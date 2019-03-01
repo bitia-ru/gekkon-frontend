@@ -19,7 +19,15 @@ WORKDIR /app
 COPY --from=builder /app/dist/index.js /app/dist/index.html ./
 
 RUN mkdir public
-COPY public/img ./public/img
+COPY public/card-image ./public/card-image
+COPY public/fonts ./public/fonts
+COPY public/header-img ./public/header-img
+COPY public/info-block-img ./public/info-block-img
+COPY public/logo-img ./public/logo-img
+COPY public/main-nav-img ./public/main-nav-img
+COPY public/social-links-sprite ./public/social-links-sprite
+COPY public/user-icon ./public/user-icon
+COPY public/view-mode-switcher-sprite ./public/view-mode-switcher-sprite
 
 COPY docker/configs/nginx.conf /etc/nginx/nginx.conf
 

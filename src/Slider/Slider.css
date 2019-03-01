@@ -1,0 +1,23 @@
+.slider__decor {
+    height: 87px;
+    flex-grow: 1;
+    align-self: flex-end;
+    background-color: #FAFAFA;
+    position: relative;
+}
+
+@media screen and (max-width: 1400px) {
+    .slider__decor {
+        height: 65px;
+    }
+}
+
+.slider__indicator {
+    height: 4px;
+    position: absolute;
+    content: '';
+    top: -4px;
+    left: 0;
+    width: 50%;
+    background-color: #006CEB;
+}

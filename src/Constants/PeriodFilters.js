@@ -1,7 +1,7 @@
 export const PERIOD_FILTERS = [
-    {value: 'day', text: 'день'},
-    {value: 'week', text: 'неделю'},
-    {value: 'month', text: 'месяц'},
-    {value: 'year', text: 'год'},
-    {value: 'all', text: 'все время'}
+    {id: 0, text: 'Все время', clickable: true},
+    {id: 1, text: 'День', clickable: true},
+    {id: 2, text: 'Неделю', clickable: true},
+    {id: 3, text: 'Месяц', clickable: true},
+    {id: 4, text: 'Год', clickable: true}
 ];
