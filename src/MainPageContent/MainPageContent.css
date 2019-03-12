@@ -1,0 +1,27 @@
+.main-page-content {
+    background-color: #ffffff;
+}
+
+.main-page-content__wrapper {
+    max-width: 1600px;
+    width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (min-width: 1600px) {
+    .main-page-content__wrapper {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+}
+
+.main-page-content__container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+}

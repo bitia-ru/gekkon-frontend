@@ -1,23 +1,25 @@
-import React from 'react';
-import {withRouter} from 'react-router-dom';
-import Axios from 'axios';
-import Qs from 'qs';
-import ApiUrl from '../ApiUrl';
+import React           from 'react';
+import {withRouter}    from 'react-router-dom';
+import Axios           from 'axios';
+import Qs              from 'qs';
+import ApiUrl          from '../ApiUrl';
 import {
     loadRoutes,
-    loadSectors
-} from '../actions';
-import {connect} from 'react-redux';
-import {Spinner} from 'spin.js';
+    loadSectors,
+    saveUser
+}                      from '../actions';
+import {connect}       from 'react-redux';
+import {Spinner}       from 'spin.js';
 import 'spin.js/spin.css';
-import {opts} from '../Constants/SpinnerOptions';
-import Content from '../Content/Content'
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import * as R from 'ramda';
+import {opts}          from '../Constants/SpinnerOptions';
+import Content         from '../Content/Content'
+import Header          from '../Header/Header';
+import Footer          from '../Footer/Footer';
+import * as R          from 'ramda';
+import {UserItemsData} from "../data";
 
-const SpotId = 1;
 const NumOfDays = 7;
+const USER = {id: 1, login: UserItemsData[0].title, avatar: '/public/user-icon/avatar.jpg'};
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -26,11 +28,12 @@ Axios.interceptors.request.use(config => {
     return config;
 });
 
-class RoutesIndex extends React.Component {
+class SpotsShow extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            spotId: parseInt(this.props.match.params.id, 10),
             sectorId: 0,
             sector: {},
             categoryFrom: '1a',
@@ -41,8 +44,7 @@ class RoutesIndex extends React.Component {
             numOfPages: 1,
             perPage: 3,
             spot: {},
-            infoData: [],
-            userId: 0
+            infoData: []
         }
     }
 
@@ -53,7 +55,7 @@ class RoutesIndex extends React.Component {
     }
 
     logIn = () => {
-        this.setState({userId: 1});
+        this.props.saveUser(USER);
         this.reloadSectors(null, null, null, null, null, 1, 1);
         if (this.state.sectorId === 0) {
             this.reloadSpot(1);
@@ -63,7 +65,7 @@ class RoutesIndex extends React.Component {
     };
 
     logOut = () => {
-        this.setState({userId: 0});
+        this.props.saveUser(null);
         this.reloadRoutes(null, null, null, null, null, 1, 0);
         if (this.state.sectorId === 0) {
             this.reloadSpot(0);
@@ -73,12 +75,12 @@ class RoutesIndex extends React.Component {
     };
 
     reloadSpot = (userId) => {
-        let currentUserId = (userId === null || userId === undefined) ? this.state.userId : userId;
+        let currentUserId = (userId === null || userId === undefined) ? (this.props.user === null ? 0 : this.props.user.id) : userId;
         let params = {};
         if (currentUserId !== 0) {
             params.user_id = currentUserId;
         }
-        Axios.get(`${ApiUrl}/v1/spots/${SpotId}`, {params: params})
+        Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}`, {params: params})
             .then(response => {
                 let infoData = [
                     {count: response.data.metadata.num_of_sectors, label: 'Залов'},
@@ -100,7 +102,7 @@ class RoutesIndex extends React.Component {
     };
 
     reloadSector = (id, userId) => {
-        let currentUserId = (userId === null || userId === undefined) ? this.state.userId : userId;
+        let currentUserId = (userId === null || userId === undefined) ? (this.props.user === null ? 0 : this.props.user.id) : userId;
         let params = {};
         if (currentUserId !== 0) {
             params.user_id = currentUserId;
@@ -128,7 +130,7 @@ class RoutesIndex extends React.Component {
     };
 
     reloadSectors = () => {
-        Axios.get(`${ApiUrl}/v1/spots/${SpotId}/sectors`)
+        Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/sectors`)
             .then(response => {
                 this.props.loadSectors(response.data.payload);
             }).catch(error => {
@@ -171,7 +173,7 @@ class RoutesIndex extends React.Component {
         let target = document.getElementById('app');
         let spinner = new Spinner(opts).spin(target);
         if (currentSectorId === 0) {
-            Axios.get(`${ApiUrl}/v1/spots/${SpotId}/routes`, {params: params})
+            Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/routes`, {params: params})
                 .then(response => {
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
                     this.props.loadRoutes(response.data.payload);
@@ -236,6 +238,7 @@ class RoutesIndex extends React.Component {
                 infoData={this.state.infoData}
                 changeSectorFilter={this.changeSectorFilter}
                 changeNameFilter={this.changeNameFilter}
+                user={this.props.user}
                 logIn={this.logIn}
                 logOut={this.logOut}/>
             <Content routes={this.props.routes}
@@ -245,19 +248,23 @@ class RoutesIndex extends React.Component {
                      changePeriodFilter={this.changePeriodFilter}
                      changeCategoryFilter={this.changeCategoryFilter}
                      changePage={this.changePage}/>
-            <Footer/>
+            <Footer user={this.props.user}
+                    logIn={this.logIn}
+                    logOut={this.logOut}/>
         </React.Fragment>
     }
 }
 
 const mapStateToProps = state => ({
     routes: state.routes,
-    sectors: state.sectors
+    sectors: state.sectors,
+    user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({
     loadRoutes: routes => dispatch(loadRoutes(routes)),
-    loadSectors: sectors => dispatch(loadSectors(sectors))
+    loadSectors: sectors => dispatch(loadSectors(sectors)),
+    saveUser: user => dispatch(saveUser(user))
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesIndex));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsShow));

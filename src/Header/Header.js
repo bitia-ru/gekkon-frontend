@@ -1,23 +1,17 @@
 import React, {Component} from 'react';
 import InfoBlock          from "../InfoBlock/InfoBlock";
 import MainNav            from "../MainNav/MainNav";
+import Logo               from "../Logo/Logo";
 import PropTypes          from 'prop-types';
-import '../logo.css';
 import './Header.css';
 
 export default class Header extends Component {
     render() {
         return <header className="header">
             <div className="header__top">
-                <div className="header__logo">
-                    <a href="#" className="logo">
-					<span className="logo__icon">
-						<img src="/public/logo-img/logo.svg" alt="Gekkon"/>
-					</span>
-                    </a>
-                </div>
+                <Logo/>
                 <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn}
-                         logOut={this.props.logOut}/>
+                         logOut={this.props.logOut} user={this.props.user}/>
             </div>
             <ul className="header__items-container">
                 <li className="header__item"

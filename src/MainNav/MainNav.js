@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import UserIcon           from "../UserIcon/UserIcon";
 import PropTypes          from 'prop-types';
+import {connect}          from "react-redux";
+import {withRouter, Link} from "react-router-dom";
+import {changeTab}        from "../actions";
 import './MainNav.css';
 
-export default class MainNav extends Component {
+class MainNav extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            tab: 1,
             searchOpened: false,
             searchStarted: false,
             searchString: ''
@@ -39,6 +41,7 @@ export default class MainNav extends Component {
 
     render() {
         return <div className="main-nav__container">
+            <Link to="/crags" id="linkToCrags"></Link>
             <div className="main-nav">
                 <div className="main-nav" onMouseLeave={this.hideSearch}>
                     <button className="main-nav__search"
@@ -61,19 +64,22 @@ export default class MainNav extends Component {
                             <ul className="main-nav__nav-list">
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
-                                       onClick={() => this.setState({tab: 1})}
-                                       className={'main-nav__nav-list-link' + (this.state.tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
+                                       onClick={() => this.props.changeTab(1)}
+                                       className={'main-nav__nav-list-link' + (this.props.tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
                                 </li>
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
-                                       onClick={() => this.setState({tab: 2})}
-                                       className={'main-nav__nav-list-link' + (this.state.tab === 2 ? ' main-nav__nav-list-link_active' : '')}>Скалы</a>
+                                       onClick={() => {
+                                           this.props.changeTab(2);
+                                           document.getElementById('linkToCrags').click()
+                                       }}
+                                       className={'main-nav__nav-list-link' + (this.props.tab === 2 ? ' main-nav__nav-list-link_active' : '')}>Скалы</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                <UserIcon logIn={this.props.logIn} logOut={this.props.logOut}/>
+                <UserIcon logIn={this.props.logIn} logOut={this.props.logOut} user={this.props.user}/>
             </div>
         </div>;
     }
@@ -82,5 +88,15 @@ export default class MainNav extends Component {
 MainNav.propTypes = {
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
-    logOut: PropTypes.func.isRequired
+    logOut: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => ({
+    tab: state.tab
+});
+
+const mapDispatchToProps = dispatch => ({
+    changeTab: tab => dispatch(changeTab(tab))
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainNav));

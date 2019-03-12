@@ -9,3 +9,13 @@ export const loadSectors = (sectors) => ({
     type: acts.LOAD_SECTORS,
     sectors
 });
+
+export const saveUser = (user) => ({
+    type: acts.SAVE_USER,
+    user
+});
+
+export const changeTab = (tab) => ({
+    type: acts.CHANGE_TAB,
+    tab
+});

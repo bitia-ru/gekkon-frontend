@@ -11,7 +11,9 @@ export default class List extends Component {
             {mapIndexed((item, index) => <li key={index} style={{listStyleType: 'none'}}
                                              className={item.separator ? 'list-item-decor' : 'list-item'}>
                 {item.separator ? '' : <div onClick={item.clickable ? (() => this.props.onClick(item.id)) : (() => {
-                })} className="list-link">{item.svgSrc ? <span className="list-icon">
+                })} className={item.clickable ? 'list-link list-link-clickable' : 'list-link'}
+                                            style={{cursor: item.clickable ? 'pointer' : ''}}>{item.svgSrc ?
+                    <span className="list-icon">
 											<svg aria-hidden="true">
 												<use xlinkHref={item.svgSrc}></use>
 											</svg>

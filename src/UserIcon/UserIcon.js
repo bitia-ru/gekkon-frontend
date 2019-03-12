@@ -6,26 +6,18 @@ import './UserIcon.css';
 
 import {UserItemsData, GuestItemsData} from "../data";
 
-const USER = {login: UserItemsData[0].title, avatar: '/public/user-icon/avatar.jpg'};
-
 export default class UserIcon extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            user: null,
-            menuItems: GuestItemsData,
             droppedDown: false
         }
     }
 
     onItemSelect = (id) => {
         if (id === 2) {
-            this.state.user ? this.props.logOut() : this.props.logIn();
-            this.setState({
-                user: (this.state.user ? null : USER),
-                menuItems: (this.state.user ? GuestItemsData : UserItemsData)
-            });
+            this.props.user ? this.props.logOut() : this.props.logIn();
         }
         this.setState({droppedDown: false})
     };
@@ -37,10 +29,10 @@ export default class UserIcon extends Component {
     render() {
         return <div className="user-icon" onBlur={() => this.setState({droppedDown: false})} tabIndex={0}>
             <Avatar onClick={this.onAvatarClick}
-                    user={this.state.user}/>
+                    user={this.props.user}/>
             {this.state.droppedDown ?
                 <div className="user-icon__user-menu user-icon__user-menu_active">
-                    <List items={this.state.menuItems}
+                    <List items={this.props.user === null ? GuestItemsData : UserItemsData}
                           onClick={this.onItemSelect}
                           textFieldName='title'/>
                 </div> : ''}

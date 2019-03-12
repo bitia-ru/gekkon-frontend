@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import PropTypes          from 'prop-types';
+import {Link}             from 'react-router-dom';
 import './Footer.css';
 import './social_links.css';
 
@@ -12,16 +14,22 @@ export default class Footer extends Component {
                             Аккаунт
                         </h3>
                         <ul className="footer__list">
-                            <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Вход
+                            {this.props.user === null ? <React.Fragment>
+                                <li className="footer__list-item">
+                                    <a onClick={this.props.logIn} className="footer__list-link">
+                                        Вход
+                                    </a>
+                                </li>
+                                <li className="footer__list-item">
+                                    <a onClick={this.props.logIn} className="footer__list-link">
+                                        Регистрация
+                                    </a>
+                                </li>
+                            </React.Fragment> : <li className="footer__list-item">
+                                <a onClick={this.props.logOut} className="footer__list-link">
+                                    Выход
                                 </a>
-                            </li>
-                            <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Регистрация
-                                </a>
-                            </li>
+                            </li>}
                         </ul>
                     </div>
                     <div className="footer__item">
@@ -30,14 +38,13 @@ export default class Footer extends Component {
                         </h3>
                         <ul className="footer__list">
                             <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Группы
-                                </a>
+                                <Link to="/users" className="footer__list-link">Скалолазы</Link>
                             </li>
                             <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Пользователи
-                                </a>
+                                <Link to="/" className="footer__list-link">Скалодромы</Link>
+                            </li>
+                            <li className="footer__list-item">
+                                <Link to="/crags" className="footer__list-link">Скалы</Link>
                             </li>
                         </ul>
                     </div>
@@ -47,14 +54,10 @@ export default class Footer extends Component {
                         </h3>
                         <ul className="footer__list">
                             <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Компания
-                                </a>
+                                <Link to="/about" className="footer__list-link">О нас</Link>
                             </li>
                             <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Пользователи
-                                </a>
+                                <Link to="/howtohelp" className="footer__list-link">Чем нам помочь</Link>
                             </li>
                         </ul>
                     </div>
@@ -64,14 +67,7 @@ export default class Footer extends Component {
                         </h3>
                         <ul className="footer__list">
                             <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    Чат
-                                </a>
-                            </li>
-                            <li className="footer__list-item">
-                                <a href="#" className="footer__list-link">
-                                    FAQ
-                                </a>
+                                <Link to="/faq" className="footer__list-link">FAQ</Link>
                             </li>
                         </ul>
                     </div>
@@ -119,3 +115,8 @@ export default class Footer extends Component {
         </footer>;
     }
 }
+
+Footer.propTypes = {
+    logIn: PropTypes.func.isRequired,
+    logOut: PropTypes.func.isRequired
+};

@@ -1,0 +1,45 @@
+import React, {Component} from 'react';
+import MainNav            from "../MainNav/MainNav";
+import Logo               from "../Logo/Logo";
+import Button             from "../Button/Button";
+import PropTypes          from 'prop-types';
+import './MainPageHeader.css';
+
+export default class MainPageHeader extends Component {
+    render() {
+        return <header className="main-page-header">
+            <div className="main-page-header__top">
+                <Logo/>
+                <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn}
+                         logOut={this.props.logOut} user={this.props.user}/>
+            </div>
+            <div className="main-page-header__content">
+                <div className="main-page-header__text">
+                    <h1 className="main-page-header__title">
+                        Короткий текст с&nbsp;призывом к действию
+                    </h1>
+                    <p className="main-page-header__descr">В данном случае призыв к регистрации</p>
+                    <div className="main-page-header__button-wrapper">
+                        {this.props.user === null ? <React.Fragment>
+                            <Button size="big" style="normal" title="Регистрация" onClick={this.props.logIn}></Button>
+                            <Button size="big" style="transparent" title="Войти" onClick={this.props.logIn}></Button>
+                        </React.Fragment> : ''}
+                    </div>
+                </div>
+                <div className="main-page-header__img">
+                    <picture>
+                        <source media="(max-width: 1600px)"
+                                srcSet="/public/main-page-header-img/main-page-header-img_desktop-md.png"/>
+                        <img src="/public/main-page-header-img/main-page-header-img.png" alt="Скалолаз"/>
+                    </picture>
+                </div>
+            </div>
+        </header>;
+    }
+}
+
+MainPageHeader.propTypes = {
+    changeNameFilter: PropTypes.func.isRequired,
+    logIn: PropTypes.func.isRequired,
+    logOut: PropTypes.func.isRequired
+};

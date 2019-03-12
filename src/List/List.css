@@ -9,7 +9,6 @@
 
 .list-link {
     display: flex;
-    cursor: pointer;
     align-items: center;
     text-decoration: none;
     color: #1F1F1F;
@@ -19,7 +18,7 @@
     padding-left: 20px;
 }
 
-.list-link:hover {
+.list-link-clickable:hover {
     background-color: #F5F5F5;
 }
 
