@@ -4,10 +4,10 @@ import './Button.css';
 
 export default class Button extends Component {
     render() {
-        let styleClass = this.props.style === 'normal' ? '' : ' btn_enter';
+        let styleClass = this.props.style === 'normal' ? '' : ' btn_transparent';
         let sizeClass = this.props.size === 'small' ? ' btn__small' : (this.props.size === 'medium' ? ' btn__medium' : '');
-        return <a onClick={this.props.onClick}
-                  className={'btn' + styleClass + sizeClass}>{this.props.title}</a>;
+        return <button onClick={this.props.onClick} disabled={this.props.disabled ? true : false}
+                  className={'btn' + styleClass + sizeClass}>{this.props.title}</button>;
     }
 }
 

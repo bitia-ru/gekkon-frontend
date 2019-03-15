@@ -5,7 +5,7 @@ import './RouteCard.css';
 export default class RouteCard extends Component {
 
     render() {
-        return <div className="content__col-md-4 content__col-lg-3">
+        return <div className="content__col-md-4 content__col-lg-3" onClick={this.props.onRouteClick ? this.props.onRouteClick : () => {}}>
             <a href="#" className="route-card content__route-card">
                 <article href="#" className="route-card__inner">
                     <div className="route-card__image">
@@ -26,7 +26,5 @@ export default class RouteCard extends Component {
 }
 
 RouteCard.propTypes = {
-    title: PropTypes.string.isRequired,
-    dateTime: PropTypes.string.isRequired,
-    dateTimeText: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired
 };

@@ -44,7 +44,7 @@ export default class Content extends Component {
                              period={this.props.period}
                              changeCategoryFilter={this.props.changeCategoryFilter}
                              changePeriodFilter={this.props.changePeriodFilter}/>
-                <RouteCardView viewMode={this.state.viewMode} routes={this.props.routes}/>
+                <RouteCardView viewMode={this.state.viewMode} routes={this.props.routes} onRouteClick={this.props.onRouteClick}/>
                 <Pagination onPageChange={this.props.changePage}
                             page={this.props.page}
                             pagesList={this.pagesList()}

@@ -15,6 +15,7 @@ import {opts}          from '../Constants/SpinnerOptions';
 import Content         from '../Content/Content'
 import Header          from '../Header/Header';
 import Footer          from '../Footer/Footer';
+import RoutesShowModal from '../Routes/RoutesShowModal';
 import * as R          from 'ramda';
 import {UserItemsData} from "../data";
 
@@ -44,7 +45,9 @@ class SpotsShow extends React.Component {
             numOfPages: 1,
             perPage: 3,
             spot: {},
-            infoData: []
+            infoData: [],
+            routesShowModalVisible: false,
+            currentShown: {}
         }
     }
 
@@ -53,6 +56,14 @@ class SpotsShow extends React.Component {
         this.reloadSectors();
         this.reloadRoutes(0);
     }
+
+    onRouteClick = (id) => {
+        this.setState({routesShowModalVisible: true, currentShown: R.find(R.propEq('id', id))(this.props.routes)});
+    };
+
+    closeRoutesShow = () => {
+        this.setState({routesShowModalVisible: false});
+    };
 
     logIn = () => {
         this.props.saveUser(USER);
@@ -232,6 +243,8 @@ class SpotsShow extends React.Component {
 
     render() {
         return <React.Fragment>
+            <div style={{overflow: (this.state.routesShowModalVisible ? 'hidden' : '')}}>
+            {this.state.routesShowModalVisible ? <RoutesShowModal closeRoutesShow={this.closeRoutesShow} route={this.state.currentShown}/> : ''}
             <Header
                 data={this.state.sectorId === 0 ? this.state.spot : this.props.sectors[R.findIndex(R.propEq('id', this.state.sectorId))(this.props.sectors)]}
                 sectors={this.props.sectors}
@@ -245,12 +258,14 @@ class SpotsShow extends React.Component {
                      page={this.state.page}
                      numOfPages={this.state.numOfPages}
                      period={this.state.period}
+                     onRouteClick={this.onRouteClick}
                      changePeriodFilter={this.changePeriodFilter}
                      changeCategoryFilter={this.changeCategoryFilter}
                      changePage={this.changePage}/>
             <Footer user={this.props.user}
                     logIn={this.logIn}
                     logOut={this.logOut}/>
+            </div>
         </React.Fragment>
     }
 }

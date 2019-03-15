@@ -9,8 +9,9 @@ export default class RouteCardTable extends Component {
             {R.map((el) => <RouteCard key={el.id}
                                       imgSrc={el.photo ? el.photo.url : null}
                                       imgAlt={el.name}
-                                      title={el.name}
+                                      title={el.name ? el.name : ''}
                                       dateTime={el.installed_at}
+                                      onRouteClick={() => this.props.onRouteClick(el.id)}
                                       dateTimeText={el.installed_at}/>, this.props.data)}
         </div>;
     }

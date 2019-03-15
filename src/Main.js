@@ -7,7 +7,7 @@ import CragsIndex      from './Crags/CragsIndex';
 export default class Main extends React.Component {
 
     render() {
-        return <main>
+        return <main className="page">
             <Switch>
                 <Route exact path='/' component={SpotsIndex}/>
                 <Route exact path='/crags' component={CragsIndex}/>

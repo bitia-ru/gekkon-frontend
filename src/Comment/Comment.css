@@ -1,0 +1,41 @@
+.comment {
+    padding: 12px 0;
+    display: flex;
+}
+
+.comment__content {
+    padding-left: 18px;
+}
+
+.comment__name {
+    font-size: 18px;
+    font-family: GilroyBold, sans-serif;
+    text-decoration: none;
+    color: #1f1f1f;
+    margin-bottom: 7px;
+    display: block;
+}
+
+.comment__footer {
+    display: flex;
+    padding-top: 7px;
+}
+
+.comment__date {
+    padding-right: 24px;
+    color: #9F9F9F;
+}
+
+.comment__answer {
+    color: #006CEB;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.comment__answer:hover {
+    text-decoration: underline;
+}
+
+.comment__text {
+    line-height: 1.3em;
+}

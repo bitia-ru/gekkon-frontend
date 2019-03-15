@@ -1,10 +1,16 @@
 import {combineReducers} from 'redux';
 import * as acts         from './Constants/Actions';
+import * as R            from 'ramda';
 
 const routesReducer = (state = [], action) => {
     switch (action.type) {
         case acts.LOAD_ROUTES:
             return action.routes;
+        case acts.UPDATE_ROUTE:
+            let routes = R.clone(state);
+            let index = R.findIndex(R.propEq('id', action.id))(routes);
+            routes[index] = action.route;
+            return routes;
         default:
             return state;
     }

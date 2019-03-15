@@ -1,0 +1,204 @@
+.modal-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+}
+
+.modal-overlay__wrapper {
+    position: relative;
+    background-color: transparent;
+    padding-left: 40px;
+    padding-right: 40px;
+    width: 100%;
+    max-width: 1464px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    min-height: 100%;
+}
+
+@media screen and (min-width: 1920px) {
+    .modal-overlay__modal {
+        align-self: center;
+    }
+}
+
+.modal {
+    max-width: 1320px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    display: flex;
+    position: relative;
+    max-height: 1040px;
+}
+
+.modal__track-block {
+    max-width: 530px;
+    flex-basis: 45%;
+    width: 100%;
+    background-color: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal__track-info {
+    padding-top: 45px;
+    width: 55%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.modal__track-header {
+    padding-left: 45px;
+    padding-right: 45px;
+    padding-bottom: 15px;
+}
+
+.modal__track-footer {
+    padding: 33px 30px;
+    align-self: flex-end;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal__track-count:not(:last-child) {
+    margin-right: 30px;
+}
+
+.modal__track-count-num {
+    margin-right: 4px;
+}
+
+.modal__track {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.modal__track img {
+    height: 100%;
+    width: auto;
+}
+
+.modal__track-status {
+    position: absolute;
+    content: '';
+    top: 38px;
+    right: -3px;
+}
+
+.modal__track-information {
+    display: flex;
+}
+
+.modal__item {
+    padding-left: 45px;
+    padding-right: 45px;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.modal__item-header {
+    font-size: 22px;
+    color: #1f1f1f;
+    font-family: GilroyBold;
+    line-height: 1.3em;
+}
+
+.modal__comment-wrap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.modal__enter-comment {
+    padding: 12px 45px;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    background-color: #ffffff;
+    align-self: flex-end;
+}
+
+.modal__enter-comment::before {
+    position: absolute;
+    content: '';
+    left: 45px;
+    right: 45px;
+    height: 1px;
+    top: -1px;
+    background-color: #CECECE;
+    z-index: 2;
+}
+
+.modal__descr-item {
+    flex-shrink: 0;
+    flex-grow: 0;
+    padding-bottom: 15px;
+}
+
+.modal__title {
+    color: #1f1f1f;
+    font-size: 30px;
+    font-family: GilroyBold, sans-serif;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.modal__title-place {
+    color: #797979;
+}
+
+.modal__link {
+    color: #006CEB;
+    text-decoration: none;
+}
+
+.modal__link:hover {
+    text-decoration: underline;
+}
+
+.modal__close {
+    position: absolute;
+    content: '';
+    width: 17px;
+    height: 17px;
+    right: -28px;
+    top: 0px;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%3Crect%20width%3D%222.40413%22%20height%3D%2221.6372%22%20transform%3D%22matrix%280.707111%20-0.707103%200.707111%200.707103%200.142578%201.8418%29%22%20fill%3D%22%23C4C4C4%22/%3E%0A%3Crect%20width%3D%222.40413%22%20height%3D%2221.6372%22%20transform%3D%22matrix%280.707111%200.707103%20-0.707111%200.707103%2015.4419%200.140625%29%22%20fill%3D%22%23C4C4C4%22/%3E%0A%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transition: opacity .4s ease-out;
+}
+
+.modal__close:hover {
+    opacity: .6;
+}

@@ -42,6 +42,7 @@ class MainNav extends Component {
     render() {
         return <div className="main-nav__container">
             <Link to="/crags" id="linkToCrags"></Link>
+            <Link to="/" id="linkToSpots"></Link>
             <div className="main-nav">
                 <div className="main-nav" onMouseLeave={this.hideSearch}>
                     <button className="main-nav__search"
@@ -64,7 +65,10 @@ class MainNav extends Component {
                             <ul className="main-nav__nav-list">
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
-                                       onClick={() => this.props.changeTab(1)}
+                                       onClick={() => {
+                                           this.props.changeTab(1);
+                                           document.getElementById('linkToSpots').click()
+                                       }}
                                        className={'main-nav__nav-list-link' + (this.props.tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
                                 </li>
                                 <li className="main-nav__nav-list-item">

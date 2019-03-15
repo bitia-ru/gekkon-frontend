@@ -1,4 +1,5 @@
 export const LOAD_ROUTES = 'LOAD_ROUTES';
+export const UPDATE_ROUTE = 'UPDATE_ROUTE';
 
 export const LOAD_SECTORS = 'LOAD_SECTORS';
 

@@ -6,8 +6,8 @@ import PropTypes          from 'prop-types';
 export default class RouteCardView extends Component {
     render() {
         return <React.Fragment>
-            {this.props.viewMode === 'table' ? <RouteCardTable data={this.props.routes}/> :
-                <RouteCardList data={this.props.routes}/>}
+            {this.props.viewMode === 'table' ? <RouteCardTable data={this.props.routes} onRouteClick={this.props.onRouteClick}/> :
+                <RouteCardList data={this.props.routes} onRouteClick={this.props.onRouteClick}/>}
         </React.Fragment>;
     }
 }

@@ -1,0 +1,40 @@
+.route-data-table-row {
+    display: flex;
+    padding: 5px 0 5px;
+}
+
+.route-data-table-item {
+    max-width: 215px;
+    width: 100%;
+    font-size: 16px;
+}
+
+.route-data-table-item_header {
+    color: #828282;
+}
+
+.route-data-table__category-track {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.route-data-table__category-track-color {
+    display: inline-block;
+    width: 60px;
+    height: 20px;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+
+.route-data-table__category-track-color_5c {
+    background-color: #E24D4D;
+}
+
+.route-data-table__link {
+    color: #006CEB;
+    text-decoration: none;
+}
+
+.route-data-table__link:hover {
+    text-decoration: underline;
+}

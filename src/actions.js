@@ -5,6 +5,12 @@ export const loadRoutes = (routes) => ({
     routes
 });
 
+export const updateRoute = (id, route) => ({
+    type: acts.UPDATE_ROUTE,
+    id,
+    route
+});
+
 export const loadSectors = (sectors) => ({
     type: acts.LOAD_SECTORS,
     sectors

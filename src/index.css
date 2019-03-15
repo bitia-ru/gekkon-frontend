@@ -8,21 +8,10 @@ body {
 }
 
 .page {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #FAFAFA;
-    font-family: GilroyRegular;
-    align-items: center;
-    justify-content: center;
-}
-
-.page {
     min-width: 1000px;
     min-height: 100%;
     width: 100%;
-    height: auto;
+    height: 100vh;
     margin: 0;
     padding: 0;
     font-family: GilroyRegular, sans-serif;
@@ -38,4 +27,8 @@ body {
     .page {
         overflow-x: scroll;
     }
+}
+
+.page_unscrollable {
+    overflow: hidden;
 }
