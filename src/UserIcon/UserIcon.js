@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import List               from '../List/List';
 import Avatar             from '../Avatar/Avatar';
 import PropTypes          from 'prop-types';
+import * as R             from "ramda";
 import './UserIcon.css';
 
 import {UserItemsData, GuestItemsData} from "../data";
@@ -16,10 +17,13 @@ export default class UserIcon extends Component {
     }
 
     onItemSelect = (id) => {
+        this.setState({droppedDown: false});
+        if (id === 1) {
+            this.props.user ? () => {} : this.props.signUp();
+        }
         if (id === 2) {
             this.props.user ? this.props.logOut() : this.props.logIn();
         }
-        this.setState({droppedDown: false})
     };
 
     onAvatarClick = () => {
@@ -32,9 +36,10 @@ export default class UserIcon extends Component {
                     user={this.props.user}/>
             {this.state.droppedDown ?
                 <div className="user-icon__user-menu user-icon__user-menu_active">
-                    <List items={this.props.user === null ? GuestItemsData : UserItemsData}
-                          onClick={this.onItemSelect}
-                          textFieldName='title'/>
+                    <List
+                        items={this.props.user === null ? GuestItemsData : R.prepend({title: (this.props.user.name ? this.props.user.name : this.props.user.login)}, UserItemsData)}
+                        onClick={this.onItemSelect}
+                        textFieldName='title'/>
                 </div> : ''}
         </div>;
     }
@@ -42,5 +47,6 @@ export default class UserIcon extends Component {
 
 UserIcon.propTypes = {
     logIn: PropTypes.func.isRequired,
-    logOut: PropTypes.func.isRequired
+    logOut: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired
 };

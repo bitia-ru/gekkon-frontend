@@ -83,7 +83,7 @@ class MainNav extends Component {
                         </nav>
                     </div>
                 </div>
-                <UserIcon logIn={this.props.logIn} logOut={this.props.logOut} user={this.props.user}/>
+                <UserIcon logIn={this.props.logIn} logOut={this.props.logOut} signUp={this.props.signUp} user={this.props.user}/>
             </div>
         </div>;
     }
@@ -93,6 +93,7 @@ MainNav.propTypes = {
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

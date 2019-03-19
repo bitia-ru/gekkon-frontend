@@ -1,0 +1,1 @@
+export const TOKEN_COOKIES_LIFETIME = 1;

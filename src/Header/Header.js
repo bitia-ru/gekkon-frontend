@@ -11,6 +11,7 @@ export default class Header extends Component {
             <div className="header__top">
                 <Logo/>
                 <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn}
+                         signUp={this.props.signUp}
                          logOut={this.props.logOut} user={this.props.user}/>
             </div>
             <ul className="header__items-container">
@@ -40,5 +41,6 @@ Header.propTypes = {
     changeSectorFilter: PropTypes.func.isRequired,
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
-    logOut: PropTypes.func.isRequired
+    logOut: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired
 };

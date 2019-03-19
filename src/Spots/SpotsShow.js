@@ -8,19 +8,21 @@ import {
     loadSectors,
     saveUser
 }                      from '../actions';
-import {connect}       from 'react-redux';
-import {Spinner}       from 'spin.js';
+import {connect}                from 'react-redux';
+import {Spinner}                from 'spin.js';
 import 'spin.js/spin.css';
-import {opts}          from '../Constants/SpinnerOptions';
-import Content         from '../Content/Content'
-import Header          from '../Header/Header';
-import Footer          from '../Footer/Footer';
-import RoutesShowModal from '../Routes/RoutesShowModal';
-import * as R          from 'ramda';
-import {UserItemsData} from "../data";
+import {opts}                   from '../Constants/SpinnerOptions';
+import Content                  from '../Content/Content'
+import Header                   from '../Header/Header';
+import Footer                   from '../Footer/Footer';
+import RoutesShowModal          from '../Routes/RoutesShowModal';
+import * as R                   from 'ramda';
+import bcrypt                   from "bcryptjs";
+import {SALT_ROUNDS}            from "../Constants/Bcrypt";
+import {TOKEN_COOKIES_LIFETIME} from "../Constants/Cookies";
+import Cookies                  from "js-cookie";
 
 const NumOfDays = 7;
-const USER = {id: 1, login: UserItemsData[0].title, avatar: '/public/user-icon/avatar.jpg'};
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -52,6 +54,15 @@ class SpotsShow extends React.Component {
     }
 
     componentDidMount() {
+        if (Cookies.get('user_session_token') !== undefined) {
+            let params = {user_session: {token: Cookies.get('user_session_token')}};
+            Axios.post(`${ApiUrl}/v1/user_sessions/sign_in`, params)
+                .then(response => {
+                    this.props.saveUser(response.data.payload.user);
+                }).catch(error => {
+                Cookies.remove('user_session_token', { path: '' });
+            });
+        }
         this.reloadSpot();
         this.reloadSectors();
         this.reloadRoutes(0);
@@ -63,19 +74,55 @@ class SpotsShow extends React.Component {
 
     closeRoutesShow = () => {
         this.setState({routesShowModalVisible: false});
-    };
-
-    logIn = () => {
-        this.props.saveUser(USER);
-        this.reloadSectors(null, null, null, null, null, 1, 1);
         if (this.state.sectorId === 0) {
-            this.reloadSpot(1);
+            this.reloadSpot();
         } else {
-            this.reloadSector(this.state.sectorId, 1);
+            this.reloadSector(this.state.sectorId);
         }
     };
 
+    signUp = () => {
+        let login = prompt('Введите login для регистрации', '');
+        let password = prompt('Введите пароль для регистрации', '');
+        let salt = bcrypt.genSaltSync(SALT_ROUNDS);
+        let hash = bcrypt.hashSync(password, salt);
+        let params = {user: {password_digest: hash, login: login, email: `${login}@mail.ru`}};
+        Axios.post(`${ApiUrl}/v1/users`, params)
+            .then(response => {
+                this.logIn();
+            }).catch(error => {
+            alert(error);
+        });
+    };
+
+    logIn = () => {
+        let login = prompt('Введите login для входа', '');
+        let password = prompt('Введите пароль для входа', '');
+        let params = {user_session: {user: {login: login}}};
+        Axios.get(`${ApiUrl}/v1/user_sessions/new`, {params: params})
+            .then(response => {
+                let hash = bcrypt.hashSync(password, response.data);
+                let params = {user_session: {user: {password_digest: hash, login: login}}};
+                Axios.post(`${ApiUrl}/v1/user_sessions`, params)
+                    .then(response => {
+                        Cookies.set('user_session_token', response.data.payload.token, {expires: TOKEN_COOKIES_LIFETIME});
+                        this.props.saveUser(response.data.payload.user);
+                        this.reloadSectors(null, null, null, null, null, 1, 1);
+                        if (this.state.sectorId === 0) {
+                            this.reloadSpot(response.data.payload.user.id);
+                        } else {
+                            this.reloadSector(this.state.sectorId, response.data.payload.user.id);
+                        }
+                    }).catch(error => {
+                    alert(error);
+                });
+            }).catch(error => {
+            alert(error)
+        });
+    };
+
     logOut = () => {
+        Cookies.remove('user_session_token', { path: '' });
         this.props.saveUser(null);
         this.reloadRoutes(null, null, null, null, null, 1, 0);
         if (this.state.sectorId === 0) {
@@ -252,6 +299,7 @@ class SpotsShow extends React.Component {
                 changeSectorFilter={this.changeSectorFilter}
                 changeNameFilter={this.changeNameFilter}
                 user={this.props.user}
+                signUp={this.signUp}
                 logIn={this.logIn}
                 logOut={this.logOut}/>
             <Content routes={this.props.routes}

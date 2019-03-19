@@ -64,7 +64,6 @@ export const ItemsData = [
 ];
 
 export const UserItemsData = [
-    {title: 'Иванов Иван'},
     {separator: true},
     {id: 1, title: 'Профиль', clickable: true},
     {id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/main-nav-img/exit.svg#exit'}

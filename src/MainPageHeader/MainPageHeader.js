@@ -6,11 +6,12 @@ import PropTypes          from 'prop-types';
 import './MainPageHeader.css';
 
 export default class MainPageHeader extends Component {
+
     render() {
         return <header className="main-page-header">
             <div className="main-page-header__top">
                 <Logo/>
-                <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn}
+                <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn} signUp={this.props.signUp}
                          logOut={this.props.logOut} user={this.props.user}/>
             </div>
             <div className="main-page-header__content">
@@ -21,7 +22,7 @@ export default class MainPageHeader extends Component {
                     <p className="main-page-header__descr">В данном случае призыв к регистрации</p>
                     <div className="main-page-header__button-wrapper">
                         {this.props.user === null ? <React.Fragment>
-                            <Button size="big" style="normal" title="Регистрация" onClick={this.props.logIn}></Button>
+                            <Button size="big" style="normal" title="Регистрация" onClick={this.props.signUp}></Button>
                             <Button size="big" style="transparent" title="Войти" onClick={this.props.logIn}></Button>
                         </React.Fragment> : ''}
                     </div>
@@ -41,5 +42,6 @@ export default class MainPageHeader extends Component {
 MainPageHeader.propTypes = {
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired
 };
