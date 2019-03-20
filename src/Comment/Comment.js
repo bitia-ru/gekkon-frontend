@@ -8,9 +8,9 @@ export default class Comment extends Component {
     render() {
         let created_at = new Date(this.props.comment.created_at);
         return <div className="comment">
-            <AvatarRound/>
+            <AvatarRound user={this.props.comment.author}/>
             <div className="comment__content">
-                <a className="comment__name">{this.props.comment.author.name}</a>
+                <a className="comment__name">{this.props.comment.author.name ? this.props.comment.author.name : this.props.comment.author.login}</a>
                 <div className="comment__text">{this.props.comment.content}</div>
                 <div className="comment__footer">
                     <div className="comment__date">

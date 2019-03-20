@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes          from 'prop-types';
 import {Link}             from 'react-router-dom';
+import SocialLinkButton   from '../SocialLinkButton/SocialLinkButton';
 import './Footer.css';
-import './social_links.css';
 
 export default class Footer extends Component {
     render() {
@@ -21,7 +21,7 @@ export default class Footer extends Component {
                                     </a>
                                 </li>
                                 <li className="footer__list-item">
-                                    <a onClick={this.props.logIn} className="footer__list-link">
+                                    <a onClick={this.props.signUp} className="footer__list-link">
                                         Регистрация
                                     </a>
                                 </li>
@@ -77,37 +77,17 @@ export default class Footer extends Component {
                         Соцсети
                     </h3>
                     <ul className="social-links">
-                        <li>
-                            <a href="https://www.instagram.com" className="social-links__link">
-                                <svg>
-                                    <use
-                                        xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"></use>
-                                </svg>
-                            </a>
+                        <li><SocialLinkButton href="https://www.instagram.com"
+                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>
-                        <li>
-                            <a href="https://ru-ru.facebook.com/" className="social-links__link">
-                                <svg>
-                                    <use
-                                        xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"></use>
-                                </svg>
-                            </a>
+                        <li><SocialLinkButton href="https://ru-ru.facebook.com/"
+                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"/>
                         </li>
-                        <li>
-                            <a href="https://vk.com/club172115153" className="social-links__link">
-                                <svg>
-                                    <use
-                                        xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"></use>
-                                </svg>
-                            </a>
+                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"/>
                         </li>
-                        <li>
-                            <a href="https://vk.com/club172115153" className="social-links__link">
-                                <svg>
-                                    <use
-                                        xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"></use>
-                                </svg>
-                            </a>
+                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"/>
                         </li>
                     </ul>
                 </div>
@@ -118,5 +98,6 @@ export default class Footer extends Component {
 
 Footer.propTypes = {
     logIn: PropTypes.func.isRequired,
+    signUp: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired
 };

@@ -91,7 +91,10 @@ class RoutesShowModal extends Component {
     reloadComments = () => {
         Axios.get(`${ApiUrl}/v1/routes/${this.props.route.id}/route_comments`)
             .then(response => {
-                this.setState({comments: this.formattedCommentsData(response.data.payload), numOfComments: response.data.metadata.all});
+                this.setState({
+                    comments: this.formattedCommentsData(response.data.payload),
+                    numOfComments: response.data.metadata.all
+                });
             }).catch(error => {
             alert(error)
         });
@@ -348,12 +351,14 @@ class RoutesShowModal extends Component {
                     <div className="modal__track-info">
                         <div className="modal__track-status">
                             {this.props.user ?
-                                <RouteStatus ascent={this.state.ascent} changeAscentResult={this.changeAscentResult}/> : ''}
+                                <RouteStatus ascent={this.state.ascent}
+                                             changeAscentResult={this.changeAscentResult}/> : ''}
                         </div>
                         <div className="modal__track-header">
                             <h1 className="modal__title">
-                                {this.props.route.number ? `№ ${this.props.route.number}` : `# ${this.props.route.id}`} <span
-                                className="modal__title-place">{this.props.route.name ? `(“${this.props.route.name}”)` : ''}</span>
+                                {this.props.route.number ? `№ ${this.props.route.number}` : `# ${this.props.route.id}`}
+                                <span
+                                    className="modal__title-place">{this.props.route.name ? `(“${this.props.route.name}”)` : ''}</span>
                             </h1>
                             <RouteDataTable route={this.props.route}/>
                         </div>
@@ -372,12 +377,12 @@ class RoutesShowModal extends Component {
                                           objectListTitle="route_comments"/>
                         </div>
                         <div className="modal__enter-comment">
-                            {this.props.user ?
-                                <CommentForm quoteComment={this.state.quoteComment}
-                                             content={this.state.commentContent}
-                                             saveComment={this.saveComment}
-                                             onContentChange={this.onCommentContentChange}
-                                             removeQuoteComment={this.removeQuoteComment}/> : ''}
+                            <CommentForm quoteComment={this.state.quoteComment}
+                                         user={this.props.user}
+                                         content={this.state.commentContent}
+                                         saveComment={this.saveComment}
+                                         onContentChange={this.onCommentContentChange}
+                                         removeQuoteComment={this.removeQuoteComment}/>
                         </div>
                     </div>
                 </div>

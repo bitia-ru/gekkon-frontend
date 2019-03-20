@@ -8,19 +8,20 @@ import {
     loadSectors,
     saveUser
 }                      from '../actions';
-import {connect}                from 'react-redux';
-import {Spinner}                from 'spin.js';
+import {connect}       from 'react-redux';
+import {Spinner}       from 'spin.js';
 import 'spin.js/spin.css';
-import {opts}                   from '../Constants/SpinnerOptions';
-import Content                  from '../Content/Content'
-import Header                   from '../Header/Header';
-import Footer                   from '../Footer/Footer';
-import RoutesShowModal          from '../Routes/RoutesShowModal';
-import * as R                   from 'ramda';
-import bcrypt                   from "bcryptjs";
-import {SALT_ROUNDS}            from "../Constants/Bcrypt";
-import {TOKEN_COOKIES_LIFETIME} from "../Constants/Cookies";
-import Cookies                  from "js-cookie";
+import {opts}          from '../Constants/SpinnerOptions';
+import Content         from '../Content/Content'
+import Header          from '../Header/Header';
+import Footer          from '../Footer/Footer';
+import RoutesShowModal from '../Routes/RoutesShowModal';
+import * as R          from 'ramda';
+import Cookies         from "js-cookie";
+import SignUpForm      from '../SignUpForm/SignUpForm';
+import LogInForm       from '../LogInForm/LogInForm';
+import Profile         from '../Profile/Profile';
+import Authorization   from '../Authorization';
 
 const NumOfDays = 7;
 
@@ -31,11 +32,11 @@ Axios.interceptors.request.use(config => {
     return config;
 });
 
-class SpotsShow extends React.Component {
+class SpotsShow extends Authorization {
     constructor(props) {
         super(props);
 
-        this.state = {
+        this.state = Object.assign({
             spotId: parseInt(this.props.match.params.id, 10),
             sectorId: 0,
             sector: {},
@@ -50,7 +51,7 @@ class SpotsShow extends React.Component {
             infoData: [],
             routesShowModalVisible: false,
             currentShown: {}
-        }
+        });
     }
 
     componentDidMount() {
@@ -60,7 +61,7 @@ class SpotsShow extends React.Component {
                 .then(response => {
                     this.props.saveUser(response.data.payload.user);
                 }).catch(error => {
-                Cookies.remove('user_session_token', { path: '' });
+                Cookies.remove('user_session_token', {path: ''});
             });
         }
         this.reloadSpot();
@@ -81,49 +82,7 @@ class SpotsShow extends React.Component {
         }
     };
 
-    signUp = () => {
-        let login = prompt('Введите login для регистрации', '');
-        let password = prompt('Введите пароль для регистрации', '');
-        let salt = bcrypt.genSaltSync(SALT_ROUNDS);
-        let hash = bcrypt.hashSync(password, salt);
-        let params = {user: {password_digest: hash, login: login, email: `${login}@mail.ru`}};
-        Axios.post(`${ApiUrl}/v1/users`, params)
-            .then(response => {
-                this.logIn();
-            }).catch(error => {
-            alert(error);
-        });
-    };
-
-    logIn = () => {
-        let login = prompt('Введите login для входа', '');
-        let password = prompt('Введите пароль для входа', '');
-        let params = {user_session: {user: {login: login}}};
-        Axios.get(`${ApiUrl}/v1/user_sessions/new`, {params: params})
-            .then(response => {
-                let hash = bcrypt.hashSync(password, response.data);
-                let params = {user_session: {user: {password_digest: hash, login: login}}};
-                Axios.post(`${ApiUrl}/v1/user_sessions`, params)
-                    .then(response => {
-                        Cookies.set('user_session_token', response.data.payload.token, {expires: TOKEN_COOKIES_LIFETIME});
-                        this.props.saveUser(response.data.payload.user);
-                        this.reloadSectors(null, null, null, null, null, 1, 1);
-                        if (this.state.sectorId === 0) {
-                            this.reloadSpot(response.data.payload.user.id);
-                        } else {
-                            this.reloadSector(this.state.sectorId, response.data.payload.user.id);
-                        }
-                    }).catch(error => {
-                    alert(error);
-                });
-            }).catch(error => {
-            alert(error)
-        });
-    };
-
-    logOut = () => {
-        Cookies.remove('user_session_token', { path: '' });
-        this.props.saveUser(null);
+    afterLogOut = () => {
         this.reloadRoutes(null, null, null, null, null, 1, 0);
         if (this.state.sectorId === 0) {
             this.reloadSpot(0);
@@ -288,10 +247,27 @@ class SpotsShow extends React.Component {
         this.reloadRoutes(null, null, null, null, null, page);
     };
 
+    afterSubmitLogInForm = (response) => {
+        this.reloadSectors(null, null, null, null, null, 1, 1);
+        if (this.state.sectorId === 0) {
+            this.reloadSpot(response.data.payload.user.id);
+        } else {
+            this.reloadSector(this.state.sectorId, response.data.payload.user.id);
+        }
+    };
+
     render() {
-        return <React.Fragment>
-            <div style={{overflow: (this.state.routesShowModalVisible ? 'hidden' : '')}}>
-            {this.state.routesShowModalVisible ? <RoutesShowModal closeRoutesShow={this.closeRoutesShow} route={this.state.currentShown}/> : ''}
+        return <div
+            style={{overflow: (this.state.routesShowModalVisible || this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
+            {this.state.routesShowModalVisible ?
+                <RoutesShowModal closeRoutesShow={this.closeRoutesShow} route={this.state.currentShown}/> : ''}
+            {this.state.signUpFormVisible ?
+                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}/> : ''}
+            {this.state.logInFormVisible ?
+                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}/> : ''}
+            {this.state.profileFormVisible ?
+                <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
+                         closeForm={this.closeProfileForm}/> : ''}
             <Header
                 data={this.state.sectorId === 0 ? this.state.spot : this.props.sectors[R.findIndex(R.propEq('id', this.state.sectorId))(this.props.sectors)]}
                 sectors={this.props.sectors}
@@ -299,6 +275,7 @@ class SpotsShow extends React.Component {
                 changeSectorFilter={this.changeSectorFilter}
                 changeNameFilter={this.changeNameFilter}
                 user={this.props.user}
+                openProfile={this.openProfileForm}
                 signUp={this.signUp}
                 logIn={this.logIn}
                 logOut={this.logOut}/>
@@ -312,9 +289,9 @@ class SpotsShow extends React.Component {
                      changePage={this.changePage}/>
             <Footer user={this.props.user}
                     logIn={this.logIn}
+                    signUp={this.signUp}
                     logOut={this.logOut}/>
-            </div>
-        </React.Fragment>
+        </div>
     }
 }
 

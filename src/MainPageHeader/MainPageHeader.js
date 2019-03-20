@@ -12,7 +12,7 @@ export default class MainPageHeader extends Component {
             <div className="main-page-header__top">
                 <Logo/>
                 <MainNav changeNameFilter={this.props.changeNameFilter} logIn={this.props.logIn} signUp={this.props.signUp}
-                         logOut={this.props.logOut} user={this.props.user}/>
+                         logOut={this.props.logOut} user={this.props.user} openProfile={this.props.openProfile}/>
             </div>
             <div className="main-page-header__content">
                 <div className="main-page-header__text">
@@ -43,5 +43,6 @@ MainPageHeader.propTypes = {
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
     signUp: PropTypes.func.isRequired,
-    logOut: PropTypes.func.isRequired
+    logOut: PropTypes.func.isRequired,
+    openProfile: PropTypes.func.isRequired
 };

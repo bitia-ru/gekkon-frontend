@@ -12,7 +12,7 @@ export default class CommentForm extends Component {
     };
 
     onKeyPress = (event) => {
-        if(event.key === 'Enter' && event.ctrlKey) {
+        if (event.key === 'Enter' && event.ctrlKey) {
             this.props.saveComment(this.props.quoteComment ? this.props.quoteComment.id : null)
         }
     };
@@ -28,9 +28,13 @@ export default class CommentForm extends Component {
                     <button className="comment-form__answer-close" onClick={this.props.removeQuoteComment}></button>
                 </div> : ''}
             <div className="comment-form__inner-wrap">
-                <AvatarRound/>
-                <textarea className="comment-form__input" placeholder="Комментировать..." value={this.props.content}
-                          onChange={(event) => this.props.onContentChange(event.target.value)} onKeyPress={this.onKeyPress}/>
+                <AvatarRound user={this.props.user}/>
+                <textarea className="comment-form__input"
+                          disabled={this.props.user && (this.props.user.login || this.props.user.name) ? false : true}
+                          placeholder={this.props.user ? ((this.props.user.login || this.props.user.name) ? 'Комментировать...' : 'Для комментирования задайте имя или логин') : 'Залогиньтесь, чтобы написать комментарий'}
+                          value={this.props.content}
+                          onChange={(event) => this.props.onContentChange(event.target.value)}
+                          onKeyPress={this.onKeyPress}/>
             </div>
             {this.props.content === '' ? '' :
                 <div className="comment-form__btn-wrap">

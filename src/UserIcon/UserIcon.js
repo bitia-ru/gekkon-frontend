@@ -19,7 +19,7 @@ export default class UserIcon extends Component {
     onItemSelect = (id) => {
         this.setState({droppedDown: false});
         if (id === 1) {
-            this.props.user ? () => {} : this.props.signUp();
+            this.props.user ? this.props.openProfile() : this.props.signUp();
         }
         if (id === 2) {
             this.props.user ? this.props.logOut() : this.props.logIn();
@@ -48,5 +48,6 @@ export default class UserIcon extends Component {
 UserIcon.propTypes = {
     logIn: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired,
-    signUp: PropTypes.func.isRequired
+    signUp: PropTypes.func.isRequired,
+    openProfile: PropTypes.func.isRequired
 };
