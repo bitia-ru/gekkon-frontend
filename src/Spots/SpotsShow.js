@@ -1,27 +1,28 @@
-import React           from 'react';
-import {withRouter}    from 'react-router-dom';
-import Axios           from 'axios';
-import Qs              from 'qs';
-import ApiUrl          from '../ApiUrl';
+import React            from 'react';
+import {withRouter}     from 'react-router-dom';
+import Axios            from 'axios';
+import Qs               from 'qs';
+import ApiUrl           from '../ApiUrl';
 import {
     loadRoutes,
     loadSectors,
     saveUser
-}                      from '../actions';
-import {connect}       from 'react-redux';
-import {Spinner}       from 'spin.js';
+}                       from '../actions';
+import {connect}        from 'react-redux';
+import {Spinner}        from 'spin.js';
 import 'spin.js/spin.css';
-import {opts}          from '../Constants/SpinnerOptions';
-import Content         from '../Content/Content'
-import Header          from '../Header/Header';
-import Footer          from '../Footer/Footer';
-import RoutesShowModal from '../Routes/RoutesShowModal';
-import * as R          from 'ramda';
-import Cookies         from "js-cookie";
-import SignUpForm      from '../SignUpForm/SignUpForm';
-import LogInForm       from '../LogInForm/LogInForm';
-import Profile         from '../Profile/Profile';
-import Authorization   from '../Authorization';
+import {opts}           from '../Constants/SpinnerOptions';
+import Content          from '../Content/Content'
+import Header           from '../Header/Header';
+import Footer           from '../Footer/Footer';
+import RoutesShowModal  from '../Routes/RoutesShowModal';
+import * as R           from 'ramda';
+import Cookies          from "js-cookie";
+import SignUpForm       from '../SignUpForm/SignUpForm';
+import LogInForm        from '../LogInForm/LogInForm';
+import Profile          from '../Profile/Profile';
+import Authorization    from '../Authorization';
+import {ToastContainer} from 'react-toastr';
 
 const NumOfDays = 7;
 
@@ -36,7 +37,7 @@ class SpotsShow extends Authorization {
     constructor(props) {
         super(props);
 
-        this.state = Object.assign({
+        this.state = Object.assign(this.state, {
             spotId: parseInt(this.props.match.params.id, 10),
             sectorId: 0,
             sector: {},
@@ -57,7 +58,7 @@ class SpotsShow extends Authorization {
     componentDidMount() {
         if (Cookies.get('user_session_token') !== undefined) {
             let params = {user_session: {token: Cookies.get('user_session_token')}};
-            Axios.post(`${ApiUrl}/v1/user_sessions/sign_in`, params)
+            Axios.post(`${ApiUrl}/v1/user_sessions/sign_in`, params, {headers: {'TOKEN': Cookies.get('user_session_token')}})
                 .then(response => {
                     this.props.saveUser(response.data.payload.user);
                 }).catch(error => {
@@ -262,12 +263,22 @@ class SpotsShow extends Authorization {
             {this.state.routesShowModalVisible ?
                 <RoutesShowModal closeRoutesShow={this.closeRoutesShow} route={this.state.currentShown}/> : ''}
             {this.state.signUpFormVisible ?
-                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}/> : ''}
+                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
+                            signUpFormErrors={this.state.signUpFormErrors}
+                            signUpResetErrors={this.signUpResetErrors}/> : ''}
             {this.state.logInFormVisible ?
-                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}/> : ''}
+                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
+                           logInFormErrors={this.state.logInFormErrors}
+                           logInResetErrors={this.logInResetErrors}/> : ''}
             {this.state.profileFormVisible ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         closeForm={this.closeProfileForm}/> : ''}
+                         closeForm={this.closeProfileForm} profileFormErrors={this.state.profileFormErrors}
+                         profileResetErrors={this.profileResetErrors}/> : ''}
+            <ToastContainer
+                ref={ref => this.container = ref}
+                onClick={() => this.container.clear()}
+                className="toast-top-right"
+            />
             <Header
                 data={this.state.sectorId === 0 ? this.state.spot : this.props.sectors[R.findIndex(R.propEq('id', this.state.sectorId))(this.props.sectors)]}
                 sectors={this.props.sectors}

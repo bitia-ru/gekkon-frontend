@@ -13,7 +13,10 @@ export default class Authorization extends React.Component {
         this.state = {
             signUpFormVisible: false,
             logInFormVisible: false,
-            profileFormVisible: false
+            profileFormVisible: false,
+            signUpFormErrors: {},
+            logInFormErrors: {},
+            profileFormErrors: {}
         }
     }
 
@@ -29,8 +32,20 @@ export default class Authorization extends React.Component {
         this.setState({signUpFormVisible: true});
     };
 
+    signUpResetErrors = () => {
+        this.setState({signUpFormErrors: {}});
+    };
+
     logIn = () => {
         this.setState({logInFormVisible: true});
+    };
+
+    logInResetErrors = () => {
+        this.setState({logInFormErrors: {}});
+    };
+
+    profileResetErrors = () => {
+        this.setState({profileFormErrors: {}});
     };
 
     submitSignUpForm = (type, data, password) => {
@@ -47,7 +62,11 @@ export default class Authorization extends React.Component {
                     this.closeSignUpForm();
                     this.submitLogInForm('email', data, password);
                 }).catch(error => {
-                alert(error);
+                    if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+                        this.setState({signUpFormErrors: error.response.data});
+                    } else {
+                        this.container.error(error.response.request.responseText, 'Ошибка', {closeButton: true});
+                    }
             });
         }
     };
@@ -77,10 +96,18 @@ export default class Authorization extends React.Component {
                                 this.afterSubmitLogInForm(response);
                             }
                         }).catch(error => {
-                        alert(error);
+                        if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+                            this.setState({logInFormErrors: error.response.data});
+                        } else {
+                            this.container.error(error.response.request.responseText, 'Ошибка', {closeButton: true});
+                        }
                     });
                 }).catch(error => {
-                alert(error)
+                if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
+                    this.setState({logInFormErrors: {email: ['Пользователь не найден']}});
+                } else {
+                    this.container.error(error.response.request.responseText, 'Ошибка', {closeButton: true});
+                }
             });
         }
     };
@@ -95,13 +122,18 @@ export default class Authorization extends React.Component {
             url: `${ApiUrl}/v1/users/${this.props.user.id}`,
             method: 'patch',
             data: data,
+            headers: {'TOKEN': Cookies.get('user_session_token')},
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         })
             .then(response => {
                 this.props.saveUser(response.data.payload);
                 this.closeProfileForm();
             }).catch(error => {
-            alert(error);
+            if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+                this.setState({profileFormErrors: error.response.data});
+            } else {
+                this.container.error(error.response.request.responseText, 'Ошибка', {closeButton: true});
+            }
         });
     };
 

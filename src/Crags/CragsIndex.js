@@ -28,12 +28,17 @@ class CragsIndex extends Authorization {
         return <div
             style={{overflow: (this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
             {this.state.signUpFormVisible ?
-                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}/> : ''}
+                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
+                            signUpFormErrors={this.state.signUpFormErrors}
+                            signUpResetErrors={this.signUpResetErrors}/> : ''}
             {this.state.logInFormVisible ?
-                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}/> : ''}
+                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
+                           logInFormErrors={this.state.logInFormErrors}
+                           logInResetErrors={this.logInResetErrors}/> : ''}
             {this.state.profileFormVisible ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         closeForm={this.closeProfileForm}/> : ''}
+                         closeForm={this.closeProfileForm} profileFormErrors={this.state.profileFormErrors}
+                         profileResetErrors={this.profileResetErrors}/> : ''}
             <MainPageHeader
                 changeNameFilter={this.changeNameFilter}
                 user={this.props.user}

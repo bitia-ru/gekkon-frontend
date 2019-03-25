@@ -31,13 +31,14 @@ export default class UserIcon extends Component {
     };
 
     render() {
+        let title = this.props.user ? (this.props.user.name ? this.props.user.name : (this.props.user.login ? this.props.user.login : (this.props.user.email ? this.props.user.email : this.props.user.phone))) : '';
         return <div className="user-icon" onBlur={() => this.setState({droppedDown: false})} tabIndex={0}>
             <Avatar onClick={this.onAvatarClick}
                     user={this.props.user}/>
             {this.state.droppedDown ?
                 <div className="user-icon__user-menu user-icon__user-menu_active">
                     <List
-                        items={this.props.user === null ? GuestItemsData : R.prepend({title: (this.props.user.name ? this.props.user.name : this.props.user.login)}, UserItemsData)}
+                        items={this.props.user === null ? GuestItemsData : R.prepend({title: title}, UserItemsData)}
                         onClick={this.onItemSelect}
                         textFieldName='title'/>
                 </div> : ''}
