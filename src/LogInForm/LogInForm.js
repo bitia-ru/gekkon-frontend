@@ -19,7 +19,8 @@ export default class LogInForm extends Component {
             passwordEnter: '',
             email: '',
             password: '',
-            errors: {}
+            errors: {},
+            rememberMe: false
         }
     }
 
@@ -29,27 +30,31 @@ export default class LogInForm extends Component {
 
     onPhoneChange = (event) => {
         this.resetErrors();
-        this.props.logInResetErrors();
+        this.props.resetErrors();
         this.setState({phone: event.target.value})
     };
 
     onPasswordEnterChange = (event) => {
         this.resetErrors();
-        this.props.logInResetErrors();
+        this.props.resetErrors();
         this.setState({passwordEnter: event.target.value})
     };
 
     onEmailChange = (event) => {
         this.resetErrors();
-        this.props.logInResetErrors();
+        this.props.resetErrors();
         this.setState({email: event.target.value});
     };
 
     onPasswordChange = (event) => {
         this.resetErrors();
-        this.props.logInResetErrors();
+        this.props.resetErrors();
         this.setState({password: event.target.value});
         this.check('password', event.target.value);
+    };
+
+    onRememberMeChange = () => {
+        this.setState({rememberMe: !this.state.rememberMe});
     };
 
     check = (field, value) => {
@@ -66,21 +71,38 @@ export default class LogInForm extends Component {
     checkAndSubmit = (type, data, password) => {
         let res = !this.check('password', this.state.password);
         if (res > 0) {return}
-        this.props.onFormSubmit(type, data, password);
+        this.props.onFormSubmit(type, data, password, this.state.rememberMe);
     };
 
     hasError = (field) => {
-        return (this.state.errors[field] || this.props.logInFormErrors[field]);
+        return (this.state.errors[field] || this.props.formErrors[field]);
     };
 
     errorText = (field) => {
-        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.logInFormErrors[field] ? this.props.logInFormErrors[field] : []));
+        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.formErrors[field] ? this.props.formErrors[field] : []));
     };
 
     closeForm = () => {
         this.resetErrors();
-        this.props.logInResetErrors();
+        this.props.resetErrors();
         this.props.closeForm()
+    };
+
+    resetPassword = (type) => {
+        if (type === 'phone') {
+            if (this.state.phone === '') {
+                this.setState({errors: {phone: ['Введите телефон']}});
+            } else {
+                this.props.resetPassword('phone', this.state.phone)
+            }
+        }
+        if (type === 'email') {
+            if (this.state.email === '') {
+                this.setState({errors: {email: ['Введите почту / логин']}});
+            } else {
+                this.props.resetPassword('email', this.state.email)
+            }
+        }
     };
 
     firstTabContent = () =>
@@ -102,8 +124,8 @@ export default class LogInForm extends Component {
             <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
                     onClick={() => this.checkAndSubmit('phone', this.state.phone, this.state.passwordEnter)}/>
             <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab1"/>
-                <a className="modal-block__link">Забыли пароль?</a>
+                <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
+                <a className="modal-block__link" onClick={() => this.resetPassword('phone')}>Забыли пароль?</a>
             </div>
         </form>;
 
@@ -127,8 +149,8 @@ export default class LogInForm extends Component {
             <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
                     onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password)}/>
             <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab2"/>
-                <a className="modal-block__link">Забыли пароль?</a>
+                <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
+                <a className="modal-block__link" onClick={() => this.resetPassword('email')}>Забыли пароль?</a>
             </div>
         </form>;
 
@@ -181,5 +203,8 @@ export default class LogInForm extends Component {
 
 LogInForm.propTypes = {
     onFormSubmit: PropTypes.func.isRequired,
-    closeForm: PropTypes.func.isRequired
+    closeForm: PropTypes.func.isRequired,
+    resetPassword: PropTypes.func.isRequired,
+    formErrors: PropTypes.object.isRequired,
+    resetErrors: PropTypes.func.isRequired
 };

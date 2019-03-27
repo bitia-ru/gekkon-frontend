@@ -33,41 +33,41 @@ export default class Profile extends Component {
 
     onPhoneChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({phone: event.target.value});
         this.check('phone', event.target.value);
     };
 
     onNameChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({name: event.target.value});
     };
 
     onEmailChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({email: event.target.value});
         this.check('email', event.target.value);
     };
 
     onLoginChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({login: event.target.value});
         this.check('login', event.target.value);
     };
 
     onPasswordChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({password: event.target.value});
         this.check('password', event.target.value);
     };
 
     onRepeatPasswordChange = (event) => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.setState({repeatPassword: event.target.value});
         this.check('repeatPassword', event.target.value);
     };
@@ -101,7 +101,7 @@ export default class Profile extends Component {
                 }
                 return true;
             case 'login':
-                let re_login = /^[a-z0-9_-]+$/;
+                let re_login = /^[\.a-zA-Z0-9_-]+$/;
                 if (value !== '' && !R.test(re_login, value)) {
                     this.setState({errors: R.merge(this.state.errors, {login: ['Неверный формат login']})});
                     return false;
@@ -167,16 +167,16 @@ export default class Profile extends Component {
     };
 
     hasError = (field) => {
-        return (this.state.errors[field] || this.props.profileFormErrors[field]);
+        return (this.state.errors[field] || this.props.formErrors[field]);
     };
 
     errorText = (field) => {
-        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.profileFormErrors[field] ? this.props.profileFormErrors[field] : []));
+        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.formErrors[field] ? this.props.formErrors[field] : []));
     };
 
     closeForm = () => {
         this.resetErrors();
-        this.props.profileResetErrors();
+        this.props.resetErrors();
         this.props.closeForm()
     };
 
@@ -195,7 +195,7 @@ export default class Profile extends Component {
                                     <img src="/public/user-icon/no-avatar.jpg" alt={this.props.user.login}/>}
                                 <input type="file" name="avatar" title="Изменить аватарку"
                                        onChange={(event) => this.onFileChosen(event.target.files[0])}/>
-                                {this.props.user.avatar ?
+                                {this.state.avatar !== null ?
                                     <button className="modal-block__avatar-delete" type="button"
                                             title="Удалить" onClick={this.removeAvatar}></button> : ''
                                 }
@@ -284,5 +284,7 @@ export default class Profile extends Component {
 Profile.propTypes = {
     onFormSubmit: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    formErrors: PropTypes.object.isRequired,
+    resetErrors: PropTypes.func.isRequired
 };

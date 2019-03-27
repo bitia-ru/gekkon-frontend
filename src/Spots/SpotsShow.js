@@ -264,16 +264,17 @@ class SpotsShow extends Authorization {
                 <RoutesShowModal closeRoutesShow={this.closeRoutesShow} route={this.state.currentShown}/> : ''}
             {this.state.signUpFormVisible ?
                 <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
-                            signUpFormErrors={this.state.signUpFormErrors}
-                            signUpResetErrors={this.signUpResetErrors}/> : ''}
+                            formErrors={this.state.signUpFormErrors}
+                            resetErrors={this.signUpResetErrors}/> : ''}
             {this.state.logInFormVisible ?
                 <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
-                           logInFormErrors={this.state.logInFormErrors}
-                           logInResetErrors={this.logInResetErrors}/> : ''}
+                           resetPassword={this.resetPassword}
+                           formErrors={this.state.logInFormErrors}
+                           resetErrors={this.logInResetErrors}/> : ''}
             {this.state.profileFormVisible ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         closeForm={this.closeProfileForm} profileFormErrors={this.state.profileFormErrors}
-                         profileResetErrors={this.profileResetErrors}/> : ''}
+                         closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
+                         resetErrors={this.profileResetErrors}/> : ''}
             <ToastContainer
                 ref={ref => this.container = ref}
                 onClick={() => this.container.clear()}

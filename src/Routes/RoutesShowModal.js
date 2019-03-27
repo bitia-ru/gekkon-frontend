@@ -73,7 +73,15 @@ class RoutesShowModal extends Component {
     }
 
     displayError = (error) => {
-        this.container.error(error.response.request.responseText, 'Ошибка', {closeButton: true});
+        if (error.response.status === 404 && error.response.statusText === 'Not Found') {
+            this.container.error(error.response.data.message, 'Ошибка', {closeButton: true});
+            return;
+        }
+        if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
+            this.container.error(error.response.data, 'Ошибка', {closeButton: true});
+            return;
+        }
+        this.container.error("Неожиданная ошибка", 'Ошибка', {closeButton: true});
     };
 
     updateDimensions = () => {
@@ -312,6 +320,15 @@ class RoutesShowModal extends Component {
         }
     };
 
+    removeComment = (comment) => {
+        Axios({url: `${ApiUrl}/v1/route_comments/${comment.id}`, method: 'delete', headers: {'TOKEN': Cookies.get('user_session_token')}})
+            .then(response => {
+                this.reloadComments();
+            }).catch(error => {
+            this.displayError(error)
+        });
+    };
+
     render() {
         return <React.Fragment>
             <ToastContainer
@@ -386,6 +403,8 @@ class RoutesShowModal extends Component {
                             </div>
                             <div className="modal__item">
                                 <CommentBlock startAnswer={this.startAnswer}
+                                              user={this.props.user}
+                                              removeComment={this.removeComment}
                                               allShown={this.state.comments.length === R.min(this.state.numOfDisplayedComments, this.state.comments.length)}
                                               numOfComments={this.state.numOfComments}
                                               showPrevious={this.showPreviousComments}

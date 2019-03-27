@@ -7,16 +7,14 @@ import CloseButton           from '../CloseButton/CloseButton';
 import PropTypes             from 'prop-types';
 import * as R                from 'ramda';
 import {PASSWORD_MIN_LENGTH} from '../Constants/User'
-import './SignUpForm.css';
+import './ResetPasswordForm.css';
 
-export default class SignUpForm extends Component {
+export default class ResetPasswordForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            phone: '',
             passwordFromSms: '',
-            email: '',
             password: '',
             repeatPassword: '',
             errors: {}
@@ -27,23 +25,10 @@ export default class SignUpForm extends Component {
         this.setState({errors: {}});
     };
 
-    onPhoneChange = (event) => {
-        this.resetErrors();
-        this.props.resetErrors();
-        this.setState({phone: event.target.value})
-    };
-
     onPasswordFromSmsChange = (event) => {
         this.resetErrors();
         this.props.resetErrors();
         this.setState({passwordFromSms: event.target.value})
-    };
-
-    onEmailChange = (event) => {
-        this.resetErrors();
-        this.props.resetErrors();
-        this.setState({email: event.target.value});
-        this.check('email', event.target.value);
     };
 
     onPasswordChange = (event) => {
@@ -62,13 +47,6 @@ export default class SignUpForm extends Component {
 
     check = (field, value) => {
         switch (field) {
-            case 'email':
-                let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
-                if (value !== '' && !R.test(re_email, value)) {
-                    this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
-                    return false;
-                }
-                return true;
             case 'password':
                 if (value !== '' && value.length < PASSWORD_MIN_LENGTH) {
                     this.setState({errors: R.merge(this.state.errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
@@ -85,8 +63,7 @@ export default class SignUpForm extends Component {
     };
 
     checkAndSubmit = (type, data, password, repeatPassword = null) => {
-        let res = !this.check('email', this.state.email);
-        res += !this.check('password', this.state.password);
+        let res = !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
         if (res > 0) {return}
         this.props.onFormSubmit(type, data, password);
@@ -110,11 +87,12 @@ export default class SignUpForm extends Component {
         <form action="#" className="form">
             <FormField placeholder="Ваш телефон"
                        id="your-phone"
-                       onChange={this.onPhoneChange}
+                       onChange={() => {}}
                        type="number"
-                       hasError={this.hasError('phone')}
-                       errorText={this.errorText('phone')}
-                       value={this.state.phone}/>
+                       hasError={false}
+                       errorText={''}
+                       disabled={true}
+                       value={this.props.phone}/>
             <FormField placeholder="Пароль из смс"
                        id="password-from-sms"
                        onChange={this.onPasswordFromSmsChange}
@@ -122,19 +100,20 @@ export default class SignUpForm extends Component {
                        hasError={this.hasError('passwordFromSms')}
                        errorText={this.errorText('passwordFromSms')}
                        value={this.state.passwordFromSms}/>
-            <Button size="medium" style="normal" title="Зарегистрироваться" fullLength={true} submit={true}
-                    onClick={() => this.checkAndSubmit('phone', this.state.phone, this.state.passwordFromSms)}/>
+            <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+                    onClick={() => this.checkAndSubmit('phone', this.props.phone, this.state.passwordFromSms)}/>
         </form>;
 
     secondTabContent = () =>
         <form action="#" className="form">
-            <FormField placeholder="Ваш email"
+            <FormField placeholder="Email / логин"
                        id="your-email"
-                       onChange={this.onEmailChange}
+                       onChange={() => {}}
                        type="text"
-                       hasError={this.hasError('email')}
-                       errorText={this.errorText('email')}
-                       value={this.state.email}/>
+                       hasError={false}
+                       errorText={''}
+                       disabled={true}
+                       value={this.props.email}/>
             <FormField placeholder="Придумайте пароль"
                        id="password"
                        onChange={this.onPasswordChange}
@@ -148,10 +127,10 @@ export default class SignUpForm extends Component {
                        type="password"
                        hasError={this.hasError('repeatPassword')}
                        errorText={this.errorText('repeatPassword')}
-                       onEnter={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}
+                       onEnter={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}
                        value={this.state.repeatPassword}/>
-            <Button size="medium" style="normal" title="Зарегистрироваться" fullLength={true} submit={true}
-                    onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}/>
+            <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+                    onClick={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}/>
         </form>;
 
     render() {
@@ -163,38 +142,11 @@ export default class SignUpForm extends Component {
                             <CloseButton onClick={this.closeForm}/>
                         </div>
                         <h3 className="modal-block__title">
-                            Регистрация
+                            Восстановить пароль
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
                                 activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
                                 titleList={["Телефон", "Email"]}/>
-                        <div className="modal-block__or">
-                            <div className="modal-block__or-inner">или</div>
-                        </div>
-                        <div className="modal-block__social">
-                            <ul className="social-links">
-                                <li><SocialLinkButton href="https://www.instagram.com"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                                      dark={true}/>
-                                </li>
-                                <li><SocialLinkButton href="https://www.instagram.com"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"
-                                                      dark={true}/>
-                                </li>
-                                <li><SocialLinkButton href="https://ru-ru.facebook.com/"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"
-                                                      dark={true}/>
-                                </li>
-                                <li><SocialLinkButton href="https://www.instagram.com/"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"
-                                                      dark={true}/>
-                                </li>
-                                <li><SocialLinkButton href="https://vk.com"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"
-                                                      dark={true}/>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -202,7 +154,7 @@ export default class SignUpForm extends Component {
     }
 }
 
-SignUpForm.propTypes = {
+ResetPasswordForm.propTypes = {
     onFormSubmit: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
     formErrors: PropTypes.object.isRequired,

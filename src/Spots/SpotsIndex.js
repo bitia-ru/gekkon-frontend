@@ -1,19 +1,20 @@
-import React            from 'react';
-import MainPageHeader   from "../MainPageHeader/MainPageHeader";
-import MainPageContent  from "../MainPageContent/MainPageContent";
-import Footer           from "../Footer/Footer";
-import {saveUser}       from "../actions";
-import {connect}        from "react-redux";
-import {withRouter}     from "react-router-dom";
-import Axios            from 'axios';
-import Qs               from 'qs';
-import ApiUrl           from '../ApiUrl';
-import Cookies          from 'js-cookie';
-import SignUpForm       from '../SignUpForm/SignUpForm';
-import LogInForm        from '../LogInForm/LogInForm';
-import Profile          from '../Profile/Profile';
-import Authorization    from '../Authorization';
-import {ToastContainer} from 'react-toastr';
+import React             from 'react';
+import MainPageHeader    from "../MainPageHeader/MainPageHeader";
+import MainPageContent   from "../MainPageContent/MainPageContent";
+import Footer            from "../Footer/Footer";
+import {saveUser}        from "../actions";
+import {connect}         from "react-redux";
+import {withRouter}      from "react-router-dom";
+import Axios             from 'axios';
+import Qs                from 'qs';
+import ApiUrl            from '../ApiUrl';
+import Cookies           from 'js-cookie';
+import SignUpForm        from '../SignUpForm/SignUpForm';
+import LogInForm         from '../LogInForm/LogInForm';
+import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
+import Profile           from '../Profile/Profile';
+import Authorization     from '../Authorization';
+import {ToastContainer}  from 'react-toastr';
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -23,6 +24,13 @@ Axios.interceptors.request.use(config => {
 });
 
 class SpotsIndex extends Authorization {
+    constructor(props) {
+        super(props);
+
+        this.state = Object.assign(this.state, {
+            email: ''
+        });
+    }
 
     componentDidMount() {
         let url = new URL(window.location.href);
@@ -34,6 +42,10 @@ class SpotsIndex extends Authorization {
                 }).catch(error => {
                 this.container.warning('При активации произошла ошибка', 'Активация email', {closeButton: true});
             });
+        }
+        code = url.searchParams.get("reset_password_code");
+        if (code !== null) {
+            this.setState({resetPasswordFormVisible: true, email: url.searchParams.get("name")})
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let params = {user_session: {token: Cookies.get('user_session_token')}};
@@ -57,16 +69,21 @@ class SpotsIndex extends Authorization {
             style={{overflow: ((this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible) ? 'hidden' : '')}}>
             {this.state.signUpFormVisible ?
                 <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
-                            signUpFormErrors={this.state.signUpFormErrors}
-                            signUpResetErrors={this.signUpResetErrors}/> : ''}
+                            formErrors={this.state.signUpFormErrors}
+                            resetErrors={this.signUpResetErrors}/> : ''}
+            {this.state.resetPasswordFormVisible ?
+                <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm} closeForm={this.closeResetPasswordForm}
+                                   formErrors={this.state.resetPasswordFormErrors} email={this.state.email}
+                                   resetErrors={this.resetPasswordResetErrors}/> : ''}
             {this.state.logInFormVisible ?
                 <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
-                           logInFormErrors={this.state.logInFormErrors}
-                           logInResetErrors={this.logInResetErrors}/> : ''}
+                           resetPassword={this.resetPassword}
+                           formErrors={this.state.logInFormErrors}
+                           resetErrors={this.logInResetErrors}/> : ''}
             {this.state.profileFormVisible ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         closeForm={this.closeProfileForm} profileFormErrors={this.state.profileFormErrors}
-                         profileResetErrors={this.profileResetErrors}/> : ''}
+                         closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
+                         resetErrors={this.profileResetErrors}/> : ''}
             <ToastContainer
                 ref={ref => this.container = ref}
                 onClick={() => this.container.clear()}

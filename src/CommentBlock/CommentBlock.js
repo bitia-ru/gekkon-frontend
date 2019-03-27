@@ -50,9 +50,11 @@ export default class CommentBlock extends Component {
                 <div className="comment-block__list" ref={(ref) => this.commentWindow = ref} onScroll={this.onScroll}>
                     {R.map((comment) =>
                         <React.Fragment key={comment.id}>
-                            <Comment startAnswer={this.props.startAnswer} comment={comment}/>
+                            <Comment startAnswer={this.props.startAnswer} removeComment={this.props.removeComment}
+                                     user={this.props.user} comment={comment}/>
                             {R.map((innerComment) => <div key={innerComment.id} className="comment-block__inner">
-                                <Comment startAnswer={this.props.startAnswer} comment={innerComment}/>
+                                <Comment startAnswer={this.props.startAnswer} removeComment={this.props.removeComment}
+                                         user={this.props.user} comment={innerComment}/>
                             </div>, comment[this.props.objectListTitle])}</React.Fragment>, this.props.comments)}
                 </div>
             </div>
@@ -63,6 +65,7 @@ export default class CommentBlock extends Component {
 CommentBlock.propTypes = {
     objectListTitle: PropTypes.string.isRequired,
     startAnswer: PropTypes.func.isRequired,
+    removeComment: PropTypes.func.isRequired,
     comments: PropTypes.array.isRequired,
     showPrevious: PropTypes.func.isRequired,
     numOfComments: PropTypes.number.isRequired,
