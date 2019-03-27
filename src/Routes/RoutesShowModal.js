@@ -299,7 +299,7 @@ class RoutesShowModal extends Component {
 
     changeAscentResult = () => {
         if (this.state.ascent) {
-            let result = this.state.ascent.result === 'flash' ? 'red_point' : (this.state.ascent.result === 'red_point' ? 'unsuccessful' : 'flash');
+            let result = this.state.ascent.result === 'red_point' ? 'flash' : (this.state.ascent.result === 'flash' ? 'unsuccessful' : 'red_point');
             let params = {ascent: {result: result}};
             Axios({url: `${ApiUrl}/v1/ascents/${this.state.ascent.id}`, method: 'patch', params: params, headers: {'TOKEN': Cookies.get('user_session_token')}})
                 .then(response => {
@@ -309,7 +309,7 @@ class RoutesShowModal extends Component {
             });
 
         } else {
-            let result = "flash";
+            let result = "red_point";
             let params = {ascent: {result: result, user_id: this.props.user.id, route_id: this.props.route.id}};
             Axios.post(`${ApiUrl}/v1/ascents`, params, {headers: {'TOKEN': Cookies.get('user_session_token')}})
                 .then(response => {

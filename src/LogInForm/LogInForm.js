@@ -172,23 +172,23 @@ export default class LogInForm extends Component {
                         </div>
                         <div className="modal-block__social">
                             <ul className="social-links">
-                                <li><SocialLinkButton href="https://www.instagram.com"
+                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://www.instagram.com"
+                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://ru-ru.facebook.com/"
+                                <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://www.instagram.com/"
+                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://vk.com"
+                                <li><SocialLinkButton href={true ? false : "https://vk.com"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"
                                                       dark={true}/>
                                 </li>

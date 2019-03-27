@@ -1,20 +1,21 @@
-import React             from 'react';
-import MainPageHeader    from "../MainPageHeader/MainPageHeader";
-import MainPageContent   from "../MainPageContent/MainPageContent";
-import Footer            from "../Footer/Footer";
-import {saveUser}        from "../actions";
-import {connect}         from "react-redux";
-import {withRouter}      from "react-router-dom";
-import Axios             from 'axios';
-import Qs                from 'qs';
-import ApiUrl            from '../ApiUrl';
-import Cookies           from 'js-cookie';
-import SignUpForm        from '../SignUpForm/SignUpForm';
-import LogInForm         from '../LogInForm/LogInForm';
-import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
-import Profile           from '../Profile/Profile';
-import Authorization     from '../Authorization';
-import {ToastContainer}  from 'react-toastr';
+import React                          from 'react';
+import MainPageHeader                 from "../MainPageHeader/MainPageHeader";
+import MainPageContent                from "../MainPageContent/MainPageContent";
+import Footer                         from "../Footer/Footer";
+import {saveUser}                     from "../actions";
+import {connect}                      from "react-redux";
+import {withRouter}                   from "react-router-dom";
+import Axios                          from 'axios';
+import Qs                             from 'qs';
+import ApiUrl                         from '../ApiUrl';
+import Cookies                        from 'js-cookie';
+import SignUpForm                     from '../SignUpForm/SignUpForm';
+import LogInForm                      from '../LogInForm/LogInForm';
+import ResetPasswordForm              from '../ResetPasswordForm/ResetPasswordForm';
+import Profile                        from '../Profile/Profile';
+import Authorization                  from '../Authorization';
+import {ToastContainer}               from 'react-toastr';
+import {TOKEN_COOKIES_LIFETIME_SHORT} from "../Constants/Cookies";
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -46,6 +47,26 @@ class SpotsIndex extends Authorization {
         code = url.searchParams.get("reset_password_code");
         if (code !== null) {
             this.setState({resetPasswordFormVisible: true, email: url.searchParams.get("name")})
+        }
+        if (url.searchParams.get("error") !== null) {
+            let errorMsg = url.searchParams.get("error_description");
+            this.container.error(errorMsg, 'Ошибка', {closeButton: true});
+        }
+        let vkCode = url.searchParams.get("vk");
+        if (vkCode !== null) {
+            Axios.get(`${ApiUrl}/v1/user_sessions/sign_in_vk/${vkCode}`)
+                .then(response => {
+                    Cookies.set('user_session_token', response.data.payload.token, {expires: TOKEN_COOKIES_LIFETIME_SHORT});
+                    let params = {user_session: {token: response.data.payload.token}};
+                    Axios.post(`${ApiUrl}/v1/user_sessions/sign_in`, params, {headers: {'TOKEN': response.data.payload.token}})
+                        .then(response => {
+                            this.props.saveUser(response.data.payload.user);
+                        }).catch(error => {
+                        Cookies.remove('user_session_token', {path: ''});
+                    });
+                }).catch(error => {
+                this.container.error('Вход через VK не удался', 'Ошибка', {closeButton: true});
+            });
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let params = {user_session: {token: Cookies.get('user_session_token')}};

@@ -9,7 +9,7 @@ export default class RouteStatus extends Component {
             <div
                 className={'route-status__type' + (complete ? (this.props.ascent.result === 'red_point' ? ' route-status__type_redpoint' : ' route-status__type_flash') : '')}>
             </div>
-            {complete ? 'Пройдена' : 'Не пройдена'}
+            {complete ? (this.props.ascent.result === 'red_point' ? 'Пролез' : 'Флешанул') : 'Не пройдена'}
         </div>;
     }
 }

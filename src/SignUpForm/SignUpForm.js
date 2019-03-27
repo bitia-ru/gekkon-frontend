@@ -1,12 +1,13 @@
-import React, {Component}    from 'react';
-import TabBar                from '../TabBar/TabBar';
-import SocialLinkButton      from '../SocialLinkButton/SocialLinkButton';
-import Button                from '../Button/Button';
-import FormField             from '../FormField/FormField';
-import CloseButton           from '../CloseButton/CloseButton';
-import PropTypes             from 'prop-types';
-import * as R                from 'ramda';
-import {PASSWORD_MIN_LENGTH} from '../Constants/User'
+import React, {Component}        from 'react';
+import TabBar                    from '../TabBar/TabBar';
+import SocialLinkButton          from '../SocialLinkButton/SocialLinkButton';
+import Button                    from '../Button/Button';
+import FormField                 from '../FormField/FormField';
+import CloseButton               from '../CloseButton/CloseButton';
+import PropTypes                 from 'prop-types';
+import * as R                    from 'ramda';
+import {PASSWORD_MIN_LENGTH}     from '../Constants/User'
+import {CLIENT_ID, REDIRECT_URI} from "../Constants/Vk";
 import './SignUpForm.css';
 
 export default class SignUpForm extends Component {
@@ -88,7 +89,9 @@ export default class SignUpForm extends Component {
         let res = !this.check('email', this.state.email);
         res += !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
-        if (res > 0) {return}
+        if (res > 0) {
+            return
+        }
         this.props.onFormSubmit(type, data, password);
     };
 
@@ -173,23 +176,24 @@ export default class SignUpForm extends Component {
                         </div>
                         <div className="modal-block__social">
                             <ul className="social-links">
-                                <li><SocialLinkButton href="https://www.instagram.com"
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                                      dark={true}/>
+                                <li><SocialLinkButton
+                                    href={true ? false : `https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`}
+                                    xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                    dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://www.instagram.com"
+                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://ru-ru.facebook.com/"
+                                <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://www.instagram.com/"
+                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"
                                                       dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href="https://vk.com"
+                                <li><SocialLinkButton href={true ? false : "https://vk.com"}
                                                       xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"
                                                       dark={true}/>
                                 </li>
