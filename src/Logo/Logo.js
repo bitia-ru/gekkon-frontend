@@ -7,7 +7,7 @@ export default class Logo extends Component {
         return <div className="logo__container">
             <Link to="/" className="logo">
                 <span className="logo__icon">
-						<img src="/public/logo-img/logo.svg" alt="Gekkon"/>
+						<img src="/public/img/logo-img/logo.svg" alt="Gekkon"/>
 					</span>
             </Link>
         </div>;

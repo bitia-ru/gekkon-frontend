@@ -192,7 +192,7 @@ export default class Profile extends Component {
                             <div className="modal-block__avatar">
                                 {(this.state.avatar !== null) ?
                                     <img src={this.state.avatar} alt={this.props.user.login}/> :
-                                    <img src="/public/user-icon/no-avatar.jpg" alt={this.props.user.login}/>}
+                                    <img src="/public/img/user-icon/no-avatar.jpg" alt={this.props.user.login}/>}
                                 <input type="file" name="avatar" title="Изменить аватарку"
                                        onChange={(event) => this.onFileChosen(event.target.files[0])}/>
                                 {this.state.avatar !== null ?
@@ -249,23 +249,23 @@ export default class Profile extends Component {
                                 <div className="modal-block__social">
                                     <ul className="social-links">
                                         <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                                               dark={true} withRemoveButton={true} unactive={true}/>
                                         </li>
                                         <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
                                                               dark={true} withRemoveButton={true}/>
                                         </li>
                                         <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
-                                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
                                                               dark={true} withRemoveButton={true}/>
                                         </li>
                                         <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
-                                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
                                                               dark={true} withRemoveButton={true}/>
                                         </li>
                                         <li><SocialLinkButton href={true ? false : "https://vk.com"}
-                                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
                                                               dark={true} withRemoveButton={true}/>
                                         </li>
                                     </ul>

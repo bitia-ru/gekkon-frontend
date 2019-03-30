@@ -30,8 +30,8 @@ export default class MainPageHeader extends Component {
                 <div className="main-page-header__img">
                     <picture>
                         <source media="(max-width: 1600px)"
-                                srcSet="/public/main-page-header-img/main-page-header-img_desktop-md.png"/>
-                        <img src="/public/main-page-header-img/main-page-header-img.png" alt="Скалолаз"/>
+                                srcSet="/public/img/main-page-header-img/main-page-header-img_desktop-md.png"/>
+                        <img src="/public/img/main-page-header-img/main-page-header-img.png" alt="Скалолаз"/>
                     </picture>
                 </div>
             </div>

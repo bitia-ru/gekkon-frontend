@@ -29,7 +29,7 @@
     width: 100%;
     height: calc(100% - 75px);
     list-style: none;
-    background-image: url("/public/header-img/header.jpg");
+    background-image: url("/public/img/header-img/header.jpg");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;

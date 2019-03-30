@@ -78,16 +78,16 @@ export default class Footer extends Component {
                     </h3>
                     <ul className="social-links">
                         <li><SocialLinkButton href="https://www.instagram.com"
-                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>
                         <li><SocialLinkButton href="https://ru-ru.facebook.com/"
-                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"/>
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"/>
                         </li>
                         <li><SocialLinkButton href="https://vk.com/club172115153"
-                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"/>
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"/>
                         </li>
                         <li><SocialLinkButton href="https://vk.com/club172115153"
-                                              xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"/>
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"/>
                         </li>
                     </ul>
                 </div>

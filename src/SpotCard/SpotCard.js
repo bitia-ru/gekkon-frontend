@@ -18,7 +18,7 @@ export default class SpotCard extends React.Component {
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
-                                                xlinkHref="/public/spot-card-sprite/spot-card-sprite.svg#icon-square"></use>
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-square"></use>
 										</svg>
 									</span>
                                 {this.props.spot.info1}
@@ -27,7 +27,7 @@ export default class SpotCard extends React.Component {
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
-                                                xlinkHref="/public/spot-card-sprite/spot-card-sprite.svg#icon-height"></use>
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-height"></use>
 										</svg>
 									</span>
                                 {this.props.spot.info2}
@@ -36,7 +36,7 @@ export default class SpotCard extends React.Component {
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
-                                                xlinkHref="/public/spot-card-sprite/spot-card-sprite.svg#icon-hooks"></use>
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-hooks"></use>
 										</svg>
 									</span>
                                 {this.props.spot.info3}
@@ -45,7 +45,7 @@ export default class SpotCard extends React.Component {
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
-                                                xlinkHref="/public/spot-card-sprite/spot-card-sprite.svg#icon-place"></use>
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-place"></use>
 										</svg>
 									</span>
                                 {this.props.spot.address}
@@ -60,7 +60,7 @@ export default class SpotCard extends React.Component {
 									<span className="spot-card__link-icon">
 										<svg>
 											<use
-                                                xlinkHref="/public/spot-card-sprite/spot-card-sprite.svg#icon-next"></use>
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-next"></use>
 										</svg>
 									</span>
 								</span>

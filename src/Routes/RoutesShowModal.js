@@ -26,7 +26,7 @@ class RoutesShowModal extends Component {
         super(props);
 
         this.state = {
-            url: (this.props.route.photo === null ? '/public/route-img/route.jpg' : this.props.route.photo.url),
+            url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
             object_id: null,
             quoteComment: null,
             commentContent: '',

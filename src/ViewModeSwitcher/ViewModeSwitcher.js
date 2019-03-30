@@ -10,7 +10,7 @@ export default class ViewModeSwitcher extends Component {
                 onClick={() => this.props.onViewModeChange('table')}>
                 <svg>
                     <use
-                        xlinkHref="/public/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-table"></use>
+                        xlinkHref="/public/img/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-table"></use>
                 </svg>
             </button>
             <button
@@ -18,7 +18,7 @@ export default class ViewModeSwitcher extends Component {
                 onClick={() => this.props.onViewModeChange('list')}>
                 <svg>
                     <use
-                        xlinkHref="/public/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-list"></use>
+                        xlinkHref="/public/img/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-list"></use>
                 </svg>
             </button>
         </div>;

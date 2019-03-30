@@ -10,7 +10,7 @@ export default class RouteEditor extends Component {
         super(props);
 
         this.state = {
-            url: (this.props.route.photo === null ? '/public/route-img/route.jpg' : this.props.route.photo.url),
+            url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
             movingPointerIndex: null,
             movingStartPosX: 0,
             movingStartPosY: 0

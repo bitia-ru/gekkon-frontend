@@ -8,7 +8,7 @@ export default class LikeButton extends Component {
                        onClick={this.props.onChange}>
 									<span className="like-button__icon">
 										<svg>
-											<use xlinkHref="/public/like-sprite/like.svg#icon-like"></use>
+											<use xlinkHref="/public/img/like-sprite/like.svg#icon-like"></use>
 										</svg>
 									</span>
             <span className="like-button__count">{this.props.numOfLikes}</span>

@@ -24,7 +24,7 @@ export default class Marker extends Component {
                      left: this.props.left - this.props.radius + this.props.dx,
                      top: this.props.top - this.props.radius + this.props.dy
                  }}>
-                <img draggable={false} src="/public/marker-img/hold-mark.png" style={{
+                <img draggable={false} src="/public/img/marker-img/hold-mark.png" style={{
                     width: `${this.props.radius * 2}px`,
                     height: `${this.props.radius * 2}px`,
                     transform: `rotate(${this.props.angle}deg)`

@@ -178,23 +178,23 @@ export default class SignUpForm extends Component {
                             <ul className="social-links">
                                 <li><SocialLinkButton
                                     href={true ? false : `https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`}
-                                    xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                     dark={true}/>
                                 </li>
                                 <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
                                                       dark={true}/>
                                 </li>
                                 <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
                                                       dark={true}/>
                                 </li>
                                 <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
                                                       dark={true}/>
                                 </li>
                                 <li><SocialLinkButton href={true ? false : "https://vk.com"}
-                                                      xlinkHref="/public/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
                                                       dark={true}/>
                                 </li>
                             </ul>

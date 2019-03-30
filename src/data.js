@@ -8,7 +8,7 @@ export const CardsData = [
     },
     {
         id: 2,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -16,7 +16,7 @@ export const CardsData = [
     },
     {
         id: 3,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -24,7 +24,7 @@ export const CardsData = [
     },
     {
         id: 4,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -32,7 +32,7 @@ export const CardsData = [
     },
     {
         id: 5,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -40,7 +40,7 @@ export const CardsData = [
     },
     {
         id: 6,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -48,7 +48,7 @@ export const CardsData = [
     },
     {
         id: 7,
-        imgSrc: '/public/route-card-img/route-card-img.jpg',
+        imgSrc: '/public/img/route-card-img/route-card-img.jpg',
         imgAlt: 'Карточка 1',
         title: 'Название трассы',
         dateTime: '2018-10-15',
@@ -66,7 +66,7 @@ export const ItemsData = [
 export const UserItemsData = [
     {separator: true},
     {id: 1, title: 'Профиль', clickable: true},
-    {id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/main-nav-img/exit.svg#exit'}
+    {id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/img/main-nav-img/exit.svg#exit'}
 ];
 
 export const GuestItemsData = [
@@ -93,7 +93,7 @@ export const SpotsData = [
         address: 'Москва, ул. Новоостаповская д.5, стр.2',
         description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n' +
         '                                зала совместно с регулярной перекруткой и обновлением трасс',
-        imgSrc: '/public/spot-card-img/gravity.jpg',
+        imgSrc: '/public/img/spot-card-img/gravity.jpg',
         className: 'spot-card_gravity'
     },
     {
@@ -105,7 +105,7 @@ export const SpotsData = [
         address: 'Москва, пер. Леснорядский д.18, стр.6',
         description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n' +
         '                                зала совместно с регулярной перекруткой и обновлением трасс',
-        imgSrc: '/public/spot-card-img/limestone.jpg',
+        imgSrc: '/public/img/spot-card-img/limestone.jpg',
         className: 'spot-card_limestone'
     },
     {
@@ -117,7 +117,7 @@ export const SpotsData = [
         address: 'Москва, Электролитный пр.7, стр.2, СК КАНТ',
         description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n' +
         '                                зала совместно с регулярной перекруткой и обновлением трасс',
-        imgSrc: '/public/spot-card-img/atmosphere.jpg',
+        imgSrc: '/public/img/spot-card-img/atmosphere.jpg',
         className: 'spot-card_atmosphere'
     },
     {
@@ -129,7 +129,7 @@ export const SpotsData = [
         address: 'Москва, ул. Новодмитровская 5А, стр 3, 1 подьезд, 3 этаж',
         description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n' +
         '                                зала совместно с регулярной перекруткой и обновлением трасс',
-        imgSrc: '/public/spot-card-img/tokyo.jpg',
+        imgSrc: '/public/img/spot-card-img/tokyo.jpg',
         className: 'spot-card_tokyo'
     }
 ];

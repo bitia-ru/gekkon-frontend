@@ -50,7 +50,7 @@ class MainNav extends Component {
                             onClick={this.searchSubmitted}>
                         <div className="main-nav__search-icon">
                             <svg aria-hidden="true">
-                                <use xlinkHref="/public/main-nav-img/search.svg#search"></use>
+                                <use xlinkHref="/public/img/main-nav-img/search.svg#search"></use>
                             </svg>
                         </div>
                     </button>

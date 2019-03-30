@@ -43,7 +43,7 @@ export default class InfoBlock extends Component {
                 <button className="info-block__info-button" onClick={this.onClick}>
 					<span className="info-block__info-icon">
 						<svg aria-hidden="true">
-							<use xlinkHref="/public/info-block-img/arrow.svg#arrow"></use>
+							<use xlinkHref="/public/img/info-block-img/arrow.svg#arrow"></use>
 						</svg>
 					</span>
                 </button>

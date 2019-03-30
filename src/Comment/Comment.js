@@ -18,7 +18,7 @@ export default class Comment extends Component {
                     </div>
                     <a className="comment__answer"
                        onClick={() => this.props.startAnswer(this.props.comment)}>Ответить</a>&nbsp;
-                    {(this.props.user && this.props.user.id === this.props.comment.author_id) ? <a className="comment__answer"
+                    {(this.props.user && (this.props.user.id === this.props.comment.author_id || this.props.user.role === 'admin')) ? <a className="comment__answer"
                                                                               onClick={() => this.props.removeComment(this.props.comment)}>Удалить</a> : ''}
                 </div>
 
