@@ -70,6 +70,11 @@ class SpotsIndex extends Authorization {
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let params = {user_session: {token: Cookies.get('user_session_token')}};
+            Axios.get(`${ApiUrl}/v1/user_sessions/test`, {withCredentials: true})
+                .then(response => {
+                    console.log(response);
+                }).catch(error => {
+            });
             Axios.post(`${ApiUrl}/v1/user_sessions/sign_in`, params, {headers: {'TOKEN': Cookies.get('user_session_token')}})
                 .then(response => {
                     this.props.saveUser(response.data.payload.user);

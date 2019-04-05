@@ -109,6 +109,12 @@ export default class SignUpForm extends Component {
         this.props.closeForm()
     };
 
+    signUpWithVk = () => {
+        console.log("signUpWithVk");
+        //`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`
+        let w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`, "VK", "resizable,scrollbars,status");
+    };
+
     firstTabContent = () =>
         <form action="#" className="form">
             <FormField placeholder="Ваш телефон"
@@ -177,7 +183,7 @@ export default class SignUpForm extends Component {
                         <div className="modal-block__social">
                             <ul className="social-links">
                                 <li><SocialLinkButton
-                                    href={true ? false : `https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`}
+                                    onClick={this.signUpWithVk}
                                     xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                     dark={true}/>
                                 </li>
