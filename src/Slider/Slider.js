@@ -6,11 +6,13 @@ export default class Slider extends Component {
 
     render() {
         return <div className="slider__decor">
-            <div className="slider__indicator"
-                 style={{
-                     width: `${this.props.position === 0 ? 100 : 100 / this.props.numOfPositions}%`,
-                     left: `${this.props.position === 0 ? 0 : 100 * (this.props.position - 1) / this.props.numOfPositions}%`
-                 }}></div>
+            <div className="slider__indicator-block">
+                <div className="slider__indicator-status"
+                     style={{
+                         width: `${this.props.position === 0 ? 100 : 100 / this.props.numOfPositions}%`,
+                         transform: `translateX(${this.props.position === 0 ? 0 : 100 * (this.props.position - 1)}%)`
+                     }}></div>
+            </div>
         </div>;
     }
 }

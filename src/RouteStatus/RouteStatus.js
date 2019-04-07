@@ -5,7 +5,7 @@ import './RouteStatus.css';
 export default class RouteStatus extends Component {
     render() {
         let complete = (this.props.ascent && this.props.ascent.result !== 'unsuccessful');
-        return <div className={'route-status' + (complete ? ' route-status_complete' : '')} onClick={this.props.changeAscentResult}>
+        return <div className={'route-status' + (complete ? ' route-status_complete' : '')} onClick={this.props.changeAscentResult ? this.props.changeAscentResult : () => {}}>
             <div
                 className={'route-status__type' + (complete ? (this.props.ascent.result === 'red_point' ? ' route-status__type_redpoint' : ' route-status__type_flash') : '')}>
             </div>
@@ -15,5 +15,4 @@ export default class RouteStatus extends Component {
 }
 
 RouteStatus.propTypes = {
-    changeAscentResult: PropTypes.func.isRequired
 };

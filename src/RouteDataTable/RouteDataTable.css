@@ -13,9 +13,28 @@
     color: #828282;
 }
 
+.route-data-table__table-item-right {
+    max-width: 240px;
+    width: 100%;
+}
+
+.route-data-table__field-select {
+    margin-left: -10px;
+    margin-top: -3px;
+}
+
 .route-data-table__category-track {
     display: inline-block;
     vertical-align: middle;
+}
+
+.route-data-table__category-track-wrap {
+    display: inline-flex;
+    position: relative;
+}
+
+.route-data-table__category-track-info {
+    cursor: pointer;
 }
 
 .route-data-table__category-track-color {
@@ -33,6 +52,7 @@
 .route-data-table__link {
     color: #006CEB;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .route-data-table__link:hover {

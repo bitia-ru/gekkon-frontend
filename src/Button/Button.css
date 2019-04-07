@@ -15,6 +15,7 @@
     cursor: pointer;
     display: flex;
     justify-content: center;
+    white-space: nowrap;
 }
 
 .btn:hover {
@@ -55,4 +56,15 @@
 
 .btn__submit {
     margin-top: 27px;
+}
+
+.btn_gray {
+    background-color: #E4E8ED;
+    color: #1f1f1f;
+    padding: 0 40px;
+    transition: background-color .4s ease-out;
+}
+
+.btn_gray:hover {
+    background-color: #D7D7D7;
 }

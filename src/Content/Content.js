@@ -44,7 +44,14 @@ export default class Content extends Component {
                              period={this.props.period}
                              changeCategoryFilter={this.props.changeCategoryFilter}
                              changePeriodFilter={this.props.changePeriodFilter}/>
-                <RouteCardView viewMode={this.state.viewMode} routes={this.props.routes} onRouteClick={this.props.onRouteClick}/>
+                <RouteCardView viewMode={this.state.viewMode}
+                               ctrlPressed={this.props.ctrlPressed}
+                               addRoute={this.props.addRoute}
+                               sectorId={this.props.sectorId}
+                               user={this.props.user}
+                               routes={this.props.routes}
+                               ascents={this.props.ascents}
+                               onRouteClick={this.props.onRouteClick}/>
                 <Pagination onPageChange={this.props.changePage}
                             page={this.props.page}
                             pagesList={this.pagesList()}
@@ -57,10 +64,14 @@ export default class Content extends Component {
 
 Content.propTypes = {
     routes: PropTypes.array.isRequired,
+    ascents: PropTypes.array.isRequired,
     page: PropTypes.number.isRequired,
     numOfPages: PropTypes.number.isRequired,
     period: PropTypes.number.isRequired,
     changeCategoryFilter: PropTypes.func.isRequired,
     changePage: PropTypes.func.isRequired,
-    changePeriodFilter: PropTypes.func.isRequired
+    changePeriodFilter: PropTypes.func.isRequired,
+    ctrlPressed: PropTypes.bool.isRequired,
+    addRoute: PropTypes.func.isRequired,
+    sectorId: PropTypes.number.isRequired
 };

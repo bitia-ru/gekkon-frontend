@@ -1,0 +1,44 @@
+.btn-handler__track-toggles {
+    position: absolute;
+    content: '';
+    right: 25px;
+    top: 25px;
+    display: flex;
+    z-index: 3;
+}
+
+.btn-handler__track-toggles-item:not(:first-child) {
+    margin-left: 6px;
+}
+
+.btn-handler__track-toggles-item:not(:last-child) {
+    margin-right: 6px;
+}
+
+.btn-handler {
+    background-color: rgba(206, 206, 206, 0.4);
+    border: none;
+    box-shadow: none;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    transition: background-color .4s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-handler:hover {
+    background-color: rgba(206, 206, 206, 0.7);
+}
+
+.btn-handler:hover svg {
+    fill: #1f1f1f;
+}
+
+.btn-handler svg {
+    width: 100%;
+    height: 100%;
+    fill: #4F4F4F;
+    transition: fill .4s ease-out;
+}

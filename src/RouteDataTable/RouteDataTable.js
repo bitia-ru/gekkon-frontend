@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes          from 'prop-types';
+import {GetCategoryColor} from '../Constants/Categories';
+import moment             from 'moment';
+import {GetUserName}      from '../Constants/User';
 import './RouteDataTable.css';
 
 export default class RouteDataTable extends Component {
     render() {
+        let name = this.props.route.author ? GetUserName(this.props.route.author) : null;
         return <div className="route-data-table">
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
@@ -11,7 +15,8 @@ export default class RouteDataTable extends Component {
                 </div>
                 <div className="route-data-table-item">
                     <div className="route-data-table__category-track">{this.props.route.category}</div>
-                    <div className="route-data-table__category-track-color route-data-table__category-track-color_5c"></div>
+                    <div className="route-data-table__category-track-color"
+                         style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -19,7 +24,6 @@ export default class RouteDataTable extends Component {
                     Народная категория:
                 </div>
                 <div className="route-data-table-item">
-                    7/10
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -35,7 +39,7 @@ export default class RouteDataTable extends Component {
                     Дата накрутки:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.route.installed_at}
+                    {this.props.route.installed_at ? moment(this.props.route.installed_at).format('DD.MM.YYYY') : ''}
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -43,7 +47,7 @@ export default class RouteDataTable extends Component {
                     Дата cкрутки:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.route.installed_until}
+                    {this.props.route.installed_until ? moment(this.props.route.installed_until).format('DD.MM.YYYY') : ''}
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -51,7 +55,7 @@ export default class RouteDataTable extends Component {
                     Накрутчик:
                 </div>
                 <div className="route-data-table-item">
-                    <a href="#" className="route-data-table__link">{(this.props.route.author && this.props.route.author.name) ? this.props.route.author.name : ''}</a>
+                    <a className="route-data-table__link">{name === null ? 'Неизвестный накрутчик' : name}</a>
                 </div>
             </div>
         </div>;

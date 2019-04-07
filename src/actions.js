@@ -11,6 +11,11 @@ export const updateRoute = (id, route) => ({
     route
 });
 
+export const addRoute = (route) => ({
+    type: acts.ADD_ROUTE,
+    route
+});
+
 export const loadSectors = (sectors) => ({
     type: acts.LOAD_SECTORS,
     sectors
@@ -24,4 +29,13 @@ export const saveUser = (user) => ({
 export const changeTab = (tab) => ({
     type: acts.CHANGE_TAB,
     tab
+});
+
+export const saveToken = (token) => ({
+    type: acts.SAVE_TOKEN,
+    token
+});
+
+export const removeToken = () => ({
+    type: acts.REMOVE_TOKEN
 });

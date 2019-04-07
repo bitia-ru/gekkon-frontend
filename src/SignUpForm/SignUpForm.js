@@ -9,6 +9,7 @@ import * as R                    from 'ramda';
 import {PASSWORD_MIN_LENGTH}     from '../Constants/User'
 import {CLIENT_ID, REDIRECT_URI} from "../Constants/Vk";
 import './SignUpForm.css';
+import Cookies                   from "js-cookie";
 
 export default class SignUpForm extends Component {
     constructor(props) {
@@ -65,13 +66,13 @@ export default class SignUpForm extends Component {
         switch (field) {
             case 'email':
                 let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
-                if (value !== '' && !R.test(re_email, value)) {
+                if (value === '' || !R.test(re_email, value)) {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
                     return false;
                 }
                 return true;
             case 'password':
-                if (value !== '' && value.length < PASSWORD_MIN_LENGTH) {
+                if (value === '' || value.length < PASSWORD_MIN_LENGTH) {
                     this.setState({errors: R.merge(this.state.errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
                     return false;
                 }
@@ -107,12 +108,6 @@ export default class SignUpForm extends Component {
         this.resetErrors();
         this.props.resetErrors();
         this.props.closeForm()
-    };
-
-    signUpWithVk = () => {
-        console.log("signUpWithVk");
-        //`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`
-        let w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`, "VK", "resizable,scrollbars,status");
     };
 
     firstTabContent = () =>
@@ -160,6 +155,7 @@ export default class SignUpForm extends Component {
                        onEnter={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}
                        value={this.state.repeatPassword}/>
             <Button size="medium" style="normal" title="Зарегистрироваться" fullLength={true} submit={true}
+                    isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}/>
         </form>;
 
@@ -183,7 +179,7 @@ export default class SignUpForm extends Component {
                         <div className="modal-block__social">
                             <ul className="social-links">
                                 <li><SocialLinkButton
-                                    onClick={this.signUpWithVk}
+                                    onClick={this.props.enterWithVk}
                                     xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                     dark={true}/>
                                 </li>
@@ -214,6 +210,7 @@ export default class SignUpForm extends Component {
 
 SignUpForm.propTypes = {
     onFormSubmit: PropTypes.func.isRequired,
+    enterWithVk: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
     formErrors: PropTypes.object.isRequired,
     resetErrors: PropTypes.func.isRequired

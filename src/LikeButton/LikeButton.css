@@ -23,6 +23,7 @@
     height: 17px;
     display: flex;
     margin-right: 8px;
+    margin-top: -3px;
 }
 
 .like-button__icon svg {
@@ -34,6 +35,7 @@
     color: #828282;
     font-size: 16px;
     transition: color .4s ease-out;
+    line-height: 1.5em;
 }
 
 .like-button_active .like-button__count {

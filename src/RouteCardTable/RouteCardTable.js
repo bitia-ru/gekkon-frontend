@@ -6,17 +6,27 @@ import PropTypes          from 'prop-types';
 export default class RouteCardTable extends Component {
     render() {
         return <div className="content__inner">
-            {R.map((el) => <RouteCard key={el.id}
-                                      imgSrc={el.photo ? el.photo.url : null}
-                                      imgAlt={el.name}
-                                      title={el.name ? el.name : ''}
-                                      dateTime={el.installed_at}
-                                      onRouteClick={() => this.props.onRouteClick(el.id)}
-                                      dateTimeText={el.installed_at}/>, this.props.data)}
+            {(this.props.sectorId !== 0 && this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator') && this.props.ctrlPressed) ?
+                <div className="content__col-md-4 content__col-lg-3">
+                    <div className="content__route-card">
+                        <a className="route-card route-card__edit" onClick={this.props.addRoute}>
+                            <span className="route-card__edit-icon"></span>
+                            <span className="route-card__edit-title">Добавить новую трассу</span>
+                        </a>
+                    </div>
+                </div> : ''}
+            {R.map((route) => <RouteCard key={route.id}
+                                         route={route}
+                                         ascent={R.find((ascent) => ascent.route_id === route.id, this.props.ascents)}
+                                         onRouteClick={() => this.props.onRouteClick(route.id)}/>, this.props.routes)}
         </div>;
     }
 }
 
 RouteCardTable.propTypes = {
-    data: PropTypes.array.isRequired
+    routes: PropTypes.array.isRequired,
+    ascents: PropTypes.array.isRequired,
+    ctrlPressed: PropTypes.bool.isRequired,
+    addRoute: PropTypes.func.isRequired,
+    sectorId: PropTypes.number.isRequired
 };

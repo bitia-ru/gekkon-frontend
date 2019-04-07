@@ -11,5 +11,8 @@ export default class RouteCardList extends Component {
 }
 
 RouteCardList.propTypes = {
-    data: PropTypes.array.isRequired
+    routes: PropTypes.array.isRequired,
+    ascents: PropTypes.array.isRequired,
+    addRoute: PropTypes.func.isRequired,
+    sectorId: PropTypes.number.isRequired
 };

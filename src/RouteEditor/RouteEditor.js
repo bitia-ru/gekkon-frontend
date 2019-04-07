@@ -118,18 +118,15 @@ export default class RouteEditor extends Component {
 
     render() {
         let mapIndexed = R.addIndex(R.map);
-        return <div className="route-editor" ref={(ref) => this.props.setImageContainer(ref)}
+        return <div className="modal__track-image-wrapper" ref={(ref) => this.props.setImageContainer(ref)}
                     onMouseDown={this.props.editable ? this.onMouseDown : (() => {
                     })}
                     onMouseUp={this.props.editable ? this.onMouseUp : (() => {
                     })}
                     onMouseMove={this.props.editable ? this.onMouseMove : (() => {
                     })}
-                    onContextMenu={this.onContextMenu}
-                    style={{
-                        backgroundImage: `url(${this.state.url})`,
-                        backgroundSize: this.overflow() ? 'cover' : 'contain'
-                    }}>
+                    onContextMenu={this.onContextMenu}>
+            <img src={this.props.routePhoto} alt={this.props.route.name}/>
             {mapIndexed((pointer, index) => <Marker key={index}
                                                     width={this.props.currentContainerW}
                                                     removePointer={this.props.editable ? (() => this.removePointer(index)) : (() => {
@@ -146,6 +143,7 @@ export default class RouteEditor extends Component {
 }
 
 RouteEditor.propTypes = {
+    routePhoto: PropTypes.string.isRequired,
     route: PropTypes.object.isRequired,
     pointers: PropTypes.array.isRequired,
     editable: PropTypes.bool.isRequired,

@@ -23,9 +23,35 @@ export default class Profile extends Component {
             repeatPassword: '',
             avatar: this.props.user.avatar ? this.props.user.avatar.url : null,
             avatarFile: null,
-            errors: {}
+            errors: {},
+            fieldsOld: {}
         }
     }
+
+    componentDidMount() {
+        this.setState({
+            fieldsOld: {
+                name: this.state.name,
+                login: this.state.login,
+                phone: this.state.phone,
+                password: this.state.password,
+                email: this.state.email,
+                avatar: this.state.avatar
+            }
+        })
+    }
+
+    fieldsChanged = () => {
+        let fields = {
+            name: this.state.name,
+            login: this.state.login,
+            phone: this.state.phone,
+            password: this.state.password,
+            email: this.state.email,
+            avatar: this.state.avatar
+        };
+        return this.state.fieldsOld && JSON.stringify(fields) !== JSON.stringify(this.state.fieldsOld);
+    };
 
     resetErrors = () => {
         this.setState({errors: {}});
@@ -142,7 +168,9 @@ export default class Profile extends Component {
         res += !this.check('phone', this.state.phone);
         res += !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
-        if (res > 0) {return}
+        if (res > 0) {
+            return
+        }
         let formData = new FormData();
         if (this.state.avatar !== (this.props.user.avatar ? this.props.user.avatar.url : null)) {
             formData.append('user[avatar]', this.state.avatarFile);
@@ -189,11 +217,12 @@ export default class Profile extends Component {
                     </div>
                     <form action="#" method="post" method="post" encType="multipart/form-data" className="form">
                         <div className="modal-block__avatar-block">
-                            <div className="modal-block__avatar">
+                            <div className="modal-block__avatar modal-block__avatar_login">
                                 {(this.state.avatar !== null) ?
-                                    <img src={this.state.avatar} alt={this.props.user.login}/> :
-                                    <img src="/public/img/user-icon/no-avatar.jpg" alt={this.props.user.login}/>}
-                                <input type="file" name="avatar" title="Изменить аватарку"
+                                    <img src={this.state.avatar} alt=''/> :
+                                    ''}
+                                <input type="file" name="avatar"
+                                       title={(this.state.avatar !== null) ? 'Изменить аватарку' : 'Загрузить аватарку'}
                                        onChange={(event) => this.onFileChosen(event.target.files[0])}/>
                                 {this.state.avatar !== null ?
                                     <button className="modal-block__avatar-delete" type="button"
@@ -272,6 +301,8 @@ export default class Profile extends Component {
                                 </div>
                             </div>
                             <Button size="medium" style="normal" title="Сохранить" fullLength={true} submit={true}
+                                    disabled={!this.fieldsChanged()}
+                                    isWaiting={this.props.isWaiting}
                                     onClick={this.checkAndSubmit}/>
                         </div>
                     </form>
@@ -286,5 +317,6 @@ Profile.propTypes = {
     closeForm: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
     formErrors: PropTypes.object.isRequired,
-    resetErrors: PropTypes.func.isRequired
+    resetErrors: PropTypes.func.isRequired,
+    isWaiting: PropTypes.bool.isRequired
 };

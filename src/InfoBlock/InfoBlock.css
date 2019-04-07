@@ -19,6 +19,8 @@
 .info-block__descr {
     margin: 0;
     margin-left: 20px;
+    overflow: hidden;
+    max-height: 50px;
 }
 
 .info-block__bottom {
@@ -106,8 +108,8 @@
 }
 
 .info-block__info-item {
-    width: 33.33%;
-    max-width: 246px;
+    flex-grow: 1;
+    max-width: 254px;
     box-sizing: border-box;
     padding-right: 45px;
 }

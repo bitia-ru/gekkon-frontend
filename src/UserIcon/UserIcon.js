@@ -3,6 +3,7 @@ import List               from '../List/List';
 import Avatar             from '../Avatar/Avatar';
 import PropTypes          from 'prop-types';
 import * as R             from "ramda";
+import {GetUserName}      from '../Constants/User';
 import './UserIcon.css';
 
 import {UserItemsData, GuestItemsData} from "../data";
@@ -31,7 +32,7 @@ export default class UserIcon extends Component {
     };
 
     render() {
-        let title = this.props.user ? (this.props.user.name ? this.props.user.name : (this.props.user.login ? this.props.user.login : (this.props.user.email ? this.props.user.email : this.props.user.phone))) : '';
+        let title = this.props.user ? GetUserName(this.props.user, true) : '';
         return <div className="user-icon" onBlur={() => this.setState({droppedDown: false})} tabIndex={0}>
             <Avatar onClick={this.onAvatarClick}
                     user={this.props.user}/>

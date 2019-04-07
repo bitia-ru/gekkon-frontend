@@ -77,6 +77,9 @@ export default class Footer extends Component {
                         Соцсети
                     </h3>
                     <ul className="social-links">
+                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"/>
+                        </li>
                         <li><SocialLinkButton href="https://www.instagram.com"
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>

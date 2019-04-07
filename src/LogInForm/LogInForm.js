@@ -70,7 +70,9 @@ export default class LogInForm extends Component {
 
     checkAndSubmit = (type, data, password) => {
         let res = !this.check('password', this.state.password);
-        if (res > 0) {return}
+        if (res > 0) {
+            return
+        }
         this.props.onFormSubmit(type, data, password, this.state.rememberMe);
     };
 
@@ -122,6 +124,7 @@ export default class LogInForm extends Component {
                        errorText={this.errorText('passwordEnter')}
                        value={this.state.passwordEnter}/>
             <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
+                    isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('phone', this.state.phone, this.state.passwordEnter)}/>
             <div className="modal-block__settings">
                 <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
@@ -147,6 +150,7 @@ export default class LogInForm extends Component {
                        onEnter={() => this.checkAndSubmit('email', this.state.email, this.state.password)}
                        value={this.state.password}/>
             <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
+                    isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password)}/>
             <div className="modal-block__settings">
                 <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
@@ -165,16 +169,18 @@ export default class LogInForm extends Component {
                         <h3 className="modal-block__title">
                             Войти
                         </h3>
-                        <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]} activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
+                        <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
+                                activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
                                 titleList={["Телефон", "Email / логин"]}/>
                         <div className="modal-block__or">
                             <div className="modal-block__or-inner">или</div>
                         </div>
                         <div className="modal-block__social">
                             <ul className="social-links">
-                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                                      dark={true}/>
+                                <li><SocialLinkButton
+                                    onClick={this.props.enterWithVk}
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                    dark={true}/>
                                 </li>
                                 <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
                                                       xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
@@ -203,6 +209,7 @@ export default class LogInForm extends Component {
 
 LogInForm.propTypes = {
     onFormSubmit: PropTypes.func.isRequired,
+    enterWithVk: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
     resetPassword: PropTypes.func.isRequired,
     formErrors: PropTypes.object.isRequired,

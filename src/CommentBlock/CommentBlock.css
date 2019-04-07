@@ -20,9 +20,10 @@
 }
 
 .comment-block__list {
-    overflow-y: scroll;
+    overflow-y: auto;
     flex-grow: 1;
     padding-right: 10px;
+    max-height: 100%;
 }
 
 .comment-block__show-comments {

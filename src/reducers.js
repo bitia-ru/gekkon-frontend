@@ -6,6 +6,8 @@ const routesReducer = (state = [], action) => {
     switch (action.type) {
         case acts.LOAD_ROUTES:
             return action.routes;
+        case acts.ADD_ROUTE:
+            return R.append(action.route, state);
         case acts.UPDATE_ROUTE:
             let routes = R.clone(state);
             let index = R.findIndex(R.propEq('id', action.id))(routes);
@@ -43,9 +45,21 @@ const tabReducer = (state = 1, action) => {
     }
 };
 
+const tokenReducer = (state = null, action) => {
+    switch (action.type) {
+        case acts.SAVE_TOKEN:
+            return action.token;
+        case acts.REMOVE_TOKEN:
+            return null;
+        default:
+            return state;
+    }
+};
+
 export default combineReducers({
     routes: routesReducer,
     sectors: sectorsReducer,
     user: userReducer,
-    tab: tabReducer
+    tab: tabReducer,
+    token: tokenReducer
 });

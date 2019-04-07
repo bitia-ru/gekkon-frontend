@@ -79,6 +79,11 @@
     font-family: GilroyRegular;
     font-size: 18px;
     z-index: 3;
+    color: #1f1f1f;
+}
+
+.main-nav__search-input::placeholder {
+    color: #828282;
 }
 
 .main-nav__search-input::-webkit-input-placeholder {

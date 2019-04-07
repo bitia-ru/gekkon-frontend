@@ -48,7 +48,7 @@ export default class ResetPasswordForm extends Component {
     check = (field, value) => {
         switch (field) {
             case 'password':
-                if (value !== '' && value.length < PASSWORD_MIN_LENGTH) {
+                if (value === '' && value.length < PASSWORD_MIN_LENGTH) {
                     this.setState({errors: R.merge(this.state.errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
                     return false;
                 }
@@ -65,7 +65,9 @@ export default class ResetPasswordForm extends Component {
     checkAndSubmit = (type, data, password, repeatPassword = null) => {
         let res = !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
-        if (res > 0) {return}
+        if (res > 0) {
+            return
+        }
         this.props.onFormSubmit(type, data, password);
     };
 
@@ -87,7 +89,8 @@ export default class ResetPasswordForm extends Component {
         <form action="#" className="form">
             <FormField placeholder="Ваш телефон"
                        id="your-phone"
-                       onChange={() => {}}
+                       onChange={() => {
+                       }}
                        type="number"
                        hasError={false}
                        errorText={''}
@@ -101,6 +104,7 @@ export default class ResetPasswordForm extends Component {
                        errorText={this.errorText('passwordFromSms')}
                        value={this.state.passwordFromSms}/>
             <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+                    isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('phone', this.props.phone, this.state.passwordFromSms)}/>
         </form>;
 
@@ -108,7 +112,8 @@ export default class ResetPasswordForm extends Component {
         <form action="#" className="form">
             <FormField placeholder="Email / логин"
                        id="your-email"
-                       onChange={() => {}}
+                       onChange={() => {
+                       }}
                        type="text"
                        hasError={false}
                        errorText={''}
