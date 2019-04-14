@@ -41,12 +41,14 @@
     background-color: #ffffff;
     display: flex;
     position: relative;
+    height: 80vh;
     min-height: 1040px;
 }
 
 .modal__track-block {
-    min-width: 530px;
-    width: 50vh;
+    max-width: 530px;
+    flex-basis: 45%;
+    width: 100%;
     background-color: #FAFAFA;
     display: flex;
     flex-direction: column;
@@ -314,11 +316,4 @@
     position: relative;
     z-index: 2;
     height: 100%;
-}
-
-.modal__track-image-wrapper img {
-    height: auto;
-    width: 100%;
-    z-index: 2;
-    margin-bottom: -7px;
 }

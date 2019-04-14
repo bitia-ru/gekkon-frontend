@@ -39,12 +39,6 @@ class RoutesEditModal extends Component {
             ascent: null,
             currentPointers: [],
             currentPointersOld: [],
-            realImageW: 0,
-            realImageH: 0,
-            currentImageW: 0,
-            currentImageH: 0,
-            currentLeftShift: 0,
-            currentTopShift: 0,
             route: R.clone(this.props.route),
             users: [],
             waitSaving: false,
@@ -63,19 +57,6 @@ class RoutesEditModal extends Component {
             route.category = CATEGORIES[0];
         }
         this.setState({fieldsOld: route, route: R.clone(route)});
-        let img = new Image();
-        let self = this;
-        img.onload = function () {
-            self.setState(
-                {
-                    realImageW: this.width,
-                    realImageH: this.height
-                });
-            setTimeout(function () { //TODO nextTick
-                self.updateDimensions();
-            }, 1000);
-        };
-        img.src = this.state.url;
         this.loadPointers();
         this.loadUsers();
     }
@@ -90,15 +71,6 @@ class RoutesEditModal extends Component {
             return;
         }
         this.container.error("Неожиданная ошибка", 'Ошибка', {closeButton: true});
-    };
-
-    updateDimensions = () => {
-        this.setState(
-            {
-                currentImageW: this.state.realImageW / this.state.realImageH * this.currentContainerH(),
-                currentImageH: this.currentContainerH(),
-                currentLeftShift: (this.currentContainerW() - this.state.realImageW / this.state.realImageH * this.currentContainerH()) / 2.0
-            });
     };
 
     loadUsers = () => {
@@ -119,20 +91,27 @@ class RoutesEditModal extends Component {
 
     save = () => {
         this.setState({waitSaving: true});
-        let mark = R.clone(this.props.route.mark);
-        if (!mark) {
-            mark = {colors: {holds: 1, marks: 1}};
-        }
-        let x = R.map((pointer) => pointer.x, this.state.currentPointers);
-        let y = R.map((pointer) => pointer.y, this.state.currentPointers);
-        let angle = R.map((pointer) => pointer.angle, this.state.currentPointers);
-        mark.pointers = {x: x, y: y, angle: angle};
-        let params = {route: {mark: mark}};
         let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
         let formData = new FormData();
+        if (JSON.stringify(this.state.currentPointers) !== JSON.stringify(this.state.currentPointersOld)) {
+            let mark = R.clone(this.props.route.mark);
+            if (!mark) {
+                mark = {colors: {holds: 1, marks: 1}};
+            }
+            let x = R.map((pointer) => pointer.x, this.state.currentPointers);
+            let y = R.map((pointer) => pointer.y, this.state.currentPointers);
+            let angle = R.map((pointer) => pointer.angle, this.state.currentPointers);
+            mark.pointers = {x: x, y: y, angle: angle};
+            formData.append('route[mark][colors][holds]', 1);
+            formData.append('route[mark][colors][marks]', 1);
+            for (let i in x) {
+                formData.append('route[mark][pointers][x][]', x[i]);
+                formData.append('route[mark][pointers][y][]', y[i]);
+                formData.append('route[mark][pointers][angle][]', angle[i]);
+            }
+        }
         for (let i in paramList) {
             if (this.props.route[paramList[i]] !== this.state.route[paramList[i]]) {
-                params.route[paramList[i]] = this.state.route[paramList[i]];
                 formData.append(`route[${paramList[i]}]`, this.state.route[paramList[i]]);
             }
         }
@@ -199,8 +178,8 @@ class RoutesEditModal extends Component {
         let mapIndexed = R.addIndex(R.map);
         pointers = mapIndexed((x, index) => {
             return {
-                x: parseInt(x, 10),
-                y: parseInt(pointers.y[index], 10),
+                x: parseFloat(x),
+                y: parseFloat(pointers.y[index]),
                 dx: 0,
                 dy: 0,
                 angle: parseInt(pointers.angle[index], 10)
@@ -211,26 +190,6 @@ class RoutesEditModal extends Component {
 
     updatePointers = (pointers) => {
         this.setState({currentPointers: pointers});
-    };
-
-    setImageContainer = (ref) => {
-        this.imageContainer = ref;
-    };
-
-    currentContainerW = () => {
-        return this.imageContainer ? this.imageContainer.offsetWidth : 0;
-    };
-
-    currentContainerH = () => {
-        return this.imageContainer ? this.imageContainer.offsetHeight : 0;
-    };
-
-    containerX = () => {
-        return this.imageContainer ? this.imageContainer.getBoundingClientRect().x : 0;
-    };
-
-    containerY = () => {
-        return this.imageContainer ? this.imageContainer.getBoundingClientRect().y : 0;
     };
 
     onRouteParamChange = (value, paramName) => {
@@ -275,19 +234,7 @@ class RoutesEditModal extends Component {
                             <RouteEditor route={this.props.route}
                                          routePhoto={typeof(this.state.route.photo) === 'string' ? this.state.route.photo : this.state.route.photo.url}
                                          pointers={this.state.currentPointers}
-                                         setImageContainer={this.setImageContainer}
-                                         currentContainerW={this.currentContainerW()}
-                                         currentContainerH={this.currentContainerH()}
-                                         containerX={this.containerX()}
-                                         containerY={this.containerY()}
                                          editable={true}
-                                         realImageW={this.state.realImageW}
-                                         realImageH={this.state.realImageH}
-                                         currentImageW={this.state.currentImageW}
-                                         currentImageH={this.state.currentImageH}
-                                         currentLeftShift={this.state.currentLeftShift}
-                                         currentTopShift={this.state.currentTopShift}
-                                         updateDimensions={this.updateDimensions}
                                          updatePointers={this.updatePointers}/> : ''}
                         <div className="btn-handler__track-toggles">
                             <input type="file" hidden={true} ref={(ref) => this.fileInput = ref}

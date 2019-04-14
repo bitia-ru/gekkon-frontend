@@ -43,31 +43,12 @@ class RoutesShowModal extends Component {
             ascent: null,
             currentPointers: [],
             currentPointersOld: [],
-            realImageW: 0,
-            realImageH: 0,
-            currentImageW: 0,
-            currentImageH: 0,
-            currentLeftShift: 0,
-            currentTopShift: 0,
             numOfActiveRequests: 0
         };
         this.numOfActiveRequests = 0;
     }
 
     componentDidMount() {
-        let img = new Image();
-        let self = this;
-        img.onload = function () {
-            self.setState(
-                {
-                    realImageW: this.width,
-                    realImageH: this.height
-                });
-            setTimeout(function () { //TODO nextTick
-                self.updateDimensions();
-            }, 1000);
-        };
-        img.src = this.state.url;
         this.reloadComments();
         this.reloadLikes();
         this.reloadAscents();
@@ -84,15 +65,6 @@ class RoutesShowModal extends Component {
             return;
         }
         this.container.error("Неожиданная ошибка", 'Ошибка', {closeButton: true});
-    };
-
-    updateDimensions = () => {
-        this.setState(
-            {
-                currentImageW: this.state.realImageW / this.state.realImageH * this.currentContainerH(),
-                currentImageH: this.currentContainerH(),
-                currentLeftShift: (this.currentContainerW() - this.state.realImageW / this.state.realImageH * this.currentContainerH()) / 2.0
-            });
     };
 
     reloadComments = () => {
@@ -266,8 +238,8 @@ class RoutesShowModal extends Component {
         let mapIndexed = R.addIndex(R.map);
         pointers = mapIndexed((x, index) => {
             return {
-                x: parseInt(x, 10),
-                y: parseInt(pointers.y[index], 10),
+                x: parseFloat(x),
+                y: parseFloat(pointers.y[index]),
                 dx: 0,
                 dy: 0,
                 angle: parseInt(pointers.angle[index], 10)
@@ -278,26 +250,6 @@ class RoutesShowModal extends Component {
 
     updatePointers = (pointers) => {
         this.setState({currentPointers: pointers});
-    };
-
-    setImageContainer = (ref) => {
-        this.imageContainer = ref;
-    };
-
-    currentContainerW = () => {
-        return this.imageContainer ? this.imageContainer.offsetWidth : 0;
-    };
-
-    currentContainerH = () => {
-        return this.imageContainer ? this.imageContainer.offsetHeight : 0;
-    };
-
-    containerX = () => {
-        return this.imageContainer ? this.imageContainer.getBoundingClientRect().x : 0;
-    };
-
-    containerY = () => {
-        return this.imageContainer ? this.imageContainer.getBoundingClientRect().y : 0;
     };
 
     changeAscentResult = () => {
@@ -375,19 +327,7 @@ class RoutesShowModal extends Component {
                             <RouteEditor route={this.props.route}
                                          routePhoto={this.props.route.photo.url}
                                          pointers={this.state.currentPointers}
-                                         setImageContainer={this.setImageContainer}
-                                         currentContainerW={this.currentContainerW()}
-                                         currentContainerH={this.currentContainerH()}
-                                         containerX={this.containerX()}
-                                         containerY={this.containerY()}
                                          editable={false}
-                                         realImageW={this.state.realImageW}
-                                         realImageH={this.state.realImageH}
-                                         currentImageW={this.state.currentImageW}
-                                         currentImageH={this.state.currentImageH}
-                                         currentLeftShift={this.state.currentLeftShift}
-                                         currentTopShift={this.state.currentTopShift}
-                                         updateDimensions={this.updateDimensions}
                                          updatePointers={this.updatePointers}/> : ''}
                     </div>
                     <div

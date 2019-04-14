@@ -18,11 +18,11 @@ export default class Marker extends Component {
     };
 
     render() {
-        return <React.Fragment>{(this.props.left && (this.props.left - this.props.radius + this.props.dx > 2 * this.props.radius && this.props.left - this.props.radius + this.props.dx < this.props.width - 2 * this.props.radius)) ?
+        return <React.Fragment>
             <div className="marker"
                  style={{
-                     left: this.props.left - this.props.radius + this.props.dx,
-                     top: this.props.top - this.props.radius + this.props.dy
+                     left: `calc(${this.props.left + this.props.dx}% - ${this.props.radius}px)`,
+                     top: `calc(${this.props.top + this.props.dy}% - ${this.props.radius}px)`
                  }}>
                 <img draggable={false} src="/public/img/marker-img/hold-mark.png" style={{
                     width: `${this.props.radius * 2}px`,
@@ -30,7 +30,7 @@ export default class Marker extends Component {
                     transform: `rotate(${this.props.angle}deg)`
                 }}
                      onMouseDown={this.onMouseDown} onContextMenu={this.onContextMenu}/>
-            </div> : ''}</React.Fragment>;
+            </div></React.Fragment>;
     }
 }
 
@@ -42,6 +42,5 @@ Marker.propTypes = {
     radius: PropTypes.number.isRequired,
     angle: PropTypes.number.isRequired,
     removePointer: PropTypes.func.isRequired,
-    onStartMoving: PropTypes.func.isRequired,
-    width: PropTypes.number.isRequired
+    onStartMoving: PropTypes.func.isRequired
 };
