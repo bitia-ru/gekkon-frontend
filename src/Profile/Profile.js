@@ -24,7 +24,8 @@ export default class Profile extends Component {
             avatar: this.props.user.avatar ? this.props.user.avatar.url : null,
             avatarFile: null,
             errors: {},
-            fieldsOld: {}
+            fieldsOld: {},
+            vkOn: this.props.user.data.vk_user_id !== undefined
         }
     }
 
@@ -36,7 +37,8 @@ export default class Profile extends Component {
                 phone: this.state.phone,
                 password: this.state.password,
                 email: this.state.email,
-                avatar: this.state.avatar
+                avatar: this.state.avatar,
+                vkOn: this.state.vkOn
             }
         })
     }
@@ -48,7 +50,8 @@ export default class Profile extends Component {
             phone: this.state.phone,
             password: this.state.password,
             email: this.state.email,
-            avatar: this.state.avatar
+            avatar: this.state.avatar,
+            vkOn: this.state.vkOn
         };
         return this.state.fieldsOld && JSON.stringify(fields) !== JSON.stringify(this.state.fieldsOld);
     };
@@ -121,7 +124,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
                     return false;
                 }
-                if (value === '' && this.state.login === '' && this.state.phone === '') {
+                if (value === '' && this.state.login === '' && this.state.phone === '' && !this.state.vkOn) {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -132,7 +135,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {login: ['Неверный формат login']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.phone === '') {
+                if (value === '' && this.state.email === '' && this.state.phone === '' && !this.state.vkOn) {
                     this.setState({errors: R.merge(this.state.errors, {login: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -142,7 +145,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {phone: ['Неверный формат номера']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.login === '') {
+                if (value === '' && this.state.email === '' && this.state.login === '' && !this.state.vkOn) {
                     this.setState({errors: R.merge(this.state.errors, {phone: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -159,6 +162,15 @@ export default class Profile extends Component {
                     return false;
                 }
                 return true;
+            case 'vkOn':
+                if (value) {return true}
+                if (!value && this.props.user.data.vk_user_id !== undefined) {
+                    if (!this.props.user.password_digest && !this.state.password) {
+                        this.setState({errors: R.merge(this.state.errors, {password: ['Необходимо задать пароль']})});
+                        return false;
+                    }
+                }
+                return true;
         }
     };
 
@@ -168,6 +180,7 @@ export default class Profile extends Component {
         res += !this.check('phone', this.state.phone);
         res += !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
+        res += !this.check('vkOn', this.state.vkOn);
         if (res > 0) {
             return
         }
@@ -191,6 +204,9 @@ export default class Profile extends Component {
         if (this.state.phone !== (this.props.user.phone ? this.props.user.phone : '')) {
             formData.append('user[phone]', this.state.phone);
         }
+        if (this.props.user.data.vk_user_id !== undefined && !this.state.vkOn) {
+            formData.append('user[data][vk_user_id]', null);
+        }
         this.props.onFormSubmit(formData);
     };
 
@@ -206,6 +222,14 @@ export default class Profile extends Component {
         this.resetErrors();
         this.props.resetErrors();
         this.props.closeForm()
+    };
+
+    removeVk = () => {
+        if ((!this.state.email && !this.state.login && !this.state.phone) || (!this.props.user.password_digest && !this.state.password)) {
+            this.props.showToastr('error', 'Ошибка', 'Невозможно отключить вход через VK. Заполните логин, email или номер телефона и задайте пароль');
+            return;
+        }
+        this.setState({vkOn: false})
     };
 
     render() {
@@ -245,13 +269,14 @@ export default class Profile extends Component {
                                        hasError={this.hasError('login')}
                                        errorText={this.errorText('login')}
                                        value={this.state.login}/>
-                            <FormField placeholder="Пароль"
-                                       id="password"
-                                       onChange={this.onPasswordChange}
-                                       type="password"
-                                       hasError={this.hasError('password')}
-                                       errorText={this.errorText('password')}
-                                       value={this.state.password}/>
+                            <FormField
+                                placeholder={this.props.user.password_digest === null ? 'Задать пароль' : 'Сменить пароль'}
+                                id="password"
+                                onChange={this.onPasswordChange}
+                                type="password"
+                                hasError={this.hasError('password')}
+                                errorText={this.errorText('password')}
+                                value={this.state.password}/>
                             <FormField placeholder="Подтверждение пароля"
                                        id="repeat-password"
                                        onChange={this.onRepeatPasswordChange}
@@ -277,25 +302,28 @@ export default class Profile extends Component {
                                 <div className="modal-block__allow-title">Разрешить вход через:</div>
                                 <div className="modal-block__social">
                                     <ul className="social-links">
-                                        <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                                              dark={true} withRemoveButton={true} unactive={true}/>
+                                        <li><SocialLinkButton
+                                            onClick={this.state.vkOn ? this.removeVk : (() => this.props.enterWithVk('addVk'))}
+                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                            active={this.state.vkOn}
+                                            dark={!this.state.vkOn}
+                                            withRemoveButton={this.state.vkOn}/>
                                         </li>
-                                        <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
-                                                              dark={true} withRemoveButton={true}/>
+                                        <li><SocialLinkButton
+                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                            dark={true} unactive={true}/>
                                         </li>
-                                        <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
-                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
-                                                              dark={true} withRemoveButton={true}/>
+                                        <li><SocialLinkButton
+                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                            dark={true} unactive={true}/>
                                         </li>
-                                        <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
-                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
-                                                              dark={true} withRemoveButton={true}/>
+                                        <li><SocialLinkButton
+                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                            dark={true} unactive={true}/>
                                         </li>
-                                        <li><SocialLinkButton href={true ? false : "https://vk.com"}
-                                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
-                                                              dark={true} withRemoveButton={true}/>
+                                        <li><SocialLinkButton
+                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                            dark={true} unactive={true}/>
                                         </li>
                                     </ul>
                                 </div>
@@ -318,5 +346,6 @@ Profile.propTypes = {
     user: PropTypes.object.isRequired,
     formErrors: PropTypes.object.isRequired,
     resetErrors: PropTypes.func.isRequired,
-    isWaiting: PropTypes.bool.isRequired
+    isWaiting: PropTypes.bool.isRequired,
+    enterWithVk: PropTypes.func.isRequired
 };

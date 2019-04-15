@@ -29,7 +29,7 @@ export default class Authorization extends React.Component {
     }
 
     logOut = () => {
-        Cookies.remove('user_session_token', {path: ''});
+        Cookies.remove('user_session_token', {path: '', domain: '.bitia.ru'});
         this.props.removeToken();
         this.props.saveUser(null);
         if (this.afterLogOut) {
@@ -78,6 +78,20 @@ export default class Authorization extends React.Component {
 
     resetPasswordResetErrors = () => {
         this.setState({resetPasswordFormErrors: {}});
+    };
+
+    showToastr = (type, title, msg) => {
+        switch (type) {
+            case 'error':
+                this.container.error(msg, title, {closeButton: true});
+                break;
+            case 'success':
+                this.container.success(msg, title, {closeButton: true});
+                break;
+            case 'warning':
+                this.container.warning(msg, title, {closeButton: true});
+                break;
+        }
     };
 
     displayError = (error) => {
@@ -278,8 +292,8 @@ export default class Authorization extends React.Component {
         this.setState({resetPasswordFormVisible: false});
     };
 
-    enterWithVk = () => {
-        this.w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74`, "VK", "resizable,scrollbars,status");
+    enterWithVk = (type) => {
+        this.w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74&state=${JSON.stringify({method: type, token: (this.props.token ? this.props.token : '')})}`, "VK", "resizable,scrollbars,status");
         let self = this;
         this.w.addEventListener('unload', () => self.afterVkEnter(), false);
     };

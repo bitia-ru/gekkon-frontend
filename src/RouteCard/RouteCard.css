@@ -11,6 +11,7 @@
     box-sizing: border-box;
     outline: none;
     background-color: #FFFFFF;
+    cursor: pointer;
 }
 
 .route-card:hover {

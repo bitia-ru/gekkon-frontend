@@ -95,6 +95,8 @@ class SpotsIndex extends Authorization {
                            resetErrors={this.logInResetErrors}/> : ''}
             {this.state.profileFormVisible ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
+                         showToastr={this.showToastr}
+                         enterWithVk={this.enterWithVk}
                          isWaiting={this.state.profileIsWaiting}
                          closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
                          resetErrors={this.profileResetErrors}/> : ''}

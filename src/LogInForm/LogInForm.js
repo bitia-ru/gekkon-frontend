@@ -178,25 +178,21 @@ export default class LogInForm extends Component {
                         <div className="modal-block__social">
                             <ul className="social-links">
                                 <li><SocialLinkButton
-                                    onClick={this.props.enterWithVk}
+                                    onClick={() => this.props.enterWithVk('logIn')}
                                     xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                     dark={true}/>
                                 </li>
-                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com"}
-                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
-                                                      dark={true}/>
+                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                                      dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton href={true ? false : "https://ru-ru.facebook.com/"}
-                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
-                                                      dark={true}/>
+                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                                      dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton href={true ? false : "https://www.instagram.com/"}
-                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
-                                                      dark={true}/>
+                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                                      dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton href={true ? false : "https://vk.com"}
-                                                      xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
-                                                      dark={true}/>
+                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                                      dark={true} unactive={true}/>
                                 </li>
                             </ul>
                         </div>
