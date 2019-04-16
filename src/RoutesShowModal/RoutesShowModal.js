@@ -12,11 +12,14 @@ import CloseButton                  from '../CloseButton/CloseButton';
 import PropTypes                    from 'prop-types';
 import Axios                        from 'axios/index';
 import * as R                       from 'ramda';
+import {
+    increaseNumOfActiveRequests,
+    decreaseNumOfActiveRequests
+}                                   from "../actions";
 import ApiUrl                       from '../ApiUrl';
 import {DEFAULT_COMMENTS_DISPLAYED} from '../Constants/Comments'
 import {withRouter}                 from 'react-router-dom';
 import {connect}                    from 'react-redux';
-import {updateRoute}                from "../actions";
 import {ToastContainer}             from 'react-toastr';
 import StickyBar                    from '../StickyBar/StickyBar';
 import './RoutesShowModal.css';
@@ -42,10 +45,8 @@ class RoutesShowModal extends Component {
             numOfFlash: 0,
             ascent: null,
             currentPointers: [],
-            currentPointersOld: [],
-            numOfActiveRequests: 0
+            currentPointersOld: []
         };
-        this.numOfActiveRequests = 0;
     }
 
     componentDidMount() {
@@ -68,30 +69,25 @@ class RoutesShowModal extends Component {
     };
 
     reloadComments = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/routes/${this.props.route.id}/route_comments`)
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.setState({
                     comments: this.formattedCommentsData(response.data.payload),
                     numOfComments: response.data.metadata.all
                 });
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
 
     reloadLikes = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/routes/${this.props.route.id}/likes`)
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let like = this.props.user === null ? 0 : (R.find(R.propEq('user_id', this.props.user.id))(response.data.payload));
                 let isLiked = this.props.user === null ? false : (like !== undefined);
                 this.setState({
@@ -100,19 +96,16 @@ class RoutesShowModal extends Component {
                     likeId: like === undefined ? 0 : like.id
                 });
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
 
     reloadAscents = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/routes/${this.props.route.id}/ascents`)
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let ascent = this.props.user === null ? null : (R.find(R.propEq('user_id', this.props.user.id))(response.data.payload));
                 this.setState({
                     ascent: ascent === undefined ? null : ascent,
@@ -120,8 +113,7 @@ class RoutesShowModal extends Component {
                     numOfFlash: R.filter(R.propEq('result', 'flash'), response.data.payload).length
                 });
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
@@ -180,25 +172,21 @@ class RoutesShowModal extends Component {
         if (route_comment_id !== null) {
             params.route_comment.route_comment_id = route_comment_id;
         }
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.post(`${ApiUrl}/v1/route_comments`, params, {headers: {'TOKEN': this.props.token}})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.reloadComments();
                 this.removeQuoteComment();
                 this.onCommentContentChange('');
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
 
     onLikeChange = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         if (this.state.isLiked) {
             Axios({
                 url: `${ApiUrl}/v1/likes/${this.state.likeId}`,
@@ -206,24 +194,20 @@ class RoutesShowModal extends Component {
                 headers: {'TOKEN': this.props.token}
             })
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.reloadLikes();
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error)
             });
         } else {
             let params = {like: {user_id: this.props.user.id, route_id: this.props.route.id}};
             Axios.post(`${ApiUrl}/v1/likes`, params, {headers: {'TOKEN': this.props.token}})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.reloadLikes();
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error)
             });
         }
@@ -253,8 +237,7 @@ class RoutesShowModal extends Component {
     };
 
     changeAscentResult = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         if (this.state.ascent) {
             let result = this.state.ascent.result === 'red_point' ? 'flash' : (this.state.ascent.result === 'flash' ? 'unsuccessful' : 'red_point');
             let params = {ascent: {result: result}};
@@ -265,12 +248,10 @@ class RoutesShowModal extends Component {
                 headers: {'TOKEN': this.props.token}
             })
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.reloadAscents();
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error)
             });
 
@@ -279,32 +260,27 @@ class RoutesShowModal extends Component {
             let params = {ascent: {result: result, user_id: this.props.user.id, route_id: this.props.route.id}};
             Axios.post(`${ApiUrl}/v1/ascents`, params, {headers: {'TOKEN': this.props.token}})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.reloadAscents();
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error)
             });
         }
     };
 
     removeComment = (comment) => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios({
             url: `${ApiUrl}/v1/route_comments/${comment.id}`,
             method: 'delete',
             headers: {'TOKEN': this.props.token}
         })
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.reloadComments();
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
@@ -404,7 +380,7 @@ class RoutesShowModal extends Component {
                 className="toast-top-right"
             />
             <div className="modal-overlay">
-                <StickyBar loading={this.state.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
             </div>
         </React.Fragment>;
     }
@@ -421,11 +397,13 @@ RoutesShowModal.propTypes = {
 
 const mapStateToProps = state => ({
     user: state.user,
-    token: state.token
+    token: state.token,
+    numOfActiveRequests: state.numOfActiveRequests
 });
 
 const mapDispatchToProps = dispatch => ({
-    updateRoute: (id, route) => dispatch(updateRoute(id, route))
+    increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
+    decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesShowModal));

@@ -56,10 +56,22 @@ const tokenReducer = (state = null, action) => {
     }
 };
 
+const numOfActiveRequestsReducer = (state = 0, action) => {
+    switch (action.type) {
+        case acts.INC_NUM_OF_ACTIVE_REQUESTS:
+            return state + 1;
+        case acts.DEC_NUM_OF_ACTIVE_REQUESTS:
+            return state - 1;
+        default:
+            return state;
+    }
+};
+
 export default combineReducers({
     routes: routesReducer,
     sectors: sectorsReducer,
     user: userReducer,
     tab: tabReducer,
-    token: tokenReducer
+    token: tokenReducer,
+    numOfActiveRequests: numOfActiveRequestsReducer
 });

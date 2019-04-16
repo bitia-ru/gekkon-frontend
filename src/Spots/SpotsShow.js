@@ -8,8 +8,10 @@ import {
     loadSectors,
     saveUser,
     saveToken,
-    removeToken
-}                         from '../actions';
+    removeToken,
+    increaseNumOfActiveRequests,
+    decreaseNumOfActiveRequests
+} from '../actions';
 import {connect}          from 'react-redux';
 import Content            from '../Content/Content'
 import Header             from '../Header/Header';
@@ -55,10 +57,8 @@ class SpotsShow extends Authorization {
             currentShown: {},
             editMode: false,
             ascents: [],
-            ctrlPressed: false,
-            numOfActiveRequests: 0
+            ctrlPressed: false
         });
-        this.numOfActiveRequests = 0;
         this.loadingRouteId = this.props.match.params.route_id;
     }
 
@@ -132,16 +132,13 @@ class SpotsShow extends Authorization {
             this.setState({ascents: []});
             return;
         }
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/users/${this.props.user.id}/ascents`)
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.setState({ascents: response.data.payload});
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
@@ -188,12 +185,10 @@ class SpotsShow extends Authorization {
         if (currentUserId !== 0) {
             params.user_id = currentUserId;
         }
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}`, {params: params})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let infoData = [
                     {count: response.data.metadata.num_of_sectors, label: 'Залов'},
                     {count: response.data.metadata.num_of_routes, label: 'Трасс'}
@@ -209,8 +204,7 @@ class SpotsShow extends Authorization {
                     infoData: infoData
                 });
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
@@ -222,12 +216,10 @@ class SpotsShow extends Authorization {
             params.user_id = currentUserId;
         }
         params.numOfDays = NumOfDays;
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/sectors/${id}`, {params: params})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let infoData = [
                     {count: response.data.metadata.num_of_routes, label: 'Трасс'},
                     {count: response.data.metadata.num_of_new_routes, label: 'Новых трасс'}
@@ -243,23 +235,19 @@ class SpotsShow extends Authorization {
                     infoData: infoData
                 });
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
 
     reloadSectors = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/sectors`)
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.props.loadSectors(response.data.payload);
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
@@ -297,12 +285,10 @@ class SpotsShow extends Authorization {
         params.limit = this.state.perPage;
         params.offset = (currentPage - 1) * this.state.perPage;
         if (currentSectorId === 0) {
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/routes`, {params: params})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
                     this.props.loadRoutes(response.data.payload);
                     if (this.loadingRouteId) {
@@ -311,17 +297,14 @@ class SpotsShow extends Authorization {
                         this.setState({currentShown: R.find((route) => route.id === route_id, response.data.payload), routesModalVisible: true, editMode: false})
                     }
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error);
             });
         } else {
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, {params: params})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
                     this.props.loadRoutes(response.data.payload);
                     if (this.loadingRouteId) {
@@ -330,8 +313,7 @@ class SpotsShow extends Authorization {
                         this.setState({currentShown: R.find((route) => route.id === route_id, response.data.payload), routesModalVisible: true, editMode: false})
                     }
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error);
             });
         }
@@ -386,21 +368,18 @@ class SpotsShow extends Authorization {
 
     removeRoute = () => {
         if (window.confirm("Удалить трассу?")) {
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios({
                 url: `${ApiUrl}/v1/routes/${this.state.currentShown.id}`,
                 method: 'delete',
                 headers: {'TOKEN': this.props.token}
             })
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.reloadRoutes(null, null, null, null, null, 1);
                     this.closeRoutesModal();
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error)
             });
         }
@@ -408,12 +387,10 @@ class SpotsShow extends Authorization {
     };
 
     addRoute = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/routes/new`, {headers: {'TOKEN': this.props.token}})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let newRoute = R.clone(response.data.payload);
                 newRoute.sector_id = this.state.sectorId;
                 if (this.state.sector.kind !== 'mixed') {
@@ -421,8 +398,7 @@ class SpotsShow extends Authorization {
                 }
                 this.setState({currentShown: newRoute, routesModalVisible: true, editMode: true});
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
@@ -491,6 +467,8 @@ class SpotsShow extends Authorization {
                            resetErrors={this.logInResetErrors}/> : ''}
             {(this.props.user && this.state.profileFormVisible) ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
+                         removeVk={this.removeVk}
+                         numOfActiveRequests={this.props.numOfActiveRequests}
                          showToastr={this.showToastr}
                          enterWithVk={this.enterWithVk}
                          isWaiting={this.state.profileIsWaiting}
@@ -530,10 +508,9 @@ class SpotsShow extends Authorization {
     };
 
     render() {
-        console.log(this.state.numOfActiveRequests);
         return <div
             style={{overflow: (this.state.routesModalVisible || this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
-            <StickyBar loading={this.state.numOfActiveRequests > 0} content={this.content()}/>
+            <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()}/>
             <Footer user={this.props.user}
                     logIn={this.logIn}
                     signUp={this.signUp}
@@ -546,7 +523,8 @@ const mapStateToProps = state => ({
     routes: state.routes,
     sectors: state.sectors,
     user: state.user,
-    token: state.token
+    token: state.token,
+    numOfActiveRequests: state.numOfActiveRequests
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -554,7 +532,9 @@ const mapDispatchToProps = dispatch => ({
     loadSectors: sectors => dispatch(loadSectors(sectors)),
     saveUser: user => dispatch(saveUser(user)),
     saveToken: token => dispatch(saveToken(token)),
-    removeToken: () => dispatch(removeToken())
+    removeToken: () => dispatch(removeToken()),
+    increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
+    decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsShow));

@@ -11,7 +11,12 @@ import ApiUrl                       from '../ApiUrl';
 import {DEFAULT_COMMENTS_DISPLAYED} from '../Constants/Comments'
 import {withRouter}                 from 'react-router-dom';
 import {connect}                    from 'react-redux';
-import {updateRoute, addRoute}      from "../actions";
+import {
+    updateRoute,
+    addRoute,
+    increaseNumOfActiveRequests,
+    decreaseNumOfActiveRequests
+}                                   from "../actions";
 import {ToastContainer}             from 'react-toastr';
 import {CATEGORIES}                 from "../Constants/Categories";
 import StickyBar                    from '../StickyBar/StickyBar';
@@ -42,10 +47,8 @@ class RoutesEditModal extends Component {
             route: R.clone(this.props.route),
             users: [],
             waitSaving: false,
-            fieldsOld: {},
-            numOfActiveRequests: 0
+            fieldsOld: {}
         };
-        this.numOfActiveRequests = 0;
     }
 
     componentDidMount() {
@@ -74,17 +77,14 @@ class RoutesEditModal extends Component {
     };
 
     loadUsers = () => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/users`, {headers: {'TOKEN': this.props.token}})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 let users = R.sort((u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes, response.data.payload);
                 this.setState({users: users})
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             this.displayError(error)
         });
     };
@@ -124,8 +124,7 @@ class RoutesEditModal extends Component {
         if (this.state.route.photo !== (this.props.route.photo ? this.props.route.photo.url : null)) {
             formData.append('route[photo]', this.state.route.photoFile);
         }
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         if (this.props.route.id !== null) {
             Axios({
                 url: `${ApiUrl}/v1/routes/${this.props.route.id}`,
@@ -135,14 +134,12 @@ class RoutesEditModal extends Component {
                 config: {headers: {'Content-Type': 'multipart/form-data'}}
             })
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.setState({waitSaving: false});
                     this.props.updateRoute(this.props.route.id, response.data.payload);
                     this.props.afterSubmit(response.data.payload);
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error);
                 this.setState({waitSaving: false});
             });
@@ -155,14 +152,12 @@ class RoutesEditModal extends Component {
                 config: {headers: {'Content-Type': 'multipart/form-data'}}
             })
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.setState({waitSaving: false});
                     this.props.addRoute(response.data.payload);
                     this.props.afterSubmit(response.data.payload);
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.displayError(error);
                 this.setState({waitSaving: false});
             });
@@ -307,7 +302,7 @@ class RoutesEditModal extends Component {
                 className="toast-top-right"
             />
             <div className="modal-overlay">
-                <StickyBar loading={this.state.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
             </div>
         </React.Fragment>;
     }
@@ -323,12 +318,15 @@ RoutesEditModal.propTypes = {
 
 const mapStateToProps = state => ({
     user: state.user,
-    token: state.token
+    token: state.token,
+    numOfActiveRequests: state.numOfActiveRequests
 });
 
 const mapDispatchToProps = dispatch => ({
     updateRoute: (id, route) => dispatch(updateRoute(id, route)),
-    addRoute: (route) => dispatch(addRoute(route))
+    addRoute: (route) => dispatch(addRoute(route)),
+    increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
+    decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesEditModal));
