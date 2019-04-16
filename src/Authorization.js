@@ -38,19 +38,16 @@ export default class Authorization extends React.Component {
     };
 
     signIn = (token, afterSignIn) => {
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/users/self`, {headers: {'TOKEN': (token ? token : this.props.token)}})
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.props.saveUser(response.data.payload);
                 if (afterSignIn) {
                     afterSignIn();
                 }
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             Cookies.remove('user_session_token', {path: ''});
             this.props.removeToken();
         });
@@ -116,18 +113,15 @@ export default class Authorization extends React.Component {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
             let hash = bcrypt.hashSync(password, salt);
             let params = {user: {password_digest: hash, email: data}};
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.post(`${ApiUrl}/v1/users`, params)
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.closeSignUpForm();
                     this.props.saveUser(response.data.payload);
                     this.setState({signUpIsWaiting: false});
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                     this.setState({signUpFormErrors: error.response.data});
                 } else {
@@ -152,16 +146,14 @@ export default class Authorization extends React.Component {
             } else {
                 params = {user_session: {user: {login: data}}, rememberMe: rememberMe};
             }
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/user_sessions/new`, {params: params})
                 .then(response => {
                     let hash = bcrypt.hashSync(password, response.data);
                     params.user_session.user.password_digest = hash;
                     Axios.post(`${ApiUrl}/v1/user_sessions`, params)
                         .then(response => {
-                            this.numOfActiveRequests--;
-                            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                            this.props.decreaseNumOfActiveRequests();
                             this.props.saveToken(response.data.payload.token);
                             this.signIn(response.data.payload.token, () => {
                                 this.closeLogInForm();
@@ -171,8 +163,7 @@ export default class Authorization extends React.Component {
                                 this.setState({logInIsWaiting: false});
                             });
                         }).catch(error => {
-                        this.numOfActiveRequests--;
-                        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                        this.props.decreaseNumOfActiveRequests();
                         if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                             this.setState({logInFormErrors: error.response.data});
                         } else {
@@ -181,8 +172,7 @@ export default class Authorization extends React.Component {
                         this.setState({logInIsWaiting: false});
                     });
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.setState({logInFormErrors: {email: ['Пользователь не найден']}});
                 } else {
@@ -216,18 +206,15 @@ export default class Authorization extends React.Component {
                     token: url.searchParams.get("reset_password_code")
                 };
             }
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios({url: `${ApiUrl}/v1/users/reset_password`, method: 'patch', data: params})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.closeResetPasswordForm();
                     this.submitLogInForm('email', data, password);
                     this.setState({resetPasswordIsWaiting: false});
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.container.error('Срок действия ссылки для восстановления пароля истек или пользователь не найден', 'Ошибка', {closeButton: true});
                 } else {
@@ -238,15 +225,14 @@ export default class Authorization extends React.Component {
         }
     };
 
-    submitProfileForm = (data) => {
+    submitProfileForm = (data, afterSuccess) => {
         this.setState({profileIsWaiting: true});
         if (data.password) {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
             data.password_digest = bcrypt.hashSync(data.password, salt);
             delete data.password;
         }
-        this.numOfActiveRequests++;
-        this.setState({numOfActiveRequests: this.numOfActiveRequests});
+        this.props.increaseNumOfActiveRequests();
         Axios({
             url: `${ApiUrl}/v1/users/${this.props.user.id}`,
             method: 'patch',
@@ -255,13 +241,14 @@ export default class Authorization extends React.Component {
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         })
             .then(response => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.props.saveUser(response.data.payload);
                 this.setState({profileIsWaiting: false});
+                if (afterSuccess) {
+                    afterSuccess(response.data.payload);
+                }
             }).catch(error => {
-            this.numOfActiveRequests--;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.decreaseNumOfActiveRequests();
             if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                 this.setState({profileFormErrors: error.response.data});
             } else {
@@ -302,6 +289,25 @@ export default class Authorization extends React.Component {
         this.setState({signUpFormVisible: false, logInFormVisible: false});
     };
 
+    removeVk = (afterSuccess) => {
+        this.setState({profileIsWaiting: true});
+        this.props.increaseNumOfActiveRequests();
+        Axios({
+            url: `${ApiUrl}/v1/users/${this.props.user.id}/integrations/vk`,
+            method: 'delete',
+            headers: {'TOKEN': this.props.token}
+        })
+            .then(response => {
+                this.props.decreaseNumOfActiveRequests();
+                this.props.saveUser(response.data.payload);
+                this.setState({profileIsWaiting: false});
+            }).catch(error => {
+            this.props.decreaseNumOfActiveRequests();
+            this.displayError(error);
+            this.setState({profileIsWaiting: false});
+        });
+    };
+
     resetPassword = (type, data) => {
         if (type === 'phone') {
             console.log("phone");
@@ -315,16 +321,13 @@ export default class Authorization extends React.Component {
             } else {
                 params = {user: {login: data}};
             }
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, {params: params})
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.container.success('На почту было отправлено сообщение для восстановления пароля', 'Восстановление пароля', {closeButton: true});
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.container.error('Пользователь не найден', 'Ошибка', {closeButton: true});
                 } else {

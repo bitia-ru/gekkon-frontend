@@ -1,21 +1,27 @@
-import React                              from 'react';
-import MainPageHeader                     from "../MainPageHeader/MainPageHeader";
-import MainPageContent                    from "../MainPageContent/MainPageContent";
-import Footer                             from "../Footer/Footer";
-import {saveUser, saveToken, removeToken} from "../actions";
-import {connect}                          from "react-redux";
-import {withRouter, Link}                 from "react-router-dom";
-import Axios                              from 'axios';
-import Qs                                 from 'qs';
-import ApiUrl                             from '../ApiUrl';
-import Cookies                            from 'js-cookie';
-import SignUpForm                         from '../SignUpForm/SignUpForm';
-import LogInForm                          from '../LogInForm/LogInForm';
-import ResetPasswordForm                  from '../ResetPasswordForm/ResetPasswordForm';
-import Profile                            from '../Profile/Profile';
-import Authorization                      from '../Authorization';
-import {ToastContainer}                   from 'react-toastr';
-import StickyBar                          from '../StickyBar/StickyBar';
+import React              from 'react';
+import MainPageHeader     from "../MainPageHeader/MainPageHeader";
+import MainPageContent    from "../MainPageContent/MainPageContent";
+import Footer             from "../Footer/Footer";
+import {
+    saveUser,
+    saveToken,
+    removeToken,
+    increaseNumOfActiveRequests,
+    decreaseNumOfActiveRequests
+}                         from "../actions";
+import {connect}          from "react-redux";
+import {withRouter, Link} from "react-router-dom";
+import Axios              from 'axios';
+import Qs                 from 'qs';
+import ApiUrl             from '../ApiUrl';
+import Cookies            from 'js-cookie';
+import SignUpForm         from '../SignUpForm/SignUpForm';
+import LogInForm          from '../LogInForm/LogInForm';
+import ResetPasswordForm  from '../ResetPasswordForm/ResetPasswordForm';
+import Profile            from '../Profile/Profile';
+import Authorization      from '../Authorization';
+import {ToastContainer}   from 'react-toastr';
+import StickyBar          from '../StickyBar/StickyBar';
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -29,10 +35,8 @@ class SpotsIndex extends Authorization {
         super(props);
 
         this.state = Object.assign(this.state, {
-            email: '',
-            numOfActiveRequests: 0
+            email: ''
         });
-        this.numOfActiveRequests = 0;
     }
 
     componentDidMount() {
@@ -44,16 +48,13 @@ class SpotsIndex extends Authorization {
         let url = new URL(window.location.href);
         let code = url.searchParams.get("activate_mail_code");
         if (code !== null) {
-            this.numOfActiveRequests++;
-            this.setState({numOfActiveRequests: this.numOfActiveRequests});
+            this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/users/mail_activation/${code}`)
                 .then(response => {
-                    this.numOfActiveRequests--;
-                    this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                    this.props.decreaseNumOfActiveRequests();
                     this.container.success('Успешно', 'Активация email', {closeButton: true});
                 }).catch(error => {
-                this.numOfActiveRequests--;
-                this.setState({numOfActiveRequests: this.numOfActiveRequests});
+                this.props.decreaseNumOfActiveRequests();
                 this.container.warning('При активации произошла ошибка', 'Активация email', {closeButton: true});
             });
         }
@@ -109,6 +110,8 @@ class SpotsIndex extends Authorization {
                            resetErrors={this.logInResetErrors}/> : ''}
             {(this.props.user && this.state.profileFormVisible) ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
+                         removeVk={this.removeVk}
+                         numOfActiveRequests={this.props.numOfActiveRequests}
                          showToastr={this.showToastr}
                          enterWithVk={this.enterWithVk}
                          isWaiting={this.state.profileIsWaiting}
@@ -134,7 +137,7 @@ class SpotsIndex extends Authorization {
         return <React.Fragment>
             <div
                 style={{overflow: ((this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible) ? 'hidden' : '')}}>
-                <StickyBar loading={this.state.numOfActiveRequests > 0} content={this.content()}/>
+                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()}/>
                 <Footer user={this.props.user}
                         logIn={this.logIn}
                         signUp={this.signUp}
@@ -146,13 +149,16 @@ class SpotsIndex extends Authorization {
 
 const mapStateToProps = state => ({
     user: state.user,
-    token: state.token
+    token: state.token,
+    numOfActiveRequests: state.numOfActiveRequests
 });
 
 const mapDispatchToProps = dispatch => ({
     saveUser: user => dispatch(saveUser(user)),
     saveToken: token => dispatch(saveToken(token)),
-    removeToken: () => dispatch(removeToken())
+    removeToken: () => dispatch(removeToken()),
+    increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
+    decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsIndex));

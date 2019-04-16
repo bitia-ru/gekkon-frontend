@@ -39,3 +39,11 @@ export const saveToken = (token) => ({
 export const removeToken = () => ({
     type: acts.REMOVE_TOKEN
 });
+
+export const increaseNumOfActiveRequests = () => ({
+    type: acts.INC_NUM_OF_ACTIVE_REQUESTS
+});
+
+export const decreaseNumOfActiveRequests = () => ({
+    type: acts.DEC_NUM_OF_ACTIVE_REQUESTS
+});

@@ -7,6 +7,7 @@ import PropTypes             from 'prop-types';
 import {SALT_ROUNDS}         from '../Constants/Bcrypt';
 import bcrypt                from 'bcryptjs';
 import {PASSWORD_MIN_LENGTH} from '../Constants/User';
+import StickyBar             from '../StickyBar/StickyBar';
 import * as R                from 'ramda';
 import './Profile.css';
 
@@ -24,8 +25,7 @@ export default class Profile extends Component {
             avatar: this.props.user.avatar ? this.props.user.avatar.url : null,
             avatarFile: null,
             errors: {},
-            fieldsOld: {},
-            vkOn: this.props.user.data.vk_user_id !== undefined
+            fieldsOld: {}
         }
     }
 
@@ -37,11 +37,32 @@ export default class Profile extends Component {
                 phone: this.state.phone,
                 password: this.state.password,
                 email: this.state.email,
-                avatar: this.state.avatar,
-                vkOn: this.state.vkOn
+                avatar: this.state.avatar
             }
         })
     }
+
+    saveStartFieldsValues = (user) => {
+        this.setState({
+            name: user.name ? user.name : '',
+            login: user.login ? user.login : '',
+            phone: user.phone ? user.phone : '',
+            password: '',
+            email: user.email ? user.email : '',
+            avatar: user.avatar ? user.avatar.url : null,
+            password: '',
+            repeatPassword: '',
+            avatarFile: null,
+            fieldsOld: {
+                name: user.name ? user.name : '',
+                login: user.login ? user.login : '',
+                phone: user.phone ? user.phone : '',
+                password: '',
+                email: user.email ? user.email : '',
+                avatar: user.avatar ? user.avatar.url : null
+            }
+        })
+    };
 
     fieldsChanged = () => {
         let fields = {
@@ -50,8 +71,7 @@ export default class Profile extends Component {
             phone: this.state.phone,
             password: this.state.password,
             email: this.state.email,
-            avatar: this.state.avatar,
-            vkOn: this.state.vkOn
+            avatar: this.state.avatar
         };
         return this.state.fieldsOld && JSON.stringify(fields) !== JSON.stringify(this.state.fieldsOld);
     };
@@ -124,7 +144,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
                     return false;
                 }
-                if (value === '' && this.state.login === '' && this.state.phone === '' && !this.state.vkOn) {
+                if (value === '' && this.state.login === '' && this.state.phone === '' && this.props.user.data.vk_user_id === undefined) {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -135,7 +155,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {login: ['Неверный формат login']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.phone === '' && !this.state.vkOn) {
+                if (value === '' && this.state.email === '' && this.state.phone === '' && this.props.user.data.vk_user_id === undefined) {
                     this.setState({errors: R.merge(this.state.errors, {login: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -145,7 +165,7 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(this.state.errors, {phone: ['Неверный формат номера']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.login === '' && !this.state.vkOn) {
+                if (value === '' && this.state.email === '' && this.state.login === '' && this.props.user.data.vk_user_id === undefined) {
                     this.setState({errors: R.merge(this.state.errors, {phone: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
@@ -162,15 +182,6 @@ export default class Profile extends Component {
                     return false;
                 }
                 return true;
-            case 'vkOn':
-                if (value) {return true}
-                if (!value && this.props.user.data.vk_user_id !== undefined) {
-                    if (!this.props.user.password_digest && !this.state.password) {
-                        this.setState({errors: R.merge(this.state.errors, {password: ['Необходимо задать пароль']})});
-                        return false;
-                    }
-                }
-                return true;
         }
     };
 
@@ -180,7 +191,6 @@ export default class Profile extends Component {
         res += !this.check('phone', this.state.phone);
         res += !this.check('password', this.state.password);
         res += !this.check('repeatPassword', this.state.repeatPassword);
-        res += !this.check('vkOn', this.state.vkOn);
         if (res > 0) {
             return
         }
@@ -204,10 +214,7 @@ export default class Profile extends Component {
         if (this.state.phone !== (this.props.user.phone ? this.props.user.phone : '')) {
             formData.append('user[phone]', this.state.phone);
         }
-        if (this.props.user.data.vk_user_id !== undefined && !this.state.vkOn) {
-            formData.append('user[data][vk_user_id]', null);
-        }
-        this.props.onFormSubmit(formData);
+        this.props.onFormSubmit(formData, (user) => this.saveStartFieldsValues(user));
     };
 
     hasError = (field) => {
@@ -225,15 +232,15 @@ export default class Profile extends Component {
     };
 
     removeVk = () => {
-        if ((!this.state.email && !this.state.login && !this.state.phone) || (!this.props.user.password_digest && !this.state.password)) {
+        if ((!this.props.user.email && !this.props.user.login && !this.props.user.phone) || (!this.props.user.password_digest)) {
             this.props.showToastr('error', 'Ошибка', 'Невозможно отключить вход через VK. Заполните логин, email или номер телефона и задайте пароль');
             return;
         }
-        this.setState({vkOn: false})
+        this.props.removeVk();
     };
 
-    render() {
-        return <div className="modal-overlay">
+    content = () => {
+        return <div style={{height: '100vh'}}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block modal-block__profile">
                     <div className="modal__close">
@@ -303,11 +310,11 @@ export default class Profile extends Component {
                                 <div className="modal-block__social">
                                     <ul className="social-links">
                                         <li><SocialLinkButton
-                                            onClick={this.state.vkOn ? this.removeVk : (() => this.props.enterWithVk('addVk'))}
+                                            onClick={(this.props.user.data.vk_user_id !== undefined) ? this.removeVk : (() => this.props.enterWithVk('addVk'))}
                                             xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                            active={this.state.vkOn}
-                                            dark={!this.state.vkOn}
-                                            withRemoveButton={this.state.vkOn}/>
+                                            active={this.props.user.data.vk_user_id !== undefined}
+                                            dark={this.props.user.data.vk_user_id === undefined}
+                                            withRemoveButton={this.props.user.data.vk_user_id !== undefined}/>
                                         </li>
                                         <li><SocialLinkButton
                                             xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
@@ -336,6 +343,12 @@ export default class Profile extends Component {
                     </form>
                 </div>
             </div>
+        </div>
+    };
+
+    render() {
+        return <div className="modal-overlay">
+            <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
         </div>;
     }
 }
@@ -347,5 +360,7 @@ Profile.propTypes = {
     formErrors: PropTypes.object.isRequired,
     resetErrors: PropTypes.func.isRequired,
     isWaiting: PropTypes.bool.isRequired,
-    enterWithVk: PropTypes.func.isRequired
+    enterWithVk: PropTypes.func.isRequired,
+    removeVk: PropTypes.func.isRequired,
+    numOfActiveRequests: PropTypes.number.isRequired
 };
