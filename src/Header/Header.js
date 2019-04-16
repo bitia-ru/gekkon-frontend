@@ -29,6 +29,7 @@ export default class Header extends Component {
             </ul>
             <InfoBlock sectors={this.props.sectors}
                        infoData={this.props.infoData}
+                       sectorId={this.props.sectorId}
                        changeSectorFilter={this.props.changeSectorFilter}/>
         </header>;
     }
@@ -43,5 +44,6 @@ Header.propTypes = {
     logIn: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired,
     signUp: PropTypes.func.isRequired,
-    openProfile: PropTypes.func.isRequired
+    openProfile: PropTypes.func.isRequired,
+    sectorId: PropTypes.number.isRequired
 };

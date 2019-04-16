@@ -110,3 +110,13 @@
     height: 100%;
     object-fit: cover;
 }
+
+.comment-form__link {
+    color: #006CEB;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.comment-form__link:hover {
+    text-decoration: underline;
+}

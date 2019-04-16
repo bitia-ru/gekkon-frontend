@@ -4,7 +4,7 @@ import MainPageContent                    from "../MainPageContent/MainPageConte
 import Footer                             from "../Footer/Footer";
 import {saveUser, saveToken, removeToken} from "../actions";
 import {connect}                          from "react-redux";
-import {withRouter}                       from "react-router-dom";
+import {withRouter, Link}                 from "react-router-dom";
 import Axios                              from 'axios';
 import Qs                                 from 'qs';
 import ApiUrl                             from '../ApiUrl';
@@ -15,7 +15,6 @@ import ResetPasswordForm                  from '../ResetPasswordForm/ResetPasswo
 import Profile                            from '../Profile/Profile';
 import Authorization                      from '../Authorization';
 import {ToastContainer}                   from 'react-toastr';
-import {TOKEN_COOKIES_LIFETIME_SHORT}     from "../Constants/Cookies";
 import StickyBar                          from '../StickyBar/StickyBar';
 
 Axios.interceptors.request.use(config => {
@@ -37,6 +36,11 @@ class SpotsIndex extends Authorization {
     }
 
     componentDidMount() {
+        this.props.history.listen((location, action) => {
+            if (action === 'POP') {
+                this.setState({profileFormVisible: (location.hash === '#profile')});
+            }
+        });
         let url = new URL(window.location.href);
         let code = url.searchParams.get("activate_mail_code");
         if (code !== null) {
@@ -73,6 +77,16 @@ class SpotsIndex extends Authorization {
         console.log(searchString);
     };
 
+    openProfileForm = () => {
+        this.props.history.push('/#profile');
+        this.setState({profileFormVisible: true});
+    };
+
+    closeProfileForm = () => {
+        this.props.history.push('/');
+        this.setState({profileFormVisible: false});
+    };
+
     content = () => {
         return <React.Fragment>
             {this.state.signUpFormVisible ?
@@ -93,7 +107,7 @@ class SpotsIndex extends Authorization {
                            resetPassword={this.resetPassword}
                            formErrors={this.state.logInFormErrors}
                            resetErrors={this.logInResetErrors}/> : ''}
-            {this.state.profileFormVisible ?
+            {(this.props.user && this.state.profileFormVisible) ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
                          showToastr={this.showToastr}
                          enterWithVk={this.enterWithVk}

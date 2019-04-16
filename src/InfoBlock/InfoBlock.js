@@ -5,26 +5,19 @@ import PropTypes          from 'prop-types';
 import './InfoBlock.css';
 
 export default class InfoBlock extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            position: 0
-        }
-    }
 
     onClick = () => {
-        if (this.state.position < this.props.sectors.length) {
-            this.props.changeSectorFilter(this.props.sectors[this.state.position].id);
-            this.setState({position: this.state.position + 1});
+        let sectorNum = R.findIndex((s) => s.id === this.props.sectorId, this.props.sectors) + 1;
+        if (sectorNum < this.props.sectors.length) {
+            this.props.changeSectorFilter(this.props.sectors[sectorNum].id);
         } else {
-            this.setState({position: 0});
             this.props.changeSectorFilter(0);
         }
     };
 
     render() {
         let mapIndexed = R.addIndex(R.map);
+        let sectorNum = R.findIndex((s) => s.id === this.props.sectorId, this.props.sectors) + 1;
         return <div className="info-block__bottom">
             <div className="info-block__info">
                 <div className="info-block__info-inner">
@@ -48,7 +41,7 @@ export default class InfoBlock extends Component {
 					</span>
                 </button>
             </div>
-            <Slider numOfPositions={this.props.sectors.length} position={this.state.position}/>
+            <Slider numOfPositions={this.props.sectors.length} position={this.props.sectorId === 0 ? 0 : sectorNum}/>
         </div>;
     }
 }
@@ -56,5 +49,6 @@ export default class InfoBlock extends Component {
 InfoBlock.propTypes = {
     sectors: PropTypes.array.isRequired,
     infoData: PropTypes.array.isRequired,
-    changeSectorFilter: PropTypes.func.isRequired
+    changeSectorFilter: PropTypes.func.isRequired,
+    sectorId: PropTypes.number.isRequired
 };

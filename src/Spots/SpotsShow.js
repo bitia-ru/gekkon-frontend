@@ -1,29 +1,29 @@
-import React            from 'react';
-import {withRouter}     from 'react-router-dom';
-import Axios            from 'axios';
-import Qs               from 'qs';
-import ApiUrl           from '../ApiUrl';
+import React              from 'react';
+import {withRouter, Link} from 'react-router-dom';
+import Axios              from 'axios';
+import Qs                 from 'qs';
+import ApiUrl             from '../ApiUrl';
 import {
     loadRoutes,
     loadSectors,
     saveUser,
     saveToken,
     removeToken
-}                       from '../actions';
-import {connect}        from 'react-redux';
-import Content          from '../Content/Content'
-import Header           from '../Header/Header';
-import Footer           from '../Footer/Footer';
-import RoutesShowModal  from '../RoutesShowModal/RoutesShowModal';
-import RoutesEditModal  from '../RoutesEditModal/RoutesEditModal';
-import * as R           from 'ramda';
-import Cookies          from "js-cookie";
-import SignUpForm       from '../SignUpForm/SignUpForm';
-import LogInForm        from '../LogInForm/LogInForm';
-import Profile          from '../Profile/Profile';
-import Authorization    from '../Authorization';
-import {ToastContainer} from 'react-toastr';
-import StickyBar        from '../StickyBar/StickyBar';
+}                         from '../actions';
+import {connect}          from 'react-redux';
+import Content            from '../Content/Content'
+import Header             from '../Header/Header';
+import Footer             from '../Footer/Footer';
+import RoutesShowModal    from '../RoutesShowModal/RoutesShowModal';
+import RoutesEditModal    from '../RoutesEditModal/RoutesEditModal';
+import * as R             from 'ramda';
+import Cookies            from "js-cookie";
+import SignUpForm         from '../SignUpForm/SignUpForm';
+import LogInForm          from '../LogInForm/LogInForm';
+import Profile            from '../Profile/Profile';
+import Authorization      from '../Authorization';
+import {ToastContainer}   from 'react-toastr';
+import StickyBar          from '../StickyBar/StickyBar';
 
 const NumOfDays = 7;
 
@@ -40,7 +40,7 @@ class SpotsShow extends Authorization {
 
         this.state = Object.assign(this.state, {
             spotId: parseInt(this.props.match.params.id, 10),
-            sectorId: 0,
+            sectorId: this.props.match.params.sector_id ? parseInt(this.props.match.params.sector_id, 10) : 0,
             sector: {},
             categoryFrom: '1a',
             categoryTo: '9c+',
@@ -59,17 +59,52 @@ class SpotsShow extends Authorization {
             numOfActiveRequests: 0
         });
         this.numOfActiveRequests = 0;
+        this.loadingRouteId = this.props.match.params.route_id;
     }
 
     componentDidMount() {
+        this.props.history.listen((location, action) => {
+            if (action === 'POP') {
+                let data = location.pathname.split('/');
+                if (data.length > 3 && data[3] === 'sectors') {
+                    let sectorId = parseInt(data[4], 10);
+                    if (data.length > 5 && data[5] === 'routes') {
+                        this.loadingRouteId = data[6];
+                        this.setState({sectorId: sectorId});
+                    } else {
+                        this.setState({sectorId: sectorId, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
+                    }
+                    this.reloadSector(sectorId);
+                    this.reloadSectors();
+                    this.reloadRoutes(sectorId);
+                    this.reloadAscents();
+                } else {
+                    if (data.length > 3 && data[3] === 'routes') {
+                        this.loadingRouteId = data[4];
+                        this.setState({sectorId: 0});
+                    } else {
+                        this.setState({sectorId: 0, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
+                    }
+                    this.reloadSpot();
+                    this.reloadSectors();
+                    this.reloadRoutes(0);
+                    this.reloadAscents();
+                }
+            }
+        });
+
         if (Cookies.get('user_session_token') !== undefined) {
             let token = Cookies.get('user_session_token');
             this.props.saveToken(token);
             this.signIn(token);
         }
-        this.reloadSpot();
+        if (this.state.sectorId === 0) {
+            this.reloadSpot();
+        } else {
+            this.reloadSector(this.state.sectorId);
+        }
         this.reloadSectors();
-        this.reloadRoutes(0);
+        this.reloadRoutes(this.state.sectorId);
         this.reloadAscents();
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
@@ -112,6 +147,12 @@ class SpotsShow extends Authorization {
     };
 
     onRouteClick = (id) => {
+        let self = this;
+        if (this.state.sectorId === 0) {
+            this.props.history.push(`/spots/${this.state.spotId}/routes/${id}`);
+        } else {
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${id}`);
+        }
         this.setState({
             routesModalVisible: true,
             editMode: false,
@@ -123,8 +164,10 @@ class SpotsShow extends Authorization {
         this.setState({routesModalVisible: false});
         if (this.state.sectorId === 0) {
             this.reloadSpot();
+            this.props.history.push(`/spots/${this.state.spotId}`);
         } else {
             this.reloadSector(this.state.sectorId);
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
         }
         this.reloadAscents();
     };
@@ -262,6 +305,11 @@ class SpotsShow extends Authorization {
                     this.setState({numOfActiveRequests: this.numOfActiveRequests});
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
                     this.props.loadRoutes(response.data.payload);
+                    if (this.loadingRouteId) {
+                        let route_id = parseInt(this.loadingRouteId, 10);
+                        this.loadingRouteId = null;
+                        this.setState({currentShown: R.find((route) => route.id === route_id, response.data.payload), routesModalVisible: true, editMode: false})
+                    }
                 }).catch(error => {
                 this.numOfActiveRequests--;
                 this.setState({numOfActiveRequests: this.numOfActiveRequests});
@@ -276,6 +324,11 @@ class SpotsShow extends Authorization {
                     this.setState({numOfActiveRequests: this.numOfActiveRequests});
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
                     this.props.loadRoutes(response.data.payload);
+                    if (this.loadingRouteId) {
+                        let route_id = parseInt(this.loadingRouteId, 10);
+                        this.loadingRouteId = null;
+                        this.setState({currentShown: R.find((route) => route.id === route_id, response.data.payload), routesModalVisible: true, editMode: false})
+                    }
                 }).catch(error => {
                 this.numOfActiveRequests--;
                 this.setState({numOfActiveRequests: this.numOfActiveRequests});
@@ -287,10 +340,13 @@ class SpotsShow extends Authorization {
     changeSectorFilter = (id) => {
         if (id !== 0) {
             this.reloadSector(id);
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${id}`);
+            this.setState({sectorId: id, page: 1});
         } else {
             this.reloadSpot();
+            this.props.history.push(`/spots/${this.state.spotId}`);
+            this.setState({sectorId: id, page: 1});
         }
-        this.setState({sectorId: id, page: 1});
         this.reloadRoutes(id, null, null, null, null, 1);
     };
 
@@ -375,6 +431,33 @@ class SpotsShow extends Authorization {
         this.setState({editMode: false, currentShown: currentShown});
     };
 
+    goToProfile = () => {
+        if (this.state.sectorId === 0) {
+            this.props.history.push(`/spots/${this.state.spotId}#profile`);
+        } else {
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}#profile`);
+        }
+        this.setState({routesModalVisible: false, profileFormVisible: true});
+    };
+
+    openProfileForm = () => {
+        this.setState({profileFormVisible: true});
+        if (this.state.sectorId === 0) {
+            this.props.history.push(`/spots/${this.state.spotId}#profile`);
+        } else {
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}#profile`);
+        }
+    };
+
+    closeProfileForm = () => {
+        this.setState({profileFormVisible: false});
+        if (this.state.sectorId === 0) {
+            this.props.history.push(`/spots/${this.state.spotId}`);
+        } else {
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
+        }
+    };
+
     content = () => {
         return <React.Fragment>
             {this.state.routesModalVisible ?
@@ -386,6 +469,7 @@ class SpotsShow extends Authorization {
                                      route={this.state.currentShown.id === null ? this.state.currentShown : R.find((r) => r.id === this.state.currentShown.id, this.props.routes)}/> :
                     <RoutesShowModal onClose={this.closeRoutesModal} openEdit={() => this.setState({editMode: true})}
                                      removeRoute={this.removeRoute} ctrlPressed={this.state.ctrlPressed}
+                                     goToProfile={this.goToProfile}
                                      route={R.find((r) => r.id === this.state.currentShown.id, this.props.routes)}/>) : ''}
             {this.state.signUpFormVisible ?
                 <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
@@ -405,7 +489,7 @@ class SpotsShow extends Authorization {
                            resetPassword={this.resetPassword}
                            formErrors={this.state.logInFormErrors}
                            resetErrors={this.logInResetErrors}/> : ''}
-            {this.state.profileFormVisible ?
+            {(this.props.user && this.state.profileFormVisible) ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
                          showToastr={this.showToastr}
                          enterWithVk={this.enterWithVk}
@@ -418,8 +502,9 @@ class SpotsShow extends Authorization {
                 className="toast-top-right"
             />
             <Header
-                data={this.state.sectorId === 0 ? this.state.spot : this.props.sectors[R.findIndex(R.propEq('id', this.state.sectorId))(this.props.sectors)]}
+                data={this.state.sectorId === 0 ? this.state.spot : this.state.sector}
                 sectors={this.props.sectors}
+                sectorId={this.state.sectorId}
                 infoData={this.state.infoData}
                 changeSectorFilter={this.changeSectorFilter}
                 changeNameFilter={this.changeNameFilter}
@@ -445,6 +530,7 @@ class SpotsShow extends Authorization {
     };
 
     render() {
+        console.log(this.state.numOfActiveRequests);
         return <div
             style={{overflow: (this.state.routesModalVisible || this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
             <StickyBar loading={this.state.numOfActiveRequests > 0} content={this.content()}/>

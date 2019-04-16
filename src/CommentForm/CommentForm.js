@@ -29,12 +29,13 @@ export default class CommentForm extends Component {
                 </div> : ''}
             <div className="comment-form__inner-wrap">
                 <AvatarRound user={this.props.user}/>
+                {(this.props.user && !this.props.user.login && !this.props.user.name) ? <a className="comment-form__input comment-form__link" onClick={this.props.goToProfile}>Для комментирования задайте имя или логин</a> :
                 <textarea className="comment-form__input"
                           disabled={this.props.user && (this.props.user.login || this.props.user.name) ? false : true}
-                          placeholder={this.props.user ? ((this.props.user.login || this.props.user.name) ? 'Комментировать...' : 'Для комментирования задайте имя или логин') : 'Залогиньтесь, чтобы написать комментарий'}
+                          placeholder={this.props.user ? 'Комментировать...' : 'Залогиньтесь, чтобы написать комментарий'}
                           value={this.props.content}
                           onChange={(event) => this.props.onContentChange(event.target.value)}
-                          onKeyPress={this.onKeyPress}/>
+                          onKeyPress={this.onKeyPress}/>}
             </div>
             {this.props.content === '' ? '' :
                 <div className="comment-form__btn-wrap">
@@ -50,5 +51,6 @@ export default class CommentForm extends Component {
 CommentForm.propTypes = {
     content: PropTypes.string.isRequired,
     saveComment: PropTypes.func.isRequired,
-    onContentChange: PropTypes.func.isRequired
+    onContentChange: PropTypes.func.isRequired,
+    goToProfile: PropTypes.func.isRequired
 };

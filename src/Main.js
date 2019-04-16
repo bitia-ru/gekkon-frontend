@@ -11,6 +11,9 @@ export default class Main extends React.Component {
             <Switch>
                 <Route exact path='/' component={SpotsIndex}/>
                 <Route exact path='/crags' component={CragsIndex}/>
+                <Route path='/spots/:id/sectors/:sector_id/routes/:route_id' component={SpotsShow}/>
+                <Route path='/spots/:id/sectors/:sector_id' component={SpotsShow}/>
+                <Route path='/spots/:id/routes/:route_id' component={SpotsShow}/>
                 <Route path='/spots/:id' component={SpotsShow}/>
             </Switch>
         </main>

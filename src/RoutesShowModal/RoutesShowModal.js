@@ -384,6 +384,7 @@ class RoutesShowModal extends Component {
                     </div>
                     <div className="modal__enter-comment">
                         <CommentForm quoteComment={this.state.quoteComment}
+                                     goToProfile={this.props.goToProfile}
                                      user={this.props.user}
                                      content={this.state.commentContent}
                                      saveComment={this.saveComment}
@@ -414,7 +415,8 @@ RoutesShowModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     openEdit: PropTypes.func.isRequired,
     ctrlPressed: PropTypes.bool.isRequired,
-    removeRoute: PropTypes.func.isRequired
+    removeRoute: PropTypes.func.isRequired,
+    goToProfile: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

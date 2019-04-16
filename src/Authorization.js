@@ -1,12 +1,12 @@
-import React                                                       from 'react';
-import Cookies                                                     from "js-cookie";
-import Axios                                                       from "axios/index";
-import {SALT_ROUNDS}                                               from "./Constants/Bcrypt";
-import {TOKEN_COOKIES_LIFETIME_SHORT, TOKEN_COOKIES_LIFETIME_LONG} from "./Constants/Cookies";
-import ApiUrl                                                      from "./ApiUrl";
-import bcrypt                                                      from "bcryptjs";
-import * as R                                                      from "ramda";
-import {CLIENT_ID, REDIRECT_URI}                                   from "./Constants/Vk";
+import React                     from 'react';
+import Cookies                   from "js-cookie";
+import Axios                     from "axios/index";
+import {SALT_ROUNDS}             from "./Constants/Bcrypt";
+import {DOMAIN}                  from "./Constants/Cookies";
+import ApiUrl                    from "./ApiUrl";
+import bcrypt                    from "bcryptjs";
+import * as R                    from "ramda";
+import {CLIENT_ID, REDIRECT_URI} from "./Constants/Vk";
 
 export default class Authorization extends React.Component {
     constructor(props) {
@@ -15,7 +15,7 @@ export default class Authorization extends React.Component {
         this.state = {
             signUpFormVisible: false,
             logInFormVisible: false,
-            profileFormVisible: false,
+            profileFormVisible: window.location.hash === '#profile',
             resetPasswordFormVisible: false,
             signUpFormErrors: {},
             logInFormErrors: {},
@@ -29,7 +29,7 @@ export default class Authorization extends React.Component {
     }
 
     logOut = () => {
-        Cookies.remove('user_session_token', {path: '', domain: '.bitia.ru'});
+        Cookies.remove('user_session_token', {path: '', domain: DOMAIN});
         this.props.removeToken();
         this.props.saveUser(null);
         if (this.afterLogOut) {
@@ -258,7 +258,6 @@ export default class Authorization extends React.Component {
                 this.numOfActiveRequests--;
                 this.setState({numOfActiveRequests: this.numOfActiveRequests});
                 this.props.saveUser(response.data.payload);
-                this.closeProfileForm();
                 this.setState({profileIsWaiting: false});
             }).catch(error => {
             this.numOfActiveRequests--;
@@ -272,10 +271,6 @@ export default class Authorization extends React.Component {
         });
     };
 
-    openProfileForm = () => {
-        this.setState({profileFormVisible: true});
-    };
-
     closeSignUpForm = () => {
         this.setState({signUpFormVisible: false});
     };
@@ -284,16 +279,15 @@ export default class Authorization extends React.Component {
         this.setState({logInFormVisible: false});
     };
 
-    closeProfileForm = () => {
-        this.setState({profileFormVisible: false});
-    };
-
     closeResetPasswordForm = () => {
         this.setState({resetPasswordFormVisible: false});
     };
 
     enterWithVk = (type) => {
-        this.w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74&state=${JSON.stringify({method: type, token: (this.props.token ? this.props.token : '')})}`, "VK", "resizable,scrollbars,status");
+        this.w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74&state=${JSON.stringify({
+            method: type,
+            token: (this.props.token ? this.props.token : '')
+        })}`, "VK", "resizable,scrollbars,status");
         let self = this;
         this.w.addEventListener('unload', () => self.afterVkEnter(), false);
     };

@@ -24,6 +24,14 @@ class CragsIndex extends Authorization {
         console.log(searchString);
     };
 
+    openProfileForm = () => {
+        this.setState({profileFormVisible: true});
+    };
+
+    closeProfileForm = () => {
+        this.setState({profileFormVisible: false});
+    };
+
     render() {
         return <div
             style={{overflow: (this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
@@ -36,7 +44,7 @@ class CragsIndex extends Authorization {
                            resetPassword={this.resetPassword}
                            formErrors={this.state.logInFormErrors}
                            resetErrors={this.logInResetErrors}/> : ''}
-            {this.state.profileFormVisible ?
+            {(this.props.user && this.state.profileFormVisible) ?
                 <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
                          closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
                          resetErrors={this.profileResetErrors}/> : ''}
