@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import RouteCard          from '../RouteCard/RouteCard';
 import * as R             from 'ramda';
 import PropTypes          from 'prop-types';
+import './RouteCardTable.css';
 
 export default class RouteCardTable extends Component {
     render() {

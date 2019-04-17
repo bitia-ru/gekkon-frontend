@@ -48,7 +48,7 @@ export default class Authorization extends React.Component {
                 }
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
-            Cookies.remove('user_session_token', {path: ''});
+            Cookies.remove('user_session_token', {path: '', domain: DOMAIN});
             this.props.removeToken();
         });
     };
@@ -93,14 +93,14 @@ export default class Authorization extends React.Component {
 
     displayError = (error) => {
         if (error.response.status === 404 && error.response.statusText === 'Not Found') {
-            this.container.error(error.response.data.message, 'Ошибка', {closeButton: true});
+            this.showToastr('error', 'Ошибка', error.response.data.message);
             return;
         }
         if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
-            this.container.error(error.response.data, 'Ошибка', {closeButton: true});
+            this.showToastr('error', 'Ошибка', error.response.data);
             return;
         }
-        this.container.error("Неожиданная ошибка", 'Ошибка', {closeButton: true});
+        this.showToastr('error', 'Ошибка', "Неожиданная ошибка");
     };
 
     submitSignUpForm = (type, data, password) => {
@@ -120,6 +120,7 @@ export default class Authorization extends React.Component {
                     this.closeSignUpForm();
                     this.props.saveUser(response.data.payload);
                     this.setState({signUpIsWaiting: false});
+                    this.showToastr('success', 'Вход выполнен', 'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.')
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
@@ -158,7 +159,7 @@ export default class Authorization extends React.Component {
                             this.signIn(response.data.payload.token, () => {
                                 this.closeLogInForm();
                                 if (this.afterSubmitLogInForm) {
-                                    this.afterSubmitLogInForm(response);
+                                    this.afterSubmitLogInForm(response.data.payload.user_id);
                                 }
                                 this.setState({logInIsWaiting: false});
                             });
@@ -216,7 +217,7 @@ export default class Authorization extends React.Component {
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
-                    this.container.error('Срок действия ссылки для восстановления пароля истек или пользователь не найден', 'Ошибка', {closeButton: true});
+                    this.showToastr('error', 'Ошибка', 'Срок действия ссылки для восстановления пароля истек или пользователь не найден');
                 } else {
                     this.displayError(error)
                 }
@@ -325,16 +326,16 @@ export default class Authorization extends React.Component {
             Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, {params: params})
                 .then(response => {
                     this.props.decreaseNumOfActiveRequests();
-                    this.container.success('На почту было отправлено сообщение для восстановления пароля', 'Восстановление пароля', {closeButton: true});
+                    this.showToastr('success', 'Восстановление пароля', 'На почту было отправлено сообщение для восстановления пароля');
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
-                    this.container.error('Пользователь не найден', 'Ошибка', {closeButton: true});
+                    this.showToastr('error', 'Ошибка', 'Пользователь не найден');
                 } else {
                     if (error.response.status === 400 && error.response.statusText === 'Bad Request' && error.response.data.email) {
-                        this.container.warning('Без почты невозможно восстановить пароль. Обратитесь к администратору.', 'Восстановление пароля', {closeButton: true});
+                        this.showToastr('warning', 'Восстановление пароля', 'Без почты невозможно восстановить пароль. Обратитесь к администратору.');
                     } else {
-                        this.container.warning('Не удалось отправить на почту сообщение для восстановления пароля', 'Восстановление пароля', {closeButton: true});
+                        this.showToastr('warning', 'Восстановление пароля', 'Не удалось отправить на почту сообщение для восстановления пароля');
                     }
                 }
             });

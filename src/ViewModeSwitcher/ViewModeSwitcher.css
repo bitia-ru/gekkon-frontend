@@ -29,3 +29,11 @@
     fill: #006CEB;
     transform: scale(1.2);
 }
+
+.content__toggle {
+    height: 57px;
+    display: flex;
+    align-self: flex-end;
+    align-items: center;
+    margin-left: auto;
+}

@@ -5,7 +5,7 @@ import './CollapsableBlock.css';
 export default class CollapsableBlock extends Component {
 
     render() {
-        return <div className="collapsable-block">
+        return <div>
             <button onClick={() => this.props.onCollapseChange(!this.props.isCollapsed)}
                     className={'collapsable-block__header' + (this.props.isCollapsed ? '' : ' collapsable-block__header_active')}>
                 {this.props.title}

@@ -4,3 +4,22 @@
     margin-bottom: 20px;
     display: flex;
 }
+
+.content__filter {
+    display: flex;
+    padding-bottom: 40px;
+}
+
+.content__filter-item {
+    margin-right: 50px;
+}
+
+.content__filter-item_category {
+    max-width: 320px;
+    width: 100%;
+}
+
+.content__filter-item_period {
+    max-width: 320px;
+    width: 100%;
+}

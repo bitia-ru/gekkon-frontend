@@ -1,12 +1,3 @@
-.btn-handler__track-toggles {
-    position: absolute;
-    content: '';
-    right: 25px;
-    top: 25px;
-    display: flex;
-    z-index: 3;
-}
-
 .btn-handler__track-toggles-item:not(:first-child) {
     margin-left: 6px;
 }

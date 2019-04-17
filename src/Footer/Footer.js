@@ -2,6 +2,13 @@ import React, {Component} from 'react';
 import PropTypes          from 'prop-types';
 import {Link}             from 'react-router-dom';
 import SocialLinkButton   from '../SocialLinkButton/SocialLinkButton';
+import {
+    VK_LINK,
+    FACEBOOK_LINK,
+    INSTAGRAM_LINK,
+    TWITTER_LINK,
+    YOUTUBE_LINK
+}                         from '../Constants/SocialLinks';
 import './Footer.css';
 
 export default class Footer extends Component {
@@ -77,19 +84,19 @@ export default class Footer extends Component {
                         Соцсети
                     </h3>
                     <ul className="social-links">
-                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                        <li><SocialLinkButton onClick={() => {if (VK_LINK !== '') {window.location = VK_LINK}}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"/>
                         </li>
-                        <li><SocialLinkButton href="https://www.instagram.com"
+                        <li><SocialLinkButton onClick={() => {if (FACEBOOK_LINK !== '') {window.location = FACEBOOK_LINK}}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>
-                        <li><SocialLinkButton href="https://ru-ru.facebook.com/"
+                        <li><SocialLinkButton onClick={() => {if (TWITTER_LINK !== '') {window.location = TWITTER_LINK}}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"/>
                         </li>
-                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                        <li><SocialLinkButton onClick={() => {if (INSTAGRAM_LINK !== '') {window.location = INSTAGRAM_LINK}}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"/>
                         </li>
-                        <li><SocialLinkButton href="https://vk.com/club172115153"
+                        <li><SocialLinkButton onClick={() => {if (YOUTUBE_LINK !== '') {window.location = YOUTUBE_LINK}}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"/>
                         </li>
                     </ul>
