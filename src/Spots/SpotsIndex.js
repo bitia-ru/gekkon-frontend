@@ -52,19 +52,17 @@ class SpotsIndex extends Authorization {
             Axios.get(`${ApiUrl}/v1/users/mail_activation/${code}`)
                 .then(response => {
                     this.props.decreaseNumOfActiveRequests();
-                    this.container.success('Успешно', 'Активация email', {closeButton: true});
+                    this.props.saveUser(response.data.payload);
+                    this.showToastr('success', 'Успешно', 'Активация email');
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
-                this.container.warning('При активации произошла ошибка', 'Активация email', {closeButton: true});
+                this.showToastr('warning', 'Активация email', 'При активации произошла ошибка');
             });
         }
         code = url.searchParams.get("reset_password_code");
         if (code !== null) {
-            this.setState({resetPasswordFormVisible: true, email: url.searchParams.get("name")})
-        }
-        if (url.searchParams.get("error") !== null) {
-            let errorMsg = url.searchParams.get("error_description");
-            this.container.error(errorMsg, 'Ошибка', {closeButton: true});
+            let email = url.searchParams.get("user_email");
+            this.setState({resetPasswordFormVisible: true, email: email ? email : url.searchParams.get("user_login")})
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let token = Cookies.get('user_session_token');

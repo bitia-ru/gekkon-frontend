@@ -26,7 +26,8 @@ export default class Profile extends Component {
             avatarFile: null,
             errors: {},
             fieldsOld: {}
-        }
+        };
+        this.mouseOver = false;
     }
 
     componentDidMount() {
@@ -61,7 +62,7 @@ export default class Profile extends Component {
                 email: user.email ? user.email : '',
                 avatar: user.avatar ? user.avatar.url : null
             }
-        })
+        });
     };
 
     fieldsChanged = () => {
@@ -240,13 +241,14 @@ export default class Profile extends Component {
     };
 
     content = () => {
-        return <div style={{height: '100vh'}}>
+        return <div style={{height: '100vh'}} onClick={() => {if (!this.mouseOver) {this.closeForm()}}}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block modal-block__profile">
                     <div className="modal__close">
                         <CloseButton onClick={this.closeForm}/>
                     </div>
-                    <form action="#" method="post" method="post" encType="multipart/form-data" className="form">
+                    <form action="#" method="post" method="post" encType="multipart/form-data" className="form"
+                          onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
                         <div className="modal-block__avatar-block">
                             <div className="modal-block__avatar modal-block__avatar_login">
                                 {(this.state.avatar !== null) ?

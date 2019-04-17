@@ -1,6 +1,5 @@
 import React, {Component}    from 'react';
 import TabBar                from '../TabBar/TabBar';
-import SocialLinkButton      from '../SocialLinkButton/SocialLinkButton';
 import Button                from '../Button/Button';
 import FormField             from '../FormField/FormField';
 import CloseButton           from '../CloseButton/CloseButton';
@@ -135,6 +134,7 @@ export default class ResetPasswordForm extends Component {
                        onEnter={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}
                        value={this.state.repeatPassword}/>
             <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+                    isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}/>
         </form>;
 

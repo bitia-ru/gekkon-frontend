@@ -5,19 +5,9 @@ import RouteEditor                  from '../RouteEditor/RouteEditor';
 import CloseButton                  from '../CloseButton/CloseButton';
 import ButtonHandler                from '../ButtonHandler/ButtonHandler';
 import PropTypes                    from 'prop-types';
-import Axios                        from 'axios/index';
 import * as R                       from 'ramda';
-import ApiUrl                       from '../ApiUrl';
-import {DEFAULT_COMMENTS_DISPLAYED} from '../Constants/Comments'
 import {withRouter}                 from 'react-router-dom';
 import {connect}                    from 'react-redux';
-import {
-    updateRoute,
-    addRoute,
-    increaseNumOfActiveRequests,
-    decreaseNumOfActiveRequests
-}                                   from "../actions";
-import {ToastContainer}             from 'react-toastr';
 import {CATEGORIES}                 from "../Constants/Categories";
 import StickyBar                    from '../StickyBar/StickyBar';
 import './RoutesEditModal.css';
@@ -30,25 +20,12 @@ class RoutesEditModal extends Component {
         this.state = {
             url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
             object_id: null,
-            quoteComment: null,
-            commentContent: '',
-            comments: [],
-            numOfDisplayedComments: DEFAULT_COMMENTS_DISPLAYED,
-            descriptionCollapsed: false,
-            numOfLikes: 0,
-            numOfComments: 0,
-            isLiked: false,
-            likeId: 0,
-            numOfRedpoints: 0,
-            numOfFlash: 0,
-            ascent: null,
             currentPointers: [],
             currentPointersOld: [],
             route: R.clone(this.props.route),
-            users: [],
-            waitSaving: false,
             fieldsOld: {}
         };
+        this.mouseOver = false;
     }
 
     componentDidMount() {
@@ -61,36 +38,9 @@ class RoutesEditModal extends Component {
         }
         this.setState({fieldsOld: route, route: R.clone(route)});
         this.loadPointers();
-        this.loadUsers();
     }
 
-    displayError = (error) => {
-        if (error.response.status === 404 && error.response.statusText === 'Not Found') {
-            this.container.error(error.response.data.message, 'Ошибка', {closeButton: true});
-            return;
-        }
-        if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
-            this.container.error(error.response.data, 'Ошибка', {closeButton: true});
-            return;
-        }
-        this.container.error("Неожиданная ошибка", 'Ошибка', {closeButton: true});
-    };
-
-    loadUsers = () => {
-        this.props.increaseNumOfActiveRequests();
-        Axios.get(`${ApiUrl}/v1/users`, {headers: {'TOKEN': this.props.token}})
-            .then(response => {
-                this.props.decreaseNumOfActiveRequests();
-                let users = R.sort((u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes, response.data.payload);
-                this.setState({users: users})
-            }).catch(error => {
-            this.props.decreaseNumOfActiveRequests();
-            this.displayError(error)
-        });
-    };
-
     save = () => {
-        this.setState({waitSaving: true});
         let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
         let formData = new FormData();
         if (JSON.stringify(this.state.currentPointers) !== JSON.stringify(this.state.currentPointersOld)) {
@@ -124,43 +74,10 @@ class RoutesEditModal extends Component {
         if (this.state.route.photo !== (this.props.route.photo ? this.props.route.photo.url : null)) {
             formData.append('route[photo]', this.state.route.photoFile);
         }
-        this.props.increaseNumOfActiveRequests();
         if (this.props.route.id !== null) {
-            Axios({
-                url: `${ApiUrl}/v1/routes/${this.props.route.id}`,
-                method: 'patch',
-                data: formData,
-                headers: {'TOKEN': this.props.token},
-                config: {headers: {'Content-Type': 'multipart/form-data'}}
-            })
-                .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
-                    this.setState({waitSaving: false});
-                    this.props.updateRoute(this.props.route.id, response.data.payload);
-                    this.props.afterSubmit(response.data.payload);
-                }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
-                this.displayError(error);
-                this.setState({waitSaving: false});
-            });
+            this.props.updateRoute(formData);
         } else {
-            Axios({
-                url: `${ApiUrl}/v1/routes`,
-                method: 'post',
-                data: formData,
-                headers: {'TOKEN': this.props.token},
-                config: {headers: {'Content-Type': 'multipart/form-data'}}
-            })
-                .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
-                    this.setState({waitSaving: false});
-                    this.props.addRoute(response.data.payload);
-                    this.props.afterSubmit(response.data.payload);
-                }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
-                this.displayError(error);
-                this.setState({waitSaving: false});
-            });
+            this.props.createRoute(formData);
         }
     };
 
@@ -212,12 +129,12 @@ class RoutesEditModal extends Component {
 
     content = () => {
         let saveDisabled = (JSON.stringify(this.state.route) === JSON.stringify(this.state.fieldsOld) && JSON.stringify(this.state.currentPointers) === JSON.stringify(this.state.currentPointersOld));
-        return <div className="modal-overlay__wrapper">
+        return <div className="modal-overlay__wrapper" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
                     <CloseButton onClick={() => this.props.onClose()}/>
                 </div>
-                <div className="modal__track-block">
+                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track">
                         <div className="modal__track-descr">
                             <div className="modal__track-descr-picture"></div>
@@ -252,13 +169,13 @@ class RoutesEditModal extends Component {
                         </div>
                         <div className="modal__track-footer-edit-mode-item">
                             <Button size="small" style="normal" title="Сохранить"
-                                    isWaiting={this.state.waitSaving}
+                                    isWaiting={this.props.isWaiting}
                                     disabled={saveDisabled}
                                     onClick={this.save}></Button>
                         </div>
                     </div>
                 </div>
-                <div className="modal__track-info">
+                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track-header">
                         <h1 className="modal__title">
                             № <input type="text"
@@ -277,10 +194,10 @@ class RoutesEditModal extends Component {
                         <RouteDataEditableTable route={this.state.route}
                                                 sector={this.props.sector}
                                                 onRouteParamChange={this.onRouteParamChange}
-                                                users={this.state.users}/>
+                                                users={this.props.users}/>
                     </div>
                     <div className="modal__item modal__descr-item">
-                        <div className="collapsable-block">
+                        <div>
                             <button className="collapsable-block__header collapsable-block__header_edit">
                                 Описание
                             </button>
@@ -296,11 +213,6 @@ class RoutesEditModal extends Component {
 
     render() {
         return <React.Fragment>
-            <ToastContainer
-                ref={ref => this.container = ref}
-                onClick={() => this.container.clear()}
-                className="toast-top-right"
-            />
             <div className="modal-overlay">
                 <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
             </div>
@@ -313,20 +225,15 @@ RoutesEditModal.propTypes = {
     sector: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
     cancel: PropTypes.func.isRequired,
-    afterSubmit: PropTypes.func.isRequired
+    users: PropTypes.array.isRequired,
+    createRoute: PropTypes.func.isRequired,
+    updateRoute: PropTypes.func.isRequired,
+    isWaiting: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
     user: state.user,
-    token: state.token,
     numOfActiveRequests: state.numOfActiveRequests
 });
 
-const mapDispatchToProps = dispatch => ({
-    updateRoute: (id, route) => dispatch(updateRoute(id, route)),
-    addRoute: (route) => dispatch(addRoute(route)),
-    increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-    decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
-});
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesEditModal));
+export default withRouter(connect(mapStateToProps)(RoutesEditModal));

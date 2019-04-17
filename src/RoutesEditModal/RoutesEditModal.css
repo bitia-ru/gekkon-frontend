@@ -312,9 +312,52 @@
     box-shadow: 0px 0px 0px 2px rgba(0, 108, 235, 0.7);
 }
 
-.modal__track-image-wrapper {
+.collapsable-block__header {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
     position: relative;
-    z-index: 2;
-    height: 100%;
+    padding-right: 15px;
+    cursor: pointer;
+    font-size: 22px;
+    color: #1f1f1f;
+    font-family: GilroyBold;
+    line-height: 1.3em;
 }
 
+.collapsable-block__header::after {
+    position: absolute;
+    content: '';
+    display: block;
+    width: 10px;
+    height: 7px;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%228%22%20viewBox%3D%220%200%2010%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%3Cpath%20d%3D%22M5%207.1875L-6.01031e-08%202.1875L1.3125%200.8125L5%204.5L8.6875%200.8125L10%202.1875L5%207.1875Z%22%20fill%3D%22%231F1F1F%22/%3E%0A%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    right: 0px;
+    top: 12px;
+}
+
+.collapsable-block__header_active::after {
+    transform: rotate(180deg);
+}
+
+.collapsable-block__header_edit {
+    cursor: default;
+}
+
+.collapsable-block__header_edit::after {
+    display: none;
+}
+
+.btn-handler__track-toggles {
+    position: absolute;
+    content: '';
+    right: 25px;
+    top: 25px;
+    display: flex;
+    z-index: 3;
+}

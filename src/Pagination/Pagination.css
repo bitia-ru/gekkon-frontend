@@ -104,3 +104,9 @@
     transform: translate(-50%, -50%) rotate(45deg);
     transform-origin: left top;
 }
+
+.content__pagination {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+}
