@@ -2,7 +2,7 @@ import React                     from 'react';
 import Cookies                   from "js-cookie";
 import Axios                     from "axios/index";
 import {SALT_ROUNDS}             from "./Constants/Bcrypt";
-import {DOMAIN}                  from "./Constants/Cookies";
+import {Domain}                  from "./Constants/Cookies";
 import ApiUrl                    from "./ApiUrl";
 import bcrypt                    from "bcryptjs";
 import * as R                    from "ramda";
@@ -29,12 +29,19 @@ export default class Authorization extends React.Component {
     }
 
     logOut = () => {
-        Cookies.remove('user_session_token', {path: '', domain: DOMAIN});
-        this.props.removeToken();
-        this.props.saveUser(null);
-        if (this.afterLogOut) {
-            this.afterLogOut();
-        }
+        this.props.increaseNumOfActiveRequests();
+        Axios({url: `${ApiUrl}/v1/user_sessions/actions/log_out`, method: 'patch', data: {token: this.props.token}, headers: {'TOKEN': this.props.token}})
+            .then(response => {
+                this.props.decreaseNumOfActiveRequests();
+                this.props.removeToken();
+                this.props.saveUser(null);
+                if (this.afterLogOut) {
+                    this.afterLogOut();
+                }
+            }).catch(error => {
+            this.props.decreaseNumOfActiveRequests();
+            this.displayError(error);
+        });
     };
 
     signIn = (token, afterSignIn) => {
@@ -48,7 +55,7 @@ export default class Authorization extends React.Component {
                 }
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
-            Cookies.remove('user_session_token', {path: '', domain: DOMAIN});
+            Cookies.remove('user_session_token', {path: '', domain: Domain()});
             this.props.removeToken();
         });
     };

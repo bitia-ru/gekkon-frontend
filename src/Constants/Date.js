@@ -1,10 +1,2 @@
-export const COMMENT_TIME_FORMAT = new Intl.DateTimeFormat('ru-RU', {
-    hour: 'numeric',
-    minute: 'numeric'
-});
-
-export const COMMENT_DATE_FORMAT = new Intl.DateTimeFormat('ru-RU', {
-    year: 'numeric',
-    month: 'long',
-    day: '2-digit'
-});
+export const COMMENT_DATETIME_FORMAT = 'hh:mm LL';
+export const DATE_FORMAT = 'DD.MM.YYYY';

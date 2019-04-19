@@ -6,13 +6,11 @@ import CloseButton                  from '../CloseButton/CloseButton';
 import ButtonHandler                from '../ButtonHandler/ButtonHandler';
 import PropTypes                    from 'prop-types';
 import * as R                       from 'ramda';
-import {withRouter}                 from 'react-router-dom';
-import {connect}                    from 'react-redux';
 import {CATEGORIES}                 from "../Constants/Categories";
 import StickyBar                    from '../StickyBar/StickyBar';
 import './RoutesEditModal.css';
 
-class RoutesEditModal extends Component {
+export default class RoutesEditModal extends Component {
 
     constructor(props) {
         super(props);
@@ -34,7 +32,10 @@ class RoutesEditModal extends Component {
             route.photo = route.photo.url;
         }
         if (this.state.route.category === null) {
-            route.category = CATEGORIES[0];
+            route.category = CATEGORIES[6];
+        }
+        if (this.state.route.number === null) {
+            route.number = route.id;
         }
         this.setState({fieldsOld: route, route: R.clone(route)});
         this.loadPointers();
@@ -228,12 +229,6 @@ RoutesEditModal.propTypes = {
     users: PropTypes.array.isRequired,
     createRoute: PropTypes.func.isRequired,
     updateRoute: PropTypes.func.isRequired,
-    isWaiting: PropTypes.bool.isRequired
+    isWaiting: PropTypes.bool.isRequired,
+    numOfActiveRequests: PropTypes.number.isRequired
 };
-
-const mapStateToProps = state => ({
-    user: state.user,
-    numOfActiveRequests: state.numOfActiveRequests
-});
-
-export default withRouter(connect(mapStateToProps)(RoutesEditModal));

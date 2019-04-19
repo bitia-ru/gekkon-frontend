@@ -9,3 +9,16 @@ export const GetUserName = (user, selfDisplayed) => {
 };
 
 export const SEARCH_DELAY = 3000;
+
+export const USER_ITEMS_DATA = [
+    {separator: true},
+    {id: 1, title: 'Профиль', clickable: true},
+    {id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/img/main-nav-img/exit.svg#exit'}
+];
+
+export const GUEST_ITEMS_DATA = [
+    {title: 'Гость'},
+    {separator: true},
+    {id: 1, title: 'Зарегистрироваться', clickable: true},
+    {id: 2, title: 'Войти', clickable: true}
+];

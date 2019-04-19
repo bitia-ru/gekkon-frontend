@@ -31,6 +31,7 @@ export default class CommentForm extends Component {
                 <AvatarRound user={this.props.user}/>
                 {(this.props.user && !this.props.user.login && !this.props.user.name) ? <a className="comment-form__input comment-form__link" onClick={this.props.goToProfile}>Для комментирования задайте имя или логин</a> :
                 <textarea className="comment-form__input"
+                          ref={(ref) => this.props.setTextareaRef(ref)}
                           disabled={this.props.user && (this.props.user.login || this.props.user.name) ? false : true}
                           placeholder={this.props.user ? 'Комментировать...' : 'Залогиньтесь, чтобы написать комментарий'}
                           value={this.props.content}
@@ -52,5 +53,6 @@ CommentForm.propTypes = {
     content: PropTypes.string.isRequired,
     saveComment: PropTypes.func.isRequired,
     onContentChange: PropTypes.func.isRequired,
-    goToProfile: PropTypes.func.isRequired
+    goToProfile: PropTypes.func.isRequired,
+    setTextareaRef: PropTypes.func.isRequired
 };

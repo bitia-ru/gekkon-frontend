@@ -8,6 +8,7 @@ import DatePickerBlock    from '../DatePickerBlock/DatePickerBlock';
 import ComboBoxPerson     from '../ComboBoxPerson/ComboBoxPerson';
 import * as R             from 'ramda';
 import moment             from 'moment';
+import {DATE_FORMAT}      from '../Constants/Date'
 import './RouteDataEditableTable.css';
 
 export default class RouteDataEditableTable extends Component {
@@ -40,13 +41,6 @@ export default class RouteDataEditableTable extends Component {
             </div>
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
-                    Народная категория:
-                </div>
-                <div className="route-data-table-item">
-                </div>
-            </div>
-            <div className="route-data-table-row">
-                <div className="route-data-table-item route-data-table-item_header">
                     Тип:
                 </div>
                 <div className="route-data-table-item">
@@ -68,6 +62,7 @@ export default class RouteDataEditableTable extends Component {
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
                         <DatePickerBlock date={this.props.route.installed_at ? moment(this.props.route.installed_at) : null}
+                                         dateFormat={DATE_FORMAT}
                                          onChange={(date) => this.props.onRouteParamChange(date.format(), 'installed_at')}/>
                     </div>
                 </div>
@@ -79,6 +74,7 @@ export default class RouteDataEditableTable extends Component {
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
                         <DatePickerBlock date={this.props.route.installed_until ? moment(this.props.route.installed_until) : null}
+                                         dateFormat={DATE_FORMAT}
                                          onChange={(date) => this.props.onRouteParamChange(date.format(), 'installed_until')}/>
                     </div>
                 </div>

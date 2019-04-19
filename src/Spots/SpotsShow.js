@@ -675,6 +675,8 @@ class SpotsShow extends Authorization {
                                      sector={this.state.sectorId === 0 ? R.find((sector) => sector.id === this.state.currentShown.sector_id, this.props.sectors) : this.state.sector}
                                      cancel={this.state.currentShown.id === null ? () => this.setState({routesModalVisible: false}) : () => this.setState({editMode: false})}
                                      users={this.state.users}
+                                     user={this.props.user}
+                                     numOfActiveRequests={this.props.numOfActiveRequests}
                                      createRoute={this.createRoute}
                                      updateRoute={this.updateRoute}
                                      isWaiting={this.state.editRouteIsWaiting}
@@ -687,6 +689,8 @@ class SpotsShow extends Authorization {
                                      numOfLikes={this.state.numOfLikes}
                                      isLiked={this.state.isLiked}
                                      onLikeChange={this.onLikeChange}
+                                     user={this.props.user}
+                                     numOfActiveRequests={this.props.numOfActiveRequests}
                                      ascent={this.state.ascent}
                                      numOfRedpoints={this.state.numOfRedpoints}
                                      numOfFlash={this.state.numOfFlash}
