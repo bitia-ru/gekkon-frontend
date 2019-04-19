@@ -47,7 +47,7 @@ export default class ResetPasswordForm extends Component {
     check = (field, value) => {
         switch (field) {
             case 'password':
-                if (value === '' && value.length < PASSWORD_MIN_LENGTH) {
+                if (value === '' || value.length < PASSWORD_MIN_LENGTH) {
                     this.setState({errors: R.merge(this.state.errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
                     return false;
                 }

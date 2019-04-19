@@ -11,12 +11,12 @@ export default class DatePickerBlock extends Component {
         return <div className="date-picker-block__container">
             {this.props.date ?
             <DatePicker
-                dateFormat="DD.MM.YYYY"
+                dateFormat={this.props.dateFormat}
                 className="date-picker-block__select date-picker-block__select-transparent date-picker-block__select_small"
                 selected={this.props.date}
                 onChange={this.props.onChange}
             /> : <DatePicker
-                    dateFormat="DD.MM.YYYY"
+                    dateFormat={this.props.dateFormat}
                     className="date-picker-block__select date-picker-block__select-transparent date-picker-block__select_small"
                     onChange={this.props.onChange}
                 />}
@@ -25,5 +25,6 @@ export default class DatePickerBlock extends Component {
 }
 
 DatePickerBlock.propTypes = {
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    dateFormat: PropTypes.string.isRequired
 };

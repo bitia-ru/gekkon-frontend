@@ -6,12 +6,14 @@ export default class CheckBox extends Component {
     render() {
         return <div className="form__checkbox">
             <input id={this.props.id} type="checkbox" name={this.props.id} checked={this.props.checked} onChange={this.props.onChange}/>
-            <label htmlFor={this.props.id}>Запомнить меня</label>
+            <label htmlFor={this.props.id}>{this.props.title}</label>
         </div>;
     }
 }
 
 CheckBox.propTypes = {
     id: PropTypes.string.isRequired,
-    checked: PropTypes.bool.isRequired
+    checked: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired
 };

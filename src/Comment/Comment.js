@@ -1,7 +1,8 @@
-import React, {Component}                         from 'react';
-import AvatarRound                                from '../AvatarRound/AvatarRound';
-import PropTypes                                  from 'prop-types';
-import {COMMENT_TIME_FORMAT, COMMENT_DATE_FORMAT} from '../Constants/Date'
+import React, {Component}        from 'react';
+import AvatarRound               from '../AvatarRound/AvatarRound';
+import PropTypes                 from 'prop-types';
+import moment                    from 'moment';
+import {COMMENT_DATETIME_FORMAT} from '../Constants/Date'
 import './Comment.css';
 
 export default class Comment extends Component {
@@ -14,12 +15,15 @@ export default class Comment extends Component {
                 <div className="comment__text">{this.props.comment.content}</div>
                 <div className="comment__footer">
                     <div className="comment__date">
-                        {COMMENT_TIME_FORMAT.format(created_at)}&nbsp;&nbsp;{COMMENT_DATE_FORMAT.format(created_at)}
+                        {moment(created_at).format(COMMENT_DATETIME_FORMAT)}
                     </div>
-                    <a className="comment__answer"
-                       onClick={() => this.props.startAnswer(this.props.comment)}>Ответить</a>&nbsp;
-                    {(this.props.user && (this.props.user.id === this.props.comment.author_id || this.props.user.role === 'admin')) ? <a className="comment__answer"
-                                                                              onClick={() => this.props.removeComment(this.props.comment)}>Удалить</a> : ''}
+                    {(this.props.user && (this.props.user.name || this.props.user.login)) ?
+                        <React.Fragment><a className="comment__answer"
+                                           onClick={() => this.props.startAnswer(this.props.comment)}>Ответить</a>&nbsp;
+                        </React.Fragment> : ''}
+                    {(this.props.user && (this.props.user.id === this.props.comment.author_id || this.props.user.role === 'admin')) ?
+                        <a className="comment__answer"
+                           onClick={() => this.props.removeComment(this.props.comment)}>Удалить</a> : ''}
                 </div>
 
             </div>

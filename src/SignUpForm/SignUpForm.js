@@ -6,10 +6,8 @@ import FormField                 from '../FormField/FormField';
 import CloseButton               from '../CloseButton/CloseButton';
 import PropTypes                 from 'prop-types';
 import * as R                    from 'ramda';
-import {PASSWORD_MIN_LENGTH}     from '../Constants/User'
-import {CLIENT_ID, REDIRECT_URI} from "../Constants/Vk";
+import {PASSWORD_MIN_LENGTH}     from '../Constants/User';
 import './SignUpForm.css';
-import Cookies                   from "js-cookie";
 
 export default class SignUpForm extends Component {
     constructor(props) {

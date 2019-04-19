@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
-import List               from '../List/List';
-import Avatar             from '../Avatar/Avatar';
-import PropTypes          from 'prop-types';
-import * as R             from "ramda";
-import {GetUserName}      from '../Constants/User';
+import React, {Component}                               from 'react';
+import List                                             from '../List/List';
+import Avatar                                           from '../Avatar/Avatar';
+import PropTypes                                        from 'prop-types';
+import * as R                                           from "ramda";
+import {GetUserName, USER_ITEMS_DATA, GUEST_ITEMS_DATA} from '../Constants/User';
 import './UserIcon.css';
-
-import {UserItemsData, GuestItemsData} from "../data";
 
 export default class UserIcon extends Component {
     constructor(props) {
@@ -39,7 +37,7 @@ export default class UserIcon extends Component {
             {this.state.droppedDown ?
                 <div className="user-icon__user-menu user-icon__user-menu_active">
                     <List
-                        items={this.props.user === null ? GuestItemsData : R.prepend({title: title}, UserItemsData)}
+                        items={this.props.user === null ? GUEST_ITEMS_DATA : R.prepend({title: title}, USER_ITEMS_DATA)}
                         onClick={this.onItemSelect}
                         textFieldName='title'/>
                 </div> : ''}

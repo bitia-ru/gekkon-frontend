@@ -6,9 +6,8 @@ import FormField             from '../FormField/FormField';
 import CloseButton           from '../CloseButton/CloseButton';
 import CheckBox              from '../CheckBox/CheckBox';
 import PropTypes             from 'prop-types';
+import * as R                from 'ramda';
 import './LogInForm.css';
-import * as R                from "ramda";
-import {PASSWORD_MIN_LENGTH} from "../Constants/User";
 
 export default class LogInForm extends Component {
     constructor(props) {
@@ -128,7 +127,7 @@ export default class LogInForm extends Component {
                     isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('phone', this.state.phone, this.state.passwordEnter)}/>
             <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
+                <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={this.state.rememberMe} title="Запомнить меня"/>
                 <a className="modal-block__link" onClick={() => this.resetPassword('phone')}>Забыли пароль?</a>
             </div>
         </form>;
@@ -154,7 +153,7 @@ export default class LogInForm extends Component {
                     isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password)}/>
             <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={this.state.rememberMe}/>
+                <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={this.state.rememberMe} title="Запомнить меня"/>
                 <a className="modal-block__link" onClick={() => this.resetPassword('email')}>Забыли пароль?</a>
             </div>
         </form>;

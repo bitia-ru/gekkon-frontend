@@ -12,12 +12,10 @@ import CloseButton                  from '../CloseButton/CloseButton';
 import PropTypes                    from 'prop-types';
 import * as R                       from 'ramda';
 import {DEFAULT_COMMENTS_DISPLAYED} from '../Constants/Comments'
-import {withRouter}                 from 'react-router-dom';
-import {connect}                    from 'react-redux';
 import StickyBar                    from '../StickyBar/StickyBar';
 import './RoutesShowModal.css';
 
-class RoutesShowModal extends Component {
+export default class RoutesShowModal extends Component {
 
     constructor(props) {
         super(props);
@@ -40,7 +38,8 @@ class RoutesShowModal extends Component {
     }
 
     startAnswer = (quoteComment) => {
-        this.setState({quoteComment: quoteComment})
+        this.setState({quoteComment: quoteComment});
+        this.textareaRef.focus();
     };
 
     removeQuoteComment = () => {
@@ -59,11 +58,8 @@ class RoutesShowModal extends Component {
         this.setState(
             {
                 descriptionCollapsed: true,
-                numOfDisplayedComments: this.props.comments.length,
-                currentImageW: 0,
-                currentImageH: 0,
-                currentLeftShift: 0
-            }, this.updateDimensions);
+                numOfDisplayedComments: this.props.comments.length
+            });
     };
 
     saveComment = (route_comment_id) => {
@@ -105,6 +101,10 @@ class RoutesShowModal extends Component {
 
     updatePointers = (pointers) => {
         this.setState({currentPointers: pointers});
+    };
+
+    setTextareaRef = (ref) => {
+        this.textareaRef = ref;
     };
 
     content = () => {
@@ -182,6 +182,7 @@ class RoutesShowModal extends Component {
                     </div>
                     <div className="modal__enter-comment">
                         <CommentForm quoteComment={this.state.quoteComment}
+                                     setTextareaRef={this.setTextareaRef}
                                      goToProfile={this.props.goToProfile}
                                      user={this.props.user}
                                      content={this.state.commentContent}
@@ -219,12 +220,6 @@ RoutesShowModal.propTypes = {
     onLikeChange: PropTypes.func.isRequired,
     numOfRedpoints: PropTypes.number.isRequired,
     numOfFlash: PropTypes.number.isRequired,
-    changeAscentResult: PropTypes.func.isRequired
+    changeAscentResult: PropTypes.func.isRequired,
+    numOfActiveRequests: PropTypes.number.isRequired
 };
-
-const mapStateToProps = state => ({
-    user: state.user,
-    numOfActiveRequests: state.numOfActiveRequests
-});
-
-export default withRouter(connect(mapStateToProps)(RoutesShowModal));

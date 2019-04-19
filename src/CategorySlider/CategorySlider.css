@@ -47,7 +47,7 @@
     border: 2px solid #DDE2EF;
     position: relative;
     margin-left: 11px;
-    background: linear-gradient(0deg, #FFFFFF 4%, #FFE602 20%, #48FF66 40%, #7C81FF 60%, #EB002A 80%, #141414 100%);
+    background: linear-gradient(0deg, #FFFFFF 33%, #FFE602 39%, #48FF66 44%, #7C81FF 50%, #EB002A 56%, #141414 100%);
 }
 
 .category__slider-bar-handler {
