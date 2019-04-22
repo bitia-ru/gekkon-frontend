@@ -13,6 +13,32 @@ export default class CategorySlider extends Component {
         }
     }
 
+    componentDidMount() {
+        window.addEventListener("keydown", this.onKeyDown);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("keydown", this.onKeyDown);
+    }
+
+    onKeyDown = (event) => {
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            let index = R.findIndex((c) => c === this.props.category)(CATEGORIES);
+            if (index + 1 < CATEGORIES.length) {
+                this.props.changeCategory(CATEGORIES[index + 1]);
+            }
+        }
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            let index = R.findIndex((c) => c === this.props.category)(CATEGORIES);
+            if (index > 0) {
+                this.props.changeCategory(CATEGORIES[index - 1]);
+            }
+        }
+    };
+
+
     startChange = () => {
         this.setState({editing: true})
     };
