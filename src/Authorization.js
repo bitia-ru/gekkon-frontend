@@ -284,17 +284,19 @@ export default class Authorization extends React.Component {
             token: (this.props.token ? this.props.token : '')
         })}`, "VK", "resizable,scrollbars,status");
         let self = this;
-        this.w.addEventListener('unload', () => self.afterVkEnter(), false);
+        window.addEventListener("message", this.afterVkEnter);
     };
 
-    afterVkEnter = () => {
-        if (!this.w.closed) {
-            return
+    afterVkEnter = (ev) => {
+        if (ev.data.result !== 'success') {
+            return;
         }
+        ev.source.close();
         let token = Cookies.get('user_session_token');
         this.props.saveToken(token);
         this.signIn(token);
         this.setState({signUpFormVisible: false, logInFormVisible: false});
+        window.removeEventListener("message", this.afterVkEnter);
     };
 
     removeVk = (afterSuccess) => {
