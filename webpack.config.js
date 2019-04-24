@@ -43,6 +43,7 @@ module.exports = (env) => {
             }),
             new webpack.EnvironmentPlugin({
                 API_URL: '',
+                CLIENT_ID: ''
             })
         ]
     }

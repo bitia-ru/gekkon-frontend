@@ -8,7 +8,9 @@ WORKDIR /app
 RUN npm i --development
 
 ARG apiUrl
+ARG clientId
 ENV API_URL ${apiUrl}
+ENV CLIENT_ID ${clientId}
 
 RUN npm run build --development
 
