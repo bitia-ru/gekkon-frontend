@@ -34,9 +34,6 @@ export default class RoutesEditModal extends Component {
         if (this.state.route.category === null) {
             route.category = CATEGORIES[6];
         }
-        if (this.state.route.number === null) {
-            route.number = route.id;
-        }
         this.setState({fieldsOld: route, route: R.clone(route)});
         this.loadPointers();
     }
