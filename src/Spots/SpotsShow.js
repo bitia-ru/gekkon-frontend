@@ -486,6 +486,9 @@ class SpotsShow extends Authorization {
     };
 
     removeComment = (comment) => {
+        if (!window.confirm("Удалить комментарий?")) {
+            return;
+        }
         this.props.increaseNumOfActiveRequests();
         Axios({
             url: `${ApiUrl}/v1/route_comments/${comment.id}`,
