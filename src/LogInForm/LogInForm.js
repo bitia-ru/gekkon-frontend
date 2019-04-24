@@ -19,7 +19,7 @@ export default class LogInForm extends Component {
             email: '',
             password: '',
             errors: {},
-            rememberMe: false
+            rememberMe: true
         };
         this.mouseOver = false;
     }
