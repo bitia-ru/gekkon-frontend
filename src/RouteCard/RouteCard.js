@@ -29,7 +29,7 @@ export default class RouteCard extends Component {
                         </div>
                         <div className="route-card__info">
                             <div className="route-card__header">
-                                <div className="route-card__number">№{this.props.route.number}</div>
+                                <div className="route-card__number">{this.props.route.number ? `№${this.props.route.number}` : `#${this.props.route.id}`} </div>
                                 <h1 className="route-card__title">{this.props.route.name}</h1>
                             </div>
                             <div className="route-card__footer">
