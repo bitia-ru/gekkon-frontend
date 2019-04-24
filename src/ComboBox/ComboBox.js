@@ -14,7 +14,9 @@ export default class ComboBox extends Component {
     }
 
     selectItem = (id) => {
-        this.setState({droppedDown: false});
+        if (!this.props.multipleSelect) {
+            this.setState({droppedDown: false});
+        }
         this.props.onChange(id);
     };
 
@@ -24,7 +26,7 @@ export default class ComboBox extends Component {
             <div
                 className={'combo-box__select' + (this.state.droppedDown ? ' combo-box__select_active' : '') + (this.props.style === 'transparent' ? ' combo-box__select-transparent' : '') + (this.props.size === 'small' ? ' combo-box__select_small' : '')}
                 onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
-                {(R.find(R.propEq('id', this.props.currentId))(this.props.items))[this.props.textFieldName]}
+                {this.props.currentValue !== undefined ? this.props.currentValue : (R.find(R.propEq('id', this.props.currentId))(this.props.items))[this.props.textFieldName]}
             </div>
             {this.state.droppedDown ?
                 <div className="combo-box__dropdown"><List items={this.props.items} onClick={this.selectItem}
@@ -37,6 +39,5 @@ export default class ComboBox extends Component {
 ComboBox.propTypes = {
     textFieldName: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    items: PropTypes.array.isRequired,
-    currentId: PropTypes.number.isRequired
+    items: PropTypes.array.isRequired
 };

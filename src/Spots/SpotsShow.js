@@ -28,6 +28,7 @@ import Profile            from '../Profile/Profile';
 import Authorization      from '../Authorization';
 import {ToastContainer}   from 'react-toastr';
 import StickyBar          from '../StickyBar/StickyBar';
+import {RESULT_FILTERS}   from '../Constants/ResultFilters'
 
 const NumOfDays = 7;
 
@@ -69,7 +70,8 @@ class SpotsShow extends Authorization {
             numOfRedpoints: 0,
             numOfFlash: 0,
             users: [],
-            editRouteIsWaiting: false
+            editRouteIsWaiting: false,
+            result: R.map((e) => e.value, RESULT_FILTERS)
         });
         this.loadingRouteId = this.props.match.params.route_id;
     }
@@ -88,7 +90,7 @@ class SpotsShow extends Authorization {
                     }
                     this.reloadSector(sectorId);
                     this.reloadSectors();
-                    this.reloadRoutes(sectorId);
+                    this.reloadRoutes({sectorId: sectorId});
                     this.reloadUserAscents();
                 } else {
                     if (data.length > 3 && data[3] === 'routes') {
@@ -99,7 +101,7 @@ class SpotsShow extends Authorization {
                     }
                     this.reloadSpot();
                     this.reloadSectors();
-                    this.reloadRoutes(0);
+                    this.reloadRoutes({sectorId: 0});
                     this.reloadUserAscents();
                 }
             }
@@ -116,7 +118,7 @@ class SpotsShow extends Authorization {
             this.reloadSector(this.state.sectorId);
         }
         this.reloadSectors();
-        this.reloadRoutes(this.state.sectorId);
+        this.reloadRoutes();
         this.reloadUserAscents();
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
@@ -183,11 +185,12 @@ class SpotsShow extends Authorization {
             this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
         }
         this.reloadUserAscents();
+        this.reloadRoutes();
     };
 
     afterLogOut = () => {
         this.setState({ascents: []});
-        this.reloadRoutes(null, null, null, null, null, 1, 0);
+        this.reloadRoutes();
         if (this.state.sectorId === 0) {
             this.reloadSpot(0);
         } else {
@@ -268,14 +271,19 @@ class SpotsShow extends Authorization {
         });
     };
 
-    reloadRoutes = (sectorId, categoryFrom, categoryTo, name, period, page) => {
-        let currentSectorId = parseInt((sectorId === null || sectorId === undefined) ? this.state.sectorId : sectorId, 10);
-        let currentCategoryFrom = (categoryFrom === null || categoryFrom === undefined) ? this.state.categoryFrom : categoryFrom;
-        let currentCategoryTo = (categoryTo === null || categoryTo === undefined) ? this.state.categoryTo : categoryTo;
-        let currentName = (name === null || name === undefined) ? this.state.name : name;
-        let currentPeriod = (period === null || period === undefined) ? this.state.period : period;
+    reloadRoutes = (filters = {}, page = 1) => {
+        let currentSectorId = parseInt((filters.sectorId === null || filters.sectorId === undefined) ? this.state.sectorId : filters.sectorId, 10);
+        let currentCategoryFrom = (filters.categoryFrom === null || filters.categoryFrom === undefined) ? this.state.categoryFrom : filters.categoryFrom;
+        let currentCategoryTo = (filters.categoryTo === null || filters.categoryTo === undefined) ? this.state.categoryTo : filters.categoryTo;
+        let currentName = (filters.name === null || filters.name === undefined) ? this.state.name : filters.name;
+        let currentPeriod = (filters.period === null || filters.period === undefined) ? this.state.period : filters.period;
+        let currentResult = (filters.result === null || filters.result === undefined) ? this.state.result : filters.result;
         let currentPage = (page === null || page === undefined) ? this.state.page : page;
         let params = {filters: {category: [[currentCategoryFrom], [currentCategoryTo]]}};
+        if (this.props.user) {
+            params.user_id = this.props.user.id;
+            params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
+        }
         if (currentName !== '') {
             params.filters.name = {like: currentName};
         }
@@ -351,7 +359,7 @@ class SpotsShow extends Authorization {
             this.props.history.push(`/spots/${this.state.spotId}`);
             this.setState({sectorId: id, page: 1});
         }
-        this.reloadRoutes(id, null, null, null, null, 1);
+        this.reloadRoutes({sectorId: id});
     };
 
     changeCategoryFilter = (categoryFrom, categoryTo) => {
@@ -361,26 +369,31 @@ class SpotsShow extends Authorization {
         if (categoryTo !== null) {
             this.setState({categoryTo: categoryTo, page: 1})
         }
-        this.reloadRoutes(null, categoryFrom, categoryTo, null, null, 1);
+        this.reloadRoutes({categoryFrom: categoryFrom, categoryTo: categoryTo});
     };
 
     changePeriodFilter = (period) => {
         this.setState({period: period, page: 1});
-        this.reloadRoutes(null, null, null, null, period, 1);
+        this.reloadRoutes({period, period});
+    };
+
+    changeResultFilter = (result) => {
+        this.setState({result: result, page: 1});
+        this.reloadRoutes({result: result});
     };
 
     changeNameFilter = (searchString) => {
         this.setState({name: searchString});
-        this.reloadRoutes(null, null, null, searchString, null, 1);
+        this.reloadRoutes({name: searchString});
     };
 
     changePage = (page) => {
         this.setState({page: page});
-        this.reloadRoutes(null, null, null, null, null, page);
+        this.reloadRoutes({}, page);
     };
 
     afterSubmitLogInForm = (userId) => {
-        this.reloadSectors(null, null, null, null, null, 1, 1);
+        this.reloadRoutes();
         if (this.state.sectorId === 0) {
             this.reloadSpot(userId);
         } else {
@@ -399,7 +412,7 @@ class SpotsShow extends Authorization {
             })
                 .then(response => {
                     this.props.decreaseNumOfActiveRequests();
-                    this.reloadRoutes(null, null, null, null, null, 1);
+                    this.reloadRoutes();
                     this.closeRoutesModal();
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
@@ -752,8 +765,10 @@ class SpotsShow extends Authorization {
                      page={this.state.page}
                      numOfPages={this.state.numOfPages}
                      period={this.state.period}
+                     result={this.state.result}
                      onRouteClick={this.onRouteClick}
                      changePeriodFilter={this.changePeriodFilter}
+                     changeResultFilter={this.changeResultFilter}
                      changeCategoryFilter={this.changeCategoryFilter}
                      changePage={this.changePage}/>
         </React.Fragment>
