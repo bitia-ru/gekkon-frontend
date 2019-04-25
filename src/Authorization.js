@@ -126,6 +126,7 @@ export default class Authorization extends React.Component {
                     this.props.decreaseNumOfActiveRequests();
                     this.closeSignUpForm();
                     this.props.saveUser(response.data.payload);
+                    this.props.saveToken(response.data.payload.user_session.token);
                     this.setState({signUpIsWaiting: false});
                     this.showToastr('success', 'Вход выполнен', 'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.')
                 }).catch(error => {
