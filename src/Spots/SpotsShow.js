@@ -13,7 +13,7 @@ import {
     decreaseNumOfActiveRequests,
     updateRoute,
     addRoute
-} from '../actions';
+}                         from '../actions';
 import {connect}          from 'react-redux';
 import Content            from '../Content/Content'
 import Header             from '../Header/Header';
@@ -29,6 +29,7 @@ import Authorization      from '../Authorization';
 import {ToastContainer}   from 'react-toastr';
 import StickyBar          from '../StickyBar/StickyBar';
 import {RESULT_FILTERS}   from '../Constants/ResultFilters'
+import {CARDS_PER_PAGE}   from '../Constants/RouteCardTable';
 
 const NumOfDays = 7;
 
@@ -53,7 +54,7 @@ class SpotsShow extends Authorization {
             name: '',
             page: 1,
             numOfPages: 1,
-            perPage: 3,
+            perPage: CARDS_PER_PAGE,
             spot: {},
             infoData: [],
             routesModalVisible: false,
