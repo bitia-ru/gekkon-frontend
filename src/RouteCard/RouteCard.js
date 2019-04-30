@@ -20,7 +20,7 @@ export default class RouteCard extends Component {
                         <div className="route-card__image">
                             <div className="route-card__image-inner">
                                 {this.props.route.photo ?
-                                    <img src={this.props.route.photo.url} alt={this.props.route.name}/> : ''}
+                                    <img src={this.props.route.photo.thumb_url} alt={this.props.route.name}/> : ''}
                                 {(this.props.ascent && this.props.ascent.result !== 'unsuccessful') ?
                                     <div className="route-card__track-status">
                                         <RouteStatus ascent={this.props.ascent}/>
