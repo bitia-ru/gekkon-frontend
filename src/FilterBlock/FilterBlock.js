@@ -36,13 +36,13 @@ export default class FilterBlock extends Component {
                 this.props.changeCategoryFilter(CATEGORIES[0], CATEGORIES[CATEGORIES.length - 1]);
                 break;
             case 1:
-                this.props.changeCategoryFilter(CATEGORIES[0], CATEGORIES[31]);
+                this.props.changeCategoryFilter(CATEGORIES[0], '6a+');
                 break;
             case 2:
-                this.props.changeCategoryFilter(CATEGORIES[0], CATEGORIES[35]);
+                this.props.changeCategoryFilter(CATEGORIES[0], '6c+');
                 break;
             case 3:
-                this.props.changeCategoryFilter(CATEGORIES[36], CATEGORIES[CATEGORIES.length - 1]);
+                this.props.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
                 break;
         }
     };
