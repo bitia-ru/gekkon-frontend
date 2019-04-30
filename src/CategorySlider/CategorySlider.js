@@ -14,6 +14,7 @@ export default class CategorySlider extends Component {
     }
 
     componentDidMount() {
+        this.wrapperRef.focus();
         window.addEventListener("keydown", this.onKeyDown);
     }
 
@@ -35,6 +36,9 @@ export default class CategorySlider extends Component {
             if (index > 0) {
                 this.props.changeCategory(CATEGORIES[index - 1]);
             }
+        }
+        if (event.key === 'Enter') {
+            this.props.hide();
         }
     };
 
@@ -72,6 +76,10 @@ export default class CategorySlider extends Component {
 
     render() {
         return <div className="category__slider category__slider_active"
+                    style={{outline: 'none'}}
+                    ref={(ref) => this.wrapperRef = ref}
+                    onBlur={() => this.props.hide()}
+                    tabIndex={0}
                     onMouseUp={this.stopEditing}
                     onMouseLeave={this.stopEditing}
                     onMouseMove={this.change}>
@@ -96,5 +104,6 @@ export default class CategorySlider extends Component {
 
 CategorySlider.propTypes = {
     category: PropTypes.string.isRequired,
-    changeCategory: PropTypes.func.isRequired
+    changeCategory: PropTypes.func.isRequired,
+    hide: PropTypes.func.isRequired
 };

@@ -35,6 +35,7 @@ export default class RouteDataEditableTable extends Component {
                                 style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
                         </div>
                         {this.state.showSlider ? <CategorySlider category={this.props.route.category}
+                                                                 hide={() => this.setState({showSlider: false})}
                                                                  changeCategory={(category) => this.props.onRouteParamChange(category, 'category')}/> : ''}
                     </div>
                 </div>
