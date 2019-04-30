@@ -75,6 +75,7 @@ class SpotsShow extends Authorization {
             result: R.map((e) => e.value, RESULT_FILTERS)
         });
         this.loadingRouteId = this.props.match.params.route_id;
+        this.loadEditMode = false;
     }
 
     componentDidMount() {
@@ -84,8 +85,27 @@ class SpotsShow extends Authorization {
                 if (data.length > 3 && data[3] === 'sectors') {
                     let sectorId = parseInt(data[4], 10);
                     if (data.length > 5 && data[5] === 'routes') {
-                        this.loadingRouteId = data[6];
-                        this.setState({sectorId: sectorId});
+                        if (data[6] === 'new') {
+                            if (this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator')) {
+                                this.addRoute();
+                            } else {
+                                window.location = '/';
+                            }
+                        } else {
+                            this.loadingRouteId = data[6];
+                            if (data.length > 7 && data[7] === 'edit') {
+                                if (this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator')) {
+                                    this.loadUsers();
+                                    this.loadEditMode = true;
+                                    this.setState({sectorId: sectorId});
+                                } else {
+                                    window.locatioin = '/'
+                                }
+                            } else {
+                                this.loadEditMode = false;
+                                this.setState({sectorId: sectorId});
+                            }
+                        }
                     } else {
                         this.setState({sectorId: sectorId, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
                     }
@@ -95,8 +115,27 @@ class SpotsShow extends Authorization {
                     this.reloadUserAscents();
                 } else {
                     if (data.length > 3 && data[3] === 'routes') {
-                        this.loadingRouteId = data[4];
-                        this.setState({sectorId: 0});
+                        if (data[4] === 'new') {
+                            if (this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator')) {
+                                this.addRoute();
+                            } else {
+                                window.location = '/';
+                            }
+                        } else {
+                            this.loadingRouteId = data[4];
+                            if (data.length > 5 && data[5] === 'edit') {
+                                if (this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator')) {
+                                    this.loadUsers();
+                                    this.loadEditMode = true;
+                                    this.setState({sectorId: 0});
+                                } else {
+                                    window.location = '/';
+                                }
+                            } else {
+                                this.loadEditMode = false;
+                                this.setState({sectorId: 0});
+                            }
+                        }
                     } else {
                         this.setState({sectorId: 0, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
                     }
@@ -111,7 +150,21 @@ class SpotsShow extends Authorization {
         if (Cookies.get('user_session_token') !== undefined) {
             let token = Cookies.get('user_session_token');
             this.props.saveToken(token);
-            this.signIn(token);
+            this.signIn(token, (user) => {
+                if (user.role === 'admin' || user.role === 'creator') {
+                    let data = location.pathname.split('/');
+                    if (R.find((e) => e === 'new', data)) {
+                        this.addRoute();
+                    }
+                    if (R.find((e) => e === 'edit', data)) {
+                        this.loadUsers();
+                        this.loadEditMode = true;
+                        this.loadingRouteId = data[3] === 'routes' ? data[4] : data[6];
+                    }
+                } else {
+                    window.location = '/';
+                }
+            });
         }
         if (this.state.sectorId === 0) {
             this.reloadSpot();
@@ -322,7 +375,7 @@ class SpotsShow extends Authorization {
                         this.reloadComments(routeId);
                         this.reloadLikes(routeId);
                         this.reloadAscents(routeId);
-                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: false})
+                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: this.loadEditMode})
                     }
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
@@ -341,7 +394,7 @@ class SpotsShow extends Authorization {
                         this.reloadComments(routeId);
                         this.reloadLikes(routeId);
                         this.reloadAscents(routeId);
-                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: false})
+                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: this.loadEditMode})
                     }
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
@@ -654,6 +707,7 @@ class SpotsShow extends Authorization {
         })
             .then(response => {
                 this.props.decreaseNumOfActiveRequests();
+                this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${response.data.payload.id}`);
                 this.setState({editRouteIsWaiting: false, editMode: false, currentShown: R.clone(response.data.payload)});
                 this.props.addRoute(response.data.payload);
                 this.setState({
@@ -687,6 +741,11 @@ class SpotsShow extends Authorization {
         })
             .then(response => {
                 this.props.decreaseNumOfActiveRequests();
+                if (this.state.sectorId === 0) {
+                    this.props.history.push(`/spots/${this.state.spotId}/routes/${this.state.currentShown.id}`);
+                } else {
+                    this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${this.state.currentShown.id}`);
+                }
                 this.setState({editRouteIsWaiting: false, editMode: false, currentShown: response.data.payload});
                 this.props.updateRoute(this.state.currentShown.id, response.data.payload);
             }).catch(error => {
@@ -696,13 +755,46 @@ class SpotsShow extends Authorization {
         });
     };
 
+    openEdit = () => {
+        this.loadUsers();
+        this.setState({editMode: true});
+        if (this.state.sectorId === 0) {
+            this.props.history.push(`/spots/${this.state.spotId}/routes/${this.state.currentShown.id}/edit`);
+        } else {
+            this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${this.state.currentShown.id}/edit`);
+        }
+    };
+
+    cancelEdit = () => {
+        if (this.state.currentShown.id === null) {
+            this.setState({routesModalVisible: false});
+            if (this.state.sectorId === 0) {
+                this.props.history.push(`/spots/${this.state.spotId}`);
+            } else {
+                this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
+            }
+        } else {
+            this.setState({editMode: false});
+            if (this.state.sectorId === 0) {
+                this.props.history.push(`/spots/${this.state.spotId}/routes/${this.state.currentShown.id}`);
+            } else {
+                this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${this.state.currentShown.id}`);
+            }
+        }
+    };
+
+    goToNew = () => {
+        this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/new`);
+        this.addRoute();
+    };
+
     content = () => {
         return <React.Fragment>
             {this.state.routesModalVisible ?
                 (this.state.editMode ?
                     <RoutesEditModal onClose={this.closeRoutesModal}
                                      sector={this.state.sectorId === 0 ? R.find((sector) => sector.id === this.state.currentShown.sector_id, this.props.sectors) : this.state.sector}
-                                     cancel={this.state.currentShown.id === null ? () => this.setState({routesModalVisible: false}) : () => this.setState({editMode: false})}
+                                     cancel={this.cancelEdit}
                                      users={this.state.users}
                                      user={this.props.user}
                                      numOfActiveRequests={this.props.numOfActiveRequests}
@@ -710,7 +802,7 @@ class SpotsShow extends Authorization {
                                      updateRoute={this.updateRoute}
                                      isWaiting={this.state.editRouteIsWaiting}
                                      route={this.state.currentShown}/> :
-                    <RoutesShowModal onClose={this.closeRoutesModal} openEdit={() => {this.loadUsers(); this.setState({editMode: true})}}
+                    <RoutesShowModal onClose={this.closeRoutesModal} openEdit={this.openEdit}
                                      removeRoute={this.removeRoute} ctrlPressed={this.state.ctrlPressed}
                                      goToProfile={this.goToProfile} comments={this.state.comments}
                                      removeComment={this.removeComment} saveComment={this.saveComment}
@@ -773,7 +865,7 @@ class SpotsShow extends Authorization {
                      ascents={this.state.ascents}
                      user={this.props.user}
                      ctrlPressed={this.state.ctrlPressed}
-                     addRoute={this.addRoute}
+                     addRoute={this.goToNew}
                      sectorId={this.state.sectorId}
                      page={this.state.page}
                      numOfPages={this.state.numOfPages}
