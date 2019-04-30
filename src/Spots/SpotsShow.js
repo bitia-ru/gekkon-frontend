@@ -656,6 +656,18 @@ class SpotsShow extends Authorization {
                 this.props.decreaseNumOfActiveRequests();
                 this.setState({editRouteIsWaiting: false, editMode: false, currentShown: R.clone(response.data.payload)});
                 this.props.addRoute(response.data.payload);
+                this.setState({
+                    comments: [],
+                    numOfComments: 0,
+                    ascents: [],
+                    ascent: null,
+                    numOfComments: 0,
+                    numOfLikes: 0,
+                    isLiked: false,
+                    likeId: 0,
+                    numOfRedpoints: 0,
+                    numOfFlash: 0,
+                })
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
