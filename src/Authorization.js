@@ -51,7 +51,7 @@ export default class Authorization extends React.Component {
                 this.props.decreaseNumOfActiveRequests();
                 this.props.saveUser(response.data.payload);
                 if (afterSignIn) {
-                    afterSignIn();
+                    afterSignIn(response.data.payload);
                 }
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
