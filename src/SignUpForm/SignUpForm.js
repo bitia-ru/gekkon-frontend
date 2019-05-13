@@ -7,6 +7,7 @@ import CloseButton               from '../CloseButton/CloseButton';
 import PropTypes                 from 'prop-types';
 import * as R                    from 'ramda';
 import {PASSWORD_MIN_LENGTH}     from '../Constants/User';
+import {reEmail}                 from '../Constants/Constraints';
 import './SignUpForm.css';
 
 export default class SignUpForm extends Component {
@@ -64,8 +65,7 @@ export default class SignUpForm extends Component {
     check = (field, value) => {
         switch (field) {
             case 'email':
-                let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
-                if (value === '' || !R.test(re_email, value)) {
+                if (value === '' || !R.test(reEmail, value)) {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
                     return false;
                 }

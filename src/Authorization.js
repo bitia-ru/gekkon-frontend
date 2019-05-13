@@ -7,6 +7,7 @@ import ApiUrl                    from "./ApiUrl";
 import bcrypt                    from "bcryptjs";
 import * as R                    from "ramda";
 import {CLIENT_ID, REDIRECT_URI} from "./Constants/Vk";
+import {reEmail}                 from './Constants/Constraints';
 
 export default class Authorization extends React.Component {
     constructor(props) {
@@ -148,9 +149,8 @@ export default class Authorization extends React.Component {
         }
         if (type === 'email') {
             this.setState({logInIsWaiting: true});
-            let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
             let params;
-            if (R.test(re_email, data)) {
+            if (R.test(reEmail, data)) {
                 params = {user_session: {user: {email: data}}, rememberMe: rememberMe};
             } else {
                 params = {user_session: {user: {login: data}}, rememberMe: rememberMe};
@@ -202,9 +202,8 @@ export default class Authorization extends React.Component {
             let url = new URL(window.location.href);
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
             let hash = bcrypt.hashSync(password, salt);
-            let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
             let params;
-            if (R.test(re_email, data)) {
+            if (R.test(reEmail, data)) {
                 params = {
                     user: {password_digest: hash, email: data},
                     token: url.searchParams.get("reset_password_code")
@@ -325,9 +324,8 @@ export default class Authorization extends React.Component {
             console.log(data);
         }
         if (type === 'email') {
-            let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
             let params;
-            if (R.test(re_email, data)) {
+            if (R.test(reEmail, data)) {
                 params = {user: {email: data}};
             } else {
                 params = {user: {login: data}};
