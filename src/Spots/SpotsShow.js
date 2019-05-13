@@ -99,7 +99,7 @@ class SpotsShow extends Authorization {
                                     this.loadEditMode = true;
                                     this.setState({sectorId: sectorId});
                                 } else {
-                                    window.locatioin = '/'
+                                    window.location = '/'
                                 }
                             } else {
                                 this.loadEditMode = false;
@@ -151,8 +151,8 @@ class SpotsShow extends Authorization {
             let token = Cookies.get('user_session_token');
             this.props.saveToken(token);
             this.signIn(token, (user) => {
+                let data = location.pathname.split('/');
                 if (user.role === 'admin' || user.role === 'creator') {
-                    let data = location.pathname.split('/');
                     if (R.find((e) => e === 'new', data)) {
                         this.addRoute();
                     }
@@ -162,7 +162,9 @@ class SpotsShow extends Authorization {
                         this.loadingRouteId = data[3] === 'routes' ? data[4] : data[6];
                     }
                 } else {
-                    window.location = '/';
+                    if (R.find((e) => (e === 'new' || e === 'edit'), data)) {
+                        window.location = '/';
+                    }
                 }
             });
         }
