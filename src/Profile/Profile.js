@@ -9,6 +9,7 @@ import bcrypt                from 'bcryptjs';
 import {PASSWORD_MIN_LENGTH} from '../Constants/User';
 import StickyBar             from '../StickyBar/StickyBar';
 import * as R                from 'ramda';
+import {reEmail}             from '../Constants/Constraints';
 import './Profile.css';
 
 export default class Profile extends Component {
@@ -51,7 +52,6 @@ export default class Profile extends Component {
             password: '',
             email: user.email ? user.email : '',
             avatar: user.avatar ? user.avatar.url : null,
-            password: '',
             repeatPassword: '',
             avatarFile: null,
             fieldsOld: {
@@ -122,7 +122,7 @@ export default class Profile extends Component {
         this.check('repeatPassword', event.target.value);
     };
 
-    onFileRead = (event) => {
+    onFileRead = () => {
         this.setState({avatar: this.fileReader.result});
     };
 
@@ -140,8 +140,7 @@ export default class Profile extends Component {
     check = (field, value) => {
         switch (field) {
             case 'email':
-                let re_email = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/;
-                if (value !== '' && !R.test(re_email, value)) {
+                if (value !== '' && !R.test(reEmail, value)) {
                     this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
                     return false;
                 }
