@@ -61,6 +61,19 @@ export default class CategorySlider extends Component {
         }
     };
 
+    onMouseUp = (event) => {
+        let sliderBarRect = this.sliderBarRef.getBoundingClientRect();
+        let newPosition = (1 - (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height) * 100;
+        if (newPosition > 100) {
+            newPosition = 100;
+        }
+        if (newPosition < 0) {
+            newPosition = 0;
+        }
+        this.props.changeCategory(this.categoryFromPosition(newPosition));
+        this.stopEditing();
+    };
+
     stopEditing = () => {
         this.setState({editing: false})
     };
@@ -80,7 +93,7 @@ export default class CategorySlider extends Component {
                     ref={(ref) => this.wrapperRef = ref}
                     onBlur={() => this.props.hide()}
                     tabIndex={0}
-                    onMouseUp={this.stopEditing}
+                    onMouseUp={this.onMouseUp}
                     onMouseLeave={this.stopEditing}
                     onMouseMove={this.change}>
             <div className="category__slider-ruler">
