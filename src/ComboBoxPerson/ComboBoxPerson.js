@@ -13,7 +13,8 @@ export default class ComboBoxPerson extends Component {
             droppedDown: false,
             users: null
         };
-        this.lastSearchText = ''
+        this.lastSearchText = '';
+        this.mouseOver = false;
     }
 
     selectItem = (user) => {
@@ -47,9 +48,19 @@ export default class ComboBoxPerson extends Component {
         this.lastSearchText = value;
     };
 
+    onBlur = () => {
+        if (!this.mouseOver) {
+            this.setState({droppedDown: false})
+        }
+    };
+
     render() {
         let name = this.props.selectedUser ? GetUserName(this.props.selectedUser) : 'Неизвестный накрутчик';
-        return <div className="combo-box__container">
+        return <div className="combo-box__container"
+                    onBlur={this.onBlur}
+                    tabIndex={1}
+                    onMouseLeave={() => this.mouseOver = false}
+                    onMouseOver={() => this.mouseOver = true}>
             <button
                 className="combo-box__select combo-box__select-transparent combo-box__select_small modal__link modal__link_edit"
                 onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
