@@ -8,6 +8,7 @@ import PropTypes                    from 'prop-types';
 import * as R                       from 'ramda';
 import {CATEGORIES}                 from "../Constants/Categories";
 import StickyBar                    from '../StickyBar/StickyBar';
+import RoutePhotoCropper            from '../RoutePhotoCropper/RoutePhotoCropper';
 import './RoutesEditModal.css';
 
 export default class RoutesEditModal extends Component {
@@ -21,7 +22,12 @@ export default class RoutesEditModal extends Component {
             currentPointers: [],
             currentPointersOld: [],
             route: R.clone(this.props.route),
-            fieldsOld: {}
+            fieldsOld: {},
+            showCropper: false,
+            crop: null,
+            rotate: null,
+            loadedPhoto: null,
+            loadedPhotoFile: null
         };
         this.mouseOver = false;
     }
@@ -72,6 +78,15 @@ export default class RoutesEditModal extends Component {
         if (this.state.route.photo !== (this.props.route.photo ? this.props.route.photo.url : null)) {
             formData.append('route[photo]', this.state.route.photoFile);
         }
+        if (this.state.crop !== null) {
+            formData.append('data[photo][cropping][x]', Math.round(this.state.crop.x));
+            formData.append('data[photo][cropping][y]', Math.round(this.state.crop.y));
+            formData.append('data[photo][cropping][width]', Math.round(this.state.crop.width));
+            formData.append('data[photo][cropping][height]', Math.round(this.state.crop.height));
+        }
+        if (this.state.rotate !== null) {
+            formData.append('data[photo][rotation]', this.state.rotate);
+        }
         if (this.props.route.id !== null) {
             this.props.updateRoute(formData);
         } else {
@@ -115,14 +130,27 @@ export default class RoutesEditModal extends Component {
     };
 
     onFileRead = (event) => {
-        this.onRouteParamChange(this.fileReader.result, 'photo');
+        this.setState({showCropper: true, loadedPhoto: this.fileReader.result});
     };
 
     onFileChosen = (file) => {
         this.fileReader = new FileReader();
         this.fileReader.onloadend = this.onFileRead;
         this.fileReader.readAsDataURL(file);
-        this.onRouteParamChange(file, 'photoFile');
+        this.setState({loadedPhotoFile: file});
+    };
+
+    saveCropped = (src, crop, rotate, image) => {
+        let route = this.state.route;
+        route['photo'] = src;
+        route['photoFile'] = this.state.loadedPhotoFile;
+        if (crop.width === 0 || crop.height === 0 || (Math.abs(image.width - crop.width) < 1 && Math.abs(image.height - crop.height) < 1)) {
+            this.setState({route: route, showCropper: false, crop: null, rotate: (rotate === 0 ? null : rotate)});
+        } else {
+            const scaleX = image.naturalWidth / image.width;
+            const scaleY = image.naturalHeight / image.height;
+            this.setState({route: route, showCropper: false, crop: {x: crop.x * scaleX, y: crop.y * scaleY, width: crop.width * scaleX, height: crop.height * scaleY}, rotate: (rotate === 0 ? null : rotate)});
+        }
     };
 
     content = () => {
@@ -212,7 +240,12 @@ export default class RoutesEditModal extends Component {
     render() {
         return <React.Fragment>
             <div className="modal-overlay">
-                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                {this.state.showCropper ?
+                    <RoutePhotoCropper src={this.state.loadedPhoto}
+                                       close={() => this.setState({showCropper: false})}
+                                       save={this.saveCropped}/> :
+                    <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                }
             </div>
         </React.Fragment>;
     }
