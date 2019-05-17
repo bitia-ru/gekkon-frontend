@@ -154,7 +154,7 @@ export default class SignUpForm extends Component {
                        errorText={this.errorText('repeatPassword')}
                        onEnter={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}
                        value={this.state.repeatPassword}/>
-            <Button size="medium" style="normal" title="Зарегистрироваться" fullLength={true} submit={true}
+            <Button size="medium" style="normal" title="Зарегистрироваться напрямую" fullLength={true} submit={true}
                     isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password, this.state.repeatPassword)}/>
         </form>;
@@ -174,7 +174,7 @@ export default class SignUpForm extends Component {
                                 activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
                                 titleList={["Телефон", "Email"]}/>
                         <div className="modal-block__or">
-                            <div className="modal-block__or-inner">или</div>
+                            <div className="modal-block__or-inner">или через</div>
                         </div>
                         <div className="modal-block__social">
                             <ul className="social-links">

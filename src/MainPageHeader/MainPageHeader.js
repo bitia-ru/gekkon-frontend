@@ -17,12 +17,16 @@ export default class MainPageHeader extends Component {
             <div className="main-page-header__content">
                 <div className="main-page-header__text">
                     <h1 className="main-page-header__title">
-                        Короткий текст с&nbsp;призывом к действию
+                        Не можешь вспомнить свою первую 6С?
                     </h1>
-                    <p className="main-page-header__descr">В данном случае призыв к регистрации</p>
+                    <p className="main-page-header__descr">Не пытайся запоминать боль, записывай</p>
                     <div className="main-page-header__button-wrapper">
                         {this.props.user === null ? <React.Fragment>
-                            <Button size="big" style="normal" title="Регистрация" onClick={this.props.signUp}></Button>
+                            <Button size="big"
+                                    style="normal"
+                                    title="Зарегистрироваться"
+                                    onClick={this.props.signUp}>
+                            </Button>
                             <Button size="big" style="transparent" title="Войти" onClick={this.props.logIn}></Button>
                         </React.Fragment> : ''}
                     </div>
