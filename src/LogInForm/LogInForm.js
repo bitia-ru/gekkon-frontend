@@ -167,13 +167,13 @@ export default class LogInForm extends Component {
                             <CloseButton onClick={this.closeForm}/>
                         </div>
                         <h3 className="modal-block__title">
-                            Войти
+                            Вход в систему
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
                                 activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
                                 titleList={["Телефон", "Email / логин"]}/>
                         <div className="modal-block__or">
-                            <div className="modal-block__or-inner">или</div>
+                            <div className="modal-block__or-inner">или через</div>
                         </div>
                         <div className="modal-block__social">
                             <ul className="social-links">

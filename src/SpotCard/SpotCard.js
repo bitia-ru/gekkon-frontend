@@ -14,7 +14,7 @@ export default class SpotCard extends React.Component {
                     <h1 className="spot-card__title">{this.props.spot.name}</h1>
                     <div className="spot-card__content">
                         <ul className="spot-card__list">
-                            <li className="spot-card__list-item">
+                            { this.props.spot.info1 && <li className="spot-card__list-item">
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
@@ -22,8 +22,8 @@ export default class SpotCard extends React.Component {
 										</svg>
 									</span>
                                 {this.props.spot.info1}
-                            </li>
-                            <li className="spot-card__list-item">
+                            </li> }
+                            { this.props.spot.info2 && <li className="spot-card__list-item">
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
@@ -31,8 +31,8 @@ export default class SpotCard extends React.Component {
 										</svg>
 									</span>
                                 {this.props.spot.info2}
-                            </li>
-                            <li className="spot-card__list-item">
+                            </li> }
+                            { this.props.spot.info3 && <li className="spot-card__list-item">
 									<span className="spot-card__list-icon">
 										<svg>
 											<use
@@ -40,7 +40,16 @@ export default class SpotCard extends React.Component {
 										</svg>
 									</span>
                                 {this.props.spot.info3}
-                            </li>
+                            </li> }
+                            { this.props.spot.info4 && <li className="spot-card__list-item">
+									<span className="spot-card__list-icon">
+										<svg>
+											<use
+                                                xlinkHref="/public/img/spot-card-sprite/spot-card-sprite.svg#icon-hooks"></use>
+										</svg>
+									</span>
+                                {this.props.spot.info4}
+                            </li> }
                             <li className="spot-card__list-item">
 									<span className="spot-card__list-icon">
 										<svg>

@@ -133,7 +133,7 @@ export default class ResetPasswordForm extends Component {
                        errorText={this.errorText('repeatPassword')}
                        onEnter={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}
                        value={this.state.repeatPassword}/>
-            <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+            <Button size="medium" style="normal" title="Сохранить" fullLength={true} submit={true}
                     isWaiting={this.props.isWaiting}
                     onClick={() => this.checkAndSubmit('email', this.props.email, this.state.password, this.state.repeatPassword)}/>
         </form>;
@@ -147,7 +147,7 @@ export default class ResetPasswordForm extends Component {
                             <CloseButton onClick={this.closeForm}/>
                         </div>
                         <h3 className="modal-block__title">
-                            Восстановить пароль
+                            Установка нового пароля
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
                                 activeList={[false, true]} activeTab={2} test={this.firstTabContent()}

@@ -5,10 +5,8 @@ import SocialLinkButton   from '../SocialLinkButton/SocialLinkButton';
 import {
     VK_LINK,
     FACEBOOK_LINK,
-    INSTAGRAM_LINK,
     TWITTER_LINK,
-    YOUTUBE_LINK
-}                         from '../Constants/SocialLinks';
+} from '../Constants/SocialLinks';
 import './Footer.css';
 
 export default class Footer extends Component {
@@ -45,9 +43,6 @@ export default class Footer extends Component {
                         </h3>
                         <ul className="footer__list">
                             <li className="footer__list-item">
-                                <Link to="/users" className="footer__list-link">Скалолазы</Link>
-                            </li>
-                            <li className="footer__list-item">
                                 <Link to="/" className="footer__list-link">Скалодромы</Link>
                             </li>
                             <li className="footer__list-item">
@@ -64,7 +59,7 @@ export default class Footer extends Component {
                                 <Link to="/about" className="footer__list-link">О нас</Link>
                             </li>
                             <li className="footer__list-item">
-                                <Link to="/howtohelp" className="footer__list-link">Чем нам помочь</Link>
+                                <Link to="/howtohelp" className="footer__list-link">Как нам помочь</Link>
                             </li>
                         </ul>
                     </div>
@@ -84,20 +79,18 @@ export default class Footer extends Component {
                         Соцсети
                     </h3>
                     <ul className="social-links">
-                        <li><SocialLinkButton onClick={() => {if (VK_LINK !== '') {window.location = VK_LINK}}}
+                        <li><SocialLinkButton onClick={() => {window.location = VK_LINK}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"/>
                         </li>
-                        <li><SocialLinkButton onClick={() => {if (FACEBOOK_LINK !== '') {window.location = FACEBOOK_LINK}}}
+                        <li><SocialLinkButton onClick={() => {window.location = FACEBOOK_LINK}}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>
-                        <li><SocialLinkButton onClick={() => {if (TWITTER_LINK !== '') {window.location = TWITTER_LINK}}}
-                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"/>
-                        </li>
-                        <li><SocialLinkButton onClick={() => {if (INSTAGRAM_LINK !== '') {window.location = INSTAGRAM_LINK}}}
-                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"/>
-                        </li>
-                        <li><SocialLinkButton onClick={() => {if (YOUTUBE_LINK !== '') {window.location = YOUTUBE_LINK}}}
-                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"/>
+                        <li>
+                            <SocialLinkButton onClick={() => {
+                                window.location = TWITTER_LINK;
+                            }}
+                                              xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter">
+                            </SocialLinkButton>
                         </li>
                     </ul>
                 </div>
