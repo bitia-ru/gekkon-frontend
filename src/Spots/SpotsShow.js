@@ -4,6 +4,10 @@ import Axios                    from 'axios';
 import Qs                       from 'qs';
 import ApiUrl                   from '../ApiUrl';
 import {
+    setSelectedPage,
+    setDefaultSelectedPages,
+    setSelectedFilter,
+    setDefaultSelectedFilters,
     loadRoutes,
     loadSectors,
     saveUser,
@@ -12,7 +16,8 @@ import {
     increaseNumOfActiveRequests,
     decreaseNumOfActiveRequests,
     updateRoute,
-    addRoute
+    addRoute,
+    loadFromLocalStorageSelectedFilters
 }                               from '../actions';
 import {connect}                from 'react-redux';
 import Content                  from '../Content/Content'
@@ -30,7 +35,8 @@ import {ToastContainer}         from 'react-toastr';
 import StickyBar                from '../StickyBar/StickyBar';
 import {RESULT_FILTERS}         from '../Constants/ResultFilters'
 import {CARDS_PER_PAGE}         from '../Constants/RouteCardTable';
-import {ROUTE_PERSONAL_DEFAULT} from '../Constants/Route';
+import {DEFAULT_FILTERS}        from '../Constants/DefaultFilters';
+import {CATEGORIES}             from '../Constants/Categories';
 
 const NumOfDays = 7;
 
@@ -49,11 +55,7 @@ class SpotsShow extends Authorization {
             spotId: parseInt(this.props.match.params.id, 10),
             sectorId: this.props.match.params.sector_id ? parseInt(this.props.match.params.sector_id, 10) : 0,
             sector: {},
-            categoryFrom: '1a',
-            categoryTo: '9c+',
-            period: 0,
             name: '',
-            page: 1,
             numOfPages: 1,
             perPage: CARDS_PER_PAGE,
             spot: {},
@@ -72,10 +74,7 @@ class SpotsShow extends Authorization {
             numOfRedpoints: 0,
             numOfFlash: 0,
             users: [],
-            editRouteIsWaiting: false,
-            result: R.map((e) => e.value, RESULT_FILTERS),
-            personal: ROUTE_PERSONAL_DEFAULT,
-            filters: []
+            editRouteIsWaiting: false
         });
         this.loadingRouteId = this.props.match.params.route_id;
         this.loadEditMode = false;
@@ -117,8 +116,7 @@ class SpotsShow extends Authorization {
                         });
                     }
                     this.reloadSector(sectorId);
-                    this.reloadSectors();
-                    this.reloadRoutes({sectorId: sectorId});
+                    this.reloadSectors(sectorId);
                     this.reloadUserAscents();
                 } else {
                     if (data.length > 3 && data[3] === 'routes') {
@@ -151,8 +149,7 @@ class SpotsShow extends Authorization {
                         });
                     }
                     this.reloadSpot();
-                    this.reloadSectors();
-                    this.reloadRoutes({sectorId: 0});
+                    this.reloadSectors(0);
                     this.reloadUserAscents();
                 }
             }
@@ -178,39 +175,17 @@ class SpotsShow extends Authorization {
                         window.location = '/';
                     }
                 }
-                let resultFilters = [];
-                resultFilters = R.map((e) => R.merge(e, {
-                    'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
-                    'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
-                }), RESULT_FILTERS);
-                let personal = {
-                    clickable: true,
-                    id: 'personal',
-                    selected: this.state.personal,
-                    text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
-                    value: 'personal'
-                };
-                this.setState({filters: R.append(personal, resultFilters)});
             });
         } else {
             this.reloadUserAscents();
-            let resultFilters = [];
-            let personal = {
-                clickable: true,
-                id: 'personal',
-                selected: this.state.personal,
-                text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
-                value: 'personal'
-            };
-            this.setState({filters: R.append(personal, resultFilters)});
         }
         if (this.state.sectorId === 0) {
             this.reloadSpot();
         } else {
             this.reloadSector(this.state.sectorId);
         }
-        this.reloadSectors();
-        this.reloadRoutes();
+        this.reloadSectors(this.state.sectorId);
+        this.props.loadFromLocalStorageSelectedFilters();
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
     }
@@ -309,7 +284,7 @@ class SpotsShow extends Authorization {
             this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
         }
         this.reloadUserAscents();
-        this.reloadRoutes({}, this.state.page);
+        this.reloadRoutes({}, null);
     };
 
     afterLogOut = () => {
@@ -392,12 +367,21 @@ class SpotsShow extends Authorization {
         });
     };
 
-    reloadSectors = () => {
+    reloadSectors = (currentSectorId) => {
         this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/sectors`)
             .then(response => {
                 this.props.decreaseNumOfActiveRequests();
                 this.props.loadSectors(response.data.payload);
+                if (!this.props.selectedFilters || this.props.selectedFilters[this.state.spotId] === undefined) {
+                    this.props.setDefaultSelectedFilters(this.state.spotId, R.map((sector) => sector.id, response.data.payload));
+                }
+                if (!this.props.selectedPages || this.props.selectedPages[this.state.spotId] === undefined) {
+                    this.props.setDefaultSelectedPages(this.state.spotId, R.map((sector) => sector.id, response.data.payload));
+                    this.reloadRoutes(R.merge({sectorId: currentSectorId}, (this.props.selectedFilters[this.state.spotId] === undefined ? DEFAULT_FILTERS : {})), 1);
+                } else {
+                    this.reloadRoutes({sectorId: currentSectorId}, null);
+                }
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
@@ -406,13 +390,13 @@ class SpotsShow extends Authorization {
 
     reloadRoutes = (filters = {}, page = 1) => {
         let currentSectorId = parseInt((filters.sectorId === null || filters.sectorId === undefined) ? this.state.sectorId : filters.sectorId, 10);
-        let currentCategoryFrom = (filters.categoryFrom === null || filters.categoryFrom === undefined) ? this.state.categoryFrom : filters.categoryFrom;
-        let currentCategoryTo = (filters.categoryTo === null || filters.categoryTo === undefined) ? this.state.categoryTo : filters.categoryTo;
+        let currentCategoryFrom = (filters.categoryFrom === null || filters.categoryFrom === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].categoryFrom : filters.categoryFrom;
+        let currentCategoryTo = (filters.categoryTo === null || filters.categoryTo === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].categoryTo : filters.categoryTo;
         let currentName = (filters.name === null || filters.name === undefined) ? this.state.name : filters.name;
-        let currentPeriod = (filters.period === null || filters.period === undefined) ? this.state.period : filters.period;
-        let currentResult = (filters.result === null || filters.result === undefined) ? this.state.result : filters.result;
-        let currentPersonal = (filters.personal === null || filters.personal === undefined) ? this.state.personal : filters.personal;
-        let currentPage = (page === null || page === undefined) ? this.state.page : page;
+        let currentPeriod = (filters.period === null || filters.period === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].period : filters.period;
+        let currentResult = (filters.result === null || filters.result === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].result : filters.result;
+        let currentPersonal = (filters.personal === null || filters.personal === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].personal : filters.personal;
+        let currentPage = (page === null || page === undefined) ? this.props.selectedPages[this.state.spotId][currentSectorId] : page;
         let params = {filters: {category: [[currentCategoryFrom], [currentCategoryTo]], personal: currentPersonal}};
         if (this.props.user) {
             params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
@@ -490,37 +474,42 @@ class SpotsShow extends Authorization {
         if (id !== 0) {
             this.reloadSector(id);
             this.props.history.push(`/spots/${this.state.spotId}/sectors/${id}`);
-            this.setState({sectorId: id, page: 1});
+            this.setState({sectorId: id});
         } else {
             this.reloadSpot();
             this.props.history.push(`/spots/${this.state.spotId}`);
-            this.setState({sectorId: id, page: 1});
+            this.setState({sectorId: id});
         }
-        this.reloadRoutes({sectorId: id});
+        this.reloadRoutes({sectorId: id}, null);
     };
 
     changeCategoryFilter = (categoryFrom, categoryTo) => {
         if (categoryFrom !== null) {
-            this.setState({categoryFrom: categoryFrom, page: 1})
+            this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'categoryFrom', categoryFrom);
+            this.props.setSelectedPage(this.state.spotId, this.state.sectorId, 1);
         }
         if (categoryTo !== null) {
-            this.setState({categoryTo: categoryTo, page: 1})
+            this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'categoryTo', categoryTo);
+            this.props.setSelectedPage(this.state.spotId, this.state.sectorId, 1);
         }
         this.reloadRoutes({categoryFrom: categoryFrom, categoryTo: categoryTo});
     };
 
     changePeriodFilter = (period) => {
-        this.setState({period: period, page: 1});
+        this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'period', period);
+        this.props.setSelectedPage(this.state.spotId, this.state.sectorId, 1);
         this.reloadRoutes({period, period});
     };
 
     changeResultFilter = (result) => {
-        this.setState({result: result, page: 1});
+        this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'result', result);
+        this.props.setSelectedPage(this.state.spotId, this.state.sectorId, 1);
         this.reloadRoutes({result: result});
     };
 
     changePersonalFilter = (personal) => {
-        this.setState({personal: personal, page: 1});
+        this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'personal', personal);
+        this.props.setSelectedPage(this.state.spotId, this.state.sectorId, 1);
         this.reloadRoutes({personal: personal});
     };
 
@@ -530,12 +519,12 @@ class SpotsShow extends Authorization {
     };
 
     changePage = (page) => {
-        this.setState({page: page});
+        this.props.setSelectedPage(this.state.spotId, this.state.sectorId, page);
         this.reloadRoutes({}, page);
     };
 
     onFilterChange = (id) => {
-        let filters = R.clone(this.state.filters);
+        let filters = R.clone(this.props.selectedFilters[this.state.spotId][this.state.sectorId].filters);
         let index = R.findIndex((e) => e.id === id, filters);
         if (filters[index].selected) {
             filters[index].text = R.slice(0, -2, filters[index].text);
@@ -543,7 +532,6 @@ class SpotsShow extends Authorization {
             filters[index].text = `${filters[index].text} ✓`
         }
         filters[index].selected = !filters[index].selected;
-        this.setState({filters: filters});
         if (id === 'personal') {
             this.changePersonalFilter(filters[index].selected);
         }
@@ -551,21 +539,10 @@ class SpotsShow extends Authorization {
             let resultFilters = R.filter((e) => R.contains(e.id, R.map((e) => e.id, RESULT_FILTERS)), filters);
             this.changeResultFilter(R.map((e) => e.value, R.filter((e) => e.selected, resultFilters)));
         }
+        this.props.setSelectedFilter(this.state.spotId, this.state.sectorId, 'filters', filters);
     };
 
     afterSubmitLogInForm = (userId) => {
-        let resultFilters = R.map((e) => R.merge(e, {
-            'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
-            'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
-        }), RESULT_FILTERS);
-        let personal = {
-            clickable: true,
-            id: 'personal',
-            selected: this.state.personal,
-            text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
-            value: 'personal'
-        };
-        this.setState({filters: R.append(personal, resultFilters)});
         this.reloadRoutes();
         if (this.state.sectorId === 0) {
             this.reloadSpot(userId);
@@ -576,18 +553,6 @@ class SpotsShow extends Authorization {
     };
 
     afterSubmitSignUpForm = (userId) => {
-        let resultFilters = R.map((e) => R.merge(e, {
-            'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
-            'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
-        }), RESULT_FILTERS);
-        let personal = {
-            clickable: true,
-            id: 'personal',
-            selected: this.state.personal,
-            text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
-            value: 'personal'
-        };
-        this.setState({filters: R.append(personal, resultFilters)});
         this.reloadRoutes();
         if (this.state.sectorId === 0) {
             this.reloadSpot(userId);
@@ -859,7 +824,6 @@ class SpotsShow extends Authorization {
                 this.props.addRoute(this.state.spotId, this.state.sectorId, response.data.payload);
                 this.setState({
                     comments: [],
-                    numOfComments: 0,
                     ascents: [],
                     ascent: null,
                     numOfComments: 0,
@@ -935,7 +899,44 @@ class SpotsShow extends Authorization {
         this.addRoute();
     };
 
+    onCategoryChange = (id) => {
+        switch (id) {
+            case 0:
+                this.changeCategoryFilter(CATEGORIES[0], CATEGORIES[CATEGORIES.length - 1]);
+                break;
+            case 1:
+                this.changeCategoryFilter(CATEGORIES[0], '6a+');
+                break;
+            case 2:
+                this.changeCategoryFilter(CATEGORIES[0], '6c+');
+                break;
+            case 3:
+                this.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
+                break;
+        }
+    };
+
     content = () => {
+        let categoryFrom = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].categoryFrom : DEFAULT_FILTERS.categoryFrom;
+        let categoryTo = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].categoryTo : DEFAULT_FILTERS.categoryTo;
+        let period = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].period : DEFAULT_FILTERS.period;
+        let filters = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].filters : DEFAULT_FILTERS.filters;
+        let categoryId;
+        if (categoryFrom === CATEGORIES[0]) {
+            switch (categoryTo) {
+                case CATEGORIES[CATEGORIES.length - 1]:
+                    categoryId = 0;
+                    break;
+                case '6a+':
+                    categoryId = 1;
+                    break;
+                case '6c+':
+                    categoryId = 2;
+                    break;
+            }
+        } else {
+            categoryId = 3;
+        }
         return <React.Fragment>
             {this.state.routesModalVisible ?
                 (this.state.editMode ?
@@ -1014,14 +1015,15 @@ class SpotsShow extends Authorization {
                      ctrlPressed={this.state.ctrlPressed}
                      addRoute={this.goToNew}
                      sectorId={this.state.sectorId}
-                     page={this.state.page}
+                     page={(this.props.selectedPages && this.props.selectedPages[this.state.spotId]) ? this.props.selectedPages[this.state.spotId][this.state.sectorId] : 1}
                      numOfPages={this.state.numOfPages}
-                     period={this.state.period}
-                     filters={this.state.filters}
+                     period={period}
+                     filters={this.props.user ? filters : R.filter((e) => !R.contains(e.id, R.map((e) => e.id, RESULT_FILTERS)), filters)}
+                     categoryId={categoryId}
                      onRouteClick={this.onRouteClick}
+                     onCategoryChange={this.onCategoryChange}
                      changePeriodFilter={this.changePeriodFilter}
                      onFilterChange={this.onFilterChange}
-                     changeCategoryFilter={this.changeCategoryFilter}
                      changePage={this.changePage}/>
         </React.Fragment>
     };
@@ -1039,6 +1041,8 @@ class SpotsShow extends Authorization {
 }
 
 const mapStateToProps = state => ({
+    selectedPages: state.selectedPages,
+    selectedFilters: state.selectedFilters,
     routes: state.routes,
     sectors: state.sectors,
     user: state.user,
@@ -1048,6 +1052,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     loadRoutes: (spotId, sectorId, routes) => dispatch(loadRoutes(spotId, sectorId, routes)),
+    setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
+    setDefaultSelectedPages: (spotId, sectorIds) => dispatch(setDefaultSelectedPages(spotId, sectorIds)),
+    setSelectedFilter: (spotId, sectorId, filterName, filterValue) => dispatch(setSelectedFilter(spotId, sectorId, filterName, filterValue)),
+    setDefaultSelectedFilters: (spotId, sectorIds) => dispatch(setDefaultSelectedFilters(spotId, sectorIds)),
+    loadFromLocalStorageSelectedFilters: () => dispatch(loadFromLocalStorageSelectedFilters()),
     loadSectors: sectors => dispatch(loadSectors(sectors)),
     saveUser: user => dispatch(saveUser(user)),
     saveToken: token => dispatch(saveToken(token)),
