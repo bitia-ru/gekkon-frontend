@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import ViewModeSwitcher   from '../ViewModeSwitcher/ViewModeSwitcher';
 import ComboBox           from "../ComboBox/ComboBox";
 import PropTypes          from 'prop-types';
-import {CATEGORIES}       from '../Constants/Categories';
 import {PERIOD_FILTERS}   from '../Constants/PeriodFilters';
 import * as R             from 'ramda';
 import './FilterBlock.css';
@@ -10,41 +9,6 @@ import './FilterBlock.css';
 import {CategoriesData} from "../data";
 
 export default class FilterBlock extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            categoryId: 0,
-            periodId: 0
-        }
-    }
-
-    componentDidMount() {
-        this.setState({periodId: this.props.period});
-    }
-
-    onCategoryChange = (id) => {
-        this.setState({categoryId: id});
-        switch (id) {
-            case 0:
-                this.props.changeCategoryFilter(CATEGORIES[0], CATEGORIES[CATEGORIES.length - 1]);
-                break;
-            case 1:
-                this.props.changeCategoryFilter(CATEGORIES[0], '6a+');
-                break;
-            case 2:
-                this.props.changeCategoryFilter(CATEGORIES[0], '6c+');
-                break;
-            case 3:
-                this.props.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
-                break;
-        }
-    };
-
-    onPeriodChange = (id) => {
-        this.setState({periodId: id});
-        this.props.changePeriodFilter(id);
-    };
 
     render() {
         return <div className="content__filter">
@@ -52,8 +16,8 @@ export default class FilterBlock extends Component {
                 <div>
                     <span className="filter-block__title">Категория</span>
                     <ComboBox tabIndex={1}
-                              onChange={this.onCategoryChange}
-                              currentId={this.state.categoryId}
+                              onChange={this.props.onCategoryChange}
+                              currentId={this.props.categoryId}
                               textFieldName='title'
                               items={CategoriesData}/>
                 </div>
@@ -62,8 +26,8 @@ export default class FilterBlock extends Component {
                 <div>
                     <span className="filter-block__title">Период</span>
                     <ComboBox tabIndex={2}
-                              onChange={this.onPeriodChange}
-                              currentId={this.state.periodId}
+                              onChange={this.props.changePeriodFilter}
+                              currentId={this.props.period}
                               textFieldName='text'
                               items={PERIOD_FILTERS}/>
                 </div>
@@ -88,9 +52,10 @@ export default class FilterBlock extends Component {
 FilterBlock.propTypes = {
     viewMode: PropTypes.string.isRequired,
     onViewModeChange: PropTypes.func.isRequired,
+    categoryId: PropTypes.number.isRequired,
     period: PropTypes.number.isRequired,
     filters: PropTypes.array.isRequired,
-    changeCategoryFilter: PropTypes.func.isRequired,
+    onFilterChange: PropTypes.func.isRequired,
     changePeriodFilter: PropTypes.func.isRequired,
-    onFilterChange: PropTypes.func.isRequired
+    onCategoryChange: PropTypes.func.isRequired
 };

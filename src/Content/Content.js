@@ -42,10 +42,11 @@ export default class Content extends Component {
                 <FilterBlock viewMode={this.state.viewMode}
                              onViewModeChange={this.changeViewMode}
                              period={this.props.period}
+                             onFilterChange={this.props.onFilterChange}
                              filters={this.props.filters}
                              user={this.props.user}
-                             onFilterChange={this.props.onFilterChange}
-                             changeCategoryFilter={this.props.changeCategoryFilter}
+                             categoryId={this.props.categoryId}
+                             onCategoryChange={this.props.onCategoryChange}
                              changePeriodFilter={this.props.changePeriodFilter}/>
                 <RouteCardView viewMode={this.state.viewMode}
                                ctrlPressed={this.props.ctrlPressed}
@@ -71,11 +72,12 @@ Content.propTypes = {
     page: PropTypes.number.isRequired,
     numOfPages: PropTypes.number.isRequired,
     period: PropTypes.number.isRequired,
+    onFilterChange: PropTypes.func.isRequired,
     filters: PropTypes.array.isRequired,
-    changeCategoryFilter: PropTypes.func.isRequired,
+    categoryId: PropTypes.number.isRequired,
+    onCategoryChange: PropTypes.func.isRequired,
     changePage: PropTypes.func.isRequired,
     changePeriodFilter: PropTypes.func.isRequired,
-    onFilterChange: PropTypes.func.isRequired,
     ctrlPressed: PropTypes.bool.isRequired,
     addRoute: PropTypes.func.isRequired,
     sectorId: PropTypes.number.isRequired
