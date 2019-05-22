@@ -159,7 +159,7 @@ class SpotsShow extends Authorization {
                     if (R.find((e) => e === 'edit', data)) {
                         this.loadUsers();
                         this.loadEditMode = true;
-                        this.loadingRouteId = data[3] === 'routes' ? data[4] : data[6];
+                        this.loadRoute(data[3] === 'routes' ? data[4] : data[6], this.openModal);
                     }
                 } else {
                     if (R.find((e) => (e === 'new' || e === 'edit'), data)) {
@@ -224,10 +224,30 @@ class SpotsShow extends Authorization {
         this.reloadComments(id);
         this.reloadLikes(id);
         this.reloadAscents(id);
+        this.loadRoute(id, this.openModal);
         this.setState({
-            routesModalVisible: true,
-            editMode: false,
-            currentShown: R.find(R.propEq('id', id))(this.props.routes)
+            editMode: false
+        });
+    };
+
+    openModal = () => {
+        this.setState({routesModalVisible: true});
+    };
+
+    loadRoute = (id, afterLoadRoute) => {
+        this.props.increaseNumOfActiveRequests();
+        Axios.get(`${ApiUrl}/v1/routes/${id}`)
+            .then(response => {
+                this.props.decreaseNumOfActiveRequests();
+                this.setState({
+                    currentShown: response.data.payload
+                });
+                if (afterLoadRoute) {
+                    afterLoadRoute();
+                }
+            }).catch(error => {
+            this.props.decreaseNumOfActiveRequests();
+            this.displayError(error);
         });
     };
 
@@ -377,7 +397,8 @@ class SpotsShow extends Authorization {
                         this.reloadComments(routeId);
                         this.reloadLikes(routeId);
                         this.reloadAscents(routeId);
-                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: this.loadEditMode})
+                        this.loadRoute(routeId, this.openModal);
+                        this.setState({editMode: this.loadEditMode})
                     }
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
@@ -396,7 +417,8 @@ class SpotsShow extends Authorization {
                         this.reloadComments(routeId);
                         this.reloadLikes(routeId);
                         this.reloadAscents(routeId);
-                        this.setState({currentShown: R.find((route) => route.id === routeId, response.data.payload), routesModalVisible: true, editMode: this.loadEditMode})
+                        this.loadRoute(routeId, this.openModal);
+                        this.setState({editMode: this.loadEditMode})
                     }
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
