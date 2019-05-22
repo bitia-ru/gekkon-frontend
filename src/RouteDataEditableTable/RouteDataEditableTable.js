@@ -8,7 +8,8 @@ import DatePickerBlock    from '../DatePickerBlock/DatePickerBlock';
 import ComboBoxPerson     from '../ComboBoxPerson/ComboBoxPerson';
 import * as R             from 'ramda';
 import moment             from 'moment';
-import {DATE_FORMAT}      from '../Constants/Date'
+import {DATE_FORMAT}      from '../Constants/Date';
+import RouteColorPicker   from '../RouteColorPicker/RouteColorPicker';
 import './RouteDataEditableTable.css';
 
 export default class RouteDataEditableTable extends Component {
@@ -19,6 +20,14 @@ export default class RouteDataEditableTable extends Component {
             showSlider: false
         }
     }
+
+    onHoldsColorSelect = (holdsColor) => {
+        this.props.onRouteParamChange(holdsColor, 'holds_color');
+    };
+
+    onMarksColorSelect = (marksColor) => {
+        this.props.onRouteParamChange(marksColor, 'marks_color');
+    };
 
     render() {
         return <div className="route-data-table">
@@ -38,6 +47,28 @@ export default class RouteDataEditableTable extends Component {
                                                                  hide={() => this.setState({showSlider: false})}
                                                                  changeCategory={(category) => this.props.onRouteParamChange(category, 'category')}/> : ''}
                     </div>
+                </div>
+            </div>
+            <div className="route-data-table-row">
+                <div className="route-data-table-item route-data-table-item_header">
+                    Цвет зацепов:
+                </div>
+                <div className="route-data-table-item">
+                    <RouteColorPicker editable={true} routeMarkColors={this.props.routeMarkColors}
+                                      route={this.props.route}
+                                      fieldName='holds_color'
+                                      onSelect={this.onHoldsColorSelect}/>
+                </div>
+            </div>
+            <div className="route-data-table-row">
+                <div className="route-data-table-item route-data-table-item_header">
+                    Цвет маркировки:
+                </div>
+                <div className="route-data-table-item">
+                    <RouteColorPicker editable={true} routeMarkColors={this.props.routeMarkColors}
+                                      route={this.props.route}
+                                      fieldName='marks_color'
+                                      onSelect={this.onMarksColorSelect}/>
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -96,5 +127,6 @@ RouteDataEditableTable.propTypes = {
     route: PropTypes.object.isRequired,
     sector: PropTypes.object.isRequired,
     users: PropTypes.array.isRequired,
-    onRouteParamChange: PropTypes.func.isRequired
+    onRouteParamChange: PropTypes.func.isRequired,
+    routeMarkColors: PropTypes.array.isRequired
 };

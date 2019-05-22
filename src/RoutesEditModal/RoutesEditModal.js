@@ -52,20 +52,26 @@ export default class RoutesEditModal extends Component {
         }
     };
 
+    changed = (newValue, oldValue) => {
+        return JSON.stringify(newValue) !== JSON.stringify(oldValue);
+    };
+
     save = () => {
         let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
         let formData = new FormData();
-        if (JSON.stringify(this.state.currentPointers) !== JSON.stringify(this.state.currentPointersOld)) {
-            let mark = R.clone(this.props.route.mark);
-            if (!mark) {
-                mark = {colors: {holds: 1, marks: 1}};
-            }
+        let pointersChanged = this.changed(this.state.currentPointers, this.state.currentPointersOld);
+        let holdsColorsChanged = this.changed(this.props.route.holds_color, this.state.route.holds_color);
+        let marksColorsChanged = this.changed(this.props.route.marks_color, this.state.route.marks_color);
+        if (pointersChanged || holdsColorsChanged || marksColorsChanged) {
             let x = R.map((pointer) => pointer.x, this.state.currentPointers);
             let y = R.map((pointer) => pointer.y, this.state.currentPointers);
             let angle = R.map((pointer) => pointer.angle, this.state.currentPointers);
-            mark.pointers = {x: x, y: y, angle: angle};
-            formData.append('route[mark][colors][holds]', 1);
-            formData.append('route[mark][colors][marks]', 1);
+            if (this.state.route.holds_color) {
+                formData.append('route[mark][colors][holds]', this.state.route.holds_color.id);
+            }
+            if (this.state.route.marks_color) {
+                formData.append('route[mark][colors][marks]', this.state.route.marks_color.id);
+            }
             for (let i in x) {
                 formData.append('route[mark][pointers][x][]', x[i]);
                 formData.append('route[mark][pointers][y][]', y[i]);
@@ -243,6 +249,7 @@ export default class RoutesEditModal extends Component {
                                                 sector={this.props.sector}
                                                 onRouteParamChange={this.onRouteParamChange}
                                                 user={this.props.user}
+                                                routeMarkColors={this.props.routeMarkColors}
                                                 users={this.props.users}/>
                     </div>
                     <div className="modal__item modal__descr-item">
@@ -284,5 +291,6 @@ RoutesEditModal.propTypes = {
     createRoute: PropTypes.func.isRequired,
     updateRoute: PropTypes.func.isRequired,
     isWaiting: PropTypes.bool.isRequired,
-    numOfActiveRequests: PropTypes.number.isRequired
+    numOfActiveRequests: PropTypes.number.isRequired,
+    routeMarkColors: PropTypes.array.isRequired
 };

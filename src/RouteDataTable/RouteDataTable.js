@@ -5,6 +5,7 @@ import moment             from 'moment';
 import {GetUserName}      from '../Constants/User';
 import {ROUTE_KINDS}      from '../Constants/Route';
 import * as R             from 'ramda';
+import RouteColorPicker   from '../RouteColorPicker/RouteColorPicker';
 import './RouteDataTable.css';
 
 export default class RouteDataTable extends Component {
@@ -29,6 +30,22 @@ export default class RouteDataTable extends Component {
                     <div className="route-data-table__category-track">{this.props.route.category}</div>
                     <div className="route-data-table__category-track-color"
                          style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
+                </div>
+            </div>
+            <div className="route-data-table-row">
+                <div className="route-data-table-item route-data-table-item_header">
+                    Цвет зацепов:
+                </div>
+                <div className="route-data-table-item">
+                    <RouteColorPicker editable={false} route={this.props.route} fieldName='holds_color'/>
+                </div>
+            </div>
+            <div className="route-data-table-row">
+                <div className="route-data-table-item route-data-table-item_header">
+                    Цвет маркировки:
+                </div>
+                <div className="route-data-table-item">
+                    <RouteColorPicker editable={false} route={this.props.route} fieldName='marks_color'/>
                 </div>
             </div>
             <div className="route-data-table-row">

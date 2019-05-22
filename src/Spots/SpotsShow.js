@@ -10,6 +10,7 @@ import {
     setDefaultSelectedFilters,
     loadRoutes,
     loadSectors,
+    loadRouteMarkColors,
     saveUser,
     saveToken,
     removeToken,
@@ -186,6 +187,9 @@ class SpotsShow extends Authorization {
         }
         this.reloadSectors(this.state.sectorId);
         this.props.loadFromLocalStorageSelectedFilters();
+        if (this.props.routeMarkColors.length === 0) {
+            this.loadRouteMarkColors();
+        }
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
     }
@@ -382,6 +386,18 @@ class SpotsShow extends Authorization {
                 } else {
                     this.reloadRoutes({sectorId: currentSectorId}, null);
                 }
+            }).catch(error => {
+            this.props.decreaseNumOfActiveRequests();
+            this.displayError(error);
+        });
+    };
+
+    loadRouteMarkColors = () => {
+        this.props.increaseNumOfActiveRequests();
+        Axios.get(`${ApiUrl}/v1/route_mark_colors`)
+            .then(response => {
+                this.props.decreaseNumOfActiveRequests();
+                this.props.loadRouteMarkColors(response.data.payload);
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
@@ -944,6 +960,7 @@ class SpotsShow extends Authorization {
                                      sector={this.state.sectorId === 0 ? R.find((sector) => sector.id === this.state.currentShown.sector_id, this.props.sectors) : this.state.sector}
                                      cancel={this.cancelEdit}
                                      users={this.state.users}
+                                     routeMarkColors={this.props.routeMarkColors}
                                      user={this.props.user}
                                      numOfActiveRequests={this.props.numOfActiveRequests}
                                      createRoute={this.createRoute}
@@ -1047,7 +1064,8 @@ const mapStateToProps = state => ({
     sectors: state.sectors,
     user: state.user,
     token: state.token,
-    numOfActiveRequests: state.numOfActiveRequests
+    numOfActiveRequests: state.numOfActiveRequests,
+    routeMarkColors: state.routeMarkColors,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -1058,6 +1076,7 @@ const mapDispatchToProps = dispatch => ({
     setDefaultSelectedFilters: (spotId, sectorIds) => dispatch(setDefaultSelectedFilters(spotId, sectorIds)),
     loadFromLocalStorageSelectedFilters: () => dispatch(loadFromLocalStorageSelectedFilters()),
     loadSectors: sectors => dispatch(loadSectors(sectors)),
+    loadRouteMarkColors: routeMarkColors => dispatch(loadRouteMarkColors(routeMarkColors)),
     saveUser: user => dispatch(saveUser(user)),
     saveToken: token => dispatch(saveToken(token)),
     removeToken: () => dispatch(removeToken()),

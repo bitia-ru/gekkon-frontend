@@ -131,6 +131,15 @@ const selectedFiltersReducer = (state = {}, action) => {
     }
 };
 
+const routeMarkColorsReducer = (state = [], action) => {
+    switch (action.type) {
+        case acts.LOAD_ROUTE_MARK_COLORS:
+            return action.routeMarkColors;
+        default:
+            return state;
+    }
+};
+
 export default combineReducers({
     routes: routesReducer,
     sectors: sectorsReducer,
@@ -139,5 +148,6 @@ export default combineReducers({
     token: tokenReducer,
     numOfActiveRequests: numOfActiveRequestsReducer,
     selectedPages: selectedPagesReducer,
-    selectedFilters: selectedFiltersReducer
+    selectedFilters: selectedFiltersReducer,
+    routeMarkColors: routeMarkColorsReducer
 });
