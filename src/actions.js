@@ -84,3 +84,8 @@ export const setDefaultSelectedFilters = (spotId, sectorIds) => ({
 export const loadFromLocalStorageSelectedFilters = () => ({
     type: acts.LOAD_FROM_LOCAL_STORAGE_SELECTED_FILTERS
 });
+
+export const loadRouteMarkColors = (routeMarkColors) => ({
+    type: acts.LOAD_ROUTE_MARK_COLORS,
+    routeMarkColors
+});
