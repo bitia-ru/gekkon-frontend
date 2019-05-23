@@ -5,7 +5,7 @@ import './FormField.css';
 export default class FormField extends Component {
 
     onKeyPress = (event) => {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && this.props.onEnter) {
             this.props.onEnter();
         }
     };
