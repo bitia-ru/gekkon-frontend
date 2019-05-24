@@ -79,16 +79,14 @@ export default class Footer extends Component {
                         Соцсети
                     </h3>
                     <ul className="social-links">
-                        <li><SocialLinkButton onClick={() => {window.location = VK_LINK}}
+                        <li><SocialLinkButton href={VK_LINK}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"/>
                         </li>
-                        <li><SocialLinkButton onClick={() => {window.location = FACEBOOK_LINK}}
+                        <li><SocialLinkButton href={FACEBOOK_LINK}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"/>
                         </li>
                         <li>
-                            <SocialLinkButton onClick={() => {
-                                window.location = TWITTER_LINK;
-                            }}
+                            <SocialLinkButton href={TWITTER_LINK}
                                               xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter">
                             </SocialLinkButton>
                         </li>
