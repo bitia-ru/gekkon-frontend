@@ -2,16 +2,22 @@ import {combineReducers} from 'redux';
 import * as acts         from './Constants/Actions';
 import * as R            from 'ramda';
 
-const routesReducer = (state = [], action) => {
+const routesReducer = (state = {}, action) => {
     switch (action.type) {
         case acts.LOAD_ROUTES:
-            return action.routes;
-        case acts.ADD_ROUTE:
-            return R.append(action.route, state);
-        case acts.UPDATE_ROUTE:
             let routes = R.clone(state);
-            let index = R.findIndex(R.propEq('id', action.id))(routes);
-            routes[index] = action.route;
+            routes[action.spotId] = routes[action.spotId] || {};
+            routes[action.spotId][action.sectorId] = action.routes;
+            return routes;
+        case acts.ADD_ROUTE:
+            routes = R.clone(state);
+            routes[action.spotId] = routes[action.spotId] || {};
+            routes[action.spotId][action.sectorId] = R.append(action.route, routes[action.spotId][action.sectorId]);
+            return routes;
+        case acts.UPDATE_ROUTE:
+            routes = R.clone(state);
+            let index = R.findIndex(R.propEq('id', action.id))(routes[action.spotId][action.sectorId]);
+            routes[action.spotId][action.sectorId][index] = action.route;
             return routes;
         default:
             return state;
