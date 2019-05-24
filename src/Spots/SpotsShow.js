@@ -151,6 +151,7 @@ class SpotsShow extends Authorization {
             let token = Cookies.get('user_session_token');
             this.props.saveToken(token);
             this.signIn(token, (user) => {
+                this.reloadUserAscents(user.id);
                 let data = location.pathname.split('/');
                 if (user.role === 'admin' || user.role === 'creator') {
                     if (R.find((e) => e === 'new', data)) {
@@ -167,6 +168,8 @@ class SpotsShow extends Authorization {
                     }
                 }
             });
+        } else {
+            this.reloadUserAscents();
         }
         if (this.state.sectorId === 0) {
             this.reloadSpot();
@@ -175,7 +178,6 @@ class SpotsShow extends Authorization {
         }
         this.reloadSectors();
         this.reloadRoutes();
-        this.reloadUserAscents();
         window.addEventListener("keydown", this.onKeyDown);
         window.addEventListener("keyup", this.onKeyUp);
     }
