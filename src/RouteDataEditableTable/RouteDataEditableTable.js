@@ -51,9 +51,9 @@ export default class RouteDataEditableTable extends Component {
                             size='small'
                             style='transparent'
                             currentId={this.props.route.kind ? R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).id : 0}
-                            textFieldName='title'
+                            textFieldName='text'
                             items={ROUTE_KINDS}/>
-                    </div> : <React.Fragment>{this.props.route.kind}</React.Fragment>}
+                    </div> : <React.Fragment>{R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}</React.Fragment>}
                 </div>
             </div>
             <div className="route-data-table-row">
