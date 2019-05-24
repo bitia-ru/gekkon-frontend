@@ -2,7 +2,8 @@ import React, {Component}        from 'react';
 import AvatarRound               from '../AvatarRound/AvatarRound';
 import PropTypes                 from 'prop-types';
 import moment                    from 'moment';
-import {COMMENT_DATETIME_FORMAT} from '../Constants/Date'
+import {COMMENT_DATETIME_FORMAT} from '../Constants/Date';
+import {TimeFromNow}             from '../Constants/DateTimeFormatter';
 import './Comment.css';
 
 export default class Comment extends Component {
@@ -14,8 +15,8 @@ export default class Comment extends Component {
                 <a className="comment__name">{this.props.comment.author.name ? this.props.comment.author.name : this.props.comment.author.login}</a>
                 <div className="comment__text">{this.props.comment.content}</div>
                 <div className="comment__footer">
-                    <div className="comment__date">
-                        {moment(created_at).format(COMMENT_DATETIME_FORMAT)}
+                    <div className="comment__date" title={moment(created_at).format(COMMENT_DATETIME_FORMAT)}>
+                        {TimeFromNow(moment(created_at))}
                     </div>
                     {(this.props.user && (this.props.user.name || this.props.user.login)) ?
                         <React.Fragment><a className="comment__answer"

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import PropTypes          from 'prop-types';
 import {SOON_END_PERIOD}  from '../Constants/Route';
 import RouteStatus        from '../RouteStatus/RouteStatus';
-import moment             from 'moment'
+import moment             from 'moment';
+import {TimeFromNow}      from '../Constants/DateTimeFormatter';
 import './RouteCard.css';
 
 export default class RouteCard extends Component {
@@ -43,7 +44,8 @@ export default class RouteCard extends Component {
                                     <use xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-clock"></use>
                                 </svg>}
 							</span>
-                                        {moment(this.props.route.installed_until).fromNow()}</span> : <span className="route-card__date"></span>}
+                                        {TimeFromNow(moment(this.props.route.installed_until))}</span> :
+                                    <span className="route-card__date"></span>}
                                 <div className="route-card__level">
                                     {this.props.route.category}
                                 </div>
