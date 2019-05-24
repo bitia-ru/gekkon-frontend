@@ -3,6 +3,8 @@ import PropTypes          from 'prop-types';
 import {GetCategoryColor} from '../Constants/Categories';
 import moment             from 'moment';
 import {GetUserName}      from '../Constants/User';
+import {ROUTE_KINDS}      from '../Constants/Route';
+import * as R             from 'ramda';
 import './RouteDataTable.css';
 
 export default class RouteDataTable extends Component {
@@ -31,7 +33,7 @@ export default class RouteDataTable extends Component {
                     Тип:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.route.kind}
+                    {R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}
                 </div>
             </div>
             <div className="route-data-table-row">
