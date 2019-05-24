@@ -24,10 +24,7 @@ export default class RoutesEditModal extends Component {
             route: R.clone(this.props.route),
             fieldsOld: {},
             showCropper: false,
-            crop: null,
-            rotate: null,
-            loadedPhoto: null,
-            loadedPhotoFile: null
+            photo: {content: null, file: null, crop: null, rotate: null}
         };
         this.mouseOver = false;
     }
@@ -78,14 +75,14 @@ export default class RoutesEditModal extends Component {
         if (this.state.route.photo !== (this.props.route.photo ? this.props.route.photo.url : null)) {
             formData.append('route[photo]', this.state.route.photoFile);
         }
-        if (this.state.crop !== null) {
-            formData.append('data[photo][cropping][x]', Math.round(this.state.crop.x));
-            formData.append('data[photo][cropping][y]', Math.round(this.state.crop.y));
-            formData.append('data[photo][cropping][width]', Math.round(this.state.crop.width));
-            formData.append('data[photo][cropping][height]', Math.round(this.state.crop.height));
+        if (this.state.photo.crop !== null) {
+            formData.append('data[photo][cropping][x]', Math.round(this.state.photo.crop.x));
+            formData.append('data[photo][cropping][y]', Math.round(this.state.photo.crop.y));
+            formData.append('data[photo][cropping][width]', Math.round(this.state.photo.crop.width));
+            formData.append('data[photo][cropping][height]', Math.round(this.state.photo.crop.height));
         }
-        if (this.state.rotate !== null) {
-            formData.append('data[photo][rotation]', this.state.rotate);
+        if (this.state.photo.rotate !== null) {
+            formData.append('data[photo][rotation]', this.state.photo.rotate);
         }
         if (this.props.route.id !== null) {
             this.props.updateRoute(formData);
@@ -121,35 +118,45 @@ export default class RoutesEditModal extends Component {
         let route = this.state.route;
         route[paramName] = value;
         if (paramName === 'author') {
-            route['author_id'] = value.id;
+            route.author_id = value.id;
         }
         if (paramName === 'photo' && value === null) {
-            route['photoFile'] = null;
+            route.photoFile = null;
         }
         this.setState({route: route})
     };
 
     onFileRead = (event) => {
-        this.setState({showCropper: true, loadedPhoto: this.fileReader.result});
+        let photo = R.clone(this.state.photo);
+        photo.content = this.fileReader.result;
+        this.setState({showCropper: true, photo: photo});
     };
 
     onFileChosen = (file) => {
         this.fileReader = new FileReader();
         this.fileReader.onloadend = this.onFileRead;
         this.fileReader.readAsDataURL(file);
-        this.setState({loadedPhotoFile: file});
+        let photo = R.clone(this.state.photo);
+        photo.file = file;
+        this.setState({photo: photo});
     };
 
     saveCropped = (src, crop, rotate, image) => {
         let route = this.state.route;
-        route['photo'] = src;
-        route['photoFile'] = this.state.loadedPhotoFile;
+        route.photo = src;
+        route.photoFile = this.state.photo.file;
         if (crop.width === 0 || crop.height === 0 || (Math.abs(image.width - crop.width) < 1 && Math.abs(image.height - crop.height) < 1)) {
-            this.setState({route: route, showCropper: false, crop: null, rotate: (rotate === 0 ? null : rotate)});
+            let photo = R.clone(this.state.photo);
+            photo.crop = null;
+            photo.rotate = (rotate === 0 ? null : rotate);
+            this.setState({route: route, showCropper: false, photo: photo});
         } else {
             const scaleX = image.naturalWidth / image.width;
             const scaleY = image.naturalHeight / image.height;
-            this.setState({route: route, showCropper: false, crop: {x: crop.x * scaleX, y: crop.y * scaleY, width: crop.width * scaleX, height: crop.height * scaleY}, rotate: (rotate === 0 ? null : rotate)});
+            let photo = R.clone(this.state.photo);
+            photo.crop = {x: crop.x * scaleX, y: crop.y * scaleY, width: crop.width * scaleX, height: crop.height * scaleY};
+            photo.rotate = (rotate === 0 ? null : rotate);
+            this.setState({route: route, showCropper: false, photo: photo});
         }
     };
 
@@ -241,7 +248,7 @@ export default class RoutesEditModal extends Component {
         return <React.Fragment>
             <div className="modal-overlay">
                 {this.state.showCropper ?
-                    <RoutePhotoCropper src={this.state.loadedPhoto}
+                    <RoutePhotoCropper src={this.state.photo.content}
                                        close={() => this.setState({showCropper: false})}
                                        save={this.saveCropped}/> :
                     <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
