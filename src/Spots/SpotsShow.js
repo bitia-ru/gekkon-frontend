@@ -225,8 +225,11 @@ class SpotsShow extends Authorization {
         this.reloadLikes(id);
         this.reloadAscents(id);
         this.loadRoute(id, this.openModal);
+        let route = R.find(R.propEq('id', id), R.pathOr({}, [this.state.spotId, this.state.sectorId], this.props.routes));
         this.setState({
-            editMode: false
+            editMode: false,
+            currentShown: route || {},
+            routesModalVisible: route
         });
     };
 
@@ -252,7 +255,17 @@ class SpotsShow extends Authorization {
     };
 
     closeRoutesModal = () => {
-        this.setState({routesModalVisible: false});
+        this.setState({
+            routesModalVisible: false,
+            comments: [],
+            numOfComments: 0,
+            numOfLikes: 0,
+            isLiked: false,
+            likeId: 0,
+            ascent: null,
+            numOfRedpoints: 0,
+            numOfFlash: 0
+        });
         if (this.state.sectorId === 0) {
             this.reloadSpot();
             this.props.history.push(`/spots/${this.state.spotId}`);
@@ -390,7 +403,7 @@ class SpotsShow extends Authorization {
                 .then(response => {
                     this.props.decreaseNumOfActiveRequests();
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
-                    this.props.loadRoutes(response.data.payload);
+                    this.props.loadRoutes(this.state.spotId, 0, response.data.payload);
                     if (this.loadingRouteId) {
                         let routeId = parseInt(this.loadingRouteId, 10);
                         this.loadingRouteId = null;
@@ -410,7 +423,7 @@ class SpotsShow extends Authorization {
                 .then(response => {
                     this.props.decreaseNumOfActiveRequests();
                     this.setState({numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / this.state.perPage))});
-                    this.props.loadRoutes(response.data.payload);
+                    this.props.loadRoutes(this.state.spotId, currentSectorId, response.data.payload);
                     if (this.loadingRouteId) {
                         let routeId = parseInt(this.loadingRouteId, 10);
                         this.loadingRouteId = null;
@@ -733,7 +746,7 @@ class SpotsShow extends Authorization {
                 this.props.decreaseNumOfActiveRequests();
                 this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${response.data.payload.id}`);
                 this.setState({editRouteIsWaiting: false, editMode: false, currentShown: R.clone(response.data.payload)});
-                this.props.addRoute(response.data.payload);
+                this.props.addRoute(this.state.spotId, this.state.sectorId, response.data.payload);
                 this.setState({
                     comments: [],
                     numOfComments: 0,
@@ -771,7 +784,7 @@ class SpotsShow extends Authorization {
                     this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${this.state.currentShown.id}`);
                 }
                 this.setState({editRouteIsWaiting: false, editMode: false, currentShown: response.data.payload});
-                this.props.updateRoute(this.state.currentShown.id, response.data.payload);
+                this.props.updateRoute(this.state.spotId, this.state.sectorId, this.state.currentShown.id, response.data.payload);
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
             this.displayError(error);
@@ -885,7 +898,7 @@ class SpotsShow extends Authorization {
                 signUp={this.signUp}
                 logIn={this.logIn}
                 logOut={this.logOut}/>
-            <Content routes={this.props.routes}
+            <Content routes={R.pathOr([], [this.state.spotId, this.state.sectorId], this.props.routes)}
                      ascents={this.state.ascents}
                      user={this.props.user}
                      ctrlPressed={this.state.ctrlPressed}
@@ -924,13 +937,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    loadRoutes: routes => dispatch(loadRoutes(routes)),
+    loadRoutes: (spotId, sectorId, routes) => dispatch(loadRoutes(spotId, sectorId, routes)),
     loadSectors: sectors => dispatch(loadSectors(sectors)),
     saveUser: user => dispatch(saveUser(user)),
     saveToken: token => dispatch(saveToken(token)),
     removeToken: () => dispatch(removeToken()),
-    updateRoute: (id, route) => dispatch(updateRoute(id, route)),
-    addRoute: (route) => dispatch(addRoute(route)),
+    updateRoute: (spotId, sectorId, id, route) => dispatch(updateRoute(spotId, sectorId, id, route)),
+    addRoute: (spotId, sectorId, route) => dispatch(addRoute(spotId, sectorId, route)),
     increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
     decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests())
 });

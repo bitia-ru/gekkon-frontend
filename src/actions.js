@@ -1,18 +1,24 @@
 import * as acts from './Constants/Actions';
 
-export const loadRoutes = (routes) => ({
+export const loadRoutes = (spotId, sectorId, routes) => ({
     type: acts.LOAD_ROUTES,
+    spotId,
+    sectorId,
     routes
 });
 
-export const updateRoute = (id, route) => ({
+export const updateRoute = (spotId, sectorId, id, route) => ({
     type: acts.UPDATE_ROUTE,
+    spotId,
+    sectorId,
     id,
     route
 });
 
-export const addRoute = (route) => ({
+export const addRoute = (spotId, sectorId, route) => ({
     type: acts.ADD_ROUTE,
+    spotId,
+    sectorId,
     route
 });
 
