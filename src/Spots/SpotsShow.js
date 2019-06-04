@@ -276,7 +276,7 @@ class SpotsShow extends Authorization {
             this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}`);
         }
         this.reloadUserAscents();
-        this.reloadRoutes();
+        this.reloadRoutes({}, this.state.page);
     };
 
     afterLogOut = () => {
