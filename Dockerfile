@@ -5,7 +5,7 @@ RUN npm config set unsafe-perm true
 COPY . /app
 WORKDIR /app
 
-RUN npm i --development
+RUN npm i --production
 
 ARG apiUrl
 ARG clientId
