@@ -18,7 +18,7 @@ FROM nginx:1.15-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/index.js /app/dist/index.html ./
+COPY --from=builder /app/dist/index-*.js /app/dist/index.html ./
 
 RUN mkdir public
 COPY public/img ./public/img
