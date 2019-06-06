@@ -26,20 +26,18 @@ module.exports = (env) => {
                 },
                 {
                     test: /\.(pdf|jpg|png|gif|svg|ico)$/,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                name: '[path][name]-[hash:8].[ext]'
-                            },
-                        }
-                    ]
+                    use: {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'assets/[path][name]-[hash].[ext]'
+                        },
+                    }
                 },
             ]
         },
         plugins: [
             new HtmlWebpackPlugin({
-                template: "./public/index.html"
+                template: "./index.html"
             }),
             new webpack.EnvironmentPlugin({
                 API_URL: '',
