@@ -18,8 +18,9 @@ FROM nginx:1.15-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/index-*.js /app/dist/index.html ./
+COPY --from=builder /app/dist /app
 
+# TODO: GKN-113: Remove this after refactoring:
 RUN mkdir public
 COPY public/img ./public/img
 COPY public/fonts ./public/fonts
