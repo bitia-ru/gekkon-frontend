@@ -130,6 +130,9 @@ export default class Authorization extends React.Component {
                     this.props.saveToken(response.data.payload.user_session.token);
                     this.setState({signUpIsWaiting: false});
                     this.showToastr('success', 'Вход выполнен', 'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.')
+                    if (this.afterSubmitSignUpForm) {
+                        this.afterSubmitSignUpForm(response.data.payload.id);
+                    }
                 }).catch(error => {
                 this.props.decreaseNumOfActiveRequests();
                 if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
