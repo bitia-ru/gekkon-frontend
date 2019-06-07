@@ -3,10 +3,9 @@ import ViewModeSwitcher   from '../ViewModeSwitcher/ViewModeSwitcher';
 import ComboBox           from "../ComboBox/ComboBox";
 import PropTypes          from 'prop-types';
 import {PERIOD_FILTERS}   from '../Constants/PeriodFilters';
+import {CATEGORIES_ITEMS} from '../Constants/Categories'
 import * as R             from 'ramda';
 import './FilterBlock.css';
-
-import {CategoriesData} from "../data";
 
 export default class FilterBlock extends Component {
 
@@ -19,7 +18,7 @@ export default class FilterBlock extends Component {
                               onChange={this.props.onCategoryChange}
                               currentId={this.props.categoryId}
                               textFieldName='title'
-                              items={CategoriesData}/>
+                              items={CATEGORIES_ITEMS}/>
                 </div>
             </div>
             <div className="content__filter-item content__filter-item_period">
