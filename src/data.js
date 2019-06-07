@@ -76,13 +76,6 @@ export const GuestItemsData = [
     {id: 2, title: 'Войти', clickable: true}
 ];
 
-export const CategoriesData = [
-    {id: 0, title: 'Все', clickable: true},
-    {id: 1, title: '6A+ и ниже', clickable: true},
-    {id: 2, title: '6C+ и ниже', clickable: true},
-    {id: 3, title: '7A и выше', clickable: true}
-];
-
 export const SpotsData = [
     {
         id: 1,

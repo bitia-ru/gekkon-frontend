@@ -908,9 +908,12 @@ class SpotsShow extends Authorization {
                 this.changeCategoryFilter(CATEGORIES[0], '6a+');
                 break;
             case 2:
-                this.changeCategoryFilter(CATEGORIES[0], '6c+');
+                this.changeCategoryFilter('6a', '6b+');
                 break;
             case 3:
+                this.changeCategoryFilter('6b', '7a+');
+                break;
+            case 4:
                 this.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
                 break;
         }
@@ -921,21 +924,18 @@ class SpotsShow extends Authorization {
         let categoryTo = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].categoryTo : DEFAULT_FILTERS.categoryTo;
         let period = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].period : DEFAULT_FILTERS.period;
         let filters = (this.props.selectedFilters && this.props.selectedFilters[this.state.spotId]) ? this.props.selectedFilters[this.state.spotId][this.state.sectorId].filters : DEFAULT_FILTERS.filters;
-        let categoryId;
-        if (categoryFrom === CATEGORIES[0]) {
-            switch (categoryTo) {
-                case CATEGORIES[CATEGORIES.length - 1]:
-                    categoryId = 0;
-                    break;
-                case '6a+':
-                    categoryId = 1;
-                    break;
-                case '6c+':
-                    categoryId = 2;
-                    break;
-            }
-        } else {
+        let categoryId = 0;
+        if (categoryFrom === CATEGORIES[0] && categoryTo === '6a+') {
+            categoryId = 1;
+        }
+        if (categoryFrom === '6a' && categoryTo === '6b+') {
+            categoryId = 2;
+        }
+        if (categoryFrom === '6b' && categoryTo === '7a+') {
             categoryId = 3;
+        }
+        if (categoryFrom === '7a' && categoryTo === CATEGORIES[CATEGORIES.length - 1]) {
+            categoryId = 4;
         }
         return <React.Fragment>
             {this.state.routesModalVisible ?
