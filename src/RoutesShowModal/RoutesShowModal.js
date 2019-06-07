@@ -35,7 +35,18 @@ export default class RoutesShowModal extends Component {
 
     componentDidMount() {
         this.loadPointers();
+        window.addEventListener("keydown", this.onKeyDown);
     }
+
+    componentWillUnmount() {
+        window.removeEventListener("keydown", this.onKeyDown);
+    }
+
+    onKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            this.props.onClose();
+        }
+    };
 
     startAnswer = (quoteComment) => {
         this.setState({quoteComment: quoteComment});
@@ -116,7 +127,7 @@ export default class RoutesShowModal extends Component {
     };
 
     content = () => {
-        return <div className="modal-overlay__wrapper" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
+        return <div className="modal-overlay__wrapper">
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
                     <CloseButton onClick={() => this.props.onClose()}/>
@@ -205,7 +216,7 @@ export default class RoutesShowModal extends Component {
 
     render() {
         return <React.Fragment>
-            <div className="modal-overlay">
+            <div className="modal-overlay" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
                 <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
             </div>
         </React.Fragment>;

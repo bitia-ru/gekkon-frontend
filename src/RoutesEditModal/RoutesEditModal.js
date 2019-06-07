@@ -39,7 +39,18 @@ export default class RoutesEditModal extends Component {
         }
         this.setState({fieldsOld: route, route: R.clone(route)});
         this.loadPointers();
+        window.addEventListener("keydown", this.onKeyDown);
     }
+
+    componentWillUnmount() {
+        window.removeEventListener("keydown", this.onKeyDown);
+    }
+
+    onKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            this.props.onClose();
+        }
+    };
 
     save = () => {
         let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
@@ -132,6 +143,7 @@ export default class RoutesEditModal extends Component {
     onFileRead = (event) => {
         let photo = R.clone(this.state.photo);
         photo.content = this.fileReader.result;
+        this.mouseOver = false;
         this.setState({showCropper: true, photo: photo});
     };
 
@@ -165,7 +177,7 @@ export default class RoutesEditModal extends Component {
 
     content = () => {
         let saveDisabled = (JSON.stringify(this.state.route) === JSON.stringify(this.state.fieldsOld) && JSON.stringify(this.state.currentPointers) === JSON.stringify(this.state.currentPointersOld));
-        return <div className="modal-overlay__wrapper" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
+        return <div className="modal-overlay__wrapper">
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
                     <CloseButton onClick={() => this.props.onClose()}/>
@@ -250,7 +262,8 @@ export default class RoutesEditModal extends Component {
 
     render() {
         return <React.Fragment>
-            <div className="modal-overlay">
+            <div className="modal-overlay"
+                 onClick={this.state.showCropper ? null : () => {if (!this.mouseOver) {this.props.onClose()}}}>
                 {this.state.showCropper ?
                     <RoutePhotoCropper src={this.state.photo.content}
                                        close={() => this.setState({showCropper: false})}

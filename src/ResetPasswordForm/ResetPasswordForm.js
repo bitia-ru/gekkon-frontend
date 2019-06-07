@@ -17,8 +17,23 @@ export default class ResetPasswordForm extends Component {
             password: '',
             repeatPassword: '',
             errors: {}
-        }
+        };
+        this.mouseOver = false;
     }
+
+    componentDidMount() {
+        window.addEventListener("keydown", this.onKeyDown);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("keydown", this.onKeyDown);
+    }
+
+    onKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            this.closeForm();
+        }
+    };
 
     resetErrors = () => {
         this.setState({errors: {}});
@@ -139,10 +154,12 @@ export default class ResetPasswordForm extends Component {
         </form>;
 
     render() {
-        return <div className="modal-overlay">
+        return <div className="modal-overlay" onClick={() => {if (!this.mouseOver) {this.closeForm()}}}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
-                    <div className="modal-block__padding-wrapper">
+                    <div className="modal-block__padding-wrapper"
+                         onMouseOver={() => this.mouseOver = true}
+                         onMouseLeave={() => this.mouseOver = false}>
                         <div className="modal-block__close">
                             <CloseButton onClick={this.closeForm}/>
                         </div>
