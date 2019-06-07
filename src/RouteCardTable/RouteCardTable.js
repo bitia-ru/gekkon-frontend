@@ -7,7 +7,7 @@ import './RouteCardTable.css';
 export default class RouteCardTable extends Component {
     render() {
         return <div className="content__inner">
-            {(this.props.sectorId !== 0 && this.props.user && (this.props.user.role === 'admin' || this.props.user.role === 'creator') && this.props.ctrlPressed) ?
+            {(this.props.sectorId !== 0 && this.props.user && this.props.ctrlPressed) ?
                 <div className="content__col-md-4 content__col-lg-3">
                     <div className="content__route-card">
                         <a className="route-card route-card__edit" onClick={this.props.addRoute}>

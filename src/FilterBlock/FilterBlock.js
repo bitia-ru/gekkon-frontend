@@ -4,7 +4,6 @@ import ComboBox           from "../ComboBox/ComboBox";
 import PropTypes          from 'prop-types';
 import {CATEGORIES}       from '../Constants/Categories';
 import {PERIOD_FILTERS}   from '../Constants/PeriodFilters';
-import {RESULT_FILTERS}   from '../Constants/ResultFilters';
 import * as R             from 'ramda';
 import './FilterBlock.css';
 
@@ -16,17 +15,12 @@ export default class FilterBlock extends Component {
 
         this.state = {
             categoryId: 0,
-            periodId: 0,
-            resultFilters: []
+            periodId: 0
         }
     }
 
     componentDidMount() {
-        let resultFilters = R.map((e) => R.merge(e, {
-            'selected': R.find((r) => r === e.value, this.props.result) !== undefined,
-            'text': `${e.text}${R.find((r) => r === e.value, this.props.result) !== undefined ? ' ✓' : ''}`
-        }), RESULT_FILTERS);
-        this.setState({periodId: this.props.period, resultFilters: resultFilters});
+        this.setState({periodId: this.props.period});
     }
 
     onCategoryChange = (id) => {
@@ -52,19 +46,6 @@ export default class FilterBlock extends Component {
         this.props.changePeriodFilter(id);
     };
 
-    onResultChange = (id) => {
-        let resultFilters = R.clone(this.state.resultFilters);
-        let index = R.findIndex((e) => e.id === id, resultFilters);
-        if (resultFilters[index].selected) {
-            resultFilters[index].text = R.slice(0, -2, resultFilters[index].text);
-        } else {
-            resultFilters[index].text = `${resultFilters[index].text} ✓`
-        }
-        resultFilters[index].selected = !resultFilters[index].selected;
-        this.setState({resultFilters: resultFilters});
-        this.props.changeResultFilter(R.map((e) => e.value, R.filter((e) => e.selected, resultFilters)));
-    };
-
     render() {
         return <div className="content__filter">
             <div className="content__filter-item content__filter-item_category">
@@ -87,17 +68,17 @@ export default class FilterBlock extends Component {
                               items={PERIOD_FILTERS}/>
                 </div>
             </div>
-            {this.props.user ? <div className="content__filter-item content__filter-item_result">
+            <div className="content__filter-item content__filter-item_result">
                 <div>
-                    <span className="filter-block__title">Пройденность</span>
+                    <span className="filter-block__title">Фильтры</span>
                     <ComboBox tabIndex={3}
-                              onChange={this.onResultChange}
+                              onChange={this.props.onFilterChange}
                               multipleSelect={true}
-                              currentValue={R.join(', ', R.map((e) => R.slice(0, -2, e.text), R.filter((e) => e.selected, this.state.resultFilters)))}
+                              currentValue={R.join(', ', R.map((e) => R.slice(0, -2, e.text), R.filter((e) => e.selected, this.props.filters)))}
                               textFieldName='text'
-                              items={this.state.resultFilters}/>
+                              items={this.props.filters}/>
                 </div>
-            </div> : ''}
+            </div>
             <ViewModeSwitcher onViewModeChange={this.props.onViewModeChange}
                               viewMode={this.props.viewMode}/>
         </div>;
@@ -108,8 +89,8 @@ FilterBlock.propTypes = {
     viewMode: PropTypes.string.isRequired,
     onViewModeChange: PropTypes.func.isRequired,
     period: PropTypes.number.isRequired,
-    result: PropTypes.array.isRequired,
+    filters: PropTypes.array.isRequired,
     changeCategoryFilter: PropTypes.func.isRequired,
     changePeriodFilter: PropTypes.func.isRequired,
-    changeResultFilter: PropTypes.func.isRequired
+    onFilterChange: PropTypes.func.isRequired
 };

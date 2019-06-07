@@ -1,8 +1,8 @@
-import React              from 'react';
-import {withRouter, Link} from 'react-router-dom';
-import Axios              from 'axios';
-import Qs                 from 'qs';
-import ApiUrl             from '../ApiUrl';
+import React                    from 'react';
+import {withRouter, Link}       from 'react-router-dom';
+import Axios                    from 'axios';
+import Qs                       from 'qs';
+import ApiUrl                   from '../ApiUrl';
 import {
     loadRoutes,
     loadSectors,
@@ -13,23 +13,24 @@ import {
     decreaseNumOfActiveRequests,
     updateRoute,
     addRoute
-}                         from '../actions';
-import {connect}          from 'react-redux';
-import Content            from '../Content/Content'
-import Header             from '../Header/Header';
-import Footer             from '../Footer/Footer';
-import RoutesShowModal    from '../RoutesShowModal/RoutesShowModal';
-import RoutesEditModal    from '../RoutesEditModal/RoutesEditModal';
-import * as R             from 'ramda';
-import Cookies            from "js-cookie";
-import SignUpForm         from '../SignUpForm/SignUpForm';
-import LogInForm          from '../LogInForm/LogInForm';
-import Profile            from '../Profile/Profile';
-import Authorization      from '../Authorization';
-import {ToastContainer}   from 'react-toastr';
-import StickyBar          from '../StickyBar/StickyBar';
-import {RESULT_FILTERS}   from '../Constants/ResultFilters'
-import {CARDS_PER_PAGE}   from '../Constants/RouteCardTable';
+}                               from '../actions';
+import {connect}                from 'react-redux';
+import Content                  from '../Content/Content'
+import Header                   from '../Header/Header';
+import Footer                   from '../Footer/Footer';
+import RoutesShowModal          from '../RoutesShowModal/RoutesShowModal';
+import RoutesEditModal          from '../RoutesEditModal/RoutesEditModal';
+import * as R                   from 'ramda';
+import Cookies                  from "js-cookie";
+import SignUpForm               from '../SignUpForm/SignUpForm';
+import LogInForm                from '../LogInForm/LogInForm';
+import Profile                  from '../Profile/Profile';
+import Authorization            from '../Authorization';
+import {ToastContainer}         from 'react-toastr';
+import StickyBar                from '../StickyBar/StickyBar';
+import {RESULT_FILTERS}         from '../Constants/ResultFilters'
+import {CARDS_PER_PAGE}         from '../Constants/RouteCardTable';
+import {ROUTE_PERSONAL_DEFAULT} from '../Constants/Route';
 
 const NumOfDays = 7;
 
@@ -72,7 +73,9 @@ class SpotsShow extends Authorization {
             numOfFlash: 0,
             users: [],
             editRouteIsWaiting: false,
-            result: R.map((e) => e.value, RESULT_FILTERS)
+            result: R.map((e) => e.value, RESULT_FILTERS),
+            personal: ROUTE_PERSONAL_DEFAULT,
+            filters: []
         });
         this.loadingRouteId = this.props.match.params.route_id;
         this.loadEditMode = false;
@@ -107,7 +110,11 @@ class SpotsShow extends Authorization {
                             }
                         }
                     } else {
-                        this.setState({sectorId: sectorId, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
+                        this.setState({
+                            sectorId: sectorId,
+                            profileFormVisible: (location.hash === '#profile'),
+                            routesModalVisible: false
+                        });
                     }
                     this.reloadSector(sectorId);
                     this.reloadSectors();
@@ -137,7 +144,11 @@ class SpotsShow extends Authorization {
                             }
                         }
                     } else {
-                        this.setState({sectorId: 0, profileFormVisible: (location.hash === '#profile'), routesModalVisible: false});
+                        this.setState({
+                            sectorId: 0,
+                            profileFormVisible: (location.hash === '#profile'),
+                            routesModalVisible: false
+                        });
                     }
                     this.reloadSpot();
                     this.reloadSectors();
@@ -167,9 +178,31 @@ class SpotsShow extends Authorization {
                         window.location = '/';
                     }
                 }
+                let resultFilters = [];
+                resultFilters = R.map((e) => R.merge(e, {
+                    'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
+                    'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
+                }), RESULT_FILTERS);
+                let personal = {
+                    clickable: true,
+                    id: 'personal',
+                    selected: this.state.personal,
+                    text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
+                    value: 'personal'
+                };
+                this.setState({filters: R.append(personal, resultFilters)});
             });
         } else {
             this.reloadUserAscents();
+            let resultFilters = [];
+            let personal = {
+                clickable: true,
+                id: 'personal',
+                selected: this.state.personal,
+                text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
+                value: 'personal'
+            };
+            this.setState({filters: R.append(personal, resultFilters)});
         }
         if (this.state.sectorId === 0) {
             this.reloadSpot();
@@ -287,6 +320,15 @@ class SpotsShow extends Authorization {
         } else {
             this.reloadSector(this.state.sectorId, 0);
         }
+        let resultFilters = [];
+        let personal = {
+            clickable: true,
+            id: 'personal',
+            selected: this.state.personal,
+            text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
+            value: 'personal'
+        };
+        this.setState({filters: R.append(personal, resultFilters)});
     };
 
     reloadSpot = (userId) => {
@@ -369,10 +411,10 @@ class SpotsShow extends Authorization {
         let currentName = (filters.name === null || filters.name === undefined) ? this.state.name : filters.name;
         let currentPeriod = (filters.period === null || filters.period === undefined) ? this.state.period : filters.period;
         let currentResult = (filters.result === null || filters.result === undefined) ? this.state.result : filters.result;
+        let currentPersonal = (filters.personal === null || filters.personal === undefined) ? this.state.personal : filters.personal;
         let currentPage = (page === null || page === undefined) ? this.state.page : page;
-        let params = {filters: {category: [[currentCategoryFrom], [currentCategoryTo]]}};
+        let params = {filters: {category: [[currentCategoryFrom], [currentCategoryTo]], personal: currentPersonal}};
         if (this.props.user) {
-            params.user_id = this.props.user.id;
             params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
         }
         if (currentName !== '') {
@@ -399,6 +441,8 @@ class SpotsShow extends Authorization {
         }
         params.limit = this.state.perPage;
         params.offset = (currentPage - 1) * this.state.perPage;
+        if (this.props.token)
+            params.token = this.props.token;
         if (currentSectorId === 0) {
             this.props.increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/routes`, {params: params})
@@ -475,6 +519,11 @@ class SpotsShow extends Authorization {
         this.reloadRoutes({result: result});
     };
 
+    changePersonalFilter = (personal) => {
+        this.setState({personal: personal, page: 1});
+        this.reloadRoutes({personal: personal});
+    };
+
     changeNameFilter = (searchString) => {
         this.setState({name: searchString});
         this.reloadRoutes({name: searchString});
@@ -485,7 +534,60 @@ class SpotsShow extends Authorization {
         this.reloadRoutes({}, page);
     };
 
+    onFilterChange = (id) => {
+        let filters = R.clone(this.state.filters);
+        let index = R.findIndex((e) => e.id === id, filters);
+        if (filters[index].selected) {
+            filters[index].text = R.slice(0, -2, filters[index].text);
+        } else {
+            filters[index].text = `${filters[index].text} ✓`
+        }
+        filters[index].selected = !filters[index].selected;
+        this.setState({filters: filters});
+        if (id === 'personal') {
+            this.changePersonalFilter(filters[index].selected);
+        }
+        if (R.contains(id, R.map((e) => e.id, RESULT_FILTERS))) {
+            let resultFilters = R.filter((e) => R.contains(e.id, R.map((e) => e.id, RESULT_FILTERS)), filters);
+            this.changeResultFilter(R.map((e) => e.value, R.filter((e) => e.selected, resultFilters)));
+        }
+    };
+
     afterSubmitLogInForm = (userId) => {
+        let resultFilters = R.map((e) => R.merge(e, {
+            'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
+            'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
+        }), RESULT_FILTERS);
+        let personal = {
+            clickable: true,
+            id: 'personal',
+            selected: this.state.personal,
+            text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
+            value: 'personal'
+        };
+        this.setState({filters: R.append(personal, resultFilters)});
+        this.reloadRoutes();
+        if (this.state.sectorId === 0) {
+            this.reloadSpot(userId);
+        } else {
+            this.reloadSector(this.state.sectorId, userId);
+        }
+        this.reloadUserAscents(userId);
+    };
+
+    afterSubmitSignUpForm = (userId) => {
+        let resultFilters = R.map((e) => R.merge(e, {
+            'selected': R.find((r) => r === e.value, this.state.result) !== undefined,
+            'text': `${e.text}${R.find((r) => r === e.value, this.state.result) !== undefined ? ' ✓' : ''}`
+        }), RESULT_FILTERS);
+        let personal = {
+            clickable: true,
+            id: 'personal',
+            selected: this.state.personal,
+            text: `Авторские трассы ${this.state.personal ? ' ✓' : ''}`,
+            value: 'personal'
+        };
+        this.setState({filters: R.append(personal, resultFilters)});
         this.reloadRoutes();
         if (this.state.sectorId === 0) {
             this.reloadSpot(userId);
@@ -526,6 +628,8 @@ class SpotsShow extends Authorization {
                     newRoute.kind = this.state.sector.kind;
                 }
                 this.loadUsers();
+                if (this.props.user.role === 'user')
+                    newRoute.data.personal = true;
                 this.setState({currentShown: newRoute, routesModalVisible: true, editMode: true});
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
@@ -747,7 +851,11 @@ class SpotsShow extends Authorization {
             .then(response => {
                 this.props.decreaseNumOfActiveRequests();
                 this.props.history.push(`/spots/${this.state.spotId}/sectors/${this.state.sectorId}/routes/${response.data.payload.id}`);
-                this.setState({editRouteIsWaiting: false, editMode: false, currentShown: R.clone(response.data.payload)});
+                this.setState({
+                    editRouteIsWaiting: false,
+                    editMode: false,
+                    currentShown: R.clone(response.data.payload)
+                });
                 this.props.addRoute(this.state.spotId, this.state.sectorId, response.data.payload);
                 this.setState({
                     comments: [],
@@ -909,10 +1017,10 @@ class SpotsShow extends Authorization {
                      page={this.state.page}
                      numOfPages={this.state.numOfPages}
                      period={this.state.period}
-                     result={this.state.result}
+                     filters={this.state.filters}
                      onRouteClick={this.onRouteClick}
                      changePeriodFilter={this.changePeriodFilter}
-                     changeResultFilter={this.changeResultFilter}
+                     onFilterChange={this.onFilterChange}
                      changeCategoryFilter={this.changeCategoryFilter}
                      changePage={this.changePage}/>
         </React.Fragment>

@@ -84,6 +84,9 @@ export default class RoutesEditModal extends Component {
         if (this.state.photo.rotate !== null) {
             formData.append('data[photo][rotation]', this.state.photo.rotate);
         }
+        if (this.props.route.data.personal || this.props.user.id === this.state.route.author_id) {
+            formData.append('data[personal]', true);
+        }
         if (this.props.route.id !== null) {
             this.props.updateRoute(formData);
         } else {
@@ -227,6 +230,7 @@ export default class RoutesEditModal extends Component {
                         <RouteDataEditableTable route={this.state.route}
                                                 sector={this.props.sector}
                                                 onRouteParamChange={this.onRouteParamChange}
+                                                user={this.props.user}
                                                 users={this.props.users}/>
                     </div>
                     <div className="modal__item modal__descr-item">

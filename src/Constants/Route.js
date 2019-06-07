@@ -10,3 +10,5 @@ export const CROP_DEFAULT = {
     keepSelection: true,
     locked: true
 };
+
+export const ROUTE_PERSONAL_DEFAULT = false;

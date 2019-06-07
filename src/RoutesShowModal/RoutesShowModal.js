@@ -107,6 +107,14 @@ export default class RoutesShowModal extends Component {
         this.textareaRef = ref;
     };
 
+    canEditRoute = (user, route) => {
+        if (user.role === 'admin' || user.role === 'creator')
+            return true;
+        if (user.role === 'user' && route.author_id === user.id)
+            return true;
+        return false;
+    };
+
     content = () => {
         return <div className="modal-overlay__wrapper" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
             <div className="modal modal-overlay__modal">
@@ -143,11 +151,11 @@ export default class RoutesShowModal extends Component {
                                 <Counter number={this.props.numOfFlash} text="flash"/>
                             </div>
                         </div>
-                        {this.props.user === null || (this.props.user.role !== 'admin' && this.props.user.role !== 'creator') ? '' :
+                        {(this.props.user && this.canEditRoute(this.props.user, this.props.route)) ?
                             (this.props.ctrlPressed ? <Button size="small" style="normal" title="Удалить"
                                                               onClick={this.props.removeRoute}></Button> :
                                 <Button size="small" style="normal" title="Редактировать"
-                                        onClick={this.props.openEdit}></Button>)}
+                                        onClick={this.props.openEdit}></Button>) : ''}
                     </div>
                 </div>
                 <div className="modal__track-info" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
@@ -162,7 +170,7 @@ export default class RoutesShowModal extends Component {
                             <span
                                 className="modal__title-place">{this.props.route.name ? `(“${this.props.route.name}”)` : ''}</span>
                         </h1>
-                        <RouteDataTable route={this.props.route}/>
+                        <RouteDataTable route={this.props.route} user={this.props.user}/>
                     </div>
                     <div className="modal__item modal__descr-item">
                         <CollapsableBlock title="Описание" isCollapsed={this.state.descriptionCollapsed}

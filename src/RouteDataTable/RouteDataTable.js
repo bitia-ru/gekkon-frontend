@@ -9,7 +9,17 @@ import './RouteDataTable.css';
 
 export default class RouteDataTable extends Component {
     render() {
+        let isCurrentUserRoute = this.props.user && this.props.route.author_id === this.props.user.id;
         let name = this.props.route.author ? GetUserName(this.props.route.author) : null;
+        name = name ? name : 'Неизвестный накрутчик';
+        if (!isCurrentUserRoute && name === 'Неизвестный накрутчик' && this.props.route.author_id !== null) {
+            if (this.props.user.role === 'admin') {
+                name = GetUserName(this.props.route.author, true);
+            }
+            if (this.props.user.role === 'creator') {
+                name = `Пользователь #${this.props.route.author.id}`;
+            }
+        }
         return <div className="route-data-table">
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
@@ -57,7 +67,7 @@ export default class RouteDataTable extends Component {
                     Накрутчик:
                 </div>
                 <div className="route-data-table-item">
-                    <a className="route-data-table__link">{name === null ? 'Неизвестный накрутчик' : name}</a>
+                    <a className="route-data-table__link">{isCurrentUserRoute ? 'Вы' : name}</a>
                 </div>
             </div>
         </div>;

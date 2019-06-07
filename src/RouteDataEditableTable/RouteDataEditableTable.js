@@ -80,12 +80,14 @@ export default class RouteDataEditableTable extends Component {
                     </div>
                 </div>
             </div>
-            <div className="route-data-table-row">
-                <div className="route-data-table-item route-data-table-item_header">
-                    Накрутчик:
-                </div>
-                <ComboBoxPerson selectedUser={this.props.route.author} users={this.props.users} onSelect={(author) => this.props.onRouteParamChange(author, 'author')}/>
-            </div>
+            {(!this.props.route.data.personal) ?
+                <div className="route-data-table-row">
+                    <div className="route-data-table-item route-data-table-item_header">
+                        Накрутчик:
+                    </div>
+                    <ComboBoxPerson selectedUser={this.props.route.author} users={this.props.users}
+                                    onSelect={(author) => this.props.onRouteParamChange(author, 'author')}/>
+                </div> : ''}
         </div>;
     }
 }
