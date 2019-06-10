@@ -238,8 +238,11 @@ class SpotsShow extends Authorization {
         this.reloadComments(id);
         this.reloadLikes(id);
         this.reloadAscents(id);
-        this.loadRoute(id, this.openModal);
-        let route = R.find(R.propEq('id', id), R.pathOr({}, [this.state.spotId, this.state.sectorId], this.props.routes));
+        let route = R.find(
+            R.propEq('id', id),
+            R.pathOr({}, [this.state.spotId, this.state.sectorId], this.props.routes)
+        );
+        this.loadRoute(id, route ? null : this.openModal);
         this.setState({
             editMode: false,
             currentShown: route || {},
