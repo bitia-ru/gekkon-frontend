@@ -15,7 +15,7 @@
   "author": "Bitia",
   "license": "ISC",
   "devDependencies": {
-    "webpack-dev-server": "^3.1.9"
+    "webpack-dev-server": "^3.3.2"
   },
   "dependencies": {
     "@babel/core": "^7.1.2",
