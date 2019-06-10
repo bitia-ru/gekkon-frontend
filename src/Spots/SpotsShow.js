@@ -176,16 +176,22 @@ class SpotsShow extends Authorization {
                         window.location = '/';
                     }
                 }
+                this.reloadSectors(this.state.sectorId, user);
+                if (this.state.sectorId === 0) {
+                    this.reloadSpot(user.id);
+                } else {
+                    this.reloadSector(this.state.sectorId, user.id);
+                }
             });
         } else {
             this.reloadUserAscents();
+            this.reloadSectors(this.state.sectorId);
+            if (this.state.sectorId === 0) {
+                this.reloadSpot();
+            } else {
+                this.reloadSector(this.state.sectorId);
+            }
         }
-        if (this.state.sectorId === 0) {
-            this.reloadSpot();
-        } else {
-            this.reloadSector(this.state.sectorId);
-        }
-        this.reloadSectors(this.state.sectorId);
         this.props.loadFromLocalStorageSelectedFilters();
         if (this.props.routeMarkColors.length === 0) {
             this.loadRouteMarkColors();
@@ -374,7 +380,7 @@ class SpotsShow extends Authorization {
         });
     };
 
-    reloadSectors = (currentSectorId) => {
+    reloadSectors = (currentSectorId, user) => {
         this.props.increaseNumOfActiveRequests();
         Axios.get(`${ApiUrl}/v1/spots/${this.state.spotId}/sectors`)
             .then(response => {
@@ -385,9 +391,13 @@ class SpotsShow extends Authorization {
                 }
                 if (!this.props.selectedPages || this.props.selectedPages[this.state.spotId] === undefined) {
                     this.props.setDefaultSelectedPages(this.state.spotId, R.map((sector) => sector.id, response.data.payload));
-                    this.reloadRoutes(R.merge({sectorId: currentSectorId}, (this.props.selectedFilters[this.state.spotId] === undefined ? DEFAULT_FILTERS : {})), 1);
+                    let filters = R.merge(
+                        {sectorId: currentSectorId},
+                        (this.props.selectedFilters[this.state.spotId] === undefined ? DEFAULT_FILTERS : {})
+                    );
+                    this.reloadRoutes(filters, 1, user);
                 } else {
-                    this.reloadRoutes({sectorId: currentSectorId}, null);
+                    this.reloadRoutes({sectorId: currentSectorId}, null, user);
                 }
             }).catch(error => {
             this.props.decreaseNumOfActiveRequests();
@@ -407,7 +417,7 @@ class SpotsShow extends Authorization {
         });
     };
 
-    reloadRoutes = (filters = {}, page = 1) => {
+    reloadRoutes = (filters = {}, page = 1, user) => {
         let currentSectorId = parseInt((filters.sectorId === null || filters.sectorId === undefined) ? this.state.sectorId : filters.sectorId, 10);
         let currentCategoryFrom = (filters.categoryFrom === null || filters.categoryFrom === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].categoryFrom : filters.categoryFrom;
         let currentCategoryTo = (filters.categoryTo === null || filters.categoryTo === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].categoryTo : filters.categoryTo;
@@ -417,7 +427,7 @@ class SpotsShow extends Authorization {
         let currentPersonal = (filters.personal === null || filters.personal === undefined) ? this.props.selectedFilters[this.state.spotId][currentSectorId].personal : filters.personal;
         let currentPage = (page === null || page === undefined) ? this.props.selectedPages[this.state.spotId][currentSectorId] : page;
         let params = {filters: {category: [[currentCategoryFrom], [currentCategoryTo]], personal: currentPersonal}};
-        if (this.props.user) {
+        if (user || this.props.user) {
             params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
         }
         if (currentName !== '') {
