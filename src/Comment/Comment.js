@@ -12,19 +12,40 @@ export default class Comment extends Component {
         return <div className="comment">
             <AvatarRound user={this.props.comment.author}/>
             <div className="comment__content">
-                <a className="comment__name">{this.props.comment.author.name ? this.props.comment.author.name : this.props.comment.author.login}</a>
+                <a className="comment__name">
+                    {
+                        this.props.comment.author.name
+                            ? this.props.comment.author.name
+                            : this.props.comment.author.login
+                    }
+                </a>
                 <div className="comment__text">{this.props.comment.content}</div>
                 <div className="comment__footer">
                     <div className="comment__date" title={moment(created_at).format(COMMENT_DATETIME_FORMAT)}>
                         {TimeFromNow(moment(created_at))}
                     </div>
-                    {(this.props.user && (this.props.user.name || this.props.user.login)) ?
-                        <React.Fragment><a className="comment__answer"
-                                           onClick={() => this.props.startAnswer(this.props.comment)}>Ответить</a>&nbsp;
-                        </React.Fragment> : ''}
-                    {(this.props.user && (this.props.user.id === this.props.comment.author_id || this.props.user.role === 'admin')) ?
-                        <a className="comment__answer"
-                           onClick={() => this.props.removeComment(this.props.comment)}>Удалить</a> : ''}
+                    {
+                        (this.props.user && (this.props.user.name || this.props.user.login))
+                            ? (
+                                <React.Fragment>
+                                    <a className="comment__answer"
+                                       onClick={() => this.props.startAnswer(this.props.comment)}>
+                                      Ответить
+                                    </a>&nbsp;
+                                </React.Fragment>
+                            )
+                            : ''
+                    }
+                    {
+                        (this.props.user && (this.props.user.id === this.props.comment.author_id || this.props.user.role === 'admin'))
+                            ? (
+                                <a className="comment__answer"
+                                   onClick={() => this.props.removeComment(this.props.comment)}>
+                                  Удалить
+                                </a>
+                            )
+                            : ''
+                    }
                 </div>
 
             </div>

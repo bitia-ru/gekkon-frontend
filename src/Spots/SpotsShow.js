@@ -967,78 +967,122 @@ class SpotsShow extends Authorization {
             categoryId = 4;
         }
         return <React.Fragment>
-            {this.state.routesModalVisible ?
-                (this.state.editMode ?
-                    <RoutesEditModal onClose={this.closeRoutesModal}
-                                     sector={this.state.sectorId === 0 ? R.find((sector) => sector.id === this.state.currentShown.sector_id, this.props.sectors) : this.state.sector}
-                                     cancel={this.cancelEdit}
-                                     users={this.state.users}
-                                     routeMarkColors={this.props.routeMarkColors}
-                                     user={this.props.user}
-                                     numOfActiveRequests={this.props.numOfActiveRequests}
-                                     createRoute={this.createRoute}
-                                     updateRoute={this.updateRoute}
-                                     isWaiting={this.state.editRouteIsWaiting}
-                                     route={this.state.currentShown}/> :
-                    <RoutesShowModal onClose={this.closeRoutesModal} openEdit={this.openEdit}
-                                     removeRoute={this.removeRoute} ctrlPressed={this.state.ctrlPressed}
-                                     goToProfile={this.goToProfile} comments={this.state.comments}
-                                     removeComment={this.removeComment} saveComment={this.saveComment}
-                                     numOfComments={this.state.numOfComments}
-                                     numOfLikes={this.state.numOfLikes}
-                                     isLiked={this.state.isLiked}
-                                     onLikeChange={this.onLikeChange}
-                                     user={this.props.user}
-                                     numOfActiveRequests={this.props.numOfActiveRequests}
-                                     ascent={this.state.ascent}
-                                     numOfRedpoints={this.state.numOfRedpoints}
-                                     numOfFlash={this.state.numOfFlash}
-                                     changeAscentResult={this.changeAscentResult}
-                                     route={this.state.currentShown}/>) : ''}
-            {this.state.signUpFormVisible ?
-                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
-                            enterWithVk={this.enterWithVk}
-                            isWaiting={this.state.signUpIsWaiting}
-                            formErrors={this.state.signUpFormErrors}
-                            resetErrors={this.signUpResetErrors}/> : ''}
-            {this.state.resetPasswordFormVisible ?
-                <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm} closeForm={this.closeResetPasswordForm}
-                                   isWaiting={this.state.resetPasswordIsWaiting}
-                                   formErrors={this.state.resetPasswordFormErrors} email={this.state.email}
-                                   resetErrors={this.resetPasswordResetErrors}/> : ''}
-            {this.state.logInFormVisible ?
-                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
-                           enterWithVk={this.enterWithVk}
-                           isWaiting={this.state.logInIsWaiting}
-                           resetPassword={this.resetPassword}
-                           formErrors={this.state.logInFormErrors}
-                           resetErrors={this.logInResetErrors}/> : ''}
-            {(this.props.user && this.state.profileFormVisible) ?
-                <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         removeVk={this.removeVk}
-                         numOfActiveRequests={this.props.numOfActiveRequests}
-                         showToastr={this.showToastr}
-                         enterWithVk={this.enterWithVk}
-                         isWaiting={this.state.profileIsWaiting}
-                         closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
-                         resetErrors={this.profileResetErrors}/> : ''}
+            {
+                this.state.routesModalVisible
+                    ? (
+                        this.state.editMode
+                            ? (
+                                <RoutesEditModal
+                                    onClose={this.closeRoutesModal}
+                                    sector={this.state.sectorId === 0 ? R.find((sector) => sector.id === this.state.currentShown.sector_id, this.props.sectors) : this.state.sector}
+                                    cancel={this.cancelEdit}
+                                    users={this.state.users}
+                                    routeMarkColors={this.props.routeMarkColors}
+                                    user={this.props.user}
+                                    numOfActiveRequests={this.props.numOfActiveRequests}
+                                    createRoute={this.createRoute}
+                                    updateRoute={this.updateRoute}
+                                    isWaiting={this.state.editRouteIsWaiting}
+                                    route={this.state.currentShown}
+                                />
+                            )
+                            : (
+                                <RoutesShowModal onClose={this.closeRoutesModal}
+                                                 openEdit={this.openEdit}
+                                                 removeRoute={this.removeRoute}
+                                                 ctrlPressed={this.state.ctrlPressed}
+                                                 goToProfile={this.goToProfile}
+                                                 comments={this.state.comments}
+                                                 removeComment={this.removeComment}
+                                                 saveComment={this.saveComment}
+                                                 numOfComments={this.state.numOfComments}
+                                                 numOfLikes={this.state.numOfLikes}
+                                                 isLiked={this.state.isLiked}
+                                                 onLikeChange={this.onLikeChange}
+                                                 user={this.props.user}
+                                                 numOfActiveRequests={this.props.numOfActiveRequests}
+                                                 ascent={this.state.ascent}
+                                                 numOfRedpoints={this.state.numOfRedpoints}
+                                                 numOfFlash={this.state.numOfFlash}
+                                                 changeAscentResult={this.changeAscentResult}
+                                                 route={this.state.currentShown}
+                                />
+                            )
+                    )
+                    : ''
+            }
+            {
+                this.state.signUpFormVisible
+                    ? (
+                        <SignUpForm onFormSubmit={this.submitSignUpForm}
+                                    closeForm={this.closeSignUpForm}
+                                    enterWithVk={this.enterWithVk}
+                                    isWaiting={this.state.signUpIsWaiting}
+                                    formErrors={this.state.signUpFormErrors}
+                                    resetErrors={this.signUpResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                this.state.resetPasswordFormVisible
+                    ? (
+                        <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm}
+                                           closeForm={this.closeResetPasswordForm}
+                                           isWaiting={this.state.resetPasswordIsWaiting}
+                                           formErrors={this.state.resetPasswordFormErrors}
+                                           email={this.state.email}
+                                           resetErrors={this.resetPasswordResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                this.state.logInFormVisible
+                    ? (
+                        <LogInForm onFormSubmit={this.submitLogInForm}
+                                   closeForm={this.closeLogInForm}
+                                   enterWithVk={this.enterWithVk}
+                                   isWaiting={this.state.logInIsWaiting}
+                                   resetPassword={this.resetPassword}
+                                   formErrors={this.state.logInFormErrors}
+                                   resetErrors={this.logInResetErrors}/>
+                    )
+                    : ''
+            }
+            {
+                (this.props.user && this.state.profileFormVisible)
+                    ? (
+                        <Profile user={this.props.user}
+                                 onFormSubmit={this.submitProfileForm}
+                                 removeVk={this.removeVk}
+                                 numOfActiveRequests={this.props.numOfActiveRequests}
+                                 showToastr={this.showToastr}
+                                 enterWithVk={this.enterWithVk}
+                                 isWaiting={this.state.profileIsWaiting}
+                                 closeForm={this.closeProfileForm}
+                                 formErrors={this.state.profileFormErrors}
+                                 resetErrors={this.profileResetErrors}
+                        />
+                    )
+                    : ''
+            }
             <ToastContainer
                 ref={ref => this.container = ref}
                 onClick={() => this.container.clear()}
                 className="toast-top-right"
             />
-            <Header
-                data={this.state.sectorId === 0 ? this.state.spot : this.state.sector}
-                sectors={this.props.sectors}
-                sectorId={this.state.sectorId}
-                infoData={this.state.infoData}
-                changeSectorFilter={this.changeSectorFilter}
-                changeNameFilter={this.changeNameFilter}
-                user={this.props.user}
-                openProfile={this.openProfileForm}
-                signUp={this.signUp}
-                logIn={this.logIn}
-                logOut={this.logOut}/>
+            <Header data={this.state.sectorId === 0 ? this.state.spot : this.state.sector}
+                    sectors={this.props.sectors}
+                    sectorId={this.state.sectorId}
+                    infoData={this.state.infoData}
+                    changeSectorFilter={this.changeSectorFilter}
+                    changeNameFilter={this.changeNameFilter}
+                    user={this.props.user}
+                    openProfile={this.openProfileForm}
+                    signUp={this.signUp}
+                    logIn={this.logIn}
+                    logOut={this.logOut}/>
             <Content routes={R.pathOr([], [this.state.spotId, this.state.sectorId], this.props.routes)}
                      ascents={this.state.ascents}
                      user={this.props.user}

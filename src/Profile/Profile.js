@@ -261,15 +261,26 @@ export default class Profile extends Component {
                           onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
                         <div className="modal-block__avatar-block">
                             <div className="modal-block__avatar modal-block__avatar_login">
-                                {(this.state.avatar !== null) ?
-                                    <img src={this.state.avatar} alt=''/> :
-                                    ''}
+                                {
+                                    (this.state.avatar !== null)
+                                        ? (
+                                            <img src={this.state.avatar} alt=''/>
+                                        )
+                                        : ''
+                                }
                                 <input type="file" name="avatar"
                                        title={(this.state.avatar !== null) ? 'Изменить аватарку' : 'Загрузить аватарку'}
                                        onChange={(event) => this.onFileChosen(event.target.files[0])}/>
-                                {this.state.avatar !== null ?
-                                    <button className="modal-block__avatar-delete" type="button"
-                                            title="Удалить" onClick={this.removeAvatar}></button> : ''
+                                {
+                                    this.state.avatar !== null
+                                        ? (
+                                            <button className="modal-block__avatar-delete"
+                                                    type="button"
+                                                    title="Удалить"
+                                                    onClick={this.removeAvatar}>
+                                            </button>
+                                        )
+                                        : ''
                                 }
                             </div>
                         </div>

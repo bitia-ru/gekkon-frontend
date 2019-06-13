@@ -15,10 +15,9 @@ export default class SocialLinkButton extends Component {
 
     return (
       <React.Fragment>
-        <a
-          href={this.props.href}
-          onClick={this.props.onClick}
-          className={aClassNames}
+        <a href={this.props.href}
+           onClick={this.props.onClick}
+           className={aClassNames}
         >
           <svg>
             <use xlinkHref={this.props.xlinkHref} />

@@ -20,32 +20,68 @@ export default class RouteCard extends Component {
                     <article className="route-card__inner">
                         <div className="route-card__image">
                             <div className="route-card__image-inner">
-                                {this.props.route.photo ?
-                                    <img src={this.props.route.photo.thumb_url} alt={this.props.route.name}/> : ''}
-                                {(this.props.ascent && this.props.ascent.result !== 'unsuccessful') ?
-                                    <div className="route-card__track-status">
-                                        <RouteStatus ascent={this.props.ascent}/>
-                                    </div> : ''}
+                                {
+                                    this.props.route.photo
+                                        ? (
+                                            <img src={this.props.route.photo.thumb_url}
+                                                 alt={this.props.route.name}/>
+                                        )
+                                        : ''
+                                }
+                                {
+                                    (this.props.ascent && this.props.ascent.result !== 'unsuccessful')
+                                        ? (
+                                            <div className="route-card__track-status">
+                                                <RouteStatus ascent={this.props.ascent}/>
+                                            </div>
+                                        )
+                                        : ''
+                                }
                             </div>
                         </div>
                         <div className="route-card__info">
                             <div className="route-card__header">
-                                <div className="route-card__number">{this.props.route.number ? `№${this.props.route.number}` : `#${this.props.route.id}`} </div>
+                                <div className="route-card__number">
+                                    {
+                                        this.props.route.number
+                                            ? `№${this.props.route.number}`
+                                            : `#${this.props.route.id}`
+                                    }
+                                </div>
                                 <h1 className="route-card__title">{this.props.route.name}</h1>
                             </div>
                             <div className="route-card__footer">
-                                {this.props.route.installed_until ?
-                                    <span title={`Скрутят: ${installed_until.format('Do MMMM')} ${(installed_until.format('YYYY') !== moment().format('YYYY') ? installed_until.format('YYYY') : '')}`}
-                                        className={'route-card__date' + ((installed_until && date >= installed_until) ? ' route-card__date_end-soon' : '')}>
-							<span className="route-card__date-icon">
-                                {(installed_until && date >= installed_until) ? <svg>
-                                    <use xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-alarm"></use>
-                                </svg> : <svg>
-                                    <use xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-clock"></use>
-                                </svg>}
-							</span>
-                                        {TimeFromNow(moment(this.props.route.installed_until))}</span> :
-                                    <span className="route-card__date"></span>}
+                                {
+                                    this.props.route.installed_until
+                                        ? (
+                                            <span
+                                                title={`Скрутят: ${installed_until.format('Do MMMM')} ${(installed_until.format('YYYY') !== moment().format('YYYY') ? installed_until.format('YYYY') : '')}`}
+                                                className={'route-card__date' + ((installed_until && date >= installed_until) ? ' route-card__date_end-soon' : '')}>
+                                                <span
+                                                    className="route-card__date-icon">
+                                                    {
+                                                        (installed_until && date >= installed_until)
+                                                            ? (
+                                                                <svg>
+                                                                    <use xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-alarm">
+                                                                    </use>
+                                                                </svg>
+                                                            )
+                                                            : (
+                                                                <svg>
+                                                                    <use xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-clock">
+                                                                    </use>
+                                                                </svg>
+                                                            )
+                                                    }
+                                                </span>
+                                                {TimeFromNow(moment(this.props.route.installed_until))}
+                                            </span>
+                                        )
+                                        : (
+                                            <span className="route-card__date"></span>
+                                        )
+                                }
                                 <div className="route-card__level">
                                     {this.props.route.category}
                                 </div>

@@ -126,14 +126,18 @@ export default class RoutePhotoCropper extends Component {
                 backgroundColor: '#000000'
             }}>
                 <div style={{zIndex: 200}}>
-                    {this.props.src ?
-                        <ReactCrop
-                            src={this.state.src}
-                            crop={this.state.crop}
-                            onImageLoaded={this.onImageLoaded}
-                            onComplete={this.onCropComplete}
-                            onChange={this.onCropChange}
-                        /> : ''}
+                    {
+                        this.props.src
+                            ? (
+                                <ReactCrop src={this.state.src}
+                                           crop={this.state.crop}
+                                           onImageLoaded={this.onImageLoaded}
+                                           onComplete={this.onCropComplete}
+                                           onChange={this.onCropChange}
+                                />
+                            )
+                            : ''
+                    }
                 </div>
             </div>
         </React.Fragment>;
