@@ -35,26 +35,45 @@ class CragsIndex extends Authorization {
     render() {
         return <div
             style={{overflow: (this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
-            {this.state.signUpFormVisible ?
-                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
-                            formErrors={this.state.signUpFormErrors}
-                            resetErrors={this.signUpResetErrors}/> : ''}
-            {this.state.logInFormVisible ?
-                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
-                           resetPassword={this.resetPassword}
-                           formErrors={this.state.logInFormErrors}
-                           resetErrors={this.logInResetErrors}/> : ''}
-            {(this.props.user && this.state.profileFormVisible) ?
-                <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
-                         resetErrors={this.profileResetErrors}/> : ''}
-            <MainPageHeader
-                changeNameFilter={this.changeNameFilter}
-                user={this.props.user}
-                openProfile={this.openProfileForm}
-                logIn={this.logIn}
-                signUp={this.signUp}
-                logOut={this.logOut}/>
+            {
+                this.state.signUpFormVisible
+                    ? (
+                        <SignUpForm onFormSubmit={this.submitSignUpForm}
+                                    closeForm={this.closeSignUpForm}
+                                    formErrors={this.state.signUpFormErrors}
+                                    resetErrors={this.signUpResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                this.state.logInFormVisible
+                    ? (
+                        <LogInForm onFormSubmit={this.submitLogInForm}
+                                   closeForm={this.closeLogInForm}
+                                   resetPassword={this.resetPassword}
+                                   formErrors={this.state.logInFormErrors}
+                                   resetErrors={this.logInResetErrors}
+                        />
+                    ) : ''
+            }
+            {
+                (this.props.user && this.state.profileFormVisible)
+                    ? (
+                        <Profile user={this.props.user}
+                                 onFormSubmit={this.submitProfileForm}
+                                 closeForm={this.closeProfileForm}
+                                 formErrors={this.state.profileFormErrors}
+                                 resetErrors={this.profileResetErrors}
+                        />
+                    ) : ''
+            }
+            <MainPageHeader changeNameFilter={this.changeNameFilter}
+                            user={this.props.user}
+                            openProfile={this.openProfileForm}
+                            logIn={this.logIn}
+                            signUp={this.signUp}
+                            logOut={this.logOut}/>
             <Footer user={this.props.user}
                     logIn={this.logIn}
                     signUp={this.signUp}

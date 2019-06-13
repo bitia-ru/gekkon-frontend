@@ -26,12 +26,26 @@ export default class ComboBox extends Component {
             <div
                 className={'combo-box__select' + (this.state.droppedDown ? ' combo-box__select_active' : '') + (this.props.style === 'transparent' ? ' combo-box__select-transparent' : '') + (this.props.size === 'small' ? ' combo-box__select_small' : '')}
                 onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
-                {this.props.currentValue !== undefined ? this.props.currentValue : (R.find(R.propEq('id', this.props.currentId))(this.props.items))[this.props.textFieldName]}
+                {
+                    this.props.currentValue !== undefined
+                        ? this.props.currentValue
+                        : (
+                            R.find(R.propEq('id', this.props.currentId))(this.props.items)[this.props.textFieldName]
+                        )
+                }
             </div>
-            {this.state.droppedDown ?
-                <div className="combo-box__dropdown"><List items={this.props.items} onClick={this.selectItem}
-                                                           textFieldName={this.props.textFieldName}/>
-                </div> : ''}
+            {
+                this.state.droppedDown
+                    ? (
+                        <div className="combo-box__dropdown">
+                            <List items={this.props.items}
+                                  onClick={this.selectItem}
+                                  textFieldName={this.props.textFieldName}
+                            />
+                        </div>
+                    )
+                    : ''
+            }
         </div>;
     }
 }

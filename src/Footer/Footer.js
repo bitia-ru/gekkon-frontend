@@ -25,21 +25,19 @@ const Footer = ({
                 ? (
                   <React.Fragment>
                     <li className="footer__list-item">
-                      <a
-                        onClick={logIn}
-                        role="link"
-                        tabIndex={0}
-                        className="footer__list-link"
+                      <a onClick={logIn}
+                         role="link"
+                         tabIndex={0}
+                         className="footer__list-link"
                       >
                         Вход
                       </a>
                     </li>
                     <li className="footer__list-item">
-                      <a
-                        onClick={signUp}
-                        role="link"
-                        tabIndex={0}
-                        className="footer__list-link"
+                      <a onClick={signUp}
+                         role="link"
+                         tabIndex={0}
+                         className="footer__list-link"
                       >
                         Регистрация
                       </a>
@@ -48,11 +46,10 @@ const Footer = ({
                 )
                 : (
                   <li className="footer__list-item">
-                    <a
-                      onClick={logOut}
-                      role="link"
-                      tabIndex={0}
-                      className="footer__list-link"
+                    <a onClick={logOut}
+                       role="link"
+                       tabIndex={0}
+                       className="footer__list-link"
                     >
                       Выход
                     </a>

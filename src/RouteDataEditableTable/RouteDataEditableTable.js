@@ -43,9 +43,17 @@ export default class RouteDataEditableTable extends Component {
                                 className="route-data-table__category-track-color"
                                 style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
                         </div>
-                        {this.state.showSlider ? <CategorySlider category={this.props.route.category}
-                                                                 hide={() => this.setState({showSlider: false})}
-                                                                 changeCategory={(category) => this.props.onRouteParamChange(category, 'category')}/> : ''}
+                        {
+                            this.state.showSlider
+                                ? (
+                                    <CategorySlider
+                                        category={this.props.route.category}
+                                        hide={() => this.setState({showSlider: false})}
+                                        changeCategory={(category) => this.props.onRouteParamChange(category, 'category')}
+                                    />
+                                )
+                                : ''
+                        }
                     </div>
                 </div>
             </div>
@@ -76,15 +84,25 @@ export default class RouteDataEditableTable extends Component {
                     Тип:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.sector.kind === 'mixed' ? <div className="modal__field-select">
-                        <ComboBox
-                            onChange={(id) => this.props.onRouteParamChange(R.find(R.propEq('id', id), ROUTE_KINDS).title, 'kind')}
-                            size='small'
-                            style='transparent'
-                            currentId={this.props.route.kind ? R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).id : 0}
-                            textFieldName='text'
-                            items={ROUTE_KINDS}/>
-                    </div> : <React.Fragment>{R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}</React.Fragment>}
+                    {
+                        this.props.sector.kind === 'mixed'
+                            ? (
+                                <div className="modal__field-select">
+                                    <ComboBox
+                                        onChange={(id) => this.props.onRouteParamChange(R.find(R.propEq('id', id), ROUTE_KINDS).title, 'kind')}
+                                        size='small'
+                                        style='transparent'
+                                        currentId={this.props.route.kind ? R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).id : 0}
+                                        textFieldName='text'
+                                        items={ROUTE_KINDS}/>
+                                </div>
+                            )
+                            : (
+                                <React.Fragment>
+                                    {R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}
+                                </React.Fragment>
+                            )
+                    }
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -111,14 +129,21 @@ export default class RouteDataEditableTable extends Component {
                     </div>
                 </div>
             </div>
-            {(!this.props.route.data.personal) ?
-                <div className="route-data-table-row">
-                    <div className="route-data-table-item route-data-table-item_header">
-                        Накрутчик:
-                    </div>
-                    <ComboBoxPerson selectedUser={this.props.route.author} users={this.props.users}
-                                    onSelect={(author) => this.props.onRouteParamChange(author, 'author')}/>
-                </div> : ''}
+            {
+                (!this.props.route.data.personal)
+                    ? (
+                        <div className="route-data-table-row">
+                            <div className="route-data-table-item route-data-table-item_header">
+                                Накрутчик:
+                            </div>
+                            <ComboBoxPerson
+                                selectedUser={this.props.route.author}
+                                users={this.props.users}
+                                onSelect={(author) => this.props.onRouteParamChange(author, 'author')}/>
+                        </div>
+                    )
+                    : ''
+            }
         </div>;
     }
 }

@@ -68,7 +68,13 @@ export default class RouteDataTable extends Component {
                     Дата накрутки:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.route.installed_at ? moment(this.props.route.installed_at).format('DD.MM.YYYY') : ''}
+                    {
+                        this.props.route.installed_at
+                            ? (
+                                moment(this.props.route.installed_at).format('DD.MM.YYYY')
+                            )
+                            : ''
+                    }
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -76,7 +82,13 @@ export default class RouteDataTable extends Component {
                     Дата cкрутки:
                 </div>
                 <div className="route-data-table-item">
-                    {this.props.route.installed_until ? moment(this.props.route.installed_until).format('DD.MM.YYYY') : ''}
+                    {
+                        this.props.route.installed_until
+                            ? (
+                                moment(this.props.route.installed_until).format('DD.MM.YYYY')
+                            )
+                            : ''
+                    }
                 </div>
             </div>
             <div className="route-data-table-row">

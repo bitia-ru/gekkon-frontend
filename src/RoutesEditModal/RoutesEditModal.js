@@ -196,23 +196,45 @@ export default class RoutesEditModal extends Component {
                                 Загрузите фото трассы
                             </div>
                         </div>
-                        {this.state.route.photo ?
-                            <RouteEditor route={this.props.route}
-                                         routePhoto={typeof(this.state.route.photo) === 'string' ? this.state.route.photo : this.state.route.photo.url}
-                                         pointers={this.state.currentPointers}
-                                         editable={true}
-                                         updatePointers={this.updatePointers}/> : ''}
+                        {
+                            this.state.route.photo
+                                ? (
+                                    <RouteEditor
+                                        route={this.props.route}
+                                        routePhoto={typeof(this.state.route.photo) === 'string' ? this.state.route.photo : this.state.route.photo.url}
+                                        pointers={this.state.currentPointers}
+                                        editable={true}
+                                        updatePointers={this.updatePointers}/>
+                                )
+                                : ''
+                        }
                         <div className="btn-handler__track-toggles">
                             <input type="file" hidden={true} ref={(ref) => this.fileInput = ref}
                                    onChange={(event) => this.onFileChosen(event.target.files[0])}/>
-                            {this.state.route.photo ?
-                                <React.Fragment><ButtonHandler onClick={() => this.fileInput.click()}
-                                                               title="Обновить фото"
-                                                               xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"/><ButtonHandler
-                                    onClick={() => this.onRouteParamChange(null, 'photo')} title="Удалить фото"
-                                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"/></React.Fragment> :
-                                <ButtonHandler onClick={() => this.fileInput.click()} title="Загрузить фото"
-                                               xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-download"/>}
+                            {
+                                this.state.route.photo
+                                    ? (
+                                        <React.Fragment>
+                                            <ButtonHandler
+                                                onClick={() => this.fileInput.click()}
+                                                title="Обновить фото"
+                                                xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
+                                            />
+                                            <ButtonHandler
+                                                onClick={() => this.onRouteParamChange(null, 'photo')}
+                                                title="Удалить фото"
+                                                xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
+                                            />
+                                        </React.Fragment>
+                                    )
+                                    : (
+                                        <ButtonHandler
+                                            onClick={() => this.fileInput.click()}
+                                            title="Загрузить фото"
+                                            xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-download"
+                                        />
+                                    )
+                            }
                         </div>
                     </div>
                     <div
@@ -271,11 +293,20 @@ export default class RoutesEditModal extends Component {
         return <React.Fragment>
             <div className="modal-overlay"
                  onClick={this.state.showCropper ? null : () => {if (!this.mouseOver) {this.props.onClose()}}}>
-                {this.state.showCropper ?
-                    <RoutePhotoCropper src={this.state.photo.content}
-                                       close={() => this.setState({showCropper: false})}
-                                       save={this.saveCropped}/> :
-                    <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                {
+                    this.state.showCropper
+                        ? (
+                            <RoutePhotoCropper src={this.state.photo.content}
+                                               close={() => this.setState({showCropper: false})}
+                                               save={this.saveCropped}
+                            />
+                        )
+                        : (
+                            <StickyBar loading={this.props.numOfActiveRequests > 0}
+                                       content={this.content()}
+                                       hideLoaded={true}
+                            />
+                        )
                 }
             </div>
         </React.Fragment>;

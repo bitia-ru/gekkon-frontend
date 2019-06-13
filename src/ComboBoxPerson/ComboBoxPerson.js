@@ -66,19 +66,24 @@ export default class ComboBoxPerson extends Component {
                 onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
                 {name === null ? 'Неизвестный накрутчик' : name}
             </button>
-            {this.state.droppedDown ?
-                <div className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
-                    <div className="combo-box__search-wrapper">
-                        <input type="text" placeholder="Поиск..." className="combo-box__search"
-                               onChange={this.searchInput} onKeyPress={this.onKeyPress}/>
-                    </div>
-                    <div className="combo-box__dropdown-wrapper">
-                        {R.map((user) => <li key={user.id} onClick={() => this.selectItem(user)}
-                                             className="combo-box__dropdown-item combo-box__dropdown-item_padding-10">
-                            <Person user={user}/>
-                        </li>, (this.state.users === null ? R.filter((user) => GetUserName(user) !== null, this.props.users) : this.state.users))}
-                    </div>
-                </div> : ''}
+            {
+                this.state.droppedDown
+                    ? (
+                        <div className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
+                            <div className="combo-box__search-wrapper">
+                                <input type="text" placeholder="Поиск..." className="combo-box__search"
+                                       onChange={this.searchInput} onKeyPress={this.onKeyPress}/>
+                            </div>
+                            <div className="combo-box__dropdown-wrapper">
+                                {R.map((user) => <li key={user.id} onClick={() => this.selectItem(user)}
+                                                     className="combo-box__dropdown-item combo-box__dropdown-item_padding-10">
+                                    <Person user={user}/>
+                                </li>, (this.state.users === null ? R.filter((user) => GetUserName(user) !== null, this.props.users) : this.state.users))}
+                            </div>
+                        </div>
+                    )
+                    : ''
+            }
         </div>;
     }
 }

@@ -10,14 +10,27 @@ export default class List extends Component {
         return <ul className="list">
             {mapIndexed((item, index) => <li key={index} style={{listStyleType: 'none'}}
                                              className={item.separator ? 'list-item-decor' : 'list-item'}>
-                {item.separator ? '' : <div onClick={item.clickable ? (() => this.props.onClick(item.id)) : (() => {
-                })} className={item.clickable ? 'list-link list-link-clickable' : 'list-link'}
-                                            style={{cursor: item.clickable ? 'pointer' : ''}}>{item.svgSrc ?
-                    <span className="list-icon">
+                {
+                    item.separator
+                        ? ''
+                        : (
+                            <div onClick={item.clickable ? (() => this.props.onClick(item.id)) : null}
+                                 className={item.clickable ? 'list-link list-link-clickable' : 'list-link'}
+                                 style={{cursor: item.clickable ? 'pointer' : ''}}>
+                              {
+                                  item.svgSrc
+                                    ? (
+                                      <span className="list-icon">
 											<svg aria-hidden="true">
 												<use xlinkHref={item.svgSrc}></use>
 											</svg>
-										</span> : ''}{item[this.props.textFieldName]}</div>}
+										</span>
+                                        )
+                                        : ''
+                                }{item[this.props.textFieldName]}
+                            </div>
+                        )
+                }
             </li>, this.props.items)}
         </ul>;
     }

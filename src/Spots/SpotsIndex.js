@@ -89,37 +89,66 @@ class SpotsIndex extends Authorization {
 
     content = () => {
         return <React.Fragment>
-            {this.state.signUpFormVisible ?
-                <SignUpForm onFormSubmit={this.submitSignUpForm} closeForm={this.closeSignUpForm}
-                            enterWithVk={this.enterWithVk}
-                            isWaiting={this.state.signUpIsWaiting}
-                            formErrors={this.state.signUpFormErrors}
-                            resetErrors={this.signUpResetErrors}/> : ''}
-            {this.state.resetPasswordFormVisible ?
-                <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm} closeForm={this.closeResetPasswordForm}
-                                   isWaiting={this.state.resetPasswordIsWaiting}
-                                   formErrors={this.state.resetPasswordFormErrors} email={this.state.email}
-                                   resetErrors={this.resetPasswordResetErrors}/> : ''}
-            {this.state.logInFormVisible ?
-                <LogInForm onFormSubmit={this.submitLogInForm} closeForm={this.closeLogInForm}
-                           enterWithVk={this.enterWithVk}
-                           isWaiting={this.state.logInIsWaiting}
-                           resetPassword={this.resetPassword}
-                           formErrors={this.state.logInFormErrors}
-                           resetErrors={this.logInResetErrors}/> : ''}
-            {(this.props.user && this.state.profileFormVisible) ?
-                <Profile user={this.props.user} onFormSubmit={this.submitProfileForm}
-                         removeVk={this.removeVk}
-                         numOfActiveRequests={this.props.numOfActiveRequests}
-                         showToastr={this.showToastr}
-                         enterWithVk={this.enterWithVk}
-                         isWaiting={this.state.profileIsWaiting}
-                         closeForm={this.closeProfileForm} formErrors={this.state.profileFormErrors}
-                         resetErrors={this.profileResetErrors}/> : ''}
-            <ToastContainer
-                ref={ref => this.container = ref}
-                onClick={() => this.container.clear()}
-                className="toast-top-right"
+            {
+                this.state.signUpFormVisible
+                    ? (
+                        <SignUpForm onFormSubmit={this.submitSignUpForm}
+                                    closeForm={this.closeSignUpForm}
+                                    enterWithVk={this.enterWithVk}
+                                    isWaiting={this.state.signUpIsWaiting}
+                                    formErrors={this.state.signUpFormErrors}
+                                    resetErrors={this.signUpResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                this.state.resetPasswordFormVisible
+                    ? (
+                        <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm}
+                                           closeForm={this.closeResetPasswordForm}
+                                           isWaiting={this.state.resetPasswordIsWaiting}
+                                           formErrors={this.state.resetPasswordFormErrors}
+                                           email={this.state.email}
+                                           resetErrors={this.resetPasswordResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                this.state.logInFormVisible
+                    ? (
+                        <LogInForm onFormSubmit={this.submitLogInForm}
+                                   closeForm={this.closeLogInForm}
+                                   enterWithVk={this.enterWithVk}
+                                   isWaiting={this.state.logInIsWaiting}
+                                   resetPassword={this.resetPassword}
+                                   formErrors={this.state.logInFormErrors}
+                                   resetErrors={this.logInResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            {
+                (this.props.user && this.state.profileFormVisible)
+                    ? (
+                        <Profile user={this.props.user}
+                                 onFormSubmit={this.submitProfileForm}
+                                 removeVk={this.removeVk}
+                                 numOfActiveRequests={this.props.numOfActiveRequests}
+                                 showToastr={this.showToastr}
+                                 enterWithVk={this.enterWithVk}
+                                 isWaiting={this.state.profileIsWaiting}
+                                 closeForm={this.closeProfileForm}
+                                 formErrors={this.state.profileFormErrors}
+                                 resetErrors={this.profileResetErrors}
+                        />
+                    )
+                    : ''
+            }
+            <ToastContainer ref={ref => this.container = ref}
+                            onClick={() => this.container.clear()}
+                            className="toast-top-right"
             />
             <MainPageHeader
                 changeNameFilter={this.changeNameFilter}

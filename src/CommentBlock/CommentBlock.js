@@ -43,10 +43,16 @@ export default class CommentBlock extends Component {
                 <div className="comment-block__count-comment">
                     {this.props.numOfComments} комментари{this.ending()}
                 </div>
-                {this.props.allShown ? '' :
-                    <button className="comment-block__show-comments" onClick={this.props.showPrevious}>
-                        Показать предыдущие комментарии
-                    </button>}
+                {
+                    this.props.allShown
+                        ? ''
+                        : (
+                            <button className="comment-block__show-comments"
+                                    onClick={this.props.showPrevious}>
+                                Показать предыдущие комментарии
+                            </button>
+                        )
+                }
                 <div className="comment-block__list" ref={(ref) => this.commentWindow = ref} onScroll={this.onScroll}>
                     {R.map((comment) =>
                         <React.Fragment key={comment.id}>

@@ -11,10 +11,15 @@ export default class CollapsableBlock extends Component {
                 {this.props.title}
             </button>
             <React.Fragment>
-                {this.props.isCollapsed ? '' :
-                    <div className="collapsable-block__content">
-                        {this.props.text}
-                    </div>}
+                {
+                    this.props.isCollapsed
+                        ? ''
+                        : (
+                            <div className="collapsable-block__content">
+                                {this.props.text}
+                            </div>
+                        )
+                }
             </React.Fragment>
         </div>;
     }

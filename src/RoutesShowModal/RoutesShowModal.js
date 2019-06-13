@@ -140,12 +140,18 @@ export default class RoutesShowModal extends Component {
                                 Загрузите фото трассы
                             </div>
                         </div>
-                        {this.props.route.photo ?
-                            <RouteEditor route={this.props.route}
-                                         routePhoto={this.props.route.photo.url}
-                                         pointers={this.state.currentPointers}
-                                         editable={false}
-                                         updatePointers={this.updatePointers}/> : ''}
+                        {
+                            this.props.route.photo
+                                ? (
+                                    <RouteEditor route={this.props.route}
+                                                 routePhoto={this.props.route.photo.url}
+                                                 pointers={this.state.currentPointers}
+                                                 editable={false}
+                                                 updatePointers={this.updatePointers}
+                                    />
+                                )
+                                : ''
+                        }
                     </div>
                     <div
                         className="modal__track-footer">
@@ -162,24 +168,53 @@ export default class RoutesShowModal extends Component {
                                 <Counter number={this.props.numOfFlash} text="flash"/>
                             </div>
                         </div>
-                        {(this.props.user && this.canEditRoute(this.props.user, this.props.route)) ?
-                            (this.props.ctrlPressed ? <Button size="small" style="normal" title="Удалить"
-                                                              onClick={this.props.removeRoute}></Button> :
-                                <Button size="small" style="normal" title="Редактировать"
-                                        onClick={this.props.openEdit}></Button>) : ''}
+                        {
+                            (this.props.user && this.canEditRoute(this.props.user, this.props.route))
+                                ?
+                                (
+                                    this.props.ctrlPressed
+                                        ? (
+                                            <Button size="small"
+                                                    style="normal"
+                                                    title="Удалить"
+                                                    onClick={this.props.removeRoute}>
+                                            </Button>
+                                        )
+                                        : (
+                                            <Button size="small"
+                                                    style="normal"
+                                                    title="Редактировать"
+                                                    onClick={this.props.openEdit}>
+                                            </Button>
+                                        )
+                                )
+                                : ''
+                        }
                     </div>
                 </div>
                 <div className="modal__track-info" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track-status">
-                        {this.props.user ?
-                            <RouteStatus ascent={this.props.ascent}
-                                         changeAscentResult={this.props.changeAscentResult}/> : ''}
+                        {
+                            this.props.user
+                                ? (
+                                    <RouteStatus ascent={this.props.ascent}
+                                                 changeAscentResult={this.props.changeAscentResult}
+                                    />
+                                )
+                                : ''
+                        }
                     </div>
                     <div className="modal__track-header">
                         <h1 className="modal__title">
-                            {this.props.route.number ? `№ ${this.props.route.number}` : `# ${this.props.route.id}`}
+                            {
+                                this.props.route.number
+                                    ? `№ ${this.props.route.number}`
+                                    : `# ${this.props.route.id}`
+                            }
                             <span
-                                className="modal__title-place">{this.props.route.name ? `(“${this.props.route.name}”)` : ''}</span>
+                                className="modal__title-place">
+                                {this.props.route.name ? `(“${this.props.route.name}”)` : ''}
+                            </span>
                         </h1>
                         <RouteDataTable route={this.props.route} user={this.props.user}/>
                     </div>
