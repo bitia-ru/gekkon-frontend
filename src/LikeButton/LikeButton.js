@@ -18,6 +18,5 @@ export default class LikeButton extends Component {
 
 LikeButton.propTypes = {
     numOfLikes: PropTypes.number.isRequired,
-    isLiked: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired
+    isLiked: PropTypes.bool.isRequired
 };

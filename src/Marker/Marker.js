@@ -40,7 +40,5 @@ Marker.propTypes = {
     dx: PropTypes.number.isRequired,
     dy: PropTypes.number.isRequired,
     radius: PropTypes.number.isRequired,
-    angle: PropTypes.number.isRequired,
-    removePointer: PropTypes.func.isRequired,
-    onStartMoving: PropTypes.func.isRequired
+    angle: PropTypes.number.isRequired
 };

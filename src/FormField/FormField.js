@@ -40,7 +40,6 @@ export default class FormField extends Component {
 FormField.propTypes = {
     placeholder: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.string.isRequired,

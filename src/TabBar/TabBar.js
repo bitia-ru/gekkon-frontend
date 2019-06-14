@@ -22,8 +22,8 @@ export default class TabBar extends Component {
             <ul className="tab__list">
                 {mapIndexed((title, index) => <li key={index} className="tab__list-item">
                     <a className={'tab__list-link' + (this.state.tab === (index + 1) ? ' tab__list-link_active' : '')}
-                       onClick={this.props.activeList[index] ? () => this.changeTab(index + 1) : () => {
-                       }} style={this.props.activeList[index] ? {} : {color: 'grey'}}>{title}</a>
+                       onClick={this.props.activeList[index] ? () => this.changeTab(index + 1) : null}
+                       style={this.props.activeList[index] ? {} : {color: 'grey'}}>{title}</a>
                 </li>, this.props.titleList)}
             </ul>
             <ul className="tab__content">
