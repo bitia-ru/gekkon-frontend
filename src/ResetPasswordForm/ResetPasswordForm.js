@@ -103,8 +103,7 @@ export default class ResetPasswordForm extends Component {
         <form action="#" className="form">
             <FormField placeholder="Ваш телефон"
                        id="your-phone"
-                       onChange={() => {
-                       }}
+                       onChange={null}
                        type="number"
                        hasError={false}
                        errorText={''}
@@ -126,8 +125,7 @@ export default class ResetPasswordForm extends Component {
         <form action="#" className="form">
             <FormField placeholder="Email / логин"
                        id="your-email"
-                       onChange={() => {
-                       }}
+                       onChange={null}
                        type="text"
                        hasError={false}
                        errorText={''}

@@ -107,20 +107,15 @@ export default class RouteEditor extends Component {
         return <div className="modal__track-image-wrapper">
             <div className="route-editor__inner-container">
                 <div className="route-editor__img-container" ref={(ref) => this.imageContainerRef = ref}
-                     onMouseDown={this.props.editable ? this.onMouseDown : (() => {
-                     })}
-                     onMouseUp={this.props.editable ? this.onMouseUp : (() => {
-                     })}
-                     onMouseMove={this.props.editable ? this.onMouseMove : (() => {
-                     })}
+                     onMouseDown={this.props.editable ? this.onMouseDown : null}
+                     onMouseUp={this.props.editable ? this.onMouseUp : null}
+                     onMouseMove={this.props.editable ? this.onMouseMove : null}
                      onContextMenu={this.onContextMenu}>
                     <img className="route-editor__img"
                          src={this.props.routePhoto} alt={this.props.route.name}/>
                     {mapIndexed((pointer, index) => <Marker key={index}
-                                                            removePointer={this.props.editable ? (() => this.removePointer(index)) : (() => {
-                                                            })}
-                                                            onStartMoving={this.props.editable ? ((x, y) => this.onStartMoving(index, x, y)) : (() => {
-                                                            })}
+                                                            removePointer={this.props.editable ? (() => this.removePointer(index)) : null}
+                                                            onStartMoving={this.props.editable ? ((x, y) => this.onStartMoving(index, x, y)) : null}
                                                             angle={pointer.angle}
                                                             radius={MARKER_RADIUS}
                                                             dx={pointer.dx}

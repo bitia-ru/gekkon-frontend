@@ -13,8 +13,7 @@ export default class RouteCard extends Component {
         let date = moment().add(SOON_END_PERIOD, 'days');
         let installed_until = this.props.route.installed_until ? moment(this.props.route.installed_until) : null;
         return <div className="content__col-md-4 content__col-lg-3"
-                    onClick={this.props.onRouteClick ? this.props.onRouteClick : () => {
-                    }}>
+                    onClick={this.props.onRouteClick ? this.props.onRouteClick : null}>
             <div className="content__route-card">
                 <a className={'route-card' + ((this.props.ascent && this.props.ascent.result !== 'unsuccessful') ? ' route-card_done' : '')}>
                     <article className="route-card__inner">

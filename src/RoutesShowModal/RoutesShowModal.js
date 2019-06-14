@@ -158,8 +158,7 @@ export default class RoutesShowModal extends Component {
                         <div className="modal__track-information">
                             <div className="modal__track-count">
                                 <LikeButton numOfLikes={this.props.numOfLikes} isLiked={this.props.isLiked}
-                                            onChange={this.props.user === null ? () => {
-                                            } : this.props.onLikeChange}/>
+                                            onChange={this.props.user === null ? null : this.props.onLikeChange}/>
                             </div>
                             <div className="modal__track-count">
                                 <Counter number={this.props.numOfRedpoints} text="redpoints"/>
