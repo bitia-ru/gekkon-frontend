@@ -17,3 +17,5 @@ export const CROP_DEFAULT = {
   keepSelection: true,
   locked: true,
 };
+
+export const SHORT_CLICK_DELAY = 500; // ms

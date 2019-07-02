@@ -17,32 +17,49 @@ export default class Marker extends Component {
       event.preventDefault();
     };
 
+    xShift = () => {
+      const { angle, radius } = this.props;
+      if (angle === 0 || angle === 90) {
+        return radius;
+      }
+      return -radius;
+    };
+
+    yShift = () => {
+      const { angle, radius } = this.props;
+      if (angle === 90 || angle === 180) {
+        return radius;
+      }
+      return -radius;
+    };
+
     render() {
       const {
         left, top, dx, dy, radius, angle,
       } = this.props;
       return (
-        <React.Fragment>
-          <div
-            className="marker"
+        <div
+          draggable={false}
+          className="marker"
+          style={{
+            left: `calc(${left + dx}% - ${radius - this.xShift()}px)`,
+            top: `calc(${top + dy}% - ${radius - this.yShift()}px)`,
+          }}
+        >
+          <img
+            draggable={false}
+            src="/public/img/marker-img/hold-mark.png"
+            className="marker__image"
             style={{
-              left: `calc(${left + dx}% - ${radius}px)`,
-              top: `calc(${top + dy}% - ${radius}px)`,
+              width: `${radius * 2}px`,
+              height: `${radius * 2}px`,
+              transform: `rotate(${angle}deg)`,
             }}
-          >
-            <img
-              draggable={false}
-              src="/public/img/marker-img/hold-mark.png"
-              style={{
-                width: `${radius * 2}px`,
-                height: `${radius * 2}px`,
-                transform: `rotate(${angle}deg)`,
-              }}
-              onMouseDown={this.onMouseDown}
-              onContextMenu={this.onContextMenu}
-            />
-          </div>
-        </React.Fragment>
+            onMouseDown={this.onMouseDown}
+            onContextMenu={this.onContextMenu}
+            alt=""
+          />
+        </div>
       );
     }
 }
