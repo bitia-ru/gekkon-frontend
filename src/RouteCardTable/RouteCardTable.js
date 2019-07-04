@@ -1,39 +1,53 @@
-import React, {Component} from 'react';
-import RouteCard          from '../RouteCard/RouteCard';
-import * as R             from 'ramda';
-import PropTypes          from 'prop-types';
+import React     from 'react';
+import RouteCard from '../RouteCard/RouteCard';
+import * as R    from 'ramda';
+import PropTypes from 'prop-types';
 import './RouteCardTable.css';
 
-export default class RouteCardTable extends Component {
-    render() {
-        return <div className="content__inner">
-            {
-                (this.props.sectorId !== 0 && this.props.user && this.props.ctrlPressed)
-                    ? (
-                        <div className="content__col-md-4 content__col-lg-3">
-                            <div className="content__route-card">
-                                <a className="route-card route-card__edit"
-                                   onClick={this.props.addRoute}>
-                                    <span className="route-card__edit-icon"></span>
-                                    <span className="route-card__edit-title">Добавить новую трассу</span>
-                                </a>
-                            </div>
+const RouteCardTable = ({
+                            user,
+                            sectorId,
+                            ctrlPressed,
+                            addRoute,
+                            ascents,
+                            onRouteClick,
+                            routes,
+                        }) => (
+    <div className="content__inner">
+        {
+            (sectorId !== 0 && user && ctrlPressed)
+                ? (
+                    <div className="content__col-md-4 content__col-lg-3">
+                        <div className="content__route-card">
+                            <a className="route-card route-card__edit"
+                               onClick={addRoute}>
+                                <span className="route-card__edit-icon"></span>
+                                <span className="route-card__edit-title">Добавить новую трассу</span>
+                            </a>
                         </div>
-                    )
-                    : ''
-            }
-            {R.map((route) => <RouteCard key={route.id}
-                                         route={route}
-                                         ascent={R.find((ascent) => ascent.route_id === route.id, this.props.ascents)}
-                                         onRouteClick={() => this.props.onRouteClick(route.id)}/>, this.props.routes)}
-        </div>;
-    }
-}
+                    </div>
+                )
+                : ''
+        }
+        {R.map((route) => <RouteCard key={route.id}
+                                     route={route}
+                                     ascent={R.find((ascent) => ascent.route_id === route.id, ascents)}
+                                     onRouteClick={() => onRouteClick(route.id)}/>, routes)}
+    </div>
+);
 
 RouteCardTable.propTypes = {
+    user: PropTypes.object,
     routes: PropTypes.array.isRequired,
     ascents: PropTypes.array.isRequired,
     ctrlPressed: PropTypes.bool.isRequired,
     addRoute: PropTypes.func.isRequired,
-    sectorId: PropTypes.number.isRequired
+    sectorId: PropTypes.number.isRequired,
+    onRouteClick: PropTypes.func.isRequired,
 };
+
+RouteCardTable.defaultProps = {
+    user: null,
+};
+
+export default RouteCardTable;

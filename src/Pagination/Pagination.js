@@ -1,33 +1,39 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
-import * as R             from 'ramda';
+import React     from 'react';
+import PropTypes from 'prop-types';
+import * as R    from 'ramda';
 import './Pagination.css';
 
-export default class Pagination extends Component {
-    render() {
-        return <div className="content__pagination">
-            <div className="pagination">
-                <div className="pagination__item pagination__toggle pagination__toggle-prev"
-                     onClick={() => this.props.onPageChange(this.props.firstPage)}>
+const Pagination = ({
+                        onPageChange,
+                        firstPage,
+                        page,
+                        pagesList,
+                        lastPage,
+                    }) => (
+    <div className="content__pagination">
+        <div className="pagination">
+            <div className="pagination__item pagination__toggle pagination__toggle-prev"
+                 onClick={() => onPageChange(firstPage)}>
 
-                </div>
-                {R.map((page) => <div
-                    key={page}
-                    onClick={() => this.props.onPageChange(page)}
-                    className={'pagination__item' + (page === this.props.page ? ' pagination__item_active' : '')}>{page}</div>, this.props.pagesList)}
-                <div className="pagination__item pagination__toggle pagination__toggle-next"
-                     onClick={() => this.props.onPageChange(this.props.lastPage)}>
-
-                </div>
             </div>
-        </div>;
-    }
-}
+            {R.map((currentPage) => <div
+                key={currentPage}
+                onClick={() => onPageChange(currentPage)}
+                className={'pagination__item' + (currentPage === page ? ' pagination__item_active' : '')}>{currentPage}</div>, pagesList)}
+            <div className="pagination__item pagination__toggle pagination__toggle-next"
+                 onClick={() => onPageChange(lastPage)}>
+
+            </div>
+        </div>
+    </div>
+);
 
 Pagination.propTypes = {
     page: PropTypes.number.isRequired,
     firstPage: PropTypes.number.isRequired,
     lastPage: PropTypes.number.isRequired,
     pagesList: PropTypes.array.isRequired,
-    onPageChange: PropTypes.func.isRequired
+    onPageChange: PropTypes.func.isRequired,
 };
+
+export default Pagination;

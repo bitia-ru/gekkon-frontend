@@ -1,41 +1,56 @@
-import React, {Component} from 'react';
-import RouteCardTable     from '../RouteCardTable/RouteCardTable';
-import RouteCardList      from '../RouteCardList/RouteCardList';
-import PropTypes          from 'prop-types';
+import React          from 'react';
+import RouteCardTable from '../RouteCardTable/RouteCardTable';
+import RouteCardList  from '../RouteCardList/RouteCardList';
+import PropTypes      from 'prop-types';
 
-export default class RouteCardView extends Component {
-    render() {
-        return <React.Fragment>
-            {this.props.viewMode === 'table'
-                ? (
-                    <RouteCardTable routes={this.props.routes}
-                                    ascents={this.props.ascents}
-                                    addRoute={this.props.addRoute}
-                                    sectorId={this.props.sectorId}
-                                    onRouteClick={this.props.onRouteClick}
-                                    ctrlPressed={this.props.ctrlPressed}
-                                    user={this.props.user}
-                    />
-                )
-                : (
-                    <RouteCardList routes={this.props.routes}
-                                   ascents={this.props.ascents}
-                                   addRoute={this.props.addRoute}
-                                   sectorId={this.props.sectorId}
-                                   onRouteClick={this.props.onRouteClick}
-                                   user={this.props.user}
-                    />
-                )
-            }
-        </React.Fragment>;
-    }
-}
+const RouteCardView = ({
+                           viewMode,
+                           routes,
+                           ascents,
+                           addRoute,
+                           sectorId,
+                           onRouteClick,
+                           ctrlPressed,
+                           user,
+                       }) => (
+    <React.Fragment>
+        {viewMode === 'table'
+            ? (
+                <RouteCardTable routes={routes}
+                                ascents={ascents}
+                                addRoute={addRoute}
+                                sectorId={sectorId}
+                                onRouteClick={onRouteClick}
+                                ctrlPressed={ctrlPressed}
+                                user={user}
+                />
+            )
+            : (
+                <RouteCardList routes={routes}
+                               ascents={ascents}
+                               addRoute={addRoute}
+                               sectorId={sectorId}
+                               onRouteClick={onRouteClick}
+                               user={user}
+                />
+            )
+        }
+    </React.Fragment>
+);
 
 RouteCardView.propTypes = {
+    user: PropTypes.object,
     viewMode: PropTypes.string.isRequired,
     routes: PropTypes.array.isRequired,
     ascents: PropTypes.array.isRequired,
     ctrlPressed: PropTypes.bool.isRequired,
     addRoute: PropTypes.func.isRequired,
-    sectorId: PropTypes.number.isRequired
+    sectorId: PropTypes.number.isRequired,
+    onRouteClick: PropTypes.func.isRequired,
 };
+
+RouteCardView.defaultProps = {
+    user: null,
+};
+
+export default RouteCardView;

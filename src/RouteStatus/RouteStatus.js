@@ -1,24 +1,36 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
+import React     from 'react';
+import PropTypes from 'prop-types';
 import './RouteStatus.css';
 
-export default class RouteStatus extends Component {
-    render() {
-        let complete = (this.props.ascent && this.props.ascent.result !== 'unsuccessful');
-        return <div className={'route-status' + (complete ? ' route-status_complete' : '')} onClick={this.props.changeAscentResult ? this.props.changeAscentResult : null}>
+const RouteStatus = ({
+                         ascent, changeAscentResult,
+                     }) => {
+    let complete = (ascent && ascent.result !== 'unsuccessful');
+    return (
+        <div className={'route-status' + (complete ? ' route-status_complete' : '')}
+             onClick={changeAscentResult ? changeAscentResult : null}>
             <div
-                className={'route-status__type' + (complete ? (this.props.ascent.result === 'red_point' ? ' route-status__type_redpoint' : ' route-status__type_flash') : '')}>
+                className={'route-status__type' + (complete ? (ascent.result === 'red_point' ? ' route-status__type_redpoint' : ' route-status__type_flash') : '')}>
             </div>
             {
                 complete
                     ? (
-                      this.props.ascent.result === 'red_point' ? 'Пролез' : 'Флешанул'
+                        ascent.result === 'red_point' ? 'Пролез' : 'Флешанул'
                     )
-                  : 'Не пройдена'
+                    : 'Не пройдена'
             }
-        </div>;
-    }
-}
+        </div>
+    )
+};
 
 RouteStatus.propTypes = {
+    ascent: PropTypes.object,
+    changeAscentResult: PropTypes.func,
 };
+
+RouteStatus.defaultProps = {
+    ascent: null,
+    changeAscentResult: null,
+};
+
+export default RouteStatus;

@@ -1,48 +1,56 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React      from 'react';
+import PropTypes  from 'prop-types';
 import classNames from 'classnames';
 import './SocialLinkButton.css';
 
-export default class SocialLinkButton extends Component {
-  render() {
+const SocialLinkButton = ({
+                              href,
+                              dark,
+                              active,
+                              unactive,
+                              onClick,
+                              withRemoveButton,
+                              xlinkHref,
+                          }) => {
     const aClassNames = classNames({
-      'social-links__link': true,
-      'social-links__link_dark': this.props.dark,
-      'social-links__link_active': this.props.active,
-      'social-link__with_remove': this.props.withRemoveButton,
-      'social-link__with_remove_unactive': this.props.unactive,
+        'social-links__link': true,
+        'social-links__link_dark': dark,
+        'social-links__link_active': active,
+        'social-link__with_remove': withRemoveButton,
+        'social-link__with_remove_unactive': unactive,
     });
 
     return (
-      <React.Fragment>
-        <a href={this.props.href}
-           onClick={this.props.onClick}
-           className={aClassNames}
-        >
-          <svg>
-            <use xlinkHref={this.props.xlinkHref} />
-          </svg>
-        </a>
-      </React.Fragment>
+        <React.Fragment>
+            <a href={href}
+               onClick={onClick}
+               className={aClassNames}
+            >
+                <svg>
+                    <use xlinkHref={xlinkHref}/>
+                </svg>
+            </a>
+        </React.Fragment>
     );
-  }
-}
+};
 
 SocialLinkButton.propTypes = {
-  href: PropTypes.string,
-  dark: PropTypes.bool,
-  active: PropTypes.bool,
-  unactive: PropTypes.bool,
-  onClick: PropTypes.func,
-  withRemoveButton: PropTypes.bool,
-  xlinkHref: PropTypes.string.isRequired,
+    href: PropTypes.string,
+    dark: PropTypes.bool,
+    active: PropTypes.bool,
+    unactive: PropTypes.bool,
+    onClick: PropTypes.func,
+    withRemoveButton: PropTypes.bool,
+    xlinkHref: PropTypes.string.isRequired,
 };
 
 SocialLinkButton.defaultProps = {
-  href: null,
-  dark: false,
-  active: false,
-  unactive: false,
-  onClick: null,
-  withRemoveButton: false,
+    href: null,
+    dark: false,
+    active: false,
+    unactive: false,
+    onClick: null,
+    withRemoveButton: false,
 };
+
+export default SocialLinkButton;
