@@ -1,13 +1,15 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
+import React     from 'react';
+import PropTypes from 'prop-types';
 import './CloseButton.css';
 
-export default class CloseButton extends Component {
-    render() {
-        return <button className="close" onClick={this.props.onClick}></button>;
-    }
-}
+const CloseButton = ({
+                         onClick,
+                     }) => (
+    <button className="close" onClick={onClick}></button>
+);
 
 CloseButton.propTypes = {
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
 };
+
+export default CloseButton;

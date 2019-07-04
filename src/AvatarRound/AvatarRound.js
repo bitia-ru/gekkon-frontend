@@ -1,17 +1,28 @@
-import React, {Component} from 'react';
+import React     from 'react';
+import PropTypes from 'prop-types';
 import './AvatarRound.css';
 
-export default class AvatarRound extends Component {
-    render() {
-        return <a className={'avatar-round' + (this.props.user ? ' avatar-round_login' : '')}>
-            {
-                (this.props.user && this.props.user.avatar)
-                    ? (
-                        <img src={this.props.user.avatar.url}
-                             alt={this.props.user.name ? this.props.user.name : this.props.user.login}
-                        />
-                    ) : ''
-            }
-        </a>;
-    }
-}
+const AvatarRound = ({
+                         user,
+                     }) => (
+    <a className={'avatar-round' + (user ? ' avatar-round_login' : '')}>
+        {
+            (user && user.avatar)
+                ? (
+                    <img src={user.avatar.url}
+                         alt={user.name ? user.name : user.login}
+                    />
+                ) : ''
+        }
+    </a>
+);
+
+AvatarRound.propTypes = {
+    user: PropTypes.object,
+};
+
+AvatarRound.defaultProps = {
+    user: null,
+};
+
+export default AvatarRound;

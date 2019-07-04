@@ -1,18 +1,9 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
+import React     from 'react';
 
-export default class RouteCardList extends Component {
+const RouteCardList = () => (
+    <div>
+        List
+    </div>
+);
 
-    render() {
-        return <div>
-            List
-        </div>;
-    }
-}
-
-RouteCardList.propTypes = {
-    routes: PropTypes.array.isRequired,
-    ascents: PropTypes.array.isRequired,
-    addRoute: PropTypes.func.isRequired,
-    sectorId: PropTypes.number.isRequired
-};
+export default RouteCardList;

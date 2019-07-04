@@ -1,21 +1,23 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
+import React     from 'react';
+import PropTypes from 'prop-types';
 import './ButtonHandler.css';
 
-export default class ButtonHandler extends Component {
-    render() {
-        return <div className="btn-handler__track-toggles-item">
-            <button className="btn-handler" title={this.props.title} onClick={this.props.onClick}>
-                <svg aria-hidden="true">
-                    <use xlinkHref={this.props.xlinkHref}></use>
-                </svg>
-            </button>
-        </div>;
-    }
-}
+const ButtonHandler = ({
+                           title, onClick, xlinkHref,
+                       }) => (
+    <div className="btn-handler__track-toggles-item">
+        <button className="btn-handler" title={title} onClick={onClick}>
+            <svg aria-hidden="true">
+                <use xlinkHref={xlinkHref}></use>
+            </svg>
+        </button>
+    </div>
+);
 
 ButtonHandler.propTypes = {
     onClick: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    xlinkHref: PropTypes.string.isRequired
+    xlinkHref: PropTypes.string.isRequired,
 };
+
+export default ButtonHandler;

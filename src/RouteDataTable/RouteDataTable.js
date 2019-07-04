@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React              from 'react';
 import PropTypes          from 'prop-types';
 import {GetCategoryColor} from '../Constants/Categories';
 import moment             from 'moment';
@@ -8,28 +8,30 @@ import * as R             from 'ramda';
 import RouteColorPicker   from '../RouteColorPicker/RouteColorPicker';
 import './RouteDataTable.css';
 
-export default class RouteDataTable extends Component {
-    render() {
-        let isCurrentUserRoute = this.props.user && this.props.route.author_id === this.props.user.id;
-        let name = this.props.route.author ? GetUserName(this.props.route.author) : null;
-        name = name ? name : 'Неизвестный накрутчик';
-        if (!isCurrentUserRoute && name === 'Неизвестный накрутчик' && this.props.route.author_id !== null) {
-            if (this.props.user.role === 'admin') {
-                name = GetUserName(this.props.route.author, true);
-            }
-            if (this.props.user.role === 'creator') {
-                name = `Пользователь #${this.props.route.author.id}`;
-            }
+const RouteDataTable = ({
+                            user, route,
+                        }) => {
+    let isCurrentUserRoute = user && route.author_id === user.id;
+    let name = route.author ? GetUserName(route.author) : null;
+    name = name ? name : 'Неизвестный накрутчик';
+    if (!isCurrentUserRoute && name === 'Неизвестный накрутчик' && route.author_id !== null) {
+        if (user.role === 'admin') {
+            name = GetUserName(route.author, true);
         }
-        return <div className="route-data-table">
+        if (user.role === 'creator') {
+            name = `Пользователь #${route.author.id}`;
+        }
+    }
+    return (
+        <div className="route-data-table">
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
                     Сложность:
                 </div>
                 <div className="route-data-table-item">
-                    <div className="route-data-table__category-track">{this.props.route.category}</div>
+                    <div className="route-data-table__category-track">{route.category}</div>
                     <div className="route-data-table__category-track-color"
-                         style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
+                         style={{backgroundColor: GetCategoryColor(route.category)}}></div>
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -37,7 +39,7 @@ export default class RouteDataTable extends Component {
                     Цвет зацепов:
                 </div>
                 <div className="route-data-table-item">
-                    <RouteColorPicker editable={false} route={this.props.route} fieldName='holds_color'/>
+                    <RouteColorPicker editable={false} route={route} fieldName='holds_color'/>
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -45,7 +47,7 @@ export default class RouteDataTable extends Component {
                     Цвет маркировки:
                 </div>
                 <div className="route-data-table-item">
-                    <RouteColorPicker editable={false} route={this.props.route} fieldName='marks_color'/>
+                    <RouteColorPicker editable={false} route={route} fieldName='marks_color'/>
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -60,7 +62,7 @@ export default class RouteDataTable extends Component {
                     Тип:
                 </div>
                 <div className="route-data-table-item">
-                    {R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}
+                    {R.find(R.propEq('title', route.kind), ROUTE_KINDS).text}
                 </div>
             </div>
             <div className="route-data-table-row">
@@ -69,9 +71,9 @@ export default class RouteDataTable extends Component {
                 </div>
                 <div className="route-data-table-item">
                     {
-                        this.props.route.installed_at
+                        route.installed_at
                             ? (
-                                moment(this.props.route.installed_at).format('DD.MM.YYYY')
+                                moment(route.installed_at).format('DD.MM.YYYY')
                             )
                             : ''
                     }
@@ -83,9 +85,9 @@ export default class RouteDataTable extends Component {
                 </div>
                 <div className="route-data-table-item">
                     {
-                        this.props.route.installed_until
+                        route.installed_until
                             ? (
-                                moment(this.props.route.installed_until).format('DD.MM.YYYY')
+                                moment(route.installed_until).format('DD.MM.YYYY')
                             )
                             : ''
                     }
@@ -99,10 +101,17 @@ export default class RouteDataTable extends Component {
                     <a className="route-data-table__link">{isCurrentUserRoute ? 'Вы' : name}</a>
                 </div>
             </div>
-        </div>;
-    }
-}
+        </div>
+    )
+};
 
 RouteDataTable.propTypes = {
-    route: PropTypes.object.isRequired
+    user: PropTypes.object,
+    route: PropTypes.object.isRequired,
 };
+
+RouteDataTable.defaultProps = {
+    user: null,
+};
+
+export default RouteDataTable;

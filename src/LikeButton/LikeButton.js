@@ -1,22 +1,29 @@
-import React, {Component} from 'react';
-import PropTypes          from 'prop-types';
+import React     from 'react';
+import PropTypes from 'prop-types';
 import './LikeButton.css';
 
-export default class LikeButton extends Component {
-    render() {
-        return <button className={'like-button' + (this.props.isLiked ? ' like-button_active' : '')}
-                       onClick={this.props.onChange}>
+const LikeButton = ({
+                        isLiked, onChange, numOfLikes,
+                    }) => (
+    <button className={'like-button' + (isLiked ? ' like-button_active' : '')}
+            onClick={onChange}>
 									<span className="like-button__icon">
 										<svg>
 											<use xlinkHref="/public/img/like-sprite/like.svg#icon-like"></use>
 										</svg>
 									</span>
-            <span className="like-button__count">{this.props.numOfLikes}</span>
-        </button>;
-    }
-}
+        <span className="like-button__count">{numOfLikes}</span>
+    </button>
+);
 
 LikeButton.propTypes = {
+    onChange: PropTypes.func,
     numOfLikes: PropTypes.number.isRequired,
-    isLiked: PropTypes.bool.isRequired
+    isLiked: PropTypes.bool.isRequired,
 };
+
+LikeButton.defaultProps = {
+    user: null,
+};
+
+export default LikeButton;
