@@ -1,27 +1,27 @@
-import React              from 'react';
-import MainPageHeader     from "../MainPageHeader/MainPageHeader";
-import MainPageContent    from "../MainPageContent/MainPageContent";
-import Footer             from "../Footer/Footer";
+import React             from 'react';
+import MainPageHeader    from "../MainPageHeader/MainPageHeader";
+import MainPageContent   from "../MainPageContent/MainPageContent";
+import Footer            from "../Footer/Footer";
 import {
     saveUser,
     saveToken,
     removeToken,
     increaseNumOfActiveRequests,
     decreaseNumOfActiveRequests
-}                         from "../actions";
-import {connect}          from "react-redux";
-import {withRouter, Link} from "react-router-dom";
-import Axios              from 'axios';
-import Qs                 from 'qs';
-import ApiUrl             from '../ApiUrl';
-import Cookies            from 'js-cookie';
-import SignUpForm         from '../SignUpForm/SignUpForm';
-import LogInForm          from '../LogInForm/LogInForm';
-import ResetPasswordForm  from '../ResetPasswordForm/ResetPasswordForm';
-import Profile            from '../Profile/Profile';
-import Authorization      from '../Authorization';
-import {ToastContainer}   from 'react-toastr';
-import StickyBar          from '../StickyBar/StickyBar';
+}                        from "../actions";
+import {connect}         from "react-redux";
+import {withRouter}      from "react-router-dom";
+import Axios             from 'axios';
+import Qs                from 'qs';
+import ApiUrl            from '../ApiUrl';
+import Cookies           from 'js-cookie';
+import SignUpForm        from '../SignUpForm/SignUpForm';
+import LogInForm         from '../LogInForm/LogInForm';
+import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
+import Profile           from '../Profile/Profile';
+import Authorization     from '../Authorization';
+import {ToastContainer}  from 'react-toastr';
+import StickyBar         from '../StickyBar/StickyBar';
 
 Axios.interceptors.request.use(config => {
     config.paramsSerializer = params => {
@@ -62,7 +62,7 @@ class SpotsIndex extends Authorization {
                     decreaseNumOfActiveRequestsProp();
                     saveUserProp(response.data.payload);
                     this.showToastr('success', 'Успешно', 'Активация email');
-                }).catch(error => {
+                }).catch(() => {
                 decreaseNumOfActiveRequestsProp();
                 this.showToastr('warning', 'Активация email', 'При активации произошла ошибка');
             });

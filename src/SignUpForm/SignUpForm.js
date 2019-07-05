@@ -108,7 +108,7 @@ export default class SignUpForm extends Component {
         }
     };
 
-    checkAndSubmit = (type, data, passwordNew, repeatPasswordNew = null) => {
+    checkAndSubmit = (type, data, passwordNew) => {
         const {onFormSubmit} = this.props;
         const {email, password, repeatPassword} = this.state;
         let res = !this.check('email', email);

@@ -165,7 +165,7 @@ export default class RoutesEditModal extends Component {
         this.setState({route: route})
     };
 
-    onFileRead = (event) => {
+    onFileRead = () => {
         const {photo} = this.state;
         let photoCopy = R.clone(photo);
         photoCopy.content = this.fileReader.result;

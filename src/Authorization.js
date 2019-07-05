@@ -45,7 +45,7 @@ export default class Authorization extends React.Component {
             data: {token: token},
             headers: {'TOKEN': token}
         })
-            .then(response => {
+            .then(() => {
                 decreaseNumOfActiveRequests();
                 removeToken();
                 saveUser(null);
@@ -74,7 +74,7 @@ export default class Authorization extends React.Component {
                 if (afterSignIn) {
                     afterSignIn(response.data.payload);
                 }
-            }).catch(error => {
+            }).catch(() => {
             decreaseNumOfActiveRequests();
             Cookies.remove('user_session_token', {path: '', domain: Domain()});
             removeToken();
@@ -259,7 +259,7 @@ export default class Authorization extends React.Component {
             }
             increaseNumOfActiveRequests();
             Axios({url: `${ApiUrl}/v1/users/reset_password`, method: 'patch', data: params})
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequests();
                     this.closeResetPasswordForm();
                     this.submitLogInForm('email', data, password);
@@ -339,7 +339,6 @@ export default class Authorization extends React.Component {
             method: type,
             token: (token ? token : '')
         })}`, "VK", "resizable,scrollbars,status");
-        let self = this;
         window.addEventListener("message", this.afterVkEnter);
     };
 
@@ -356,7 +355,7 @@ export default class Authorization extends React.Component {
         window.removeEventListener("message", this.afterVkEnter);
     };
 
-    removeVk = (afterSuccess) => {
+    removeVk = () => {
         const {
                   user,
                   token,
@@ -400,7 +399,7 @@ export default class Authorization extends React.Component {
             }
             increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, {params: params})
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequests();
                     this.showToastr(
                         'success',
