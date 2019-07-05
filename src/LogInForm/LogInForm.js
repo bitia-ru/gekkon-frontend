@@ -1,12 +1,12 @@
-import React, {Component}    from 'react';
-import TabBar                from '../TabBar/TabBar';
-import SocialLinkButton      from '../SocialLinkButton/SocialLinkButton';
-import Button                from '../Button/Button';
-import FormField             from '../FormField/FormField';
-import CloseButton           from '../CloseButton/CloseButton';
-import CheckBox              from '../CheckBox/CheckBox';
-import PropTypes             from 'prop-types';
-import * as R                from 'ramda';
+import React, {Component} from 'react';
+import TabBar             from '../TabBar/TabBar';
+import SocialLinkButton   from '../SocialLinkButton/SocialLinkButton';
+import Button             from '../Button/Button';
+import FormField          from '../FormField/FormField';
+import CloseButton        from '../CloseButton/CloseButton';
+import CheckBox           from '../CheckBox/CheckBox';
+import PropTypes          from 'prop-types';
+import * as R             from 'ramda';
 import './LogInForm.css';
 
 export default class LogInForm extends Component {
@@ -43,140 +43,173 @@ export default class LogInForm extends Component {
     };
 
     onPhoneChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({phone: event.target.value})
     };
 
     onPasswordEnterChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({passwordEnter: event.target.value})
     };
 
     onEmailChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({email: event.target.value});
     };
 
     onPasswordChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({password: event.target.value});
         this.check('password', event.target.value);
     };
 
     onRememberMeChange = () => {
-        this.setState({rememberMe: !this.state.rememberMe});
+        const {rememberMe} = this.state;
+        this.setState({rememberMe: !rememberMe});
     };
 
     check = (field, value) => {
+        const {errors} = this.state;
         switch (field) {
             case 'password':
                 if (value.length === 0) {
-                    this.setState({errors: R.merge(this.state.errors, {password_digest: ['Пароль не может быть пустым']})});
+                    this.setState({errors: R.merge(errors, {password_digest: ['Пароль не может быть пустым']})});
                     return false;
                 }
                 return true;
         }
     };
 
-    checkAndSubmit = (type, data, password) => {
-        let res = !this.check('password', this.state.password);
+    checkAndSubmit = (type, data, passwordNew) => {
+        const {onFormSubmit} = this.props;
+        const {password, rememberMe} = this.state;
+        const res = !this.check('password', password);
         if (res > 0) {
-            return
+            return;
         }
-        this.props.onFormSubmit(type, data, password, this.state.rememberMe);
+        onFormSubmit(type, data, passwordNew, rememberMe);
     };
 
     hasError = (field) => {
-        return (this.state.errors[field] || this.props.formErrors[field]);
+        const {formErrors} = this.props;
+        const {errors} = this.state;
+        return (errors[field] || formErrors[field]);
     };
 
     errorText = (field) => {
-        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.formErrors[field] ? this.props.formErrors[field] : []));
+        const {formErrors} = this.props;
+        const {errors} = this.state;
+        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
     };
 
     closeForm = () => {
+        const {resetErrors, closeForm} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
-        this.props.closeForm()
+        resetErrors();
+        closeForm()
     };
 
     resetPassword = (type) => {
+        const {resetPassword} = this.props;
+        const {phone, email} = this.state;
         if (type === 'phone') {
-            if (this.state.phone === '') {
+            if (phone === '') {
                 this.setState({errors: {phone: ['Введите телефон']}});
             } else {
-                this.props.resetPassword('phone', this.state.phone)
+                resetPassword('phone', phone)
             }
         }
         if (type === 'email') {
-            if (this.state.email === '') {
+            if (email === '') {
                 this.setState({errors: {email: ['Введите почту / логин']}});
             } else {
-                this.props.resetPassword('email', this.state.email)
+                resetPassword('email', email)
             }
         }
     };
 
-    firstTabContent = () =>
-        <form action="#" className="form">
-            <FormField placeholder="Телефон"
-                       id="phone"
-                       onChange={this.onPhoneChange}
-                       type="number"
-                       hasError={this.hasError('phone')}
-                       errorText={this.errorText('phone')}
-                       value={this.state.phone}/>
-            <FormField placeholder="Пароль"
-                       id="password-enter"
-                       onChange={this.onPasswordEnterChange}
-                       type="text"
-                       hasError={this.hasError('passwordEnter')}
-                       errorText={this.errorText('passwordEnter')}
-                       value={this.state.passwordEnter}/>
-            <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
-                    isWaiting={this.props.isWaiting}
-                    onClick={() => this.checkAndSubmit('phone', this.state.phone, this.state.passwordEnter)}/>
-            <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={this.state.rememberMe} title="Запомнить меня"/>
-                <a className="modal-block__link" onClick={() => this.resetPassword('phone')}>Забыли пароль?</a>
-            </div>
-        </form>;
+    firstTabContent = () => {
+        const {isWaiting} = this.props;
+        const {phone, passwordEnter, rememberMe} = this.state;
+        return (
+            <form action="#" className="form">
+                <FormField placeholder="Телефон"
+                           id="phone"
+                           onChange={this.onPhoneChange}
+                           type="number"
+                           hasError={this.hasError('phone')}
+                           errorText={this.errorText('phone')}
+                           value={phone}/>
+                <FormField placeholder="Пароль"
+                           id="password-enter"
+                           onChange={this.onPasswordEnterChange}
+                           type="text"
+                           hasError={this.hasError('passwordEnter')}
+                           errorText={this.errorText('passwordEnter')}
+                           value={passwordEnter}/>
+                <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
+                        isWaiting={isWaiting}
+                        onClick={() => this.checkAndSubmit('phone', phone, passwordEnter)}/>
+                <div className="modal-block__settings">
+                    <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={rememberMe}
+                              title="Запомнить меня"/>
+                    <a className="modal-block__link" onClick={() => this.resetPassword('phone')}>Забыли пароль?</a>
+                </div>
+            </form>
+        );
+    };
 
-    secondTabContent = () =>
-        <form action="#" className="form">
-            <FormField placeholder="Email / логин"
-                       id="email"
-                       onChange={this.onEmailChange}
-                       type="text"
-                       hasError={this.hasError('email')}
-                       errorText={this.errorText('email')}
-                       value={this.state.email}/>
-            <FormField placeholder="Пароль"
-                       id="password"
-                       onChange={this.onPasswordChange}
-                       type="password"
-                       hasError={this.hasError('password_digest')}
-                       errorText={this.errorText('password_digest')}
-                       onEnter={() => this.checkAndSubmit('email', this.state.email, this.state.password)}
-                       value={this.state.password}/>
-            <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
-                    isWaiting={this.props.isWaiting}
-                    onClick={() => this.checkAndSubmit('email', this.state.email, this.state.password)}/>
-            <div className="modal-block__settings">
-                <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={this.state.rememberMe} title="Запомнить меня"/>
-                <a className="modal-block__link" onClick={() => this.resetPassword('email')}>Забыли пароль?</a>
-            </div>
-        </form>;
+    secondTabContent = () => {
+        const {isWaiting} = this.props;
+        const {email, password, rememberMe} = this.state;
+        return (
+            <form action="#" className="form">
+                <FormField placeholder="Email / логин"
+                           id="email"
+                           onChange={this.onEmailChange}
+                           type="text"
+                           hasError={this.hasError('email')}
+                           errorText={this.errorText('email')}
+                           value={email}/>
+                <FormField placeholder="Пароль"
+                           id="password"
+                           onChange={this.onPasswordChange}
+                           type="password"
+                           hasError={this.hasError('password_digest')}
+                           errorText={this.errorText('password_digest')}
+                           onEnter={() => this.checkAndSubmit('email', email, password)}
+                           value={password}/>
+                <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
+                        isWaiting={isWaiting}
+                        onClick={() => this.checkAndSubmit('email', email, password)}/>
+                <div className="modal-block__settings">
+                    <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={rememberMe}
+                              title="Запомнить меня"/>
+                    <a className="modal-block__link" onClick={() => this.resetPassword('email')}>Забыли пароль?</a>
+                </div>
+            </form>
+        );
+    };
 
     render() {
-        return <div className="modal-overlay" onClick={() => {if (!this.mouseOver) {this.closeForm()}}}>
+        const {enterWithVk} = this.props;
+        return <div className="modal-overlay" onClick={() => {
+            if (!this.mouseOver) {
+                this.closeForm()
+            }
+        }}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
-                    <div className="modal-block__padding-wrapper" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                    <div className="modal-block__padding-wrapper" onMouseOver={() => this.mouseOver = true}
+                         onMouseLeave={() => this.mouseOver = false}>
                         <div className="modal-block__close">
                             <CloseButton onClick={this.closeForm}/>
                         </div>
@@ -192,21 +225,25 @@ export default class LogInForm extends Component {
                         <div className="modal-block__social">
                             <ul className="social-links">
                                 <li><SocialLinkButton
-                                    onClick={() => this.props.enterWithVk('logIn')}
+                                    onClick={() => enterWithVk('logIn')}
                                     xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
                                     dark={true}/>
                                 </li>
-                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
-                                                      dark={true} unactive={true}/>
+                                <li><SocialLinkButton
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                    dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
-                                                      dark={true} unactive={true}/>
+                                <li><SocialLinkButton
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                    dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
-                                                      dark={true} unactive={true}/>
+                                <li><SocialLinkButton
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                    dark={true} unactive={true}/>
                                 </li>
-                                <li><SocialLinkButton xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
-                                                      dark={true} unactive={true}/>
+                                <li><SocialLinkButton
+                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                    dark={true} unactive={true}/>
                                 </li>
                             </ul>
                         </div>
@@ -218,10 +255,15 @@ export default class LogInForm extends Component {
 }
 
 LogInForm.propTypes = {
+    isWaiting: PropTypes.bool,
     onFormSubmit: PropTypes.func.isRequired,
     enterWithVk: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
     resetPassword: PropTypes.func.isRequired,
     formErrors: PropTypes.object.isRequired,
-    resetErrors: PropTypes.func.isRequired
+    resetErrors: PropTypes.func.isRequired,
+};
+
+LogInForm.defaultProps = {
+    isWaiting: null,
 };

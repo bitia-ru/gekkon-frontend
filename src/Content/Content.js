@@ -22,51 +22,72 @@ export default class Content extends Component {
     };
 
     pagesList = () => {
-        if (NUM_OF_DISPLAYED_PAGES >= this.props.numOfPages) {
-            return R.range(1, this.props.numOfPages + 1);
+        const {numOfPages, page} = this.props;
+        if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
+            return R.range(1, numOfPages + 1);
         }
-        let firstPage = this.props.page - Math.floor(NUM_OF_DISPLAYED_PAGES / 2);
+        let firstPage = page - Math.floor(NUM_OF_DISPLAYED_PAGES / 2);
         let lastPage = firstPage + NUM_OF_DISPLAYED_PAGES;
-        if (firstPage >= 1 && lastPage <= this.props.numOfPages) {
+        if (firstPage >= 1 && lastPage <= numOfPages) {
             return R.range(firstPage, lastPage);
         }
         if (firstPage >= 1) {
-            return R.range(this.props.numOfPages - NUM_OF_DISPLAYED_PAGES + 1, this.props.numOfPages + 1);
+            return R.range(numOfPages - NUM_OF_DISPLAYED_PAGES + 1, numOfPages + 1);
         }
         return R.range(1, NUM_OF_DISPLAYED_PAGES + 1);
     };
 
     render() {
+        const {
+                  page,
+                  numOfPages,
+                  user,
+                  period,
+                  onFilterChange,
+                  filters,
+                  categoryId,
+                  onCategoryChange,
+                  changePeriodFilter,
+                  ctrlPressed,
+                  addRoute,
+                  sectorId,
+                  routes,
+                  ascents,
+                  onRouteClick,
+                  changePage,
+              } = this.props;
+        const {viewMode} = this.state;
         return <div className="content">
             <div className="content__container">
-                <FilterBlock viewMode={this.state.viewMode}
+                <FilterBlock viewMode={viewMode}
                              onViewModeChange={this.changeViewMode}
-                             period={this.props.period}
-                             onFilterChange={this.props.onFilterChange}
-                             filters={this.props.filters}
-                             user={this.props.user}
-                             categoryId={this.props.categoryId}
-                             onCategoryChange={this.props.onCategoryChange}
-                             changePeriodFilter={this.props.changePeriodFilter}/>
-                <RouteCardView viewMode={this.state.viewMode}
-                               ctrlPressed={this.props.ctrlPressed}
-                               addRoute={this.props.addRoute}
-                               sectorId={this.props.sectorId}
-                               user={this.props.user}
-                               routes={this.props.routes}
-                               ascents={this.props.ascents}
-                               onRouteClick={this.props.onRouteClick}/>
-                <Pagination onPageChange={this.props.changePage}
-                            page={this.props.page}
+                             period={period}
+                             onFilterChange={onFilterChange}
+                             filters={filters}
+                             user={user}
+                             categoryId={categoryId}
+                             onCategoryChange={onCategoryChange}
+                             changePeriodFilter={changePeriodFilter}/>
+                <RouteCardView viewMode={viewMode}
+                               ctrlPressed={ctrlPressed}
+                               addRoute={addRoute}
+                               sectorId={sectorId}
+                               user={user}
+                               routes={routes}
+                               ascents={ascents}
+                               onRouteClick={onRouteClick}/>
+                <Pagination onPageChange={changePage}
+                            page={page}
                             pagesList={this.pagesList()}
                             firstPage={1}
-                            lastPage={this.props.numOfPages}/>
+                            lastPage={numOfPages}/>
             </div>
         </div>;
     }
 }
 
 Content.propTypes = {
+    user: PropTypes.object,
     routes: PropTypes.array.isRequired,
     ascents: PropTypes.array.isRequired,
     page: PropTypes.number.isRequired,
@@ -80,5 +101,10 @@ Content.propTypes = {
     changePeriodFilter: PropTypes.func.isRequired,
     ctrlPressed: PropTypes.bool.isRequired,
     addRoute: PropTypes.func.isRequired,
-    sectorId: PropTypes.number.isRequired
+    sectorId: PropTypes.number.isRequired,
+    onRouteClick: PropTypes.func.isRequired,
+};
+
+Content.defaultProps = {
+    user: null,
 };

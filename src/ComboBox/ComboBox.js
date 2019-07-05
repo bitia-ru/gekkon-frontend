@@ -14,33 +14,38 @@ export default class ComboBox extends Component {
     }
 
     selectItem = (id) => {
-        if (!this.props.multipleSelect) {
+        const {multipleSelect, onChange} = this.props;
+        if (!multipleSelect) {
             this.setState({droppedDown: false});
         }
-        this.props.onChange(id);
+        onChange(id);
     };
 
     render() {
+        const {
+                  tabIndex, currentValue, currentId, items, textFieldName, style, size,
+              } = this.props;
+        const {droppedDown} = this.state;
         return <div className="combo-box__container" onBlur={() => this.setState({droppedDown: false})}
-                    tabIndex={this.props.tabIndex}>
+                    tabIndex={tabIndex}>
             <div
-                className={'combo-box__select' + (this.state.droppedDown ? ' combo-box__select_active' : '') + (this.props.style === 'transparent' ? ' combo-box__select-transparent' : '') + (this.props.size === 'small' ? ' combo-box__select_small' : '')}
-                onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
+                className={'combo-box__select' + (droppedDown ? ' combo-box__select_active' : '') + (style === 'transparent' ? ' combo-box__select-transparent' : '') + (size === 'small' ? ' combo-box__select_small' : '')}
+                onClick={() => this.setState({droppedDown: !droppedDown})}>
                 {
-                    this.props.currentValue !== undefined
-                        ? this.props.currentValue
+                    currentValue !== null
+                        ? currentValue
                         : (
-                            R.find(R.propEq('id', this.props.currentId))(this.props.items)[this.props.textFieldName]
+                            R.find(R.propEq('id', currentId))(items)[textFieldName]
                         )
                 }
             </div>
             {
-                this.state.droppedDown
+                droppedDown
                     ? (
                         <div className="combo-box__dropdown">
-                            <List items={this.props.items}
+                            <List items={items}
                                   onClick={this.selectItem}
-                                  textFieldName={this.props.textFieldName}
+                                  textFieldName={textFieldName}
                             />
                         </div>
                     )
@@ -51,7 +56,22 @@ export default class ComboBox extends Component {
 }
 
 ComboBox.propTypes = {
+    multipleSelect: PropTypes.bool,
+    currentValue: PropTypes.string,
+    currentId: PropTypes.number,
+    style: PropTypes.string,
+    size: PropTypes.string,
+    tabIndex: PropTypes.number,
     textFieldName: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    items: PropTypes.array.isRequired
+    items: PropTypes.array.isRequired,
+};
+
+ComboBox.defaultProps = {
+    multipleSelect: false,
+    currentValue: null,
+    currentId: null,
+    style: null,
+    size: null,
+    tabIndex: null,
 };

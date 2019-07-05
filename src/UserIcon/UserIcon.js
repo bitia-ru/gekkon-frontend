@@ -16,30 +16,36 @@ export default class UserIcon extends Component {
     }
 
     onItemSelect = (id) => {
+        const {
+                  user, openProfile, signUp, logOut, logIn,
+              } = this.props;
         this.setState({droppedDown: false});
         if (id === 1) {
-            this.props.user ? this.props.openProfile() : this.props.signUp();
+            user ? openProfile() : signUp();
         }
         if (id === 2) {
-            this.props.user ? this.props.logOut() : this.props.logIn();
+            user ? logOut() : logIn();
         }
     };
 
     onAvatarClick = () => {
-        this.setState({droppedDown: !this.state.droppedDown})
+        const {droppedDown} = this.state;
+        this.setState({droppedDown: !droppedDown})
     };
 
     render() {
-        let title = this.props.user ? GetUserName(this.props.user, true) : '';
+        const {user} = this.props;
+        const {droppedDown} = this.state;
+        let title = user ? GetUserName(user, true) : '';
         return <div className="user-icon" onBlur={() => this.setState({droppedDown: false})} tabIndex={0}>
             <Avatar onClick={this.onAvatarClick}
-                    user={this.props.user}/>
+                    user={user}/>
             {
-                this.state.droppedDown
+                droppedDown
                     ? (
                         <div className="user-icon__user-menu user-icon__user-menu_active">
                             <List
-                                items={this.props.user === null ? GUEST_ITEMS_DATA : R.prepend({title: title}, USER_ITEMS_DATA)}
+                                items={user === null ? GUEST_ITEMS_DATA : R.prepend({title: title}, USER_ITEMS_DATA)}
                                 onClick={this.onItemSelect}
                                 textFieldName='title'/>
                         </div>
@@ -51,8 +57,13 @@ export default class UserIcon extends Component {
 }
 
 UserIcon.propTypes = {
+    user: PropTypes.object,
     logIn: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired,
     signUp: PropTypes.func.isRequired,
     openProfile: PropTypes.func.isRequired
+};
+
+UserIcon.defaultProps = {
+    user: null,
 };

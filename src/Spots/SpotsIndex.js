@@ -40,7 +40,14 @@ class SpotsIndex extends Authorization {
     }
 
     componentDidMount() {
-        this.props.history.listen((location, action) => {
+        const {
+                  history,
+                  increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
+                  decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+                  saveUser: saveUserProp,
+                  saveToken: saveTokenProp,
+              } = this.props;
+        history.listen((location, action) => {
             if (action === 'POP') {
                 this.setState({profileFormVisible: (location.hash === '#profile')});
             }
@@ -48,15 +55,15 @@ class SpotsIndex extends Authorization {
         let url = new URL(window.location.href);
         let code = url.searchParams.get("activate_mail_code");
         if (code !== null) {
-            this.props.increaseNumOfActiveRequests();
+            increaseNumOfActiveRequestsProp();
             let user_id = url.searchParams.get("user_id");
             Axios.get(`${ApiUrl}/v1/users/mail_activation/${code}`, {params: {id: user_id}})
                 .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
-                    this.props.saveUser(response.data.payload);
+                    decreaseNumOfActiveRequestsProp();
+                    saveUserProp(response.data.payload);
                     this.showToastr('success', 'Успешно', 'Активация email');
                 }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
+                decreaseNumOfActiveRequestsProp();
                 this.showToastr('warning', 'Активация email', 'При активации произошла ошибка');
             });
         }
@@ -67,7 +74,7 @@ class SpotsIndex extends Authorization {
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let token = Cookies.get('user_session_token');
-            this.props.saveToken(token);
+            saveTokenProp(token);
             this.signIn(token);
         }
 
@@ -78,69 +85,87 @@ class SpotsIndex extends Authorization {
     };
 
     openProfileForm = () => {
-        this.props.history.push('/#profile');
+        const {history} = this.props;
+        history.push('/#profile');
         this.setState({profileFormVisible: true});
     };
 
     closeProfileForm = () => {
-        this.props.history.push('/');
+        const {history} = this.props;
+        history.push('/');
         this.setState({profileFormVisible: false});
     };
 
     content = () => {
+        const {user, numOfActiveRequests} = this.props;
+        const {
+                  signUpFormVisible,
+                  signUpIsWaiting,
+                  signUpFormErrors,
+                  resetPasswordFormVisible,
+                  resetPasswordIsWaiting,
+                  resetPasswordFormErrors,
+                  email,
+                  logInFormVisible,
+                  logInIsWaiting,
+                  logInFormErrors,
+                  profileFormVisible,
+                  profileIsWaiting,
+                  profileFormErrors,
+              } = this.state;
         return <React.Fragment>
             {
-                this.state.signUpFormVisible
+                signUpFormVisible
                     ? (
                         <SignUpForm onFormSubmit={this.submitSignUpForm}
                                     closeForm={this.closeSignUpForm}
                                     enterWithVk={this.enterWithVk}
-                                    isWaiting={this.state.signUpIsWaiting}
-                                    formErrors={this.state.signUpFormErrors}
+                                    isWaiting={signUpIsWaiting}
+                                    formErrors={signUpFormErrors}
                                     resetErrors={this.signUpResetErrors}
                         />
                     )
                     : ''
             }
             {
-                this.state.resetPasswordFormVisible
+                resetPasswordFormVisible
                     ? (
                         <ResetPasswordForm onFormSubmit={this.submitResetPasswordForm}
                                            closeForm={this.closeResetPasswordForm}
-                                           isWaiting={this.state.resetPasswordIsWaiting}
-                                           formErrors={this.state.resetPasswordFormErrors}
-                                           email={this.state.email}
+                                           isWaiting={resetPasswordIsWaiting}
+                                           formErrors={resetPasswordFormErrors}
+                                           email={email}
                                            resetErrors={this.resetPasswordResetErrors}
                         />
                     )
                     : ''
             }
             {
-                this.state.logInFormVisible
+                logInFormVisible
                     ? (
                         <LogInForm onFormSubmit={this.submitLogInForm}
                                    closeForm={this.closeLogInForm}
                                    enterWithVk={this.enterWithVk}
-                                   isWaiting={this.state.logInIsWaiting}
+                                   isWaiting={logInIsWaiting}
                                    resetPassword={this.resetPassword}
-                                   formErrors={this.state.logInFormErrors}
+                                   formErrors={logInFormErrors}
                                    resetErrors={this.logInResetErrors}
                         />
                     )
                     : ''
             }
             {
-                (this.props.user && this.state.profileFormVisible)
+                (user && profileFormVisible)
                     ? (
-                        <Profile user={this.props.user}
+                        <Profile user={user}
                                  onFormSubmit={this.submitProfileForm}
                                  removeVk={this.removeVk}
-                                 numOfActiveRequests={this.props.numOfActiveRequests}
+                                 numOfActiveRequests={numOfActiveRequests}
                                  showToastr={this.showToastr}
                                  enterWithVk={this.enterWithVk}
-                                 isWaiting={this.state.profileIsWaiting}
+                                 isWaiting={profileIsWaiting}
                                  closeForm={this.closeProfileForm}
-                                 formErrors={this.state.profileFormErrors}
+                                 formErrors={profileFormErrors}
                                  resetErrors={this.profileResetErrors}
                         />
                     )
@@ -152,7 +177,7 @@ class SpotsIndex extends Authorization {
             />
             <MainPageHeader
                 changeNameFilter={this.changeNameFilter}
-                user={this.props.user}
+                user={user}
                 openProfile={this.openProfileForm}
                 logIn={this.logIn}
                 signUp={this.signUp}
@@ -162,11 +187,17 @@ class SpotsIndex extends Authorization {
     };
 
     render() {
+        const {user, numOfActiveRequests} = this.props;
+        const {
+                  signUpFormVisible,
+                  logInFormVisible,
+                  profileFormVisible,
+              } = this.state;
         return <React.Fragment>
             <div
-                style={{overflow: ((this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible) ? 'hidden' : '')}}>
-                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()}/>
-                <Footer user={this.props.user}
+                style={{overflow: ((signUpFormVisible || logInFormVisible || profileFormVisible) ? 'hidden' : '')}}>
+                <StickyBar loading={numOfActiveRequests > 0} content={this.content()}/>
+                <Footer user={user}
                         logIn={this.logIn}
                         signUp={this.signUp}
                         logOut={this.logOut}/>

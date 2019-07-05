@@ -16,14 +16,15 @@ export default class Profile extends Component {
     constructor(props) {
         super(props);
 
+        const {user} = this.props;
         this.state = {
-            name: this.props.user.name ? this.props.user.name : '',
-            login: this.props.user.login ? this.props.user.login : '',
-            phone: this.props.user.phone ? this.props.user.phone : '',
+            name: user.name ? user.name : '',
+            login: user.login ? user.login : '',
+            phone: user.phone ? user.phone : '',
             password: '',
-            email: this.props.user.email ? this.props.user.email : '',
+            email: user.email ? user.email : '',
             repeatPassword: '',
-            avatar: this.props.user.avatar ? this.props.user.avatar.url : null,
+            avatar: user.avatar ? user.avatar.url : null,
             avatarFile: null,
             errors: {},
             fieldsOld: {}
@@ -32,14 +33,22 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
+        const {
+                  name,
+                  login,
+                  phone,
+                  password,
+                  email,
+                  avatar,
+              } = this.state;
         this.setState({
             fieldsOld: {
-                name: this.state.name,
-                login: this.state.login,
-                phone: this.state.phone,
-                password: this.state.password,
-                email: this.state.email,
-                avatar: this.state.avatar
+                name: name,
+                login: login,
+                phone: phone,
+                password: password,
+                email: email,
+                avatar: avatar
             }
         });
         window.addEventListener("keydown", this.onKeyDown);
@@ -77,15 +86,24 @@ export default class Profile extends Component {
     };
 
     fieldsChanged = () => {
+        const {
+                  name,
+                  login,
+                  phone,
+                  password,
+                  email,
+                  avatar,
+                  fieldsOld,
+              } = this.state;
         let fields = {
-            name: this.state.name,
-            login: this.state.login,
-            phone: this.state.phone,
-            password: this.state.password,
-            email: this.state.email,
-            avatar: this.state.avatar
+            name: name,
+            login: login,
+            phone: phone,
+            password: password,
+            email: email,
+            avatar: avatar
         };
-        return this.state.fieldsOld && JSON.stringify(fields) !== JSON.stringify(this.state.fieldsOld);
+        return fieldsOld && JSON.stringify(fields) !== JSON.stringify(fieldsOld);
     };
 
     resetErrors = () => {
@@ -93,42 +111,48 @@ export default class Profile extends Component {
     };
 
     onPhoneChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({phone: event.target.value});
         this.check('phone', event.target.value);
     };
 
     onNameChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({name: event.target.value});
     };
 
     onEmailChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({email: event.target.value});
         this.check('email', event.target.value);
     };
 
     onLoginChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({login: event.target.value});
         this.check('login', event.target.value);
     };
 
     onPasswordChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({password: event.target.value});
         this.check('password', event.target.value);
     };
 
     onRepeatPasswordChange = (event) => {
+        const {resetErrors} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
+        resetErrors();
         this.setState({repeatPassword: event.target.value});
         this.check('repeatPassword', event.target.value);
     };
@@ -149,47 +173,51 @@ export default class Profile extends Component {
     };
 
     check = (field, value) => {
+        const {user} = this.props;
+        const {
+                  errors, login, phone, email, password,
+              } = this.state;
         switch (field) {
             case 'email':
                 if (value !== '' && !R.test(reEmail, value)) {
-                    this.setState({errors: R.merge(this.state.errors, {email: ['Неверный формат email']})});
+                    this.setState({errors: R.merge(errors, {email: ['Неверный формат email']})});
                     return false;
                 }
-                if (value === '' && this.state.login === '' && this.state.phone === '' && this.props.user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(this.state.errors, {email: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && login === '' && phone === '' && user.data.vk_user_id === undefined) {
+                    this.setState({errors: R.merge(errors, {email: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
                 return true;
             case 'login':
                 let re_login = /^[\.a-zA-Z0-9_-]+$/;
                 if (value !== '' && !R.test(re_login, value)) {
-                    this.setState({errors: R.merge(this.state.errors, {login: ['Неверный формат login']})});
+                    this.setState({errors: R.merge(errors, {login: ['Неверный формат login']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.phone === '' && this.props.user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(this.state.errors, {login: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && email === '' && phone === '' && user.data.vk_user_id === undefined) {
+                    this.setState({errors: R.merge(errors, {login: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
                 return true;
             case 'phone':
                 if (value !== '' && value.length < 11) {
-                    this.setState({errors: R.merge(this.state.errors, {phone: ['Неверный формат номера']})});
+                    this.setState({errors: R.merge(errors, {phone: ['Неверный формат номера']})});
                     return false;
                 }
-                if (value === '' && this.state.email === '' && this.state.login === '' && this.props.user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(this.state.errors, {phone: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && email === '' && login === '' && user.data.vk_user_id === undefined) {
+                    this.setState({errors: R.merge(errors, {phone: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
                     return false;
                 }
                 return true;
             case 'password':
                 if (value !== '' && value.length < PASSWORD_MIN_LENGTH) {
-                    this.setState({errors: R.merge(this.state.errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
+                    this.setState({errors: R.merge(errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
                     return false;
                 }
                 return true;
             case 'repeatPassword':
-                if (this.state.password !== value) {
-                    this.setState({errors: R.merge(this.state.errors, {repeatPassword: ['Пароли не совпадают']})});
+                if (password !== value) {
+                    this.setState({errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})});
                     return false;
                 }
                 return true;
@@ -197,61 +225,81 @@ export default class Profile extends Component {
     };
 
     checkAndSubmit = () => {
-        let res = !this.check('email', this.state.email);
-        res += !this.check('login', this.state.login);
-        res += !this.check('phone', this.state.phone);
-        res += !this.check('password', this.state.password);
-        res += !this.check('repeatPassword', this.state.repeatPassword);
+        const {user, onFormSubmit} = this.props;
+        const {
+                  email, login, phone, password, repeatPassword, avatar, avatarFile, name,
+              } = this.state;
+        let res = !this.check('email', email);
+        res += !this.check('login', login);
+        res += !this.check('phone', phone);
+        res += !this.check('password', password);
+        res += !this.check('repeatPassword', repeatPassword);
         if (res > 0) {
             return
         }
         let formData = new FormData();
-        if (this.state.avatar !== (this.props.user.avatar ? this.props.user.avatar.url : null)) {
-            formData.append('user[avatar]', this.state.avatarFile);
+        if (avatar !== (user.avatar ? user.avatar.url : null)) {
+            formData.append('user[avatar]', avatarFile);
         }
-        if (this.state.name !== (this.props.user.name ? this.props.user.name : '')) {
-            formData.append('user[name]', this.state.name);
+        if (name !== (user.name ? user.name : '')) {
+            formData.append('user[name]', name);
         }
-        if (this.state.login !== (this.props.user.login ? this.props.user.login : '')) {
-            formData.append('user[login]', this.state.login);
+        if (login !== (user.login ? user.login : '')) {
+            formData.append('user[login]', login);
         }
-        if (this.state.password !== '') {
+        if (password !== '') {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
-            formData.append('user[password_digest]', bcrypt.hashSync(this.state.password, salt));
+            formData.append('user[password_digest]', bcrypt.hashSync(password, salt));
         }
-        if (this.state.email !== (this.props.user.email ? this.props.user.email : '')) {
-            formData.append('user[email]', this.state.email);
+        if (email !== (user.email ? user.email : '')) {
+            formData.append('user[email]', email);
         }
-        if (this.state.phone !== (this.props.user.phone ? this.props.user.phone : '')) {
-            formData.append('user[phone]', this.state.phone);
+        if (phone !== (user.phone ? user.phone : '')) {
+            formData.append('user[phone]', phone);
         }
-        this.props.onFormSubmit(formData, (user) => this.saveStartFieldsValues(user));
+        onFormSubmit(formData, (u) => this.saveStartFieldsValues(u));
     };
 
     hasError = (field) => {
-        return (this.state.errors[field] || this.props.formErrors[field]);
+        const {formErrors} = this.props;
+        const {errors} = this.state;
+        return (errors[field] || formErrors[field]);
     };
 
     errorText = (field) => {
-        return R.join(', ', R.concat(this.state.errors[field] ? this.state.errors[field] : [], this.props.formErrors[field] ? this.props.formErrors[field] : []));
+        const {formErrors} = this.props;
+        const {errors} = this.state;
+        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
     };
 
     closeForm = () => {
+        const {resetErrors, closeForm} = this.props;
         this.resetErrors();
-        this.props.resetErrors();
-        this.props.closeForm()
+        resetErrors();
+        closeForm()
     };
 
     removeVk = () => {
-        if ((!this.props.user.email && !this.props.user.login && !this.props.user.phone) || (!this.props.user.password_digest)) {
-            this.props.showToastr('error', 'Ошибка', 'Невозможно отключить вход через VK. Заполните логин, email или номер телефона и задайте пароль');
+        const {user, showToastr, removeVk} = this.props;
+        if ((!user.email && !user.login && !user.phone) || (!user.password_digest)) {
+            showToastr('error', 'Ошибка', 'Невозможно отключить вход через VK. Заполните логин, email или номер телефона и задайте пароль');
             return;
         }
-        this.props.removeVk();
+        removeVk();
     };
 
     content = () => {
-        return <div style={{height: '100vh'}} onClick={() => {if (!this.mouseOver) {this.closeForm()}}}>
+        const {
+                  user, enterWithVk, isWaiting,
+              } = this.props;
+        const {
+                  avatar, name, login, password, repeatPassword, email, phone,
+              } = this.state;
+        return <div style={{height: '100vh'}} onClick={() => {
+            if (!this.mouseOver) {
+                this.closeForm()
+            }
+        }}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block modal-block__profile">
                     <div className="modal__close">
@@ -262,17 +310,17 @@ export default class Profile extends Component {
                         <div className="modal-block__avatar-block">
                             <div className="modal-block__avatar modal-block__avatar_login">
                                 {
-                                    (this.state.avatar !== null)
+                                    (avatar !== null)
                                         ? (
-                                            <img src={this.state.avatar} alt=''/>
+                                            <img src={avatar} alt=''/>
                                         )
                                         : ''
                                 }
                                 <input type="file" name="avatar"
-                                       title={(this.state.avatar !== null) ? 'Изменить аватарку' : 'Загрузить аватарку'}
+                                       title={(avatar !== null) ? 'Изменить аватарку' : 'Загрузить аватарку'}
                                        onChange={(event) => this.onFileChosen(event.target.files[0])}/>
                                 {
-                                    this.state.avatar !== null
+                                    avatar !== null
                                         ? (
                                             <button className="modal-block__avatar-delete"
                                                     type="button"
@@ -291,53 +339,53 @@ export default class Profile extends Component {
                                        type="text"
                                        hasError={this.hasError('name')}
                                        errorText={this.errorText('name')}
-                                       value={this.state.name}/>
+                                       value={name}/>
                             <FormField placeholder="Логин"
                                        id="login"
                                        onChange={this.onLoginChange}
                                        type="text"
                                        hasError={this.hasError('login')}
                                        errorText={this.errorText('login')}
-                                       value={this.state.login}/>
+                                       value={login}/>
                             <FormField
-                                placeholder={this.props.user.password_digest === null ? 'Задать пароль' : 'Сменить пароль'}
+                                placeholder={user.password_digest === null ? 'Задать пароль' : 'Сменить пароль'}
                                 id="password"
                                 onChange={this.onPasswordChange}
                                 type="password"
                                 hasError={this.hasError('password')}
                                 errorText={this.errorText('password')}
-                                value={this.state.password}/>
+                                value={password}/>
                             <FormField placeholder="Подтверждение пароля"
                                        id="repeat-password"
                                        onChange={this.onRepeatPasswordChange}
                                        type="password"
                                        hasError={this.hasError('repeatPassword')}
                                        errorText={this.errorText('repeatPassword')}
-                                       value={this.state.repeatPassword}/>
+                                       value={repeatPassword}/>
                             <FormField placeholder="Email"
                                        id="email"
                                        onChange={this.onEmailChange}
                                        type="text"
                                        hasError={this.hasError('email')}
                                        errorText={this.errorText('email')}
-                                       value={this.state.email}/>
+                                       value={email}/>
                             <FormField placeholder="Телефон"
                                        id="phone"
                                        onChange={this.onPhoneChange}
                                        type="number"
                                        hasError={this.hasError('phone')}
                                        errorText={this.errorText('phone')}
-                                       value={this.state.phone}/>
+                                       value={phone}/>
                             <div className="modal-block__allow">
                                 <div className="modal-block__allow-title">Разрешить вход через:</div>
                                 <div className="modal-block__social">
                                     <ul className="social-links">
                                         <li><SocialLinkButton
-                                            onClick={(this.props.user.data.vk_user_id !== undefined) ? this.removeVk : (() => this.props.enterWithVk('addVk'))}
+                                            onClick={(user.data.vk_user_id !== undefined) ? this.removeVk : (() => enterWithVk('addVk'))}
                                             xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
-                                            active={this.props.user.data.vk_user_id !== undefined}
-                                            dark={this.props.user.data.vk_user_id === undefined}
-                                            withRemoveButton={this.props.user.data.vk_user_id !== undefined}/>
+                                            active={user.data.vk_user_id !== undefined}
+                                            dark={user.data.vk_user_id === undefined}
+                                            withRemoveButton={user.data.vk_user_id !== undefined}/>
                                         </li>
                                         <li><SocialLinkButton
                                             xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
@@ -360,7 +408,7 @@ export default class Profile extends Component {
                             </div>
                             <Button size="medium" style="normal" title="Сохранить" fullLength={true} submit={true}
                                     disabled={!this.fieldsChanged()}
-                                    isWaiting={this.props.isWaiting}
+                                    isWaiting={isWaiting}
                                     onClick={this.checkAndSubmit}/>
                         </div>
                     </form>
@@ -370,13 +418,15 @@ export default class Profile extends Component {
     };
 
     render() {
+        const {numOfActiveRequests} = this.props;
         return <div className="modal-overlay">
-            <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+            <StickyBar loading={numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
         </div>;
     }
 }
 
 Profile.propTypes = {
+    showToastr: PropTypes.func.isRequired,
     onFormSubmit: PropTypes.func.isRequired,
     closeForm: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,

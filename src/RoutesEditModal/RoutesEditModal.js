@@ -1,14 +1,14 @@
-import React, {Component}           from 'react';
-import Button                       from '../Button/Button';
-import RouteDataEditableTable       from '../RouteDataEditableTable/RouteDataEditableTable';
-import RouteEditor                  from '../RouteEditor/RouteEditor';
-import CloseButton                  from '../CloseButton/CloseButton';
-import ButtonHandler                from '../ButtonHandler/ButtonHandler';
-import PropTypes                    from 'prop-types';
-import * as R                       from 'ramda';
-import {CATEGORIES}                 from "../Constants/Categories";
-import StickyBar                    from '../StickyBar/StickyBar';
-import RoutePhotoCropper            from '../RoutePhotoCropper/RoutePhotoCropper';
+import React, {Component}     from 'react';
+import Button                 from '../Button/Button';
+import RouteDataEditableTable from '../RouteDataEditableTable/RouteDataEditableTable';
+import RouteEditor            from '../RouteEditor/RouteEditor';
+import CloseButton            from '../CloseButton/CloseButton';
+import ButtonHandler          from '../ButtonHandler/ButtonHandler';
+import PropTypes              from 'prop-types';
+import * as R                 from 'ramda';
+import {CATEGORIES}           from "../Constants/Categories";
+import StickyBar              from '../StickyBar/StickyBar';
+import RoutePhotoCropper      from '../RoutePhotoCropper/RoutePhotoCropper';
 import './RoutesEditModal.css';
 
 export default class RoutesEditModal extends Component {
@@ -16,12 +16,13 @@ export default class RoutesEditModal extends Component {
     constructor(props) {
         super(props);
 
+        const {route} = this.props;
         this.state = {
-            url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
+            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
             object_id: null,
             currentPointers: [],
             currentPointersOld: [],
-            route: R.clone(this.props.route),
+            route: R.clone(route),
             fieldsOld: {},
             showCropper: false,
             photo: {content: null, file: null, crop: null, rotate: null}
@@ -30,14 +31,15 @@ export default class RoutesEditModal extends Component {
     }
 
     componentDidMount() {
-        let route = R.clone(this.state.route);
-        if (this.state.route.photo) {
-            route.photo = route.photo.url;
+        const {route} = this.state;
+        let routeCopy = R.clone(route);
+        if (route.photo) {
+            routeCopy.photo = routeCopy.photo.url;
         }
-        if (this.state.route.category === null) {
-            route.category = CATEGORIES[6];
+        if (route.category === null) {
+            routeCopy.category = CATEGORIES[6];
         }
-        this.setState({fieldsOld: route, route: R.clone(route)});
+        this.setState({fieldsOld: routeCopy, route: R.clone(routeCopy)});
         this.loadPointers();
         window.addEventListener("keydown", this.onKeyDown);
     }
@@ -47,8 +49,9 @@ export default class RoutesEditModal extends Component {
     }
 
     onKeyDown = (event) => {
+        const {onClose} = this.props;
         if (event.key === 'Escape') {
-            this.props.onClose();
+            onClose();
         }
     };
 
@@ -57,20 +60,26 @@ export default class RoutesEditModal extends Component {
     };
 
     save = () => {
+        const {
+                  route: routeProp, sector, user, updateRoute, createRoute,
+              } = this.props;
+        const {
+                  currentPointers, currentPointersOld, route, photo,
+              } = this.state;
         let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
         let formData = new FormData();
-        let pointersChanged = this.changed(this.state.currentPointers, this.state.currentPointersOld);
-        let holdsColorsChanged = this.changed(this.props.route.holds_color, this.state.route.holds_color);
-        let marksColorsChanged = this.changed(this.props.route.marks_color, this.state.route.marks_color);
+        let pointersChanged = this.changed(currentPointers, currentPointersOld);
+        let holdsColorsChanged = this.changed(routeProp.holds_color, route.holds_color);
+        let marksColorsChanged = this.changed(routeProp.marks_color, route.marks_color);
         if (pointersChanged || holdsColorsChanged || marksColorsChanged) {
-            let x = R.map((pointer) => pointer.x, this.state.currentPointers);
-            let y = R.map((pointer) => pointer.y, this.state.currentPointers);
-            let angle = R.map((pointer) => pointer.angle, this.state.currentPointers);
-            if (this.state.route.holds_color) {
-                formData.append('route[mark][colors][holds]', this.state.route.holds_color.id);
+            let x = R.map((pointer) => pointer.x, currentPointers);
+            let y = R.map((pointer) => pointer.y, currentPointers);
+            let angle = R.map((pointer) => pointer.angle, currentPointers);
+            if (route.holds_color) {
+                formData.append('route[mark][colors][holds]', route.holds_color.id);
             }
-            if (this.state.route.marks_color) {
-                formData.append('route[mark][colors][marks]', this.state.route.marks_color.id);
+            if (route.marks_color) {
+                formData.append('route[mark][colors][marks]', route.marks_color.id);
             }
             for (let i in x) {
                 formData.append('route[mark][pointers][x][]', x[i]);
@@ -79,40 +88,41 @@ export default class RoutesEditModal extends Component {
             }
         }
         for (let i in paramList) {
-            if (this.props.route[paramList[i]] !== this.state.route[paramList[i]]) {
-                formData.append(`route[${paramList[i]}]`, this.state.route[paramList[i]]);
+            if (routeProp[paramList[i]] !== route[paramList[i]]) {
+                formData.append(`route[${paramList[i]}]`, route[paramList[i]]);
             }
         }
-        if (this.state.route.id === null) {
-            formData.append('route[sector_id]', this.state.route.sector_id);
-            if (this.props.sector.kind !== 'mixed') {
-                formData.append('route[kind]', this.state.route.kind);
+        if (route.id === null) {
+            formData.append('route[sector_id]', route.sector_id);
+            if (sector.kind !== 'mixed') {
+                formData.append('route[kind]', route.kind);
             }
         }
-        if (this.state.route.photo !== (this.props.route.photo ? this.props.route.photo.url : null)) {
-            formData.append('route[photo]', this.state.route.photoFile);
+        if (route.photo !== (routeProp.photo ? routeProp.photo.url : null)) {
+            formData.append('route[photo]', route.photoFile);
         }
-        if (this.state.photo.crop !== null) {
-            formData.append('data[photo][cropping][x]', Math.round(this.state.photo.crop.x));
-            formData.append('data[photo][cropping][y]', Math.round(this.state.photo.crop.y));
-            formData.append('data[photo][cropping][width]', Math.round(this.state.photo.crop.width));
-            formData.append('data[photo][cropping][height]', Math.round(this.state.photo.crop.height));
+        if (photo.crop !== null) {
+            formData.append('data[photo][cropping][x]', Math.round(photo.crop.x));
+            formData.append('data[photo][cropping][y]', Math.round(photo.crop.y));
+            formData.append('data[photo][cropping][width]', Math.round(photo.crop.width));
+            formData.append('data[photo][cropping][height]', Math.round(photo.crop.height));
         }
-        if (this.state.photo.rotate !== null) {
-            formData.append('data[photo][rotation]', this.state.photo.rotate);
+        if (photo.rotate !== null) {
+            formData.append('data[photo][rotation]', photo.rotate);
         }
-        if (this.props.route.data.personal || this.props.user.id === this.state.route.author_id) {
+        if (routeProp.data.personal || user.id === route.author_id) {
             formData.append('data[personal]', true);
         }
-        if (this.props.route.id !== null) {
-            this.props.updateRoute(formData);
+        if (routeProp.id !== null) {
+            updateRoute(formData);
         } else {
-            this.props.createRoute(formData);
+            createRoute(formData);
         }
     };
 
     loadPointers = () => {
-        let pointers = (this.props.route.mark && this.props.route.mark.pointers) ? this.props.route.mark.pointers : {
+        const {route} = this.props;
+        let pointers = (route.mark && route.mark.pointers) ? route.mark.pointers : {
             x: [],
             y: [],
             angle: []
@@ -135,7 +145,7 @@ export default class RoutesEditModal extends Component {
     };
 
     onRouteParamChange = (value, paramName) => {
-        let route = this.state.route;
+        const {route} = this.state;
         route[paramName] = value;
         if (paramName === 'author') {
             route.author_id = value.id;
@@ -147,48 +157,62 @@ export default class RoutesEditModal extends Component {
     };
 
     onFileRead = (event) => {
-        let photo = R.clone(this.state.photo);
-        photo.content = this.fileReader.result;
+        const {photo} = this.state;
+        let photoCopy = R.clone(photo);
+        photoCopy.content = this.fileReader.result;
         this.mouseOver = false;
-        this.setState({showCropper: true, photo: photo});
+        this.setState({showCropper: true, photo: photoCopy});
     };
 
     onFileChosen = (file) => {
+        const {photo} = this.state;
         this.fileReader = new FileReader();
         this.fileReader.onloadend = this.onFileRead;
         this.fileReader.readAsDataURL(file);
-        let photo = R.clone(this.state.photo);
-        photo.file = file;
-        this.setState({photo: photo});
+        let photoCopy = R.clone(photo);
+        photoCopy.file = file;
+        this.setState({photo: photoCopy});
     };
 
     saveCropped = (src, crop, rotate, image) => {
-        let route = this.state.route;
+        const {route, photo} = this.state;
         route.photo = src;
-        route.photoFile = this.state.photo.file;
+        route.photoFile = photo.file;
         if (crop.width === 0 || crop.height === 0 || (Math.abs(image.width - crop.width) < 1 && Math.abs(image.height - crop.height) < 1)) {
-            let photo = R.clone(this.state.photo);
-            photo.crop = null;
-            photo.rotate = (rotate === 0 ? null : rotate);
-            this.setState({route: route, showCropper: false, photo: photo});
+            let photoCopy = R.clone(photo);
+            photoCopy.crop = null;
+            photoCopy.rotate = (rotate === 0 ? null : rotate);
+            this.setState({route: route, showCropper: false, photo: photoCopy});
         } else {
             const scaleX = image.naturalWidth / image.width;
             const scaleY = image.naturalHeight / image.height;
-            let photo = R.clone(this.state.photo);
-            photo.crop = {x: crop.x * scaleX, y: crop.y * scaleY, width: crop.width * scaleX, height: crop.height * scaleY};
-            photo.rotate = (rotate === 0 ? null : rotate);
-            this.setState({route: route, showCropper: false, photo: photo});
+            let photoCopy = R.clone(photo);
+            photoCopy.crop = {
+                x: crop.x * scaleX,
+                y: crop.y * scaleY,
+                width: crop.width * scaleX,
+                height: crop.height * scaleY
+            };
+            photoCopy.rotate = (rotate === 0 ? null : rotate);
+            this.setState({route: route, showCropper: false, photo: photoCopy});
         }
     };
 
     content = () => {
-        let saveDisabled = (JSON.stringify(this.state.route) === JSON.stringify(this.state.fieldsOld) && JSON.stringify(this.state.currentPointers) === JSON.stringify(this.state.currentPointersOld));
+        const {
+                  onClose, route: routeProp, cancel, isWaiting, sector, user, routeMarkColors, users,
+              } = this.props;
+        const {
+                  route, fieldsOld, currentPointers, currentPointersOld,
+              } = this.state;
+        let saveDisabled = (JSON.stringify(route) === JSON.stringify(fieldsOld) && JSON.stringify(currentPointers) === JSON.stringify(currentPointersOld));
         return <div className="modal-overlay__wrapper">
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
-                    <CloseButton onClick={() => this.props.onClose()}/>
+                    <CloseButton onClick={() => onClose()}/>
                 </div>
-                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true}
+                     onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track">
                         <div className="modal__track-descr">
                             <div className="modal__track-descr-picture"></div>
@@ -197,12 +221,12 @@ export default class RoutesEditModal extends Component {
                             </div>
                         </div>
                         {
-                            this.state.route.photo
+                            route.photo
                                 ? (
                                     <RouteEditor
-                                        route={this.props.route}
-                                        routePhoto={typeof(this.state.route.photo) === 'string' ? this.state.route.photo : this.state.route.photo.url}
-                                        pointers={this.state.currentPointers}
+                                        route={routeProp}
+                                        routePhoto={typeof(route.photo) === 'string' ? route.photo : route.photo.url}
+                                        pointers={currentPointers}
                                         editable={true}
                                         updatePointers={this.updatePointers}/>
                                 )
@@ -212,7 +236,7 @@ export default class RoutesEditModal extends Component {
                             <input type="file" hidden={true} ref={(ref) => this.fileInput = ref}
                                    onChange={(event) => this.onFileChosen(event.target.files[0])}/>
                             {
-                                this.state.route.photo
+                                route.photo
                                     ? (
                                         <React.Fragment>
                                             <ButtonHandler
@@ -241,38 +265,39 @@ export default class RoutesEditModal extends Component {
                         className="modal__track-footer modal__track-footer-edit-mode">
                         <div className="modal__track-footer-edit-mode-item">
                             <Button size="small" style="gray" title="Отмена"
-                                    onClick={this.props.cancel}></Button>
+                                    onClick={cancel}></Button>
                         </div>
                         <div className="modal__track-footer-edit-mode-item">
                             <Button size="small" style="normal" title="Сохранить"
-                                    isWaiting={this.props.isWaiting}
+                                    isWaiting={isWaiting}
                                     disabled={saveDisabled}
                                     onClick={this.save}></Button>
                         </div>
                     </div>
                 </div>
-                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true}
+                     onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track-header">
                         <h1 className="modal__title">
                             № <input type="text"
                                      onChange={(event) => this.onRouteParamChange(event.target.value, 'number')}
                                      className="modal__title-input modal__number-input modal__title-input_dark"
                                      maxLength="6"
-                                     value={this.state.route.number === null ? '' : this.state.route.number}/>
+                                     value={route.number === null ? '' : route.number}/>
                             <span className="modal__title-place">(“</span>
                             <input type="text"
                                    onChange={(event) => this.onRouteParamChange(event.target.value, 'name')}
                                    className="modal__title-input"
-                                   value={this.state.route.name === null ? '' : this.state.route.name}/>
+                                   value={route.name === null ? '' : route.name}/>
                             <span
                                 className="modal__title-place">”)</span>
                         </h1>
-                        <RouteDataEditableTable route={this.state.route}
-                                                sector={this.props.sector}
+                        <RouteDataEditableTable route={route}
+                                                sector={sector}
                                                 onRouteParamChange={this.onRouteParamChange}
-                                                user={this.props.user}
-                                                routeMarkColors={this.props.routeMarkColors}
-                                                users={this.props.users}/>
+                                                user={user}
+                                                routeMarkColors={routeMarkColors}
+                                                users={users}/>
                     </div>
                     <div className="modal__item modal__descr-item">
                         <div>
@@ -281,7 +306,7 @@ export default class RoutesEditModal extends Component {
                             </button>
                             <textarea className="modal__descr-edit"
                                       onChange={(event) => this.onRouteParamChange(event.target.value, 'description')}
-                                      value={this.state.route.description ? this.state.route.description : ''}></textarea>
+                                      value={route.description ? route.description : ''}></textarea>
                         </div>
                     </div>
                 </div>
@@ -290,19 +315,25 @@ export default class RoutesEditModal extends Component {
     };
 
     render() {
+        const {onClose, numOfActiveRequests} = this.props;
+        const {showCropper, photo} = this.state;
         return <React.Fragment>
             <div className="modal-overlay"
-                 onClick={this.state.showCropper ? null : () => {if (!this.mouseOver) {this.props.onClose()}}}>
+                 onClick={showCropper ? null : () => {
+                     if (!this.mouseOver) {
+                         onClose()
+                     }
+                 }}>
                 {
-                    this.state.showCropper
+                    showCropper
                         ? (
-                            <RoutePhotoCropper src={this.state.photo.content}
+                            <RoutePhotoCropper src={photo.content}
                                                close={() => this.setState({showCropper: false})}
                                                save={this.saveCropped}
                             />
                         )
                         : (
-                            <StickyBar loading={this.props.numOfActiveRequests > 0}
+                            <StickyBar loading={numOfActiveRequests > 0}
                                        content={this.content()}
                                        hideLoaded={true}
                             />
@@ -314,6 +345,7 @@ export default class RoutesEditModal extends Component {
 }
 
 RoutesEditModal.propTypes = {
+    user: PropTypes.object,
     route: PropTypes.object.isRequired,
     sector: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -324,4 +356,8 @@ RoutesEditModal.propTypes = {
     isWaiting: PropTypes.bool.isRequired,
     numOfActiveRequests: PropTypes.number.isRequired,
     routeMarkColors: PropTypes.array.isRequired
+};
+
+RoutesEditModal.defaultProps = {
+    user: null,
 };
