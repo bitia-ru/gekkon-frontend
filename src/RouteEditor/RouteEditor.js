@@ -68,8 +68,8 @@ export default class RouteEditor extends Component {
                 let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
                 const xShift = (event.pageX - imageContainerRect.x) / imageContainerRect.width;
                 const yShift = (event.pageY - imageContainerRect.y) / imageContainerRect.height;
-                let dx = xShift * 100 - pointersCopy[movingPointerIndex].x;
-                let dy = yShift * 100 - pointersCopy[movingPointerIndex].y;
+                dx = xShift * 100 - pointersCopy[movingPointerIndex].x;
+                dy = yShift * 100 - pointersCopy[movingPointerIndex].y;
                 pointersCopy[movingPointerIndex].x = pointersCopy[movingPointerIndex].x + dx;
                 pointersCopy[movingPointerIndex].y = pointersCopy[movingPointerIndex].y + dy;
                 pointersCopy[movingPointerIndex].dx = 0;

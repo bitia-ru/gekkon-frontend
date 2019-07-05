@@ -727,7 +727,7 @@ class SpotsShow extends Authorization {
         }
         if (R.contains(id, R.map((e) => e.id, RESULT_FILTERS))) {
             let resultFilters = R.filter(
-                (e) => R.contains(e.id, R.map((e) => e.id, RESULT_FILTERS)),
+                (e) => R.contains(e.id, R.map((f) => f.id, RESULT_FILTERS)),
                 filters,
             );
             this.changeResultFilter(
@@ -1311,12 +1311,15 @@ class SpotsShow extends Authorization {
             categoryId = 4;
         }
         const defaultFilters = R.filter(
-            (e) => !R.contains(e.id, R.map((e) => e.id, RESULT_FILTERS)),
+            (e) => !R.contains(e.id, R.map((f) => f.id, RESULT_FILTERS)),
             filters
         );
         let currentSector;
         if (sectorId === 0) {
-            currentSector = R.find((sector) => sector.id === currentShown.sector_id, sectors);
+            currentSector = R.find(
+                (currentSector) => currentSector.id === currentShown.sector_id,
+                sectors,
+            );
         }
         return <React.Fragment>
             {
