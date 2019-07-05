@@ -10,8 +10,6 @@ export default class CommentBlock extends Component {
         super(props);
 
         this.state = {
-            object_id: null,
-            quote: null,
             scrollPosition: 0
         }
     }
