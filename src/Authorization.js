@@ -193,13 +193,13 @@ export default class Authorization extends React.Component {
                     let hash = bcrypt.hashSync(password, response.data);
                     params.user_session.user.password_digest = hash;
                     Axios.post(`${ApiUrl}/v1/user_sessions`, params)
-                        .then(response => {
+                        .then(resp => {
                             decreaseNumOfActiveRequests();
-                            saveToken(response.data.payload.token);
-                            this.signIn(response.data.payload.token, () => {
+                            saveToken(resp.data.payload.token);
+                            this.signIn(resp.data.payload.token, () => {
                                 this.closeLogInForm();
                                 if (this.afterSubmitLogInForm) {
-                                    this.afterSubmitLogInForm(response.data.payload.user_id);
+                                    this.afterSubmitLogInForm(resp.data.payload.user_id);
                                 }
                                 this.setState({logInIsWaiting: false});
                             });
