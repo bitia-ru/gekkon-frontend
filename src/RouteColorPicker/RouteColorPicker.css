@@ -21,6 +21,9 @@
     height: 20px;
     vertical-align: middle;
     margin-left: 15px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .mark-color-picker__item {

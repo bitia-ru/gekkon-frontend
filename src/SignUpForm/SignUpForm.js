@@ -92,13 +92,16 @@ export default class SignUpForm extends Component {
                 return true;
             case 'password':
                 if (value === '' || value.length < PASSWORD_MIN_LENGTH) {
-                    this.setState({errors: R.merge(errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
+                    const msgErr = `Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`;
+                    this.setState({errors: R.merge(errors, {password: [msgErr]})});
                     return false;
                 }
                 return true;
             case 'repeatPassword':
                 if (password !== value) {
-                    this.setState({errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})});
+                    this.setState(
+                        {errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})}
+                    );
                     return false;
                 }
                 return true;
@@ -126,7 +129,13 @@ export default class SignUpForm extends Component {
     errorText = (field) => {
         const {formErrors} = this.props;
         const {errors} = this.state;
-        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
+        return R.join(
+            ', ',
+            R.concat(
+                errors[field] ? errors[field] : [],
+                formErrors[field] ? formErrors[field] : []
+            )
+        );
     };
 
     closeForm = () => {
@@ -155,7 +164,11 @@ export default class SignUpForm extends Component {
                            hasError={this.hasError('passwordFromSms')}
                            errorText={this.errorText('passwordFromSms')}
                            value={passwordFromSms}/>
-                <Button size="medium" style="normal" title="Зарегистрироваться" fullLength={true} submit={true}
+                <Button size="medium"
+                        style="normal"
+                        title="Зарегистрироваться"
+                        fullLength={true}
+                        submit={true}
                         isWaiting={isWaiting}
                         onClick={() => this.checkAndSubmit('phone', phone, passwordFromSms)}/>
             </form>
@@ -187,17 +200,30 @@ export default class SignUpForm extends Component {
                            type="password"
                            hasError={this.hasError('repeatPassword')}
                            errorText={this.errorText('repeatPassword')}
-                           onEnter={() => this.checkAndSubmit('email', email, password, repeatPassword)}
+                           onEnter={
+                               () => this.checkAndSubmit('email', email, password, repeatPassword)
+                           }
                            value={repeatPassword}/>
-                <Button size="medium" style="normal" title="Зарегистрироваться напрямую" fullLength={true} submit={true}
+                <Button size="medium"
+                        style="normal"
+                        title="Зарегистрироваться напрямую"
+                        fullLength={true}
+                        submit={true}
                         isWaiting={isWaiting}
-                        onClick={() => this.checkAndSubmit('email', email, password, repeatPassword)}/>
+                        onClick={
+                            () => this.checkAndSubmit('email', email, password, repeatPassword)
+                        }/>
             </form>
         );
     };
 
     render() {
         const {enterWithVk} = this.props;
+        const iconVk = "/public/img/social-links-sprite/social-links-sprite.svg#icon-vk";
+        const iconFB = "/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook";
+        const iconTwitter = "/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter";
+        const iconInst = "/public/img/social-links-sprite/social-links-sprite.svg#icon-inst";
+        const iconYoutube = "/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube";
         return <div className="modal-overlay" onClick={() => {
             if (!this.mouseOver) {
                 this.closeForm()
@@ -205,8 +231,10 @@ export default class SignUpForm extends Component {
         }}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
-                    <div className="modal-block__padding-wrapper" onMouseOver={() => this.mouseOver = true}
-                         onMouseLeave={() => this.mouseOver = false}>
+                    <div className="modal-block__padding-wrapper"
+                         onMouseOver={() => this.mouseOver = true}
+                         onMouseLeave={() => this.mouseOver = false}
+                    >
                         <div className="modal-block__close">
                             <CloseButton onClick={this.closeForm}/>
                         </div>
@@ -214,7 +242,9 @@ export default class SignUpForm extends Component {
                             Регистрация
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
-                                activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
+                                activeList={[false, true]}
+                                activeTab={2}
+                                test={this.firstTabContent()}
                                 titleList={["Телефон", "Email"]}/>
                         <div className="modal-block__or">
                             <div className="modal-block__or-inner">или через</div>
@@ -223,23 +253,23 @@ export default class SignUpForm extends Component {
                             <ul className="social-links">
                                 <li><SocialLinkButton
                                     onClick={() => enterWithVk('signUp')}
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                    xlinkHref={iconVk}
                                     dark={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                    xlinkHref={iconFB}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                    xlinkHref={iconTwitter}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                    xlinkHref={iconInst}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                    xlinkHref={iconYoutube}
                                     dark={true} unactive={true}/>
                                 </li>
                             </ul>

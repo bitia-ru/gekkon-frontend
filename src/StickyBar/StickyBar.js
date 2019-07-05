@@ -4,18 +4,21 @@ import './StickyBar.css';
 
 const StickyBar = ({
                        content, loading, hideLoaded,
-                   }) => (
-    <div className="sticky-bar">
-        <div className="wrapper">
-            {content}
-        </div>
+                   }) => {
+    const loadingClass = (loading ? ' sticky-bar__item-indicator_active' : '');
+    return (
+        <div className="sticky-bar">
+            <div className="wrapper">
+                {content}
+            </div>
 
-        <div className="sticky-bar__item">
-            <div style={(loading ? {} : (hideLoaded ? {opacity: 0} : {}))}
-                 className={'sticky-bar__item-indicator' + (loading ? ' sticky-bar__item-indicator_active' : '')}></div>
+            <div className="sticky-bar__item">
+                <div style={(loading ? {} : (hideLoaded ? {opacity: 0} : {}))}
+                     className={'sticky-bar__item-indicator' + loadingClass}></div>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 StickyBar.propTypes = {
     content: PropTypes.object,

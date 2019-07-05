@@ -12,11 +12,31 @@ const RouteCard = ({
     moment.locale('ru');
     let date = moment().add(SOON_END_PERIOD, 'days');
     let installed_until = route.installed_until ? moment(route.installed_until) : null;
+    const statusClass = ((ascent && ascent.result !== 'unsuccessful') ? ' route-card_done' : '');
+    let year;
+    let titleDate;
+    let soonClass;
+    if (route.installed_until) {
+        year = (
+            installed_until.format('YYYY') !== moment().format('YYYY')
+                ? installed_until.format('YYYY')
+                : ''
+        );
+        titleDate = installed_until.format('Do MMMM');
+        soonClass = (
+            (installed_until && date >= installed_until)
+                ? ' route-card__date_end-soon'
+                : ''
+        );
+    }
+    const alarmIcon = "/public/img/route-card-sprite/card-sprite.svg#icon-alarm";
+    const clockIcon = "/public/img/route-card-sprite/card-sprite.svg#icon-clock";
+    const installedUntilValid = (installed_until && date >= installed_until);
     return (
         <div className="content__col-md-4 content__col-lg-3"
              onClick={onRouteClick ? onRouteClick : null}>
             <div className="content__route-card">
-                <a className={'route-card' + ((ascent && ascent.result !== 'unsuccessful') ? ' route-card_done' : '')}>
+                <a className={'route-card' + statusClass}>
                     <article className="route-card__inner">
                         <div className="route-card__image">
                             <div className="route-card__image-inner">
@@ -54,24 +74,22 @@ const RouteCard = ({
                                 {
                                     route.installed_until
                                         ? (
-                                            <span
-                                                title={`Скрутят: ${installed_until.format('Do MMMM')} ${(installed_until.format('YYYY') !== moment().format('YYYY') ? installed_until.format('YYYY') : '')}`}
-                                                className={'route-card__date' + ((installed_until && date >= installed_until) ? ' route-card__date_end-soon' : '')}>
+                                            <span title={`Скрутят: ${titleDate} ${year}`}
+                                                  className={'route-card__date' + soonClass}
+                                            >
                                                 <span
                                                     className="route-card__date-icon">
                                                     {
-                                                        (installed_until && date >= installed_until)
+                                                        installedUntilValid
                                                             ? (
                                                                 <svg>
-                                                                    <use
-                                                                        xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-alarm">
+                                                                    <use xlinkHref={alarmIcon}>
                                                                     </use>
                                                                 </svg>
                                                             )
                                                             : (
                                                                 <svg>
-                                                                    <use
-                                                                        xlinkHref="/public/img/route-card-sprite/card-sprite.svg#icon-clock">
+                                                                    <use xlinkHref={clockIcon}>
                                                                     </use>
                                                                 </svg>
                                                             )

@@ -36,6 +36,10 @@ export default class RouteDataEditableTable extends Component {
                   route, onRouteParamChange, routeMarkColors, sector, users,
               } = this.props;
         const {showSlider} = this.state;
+        let kindId;
+        if (route.kind) {
+            kindId = R.find(R.propEq('title', route.kind), ROUTE_KINDS).id;
+        }
         return <div className="route-data-table">
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
@@ -45,7 +49,9 @@ export default class RouteDataEditableTable extends Component {
                     <div className="route-data-table__category-track-wrap">
                         <div className="route-data-table__category-track-info"
                              onClick={() => this.setState({showSlider: !showSlider})}>
-                            <div className="route-data-table__category-track">{route.category}</div>
+                            <div className="route-data-table__category-track">
+                                {route.category}
+                            </div>
                             <div
                                 className="route-data-table__category-track-color"
                                 style={{backgroundColor: GetCategoryColor(route.category)}}></div>
@@ -56,7 +62,9 @@ export default class RouteDataEditableTable extends Component {
                                     <CategorySlider
                                         category={route.category}
                                         hide={() => this.setState({showSlider: false})}
-                                        changeCategory={(category) => onRouteParamChange(category, 'category')}
+                                        changeCategory={
+                                            (category) => onRouteParamChange(category, 'category')
+                                        }
                                     />
                                 )
                                 : ''
@@ -96,10 +104,15 @@ export default class RouteDataEditableTable extends Component {
                             ? (
                                 <div className="modal__field-select">
                                     <ComboBox
-                                        onChange={(id) => onRouteParamChange(R.find(R.propEq('id', id), ROUTE_KINDS).title, 'kind')}
+                                        onChange={
+                                            (id) => onRouteParamChange(
+                                                R.find(R.propEq('id', id), ROUTE_KINDS).title,
+                                                'kind',
+                                            )
+                                        }
                                         size='small'
                                         style='transparent'
-                                        currentId={route.kind ? R.find(R.propEq('title', route.kind), ROUTE_KINDS).id : 0}
+                                        currentId={route.kind ? kindId : 0}
                                         textFieldName='text'
                                         items={ROUTE_KINDS}/>
                                 </div>
@@ -118,9 +131,11 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
-                        <DatePickerBlock date={route.installed_at ? moment(route.installed_at) : null}
-                                         dateFormat={DATE_FORMAT}
-                                         onChange={(date) => onRouteParamChange(date.format(), 'installed_at')}/>
+                        <DatePickerBlock
+                            date={route.installed_at ? moment(route.installed_at) : null}
+                            dateFormat={DATE_FORMAT}
+                            onChange={(date) => onRouteParamChange(date.format(), 'installed_at')}
+                        />
                     </div>
                 </div>
             </div>
@@ -130,9 +145,13 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
-                        <DatePickerBlock date={route.installed_until ? moment(route.installed_until) : null}
-                                         dateFormat={DATE_FORMAT}
-                                         onChange={(date) => onRouteParamChange(date.format(), 'installed_until')}/>
+                        <DatePickerBlock
+                            date={route.installed_until ? moment(route.installed_until) : null}
+                            dateFormat={DATE_FORMAT}
+                            onChange={
+                                (date) => onRouteParamChange(date.format(), 'installed_until')
+                            }
+                        />
                     </div>
                 </div>
             </div>

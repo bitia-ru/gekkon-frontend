@@ -53,7 +53,8 @@ export default class CategorySlider extends Component {
         const {editing} = this.state;
         if (editing) {
             let sliderBarRect = this.sliderBarRef.getBoundingClientRect();
-            let newPosition = (1 - (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height) * 100;
+            const dy = (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height;
+            let newPosition = (1 - dy) * 100;
             if (newPosition > 100) {
                 newPosition = 100;
             }
@@ -67,7 +68,8 @@ export default class CategorySlider extends Component {
     onMouseUp = (event) => {
         const {changeCategory} = this.props;
         let sliderBarRect = this.sliderBarRef.getBoundingClientRect();
-        let newPosition = (1 - (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height) * 100;
+        const dy = (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height;
+        let newPosition = (1 - dy) * 100;
         if (newPosition > 100) {
             newPosition = 100;
         }
@@ -83,7 +85,8 @@ export default class CategorySlider extends Component {
     };
 
     categoryFromPosition = (position) => {
-        return CATEGORIES[parseInt(position / 100 * (CATEGORIES.length - 1), 10)];
+        const categogyIndex = position / 100 * (CATEGORIES.length - 1);
+        return CATEGORIES[parseInt(categogyIndex, 10)];
     };
 
     positionFromCategory = (category) => {
@@ -102,12 +105,15 @@ export default class CategorySlider extends Component {
                     onMouseLeave={this.stopEditing}
                     onMouseMove={this.change}>
             <div className="category__slider-ruler">
-                <div
-                    className="category__slider-ruler-item category__slider-ruler-item_first">{CATEGORIES[CATEGORIES.length - 1].toUpperCase()}</div>
-                <div
-                    className="category__slider-ruler-item">{CATEGORIES[parseInt((CATEGORIES.length - 1) / 2, 10)].toUpperCase()}</div>
-                <div
-                    className="category__slider-ruler-item category__slider-ruler-item_last">{CATEGORIES[0].toUpperCase()}</div>
+                <div className="category__slider-ruler-item category__slider-ruler-item_first" >
+                    {CATEGORIES[CATEGORIES.length - 1].toUpperCase()}
+                </div>
+                <div className="category__slider-ruler-item" >
+                    {CATEGORIES[parseInt((CATEGORIES.length - 1) / 2, 10)].toUpperCase()}
+                </div>
+                <div className="category__slider-ruler-item category__slider-ruler-item_last" >
+                    {CATEGORIES[0].toUpperCase()}
+                </div>
             </div>
             <div className="category__slider-bar" ref={(ref) => this.sliderBarRef = ref}>
                 <div className="category__slider-bar-item category__slider-bar-item_first"></div>

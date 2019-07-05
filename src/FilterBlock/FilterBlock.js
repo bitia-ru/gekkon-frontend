@@ -44,9 +44,18 @@ const FilterBlock = ({
                 <ComboBox tabIndex={3}
                           onChange={onFilterChange}
                           multipleSelect={true}
-                          currentValue={R.join(', ', R.map((e) => R.slice(0, -2, e.text), R.filter((e) => e.selected, filters)))}
+                          currentValue={
+                              R.join(
+                                  ', ',
+                                  R.map(
+                                      (e) => R.slice(0, -2, e.text),
+                                      R.filter((e) => e.selected, filters),
+                                  ),
+                              )
+                          }
                           textFieldName='text'
-                          items={filters}/>
+                          items={filters}
+                />
             </div>
         </div>
         <ViewModeSwitcher onViewModeChange={onViewModeChange}

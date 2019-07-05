@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as R             from 'ramda';
 import PropTypes          from 'prop-types';
+import classNames         from 'classnames';
 import './RouteColorPicker.css';
 
 export default class RouteColorPicker extends Component {
@@ -25,13 +26,30 @@ export default class RouteColorPicker extends Component {
         }
     };
 
+    getColorStyle = (routeMarkColor) => {
+        if (routeMarkColor && routeMarkColor.photo)
+            return {backgroundImage: `url(${routeMarkColor.photo.url})`};
+        else if (routeMarkColor && routeMarkColor.color) {
+            return {backgroundColor: routeMarkColor.color}
+        }
+        return {backgroundImage: 'url(/public/img/route-img/no_color.png)'}
+    };
+
     render() {
         const {
                   route, fieldName, editable, routeMarkColors,
               } = this.props;
         const {droppedDown} = this.state;
         let routeColor = route[fieldName];
-        let hasPhotoOrColor = routeColor && (routeColor.photo || routeColor.color);
+        const droppedDownClasses = classNames({
+            'combo-box__dropdown': true,
+            'modal__combo-box-drowdown': true,
+            'combo-box__dropdown_active': true,
+        });
+        const itemClasses = classNames({
+            'combo-box__dropdown-item': true,
+            'combo-box__dropdown-item_padding-10': true,
+        });
         return <div className="mark-color-picker__wrap" onClick={() => {
             if (editable) {
                 this.setState({droppedDown: !droppedDown})
@@ -41,19 +59,8 @@ export default class RouteColorPicker extends Component {
             <div className="mark-color-picker__info">
                 <div
                     className="mark-color-picker__color"
-                    style={(hasPhotoOrColor) ? (route[fieldName].photo ? {
-                        backgroundImage: `url(${route[fieldName].photo.url})`,
-                        backgroundPosition: 'center',
-                        backgroundSize: 'contain',
-                        backgroundRepeat: 'no-repeat'
-                    } : {
-                        backgroundColor: route[fieldName].color
-                    }) : {
-                        backgroundImage: 'url(/public/img/route-img/no_color.png)',
-                        backgroundPosition: 'center',
-                        backgroundSize: 'contain',
-                        backgroundRepeat: 'no-repeat'
-                    }}></div>
+                    style={this.getColorStyle(route[fieldName])}>
+                </div>
             </div>
             <div className="mark-color-picker__name">
                 {
@@ -66,28 +73,21 @@ export default class RouteColorPicker extends Component {
                 droppedDown
                     ? (
                         <div
-                            className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
+                            className={droppedDownClasses}>
                             <div
                                 className="combo-box__dropdown-wrapper">
                                 {R.map((routeMarkColor) =>
                                     <li key={routeMarkColor.id}
                                         onClick={() => this.selectItem(routeMarkColor)}
-                                        className="combo-box__dropdown-item combo-box__dropdown-item_padding-10">
+                                        className={itemClasses}>
                                         <div className="mark-color-picker__item">
                                             <div
                                                 className="mark-color-picker__color"
-                                                style={routeMarkColor.photo ? {
-                                                    backgroundImage: `url(${routeMarkColor.photo.url})`,
-                                                    backgroundPosition: 'center',
-                                                    backgroundSize: 'contain',
-                                                    backgroundRepeat: 'no-repeat'
-                                                } : (routeMarkColor.color ? {backgroundColor: routeMarkColor.color} : {
-                                                    backgroundImage: 'url(/public/img/route-img/no_color.png)',
-                                                    backgroundPosition: 'center',
-                                                    backgroundSize: 'contain',
-                                                    backgroundRepeat: 'no-repeat'
-                                                })}></div>
-                                            <div className="mark-color-picker__item-text">{routeMarkColor.name}</div>
+                                                style={this.getColorStyle(routeMarkColor)}>
+                                            </div>
+                                            <div className="mark-color-picker__item-text">
+                                                {routeMarkColor.name}
+                                            </div>
                                         </div>
                                     </li>, routeMarkColors)}
                             </div>

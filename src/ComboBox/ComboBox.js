@@ -26,10 +26,16 @@ export default class ComboBox extends Component {
                   tabIndex, currentValue, currentId, items, textFieldName, style, size,
               } = this.props;
         const {droppedDown} = this.state;
-        return <div className="combo-box__container" onBlur={() => this.setState({droppedDown: false})}
-                    tabIndex={tabIndex}>
+        const droppedDownClass = droppedDown ? ' combo-box__select_active' : '';
+        const styleClass = style === 'transparent' ? ' combo-box__select-transparent' : '';
+        const sizeClass = size === 'small' ? ' combo-box__select_small' : '';
+        return <div
+            className="combo-box__container"
+            onBlur={() => this.setState({droppedDown: false})}
+            tabIndex={tabIndex}
+        >
             <div
-                className={'combo-box__select' + (droppedDown ? ' combo-box__select_active' : '') + (style === 'transparent' ? ' combo-box__select-transparent' : '') + (size === 'small' ? ' combo-box__select_small' : '')}
+                className={'combo-box__select' + droppedDownClass + styleClass + sizeClass}
                 onClick={() => this.setState({droppedDown: !droppedDown})}>
                 {
                     currentValue !== null

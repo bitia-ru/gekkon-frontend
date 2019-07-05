@@ -177,14 +177,16 @@ export default class Profile extends Component {
         const {
                   errors, login, phone, email, password,
               } = this.state;
+        const noVk = user.data.vk_user_id === undefined;
+        const msg = 'Должно быть заполнено хотя бы одно из полей email, логин или телефон';
         switch (field) {
             case 'email':
                 if (value !== '' && !R.test(reEmail, value)) {
                     this.setState({errors: R.merge(errors, {email: ['Неверный формат email']})});
                     return false;
                 }
-                if (value === '' && login === '' && phone === '' && user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(errors, {email: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && login === '' && phone === '' && noVk) {
+                    this.setState({errors: R.merge(errors, {email: [msg]})});
                     return false;
                 }
                 return true;
@@ -194,8 +196,8 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(errors, {login: ['Неверный формат login']})});
                     return false;
                 }
-                if (value === '' && email === '' && phone === '' && user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(errors, {login: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && email === '' && phone === '' && noVk) {
+                    this.setState({errors: R.merge(errors, {login: [msg]})});
                     return false;
                 }
                 return true;
@@ -204,20 +206,23 @@ export default class Profile extends Component {
                     this.setState({errors: R.merge(errors, {phone: ['Неверный формат номера']})});
                     return false;
                 }
-                if (value === '' && email === '' && login === '' && user.data.vk_user_id === undefined) {
-                    this.setState({errors: R.merge(errors, {phone: ['Должно быть заполнено хотя бы одно из полей email, логин или телефон']})});
+                if (value === '' && email === '' && login === '' && noVk) {
+                    this.setState({errors: R.merge(errors, {phone: [msg]})});
                     return false;
                 }
                 return true;
             case 'password':
                 if (value !== '' && value.length < PASSWORD_MIN_LENGTH) {
-                    this.setState({errors: R.merge(errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
+                    const errMsg = `Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`;
+                    this.setState({errors: R.merge(errors, {password: [errMsg]})});
                     return false;
                 }
                 return true;
             case 'repeatPassword':
                 if (password !== value) {
-                    this.setState({errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})});
+                    this.setState(
+                        {errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})}
+                    );
                     return false;
                 }
                 return true;
@@ -269,7 +274,13 @@ export default class Profile extends Component {
     errorText = (field) => {
         const {formErrors} = this.props;
         const {errors} = this.state;
-        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
+        return R.join(
+            ', ',
+            R.concat(
+                errors[field] ? errors[field] : [],
+                formErrors[field] ? formErrors[field] : [],
+            ),
+        );
     };
 
     closeForm = () => {
@@ -282,7 +293,12 @@ export default class Profile extends Component {
     removeVk = () => {
         const {user, showToastr, removeVk} = this.props;
         if ((!user.email && !user.login && !user.phone) || (!user.password_digest)) {
-            showToastr('error', 'Ошибка', 'Невозможно отключить вход через VK. Заполните логин, email или номер телефона и задайте пароль');
+            showToastr(
+                'error',
+                'Ошибка',
+                'Невозможно отключить вход через VK. '
+                + 'Заполните логин, email или номер телефона и задайте пароль',
+            );
             return;
         }
         removeVk();
@@ -295,6 +311,11 @@ export default class Profile extends Component {
         const {
                   avatar, name, login, password, repeatPassword, email, phone,
               } = this.state;
+        const iconVk = "/public/img/social-links-sprite/social-links-sprite.svg#icon-vk";
+        const iconFB = "/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook";
+        const iconTwitter = "/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter";
+        const iconInst = "/public/img/social-links-sprite/social-links-sprite.svg#icon-inst";
+        const iconYoutube = "/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube";
         return <div style={{height: '100vh'}} onClick={() => {
             if (!this.mouseOver) {
                 this.closeForm()
@@ -305,8 +326,13 @@ export default class Profile extends Component {
                     <div className="modal__close">
                         <CloseButton onClick={this.closeForm}/>
                     </div>
-                    <form action="#" method="post" method="post" encType="multipart/form-data" className="form"
-                          onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                    <form action="#"
+                          method="post"
+                          encType="multipart/form-data"
+                          className="form"
+                          onMouseOver={() => this.mouseOver = true}
+                          onMouseLeave={() => this.mouseOver = false}
+                    >
                         <div className="modal-block__avatar-block">
                             <div className="modal-block__avatar modal-block__avatar_login">
                                 {
@@ -316,9 +342,18 @@ export default class Profile extends Component {
                                         )
                                         : ''
                                 }
-                                <input type="file" name="avatar"
-                                       title={(avatar !== null) ? 'Изменить аватарку' : 'Загрузить аватарку'}
-                                       onChange={(event) => this.onFileChosen(event.target.files[0])}/>
+                                <input
+                                    type="file"
+                                    name="avatar"
+                                    title={
+                                        (avatar !== null)
+                                            ? 'Изменить аватарку'
+                                            : 'Загрузить аватарку'
+                                    }
+                                    onChange={
+                                        (event) => this.onFileChosen(event.target.files[0])
+                                    }
+                                />
                                 {
                                     avatar !== null
                                         ? (
@@ -347,14 +382,17 @@ export default class Profile extends Component {
                                        hasError={this.hasError('login')}
                                        errorText={this.errorText('login')}
                                        value={login}/>
-                            <FormField
-                                placeholder={user.password_digest === null ? 'Задать пароль' : 'Сменить пароль'}
-                                id="password"
-                                onChange={this.onPasswordChange}
-                                type="password"
-                                hasError={this.hasError('password')}
-                                errorText={this.errorText('password')}
-                                value={password}/>
+                            <FormField id="password"
+                                       placeholder={
+                                           user.password_digest === null
+                                               ? 'Задать пароль'
+                                               : 'Сменить пароль'
+                                       }
+                                       onChange={this.onPasswordChange}
+                                       type="password"
+                                       hasError={this.hasError('password')}
+                                       errorText={this.errorText('password')}
+                                       value={password}/>
                             <FormField placeholder="Подтверждение пароля"
                                        id="repeat-password"
                                        onChange={this.onRepeatPasswordChange}
@@ -377,39 +415,50 @@ export default class Profile extends Component {
                                        errorText={this.errorText('phone')}
                                        value={phone}/>
                             <div className="modal-block__allow">
-                                <div className="modal-block__allow-title">Разрешить вход через:</div>
+                                <div className="modal-block__allow-title">
+                                    Разрешить вход через:
+                                </div>
                                 <div className="modal-block__social">
                                     <ul className="social-links">
                                         <li><SocialLinkButton
-                                            onClick={(user.data.vk_user_id !== undefined) ? this.removeVk : (() => enterWithVk('addVk'))}
-                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                            onClick={
+                                                (user.data.vk_user_id !== undefined)
+                                                    ? this.removeVk
+                                                    : (() => enterWithVk('addVk'))
+                                            }
+                                            xlinkHref={iconVk}
                                             active={user.data.vk_user_id !== undefined}
                                             dark={user.data.vk_user_id === undefined}
                                             withRemoveButton={user.data.vk_user_id !== undefined}/>
                                         </li>
                                         <li><SocialLinkButton
-                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                            xlinkHref={iconFB}
                                             dark={true} unactive={true}/>
                                         </li>
                                         <li><SocialLinkButton
-                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                            xlinkHref={iconTwitter}
                                             dark={true} unactive={true}/>
                                         </li>
                                         <li><SocialLinkButton
-                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                            xlinkHref={iconInst}
                                             dark={true} unactive={true}/>
                                         </li>
                                         <li><SocialLinkButton
-                                            xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                            xlinkHref={iconYoutube}
                                             dark={true} unactive={true}/>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <Button size="medium" style="normal" title="Сохранить" fullLength={true} submit={true}
+                            <Button size="medium"
+                                    style="normal"
+                                    title="Сохранить"
+                                    fullLength={true}
+                                    submit={true}
                                     disabled={!this.fieldsChanged()}
                                     isWaiting={isWaiting}
-                                    onClick={this.checkAndSubmit}/>
+                                    onClick={this.checkAndSubmit}
+                            />
                         </div>
                     </form>
                 </div>
@@ -420,7 +469,11 @@ export default class Profile extends Component {
     render() {
         const {numOfActiveRequests} = this.props;
         return <div className="modal-overlay">
-            <StickyBar loading={numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+            <StickyBar
+                loading={numOfActiveRequests > 0}
+                content={this.content()}
+                hideLoaded={true}
+            />
         </div>;
     }
 }

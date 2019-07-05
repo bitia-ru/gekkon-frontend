@@ -81,7 +81,14 @@ export default class LogInForm extends Component {
         switch (field) {
             case 'password':
                 if (value.length === 0) {
-                    this.setState({errors: R.merge(errors, {password_digest: ['Пароль не может быть пустым']})});
+                    this.setState(
+                        {
+                            errors: R.merge(
+                                errors,
+                                {password_digest: ['Пароль не может быть пустым']},
+                            )
+                        }
+                    );
                     return false;
                 }
                 return true;
@@ -107,7 +114,13 @@ export default class LogInForm extends Component {
     errorText = (field) => {
         const {formErrors} = this.props;
         const {errors} = this.state;
-        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
+        return R.join(
+            ', ',
+            R.concat(
+                errors[field] ? errors[field] : [],
+                formErrors[field] ? formErrors[field] : [],
+            )
+        );
     };
 
     closeForm = () => {
@@ -155,13 +168,28 @@ export default class LogInForm extends Component {
                            hasError={this.hasError('passwordEnter')}
                            errorText={this.errorText('passwordEnter')}
                            value={passwordEnter}/>
-                <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
-                        isWaiting={isWaiting}
-                        onClick={() => this.checkAndSubmit('phone', phone, passwordEnter)}/>
+                <Button
+                    size="medium"
+                    style="normal"
+                    title="Войти"
+                    fullLength={true}
+                    submit={true}
+                    isWaiting={isWaiting}
+                    onClick={() => this.checkAndSubmit('phone', phone, passwordEnter)}
+                />
                 <div className="modal-block__settings">
-                    <CheckBox id="rememberMeTab1" onChange={this.onRememberMeChange} checked={rememberMe}
-                              title="Запомнить меня"/>
-                    <a className="modal-block__link" onClick={() => this.resetPassword('phone')}>Забыли пароль?</a>
+                    <CheckBox
+                        id="rememberMeTab1"
+                        onChange={this.onRememberMeChange}
+                        checked={rememberMe}
+                        title="Запомнить меня"
+                    />
+                    <a
+                        className="modal-block__link"
+                        onClick={() => this.resetPassword('phone')}
+                    >
+                        Забыли пароль?
+                    </a>
                 </div>
             </form>
         );
@@ -187,13 +215,28 @@ export default class LogInForm extends Component {
                            errorText={this.errorText('password_digest')}
                            onEnter={() => this.checkAndSubmit('email', email, password)}
                            value={password}/>
-                <Button size="medium" style="normal" title="Войти" fullLength={true} submit={true}
-                        isWaiting={isWaiting}
-                        onClick={() => this.checkAndSubmit('email', email, password)}/>
+                <Button
+                    size="medium"
+                    style="normal"
+                    title="Войти"
+                    fullLength={true}
+                    submit={true}
+                    isWaiting={isWaiting}
+                    onClick={() => this.checkAndSubmit('email', email, password)}
+                />
                 <div className="modal-block__settings">
-                    <CheckBox id="rememberMeTab2" onChange={this.onRememberMeChange} checked={rememberMe}
-                              title="Запомнить меня"/>
-                    <a className="modal-block__link" onClick={() => this.resetPassword('email')}>Забыли пароль?</a>
+                    <CheckBox
+                        id="rememberMeTab2"
+                        onChange={this.onRememberMeChange}
+                        checked={rememberMe}
+                        title="Запомнить меня"
+                    />
+                    <a
+                        className="modal-block__link"
+                        onClick={() => this.resetPassword('email')}
+                    >
+                        Забыли пароль?
+                    </a>
                 </div>
             </form>
         );
@@ -201,6 +244,11 @@ export default class LogInForm extends Component {
 
     render() {
         const {enterWithVk} = this.props;
+        const iconVk = "/public/img/social-links-sprite/social-links-sprite.svg#icon-vk";
+        const iconFB = "/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook";
+        const iconTwitter = "/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter";
+        const iconInst = "/public/img/social-links-sprite/social-links-sprite.svg#icon-inst";
+        const iconYoutube = "/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube";
         return <div className="modal-overlay" onClick={() => {
             if (!this.mouseOver) {
                 this.closeForm()
@@ -208,8 +256,10 @@ export default class LogInForm extends Component {
         }}>
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
-                    <div className="modal-block__padding-wrapper" onMouseOver={() => this.mouseOver = true}
-                         onMouseLeave={() => this.mouseOver = false}>
+                    <div className="modal-block__padding-wrapper"
+                         onMouseOver={() => this.mouseOver = true}
+                         onMouseLeave={() => this.mouseOver = false}
+                    >
                         <div className="modal-block__close">
                             <CloseButton onClick={this.closeForm}/>
                         </div>
@@ -217,7 +267,8 @@ export default class LogInForm extends Component {
                             Вход в систему
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
-                                activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
+                                activeList={[false, true]}
+                                activeTab={2}
                                 titleList={["Телефон", "Email / логин"]}/>
                         <div className="modal-block__or">
                             <div className="modal-block__or-inner">или через</div>
@@ -226,23 +277,23 @@ export default class LogInForm extends Component {
                             <ul className="social-links">
                                 <li><SocialLinkButton
                                     onClick={() => enterWithVk('logIn')}
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                                    xlinkHref={iconVk}
                                     dark={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                                    xlinkHref={iconFB}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                                    xlinkHref={iconTwitter}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                                    xlinkHref={iconInst}
                                     dark={true} unactive={true}/>
                                 </li>
                                 <li><SocialLinkButton
-                                    xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube"
+                                    xlinkHref={iconYoutube}
                                     dark={true} unactive={true}/>
                                 </li>
                             </ul>

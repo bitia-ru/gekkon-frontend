@@ -12,12 +12,33 @@ const Button = ({
                     style,
                     onClick,
                 }) => {
-    let styleClass = style === 'normal' ? '' : (style === 'gray' ? ' btn_gray' : ' btn_transparent');
-    let sizeClass = size === 'small' ? ' btn__small' : (size === 'medium' ? ' btn__medium' : '');
+    let styleClass = '';
+    if (style !== 'normal') {
+        if (style === 'gray') {
+            styleClass = ' btn_gray';
+        } else {
+            styleClass = ' btn_transparent';
+        }
+    }
+    let sizeClass = '';
+    if (size === 'small') {
+        sizeClass = ' btn__small';
+    } else if (size === 'medium') {
+        sizeClass = ' btn__medium';
+    }
+    let fullLengthClass = fullLength ? ' btn_full-length' : '';
+    let submitClass = submit ? ' btn__submit' : '';
     return (
-        <button type="button" onClick={onClick} disabled={disabled ? true : false}
+        <button type="button"
+                onClick={onClick}
+                disabled={disabled ? true : false}
                 style={disabled ? {cursor: 'not-allowed'} : (isWaiting ? {cursor: 'wait'} : {})}
-                className={'btn' + styleClass + sizeClass + (fullLength ? ' btn_full-length' : '') + (submit ? ' btn__submit' : '')}>{title}</button>
+                className={
+                    'btn' + styleClass + sizeClass + fullLengthClass + submitClass
+                }
+        >
+            {title}
+        </button>
     )
 };
 

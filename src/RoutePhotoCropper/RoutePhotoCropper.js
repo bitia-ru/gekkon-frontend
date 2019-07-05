@@ -114,9 +114,10 @@ export default class RoutePhotoCropper extends Component {
                 zIndex: 300,
                 display: 'flex'
             }}>
-                <ButtonHandler onClick={this.rotate}
-                               title="Поворот"
-                               xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"/>
+                <ButtonHandler
+                    onClick={this.rotate}
+                    title="Поворот"
+                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"/>
                 <ButtonHandler
                     onClick={close} title="Закрыть"
                     xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"/>

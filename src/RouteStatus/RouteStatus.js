@@ -6,11 +6,17 @@ const RouteStatus = ({
                          ascent, changeAscentResult,
                      }) => {
     let complete = (ascent && ascent.result !== 'unsuccessful');
+    let statusClass = '';
+    if (complete && ascent.result === 'red_point') {
+        statusClass = ' route-status__type_redpoint';
+    } else if (complete && ascent.result === 'flash') {
+        statusClass = ' route-status__type_flash';
+    }
     return (
         <div className={'route-status' + (complete ? ' route-status_complete' : '')}
              onClick={changeAscentResult ? changeAscentResult : null}>
             <div
-                className={'route-status__type' + (complete ? (ascent.result === 'red_point' ? ' route-status__type_redpoint' : ' route-status__type_flash') : '')}>
+                className={'route-status__type' + statusClass}>
             </div>
             {
                 complete

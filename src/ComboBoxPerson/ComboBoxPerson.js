@@ -3,6 +3,7 @@ import PropTypes                   from 'prop-types';
 import Person                      from '../Person/Person';
 import * as R                      from 'ramda';
 import {SEARCH_DELAY, GetUserName} from '../Constants/User';
+import classNames                  from 'classnames';
 import './ComboBoxPerson.css';
 
 export default class ComboBoxPerson extends Component {
@@ -59,30 +60,64 @@ export default class ComboBoxPerson extends Component {
     render() {
         const {selectedUser, users: usersProp} = this.props;
         const {users, droppedDown} = this.state;
+        const filteredUsers = (
+            users === null
+                ? R.filter((user) => GetUserName(user) !== null, usersProp)
+                : users
+        );
         let name = selectedUser ? GetUserName(selectedUser) : 'Неизвестный накрутчик';
+        const buttonClasses = classNames({
+            'combo-box__select': true,
+            'combo-box__select-transparent': true,
+            'combo-box__select_small': true,
+            'modal__link': true,
+            'modal__link_edit': true,
+        });
+        const droppedDownClasses = classNames({
+            'combo-box__dropdown': true,
+            'modal__combo-box-drowdown': true,
+            'combo-box__dropdown_active': true,
+        });
+        const itemClasses = classNames({
+            'combo-box__dropdown-item': true,
+            'combo-box__dropdown-item_padding-10': true,
+        });
         return <div className="combo-box__container"
                     onBlur={this.onBlur}
                     tabIndex={1}
                     onMouseLeave={() => this.mouseOver = false}
                     onMouseOver={() => this.mouseOver = true}>
             <button
-                className="combo-box__select combo-box__select-transparent combo-box__select_small modal__link modal__link_edit"
+                className={buttonClasses}
                 onClick={() => this.setState({droppedDown: !droppedDown})}>
                 {name === null ? 'Неизвестный накрутчик' : name}
             </button>
             {
                 droppedDown
                     ? (
-                        <div className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
+                        <div
+                            className={droppedDownClasses}
+                        >
                             <div className="combo-box__search-wrapper">
-                                <input type="text" placeholder="Поиск..." className="combo-box__search"
-                                       onChange={this.searchInput} onKeyPress={this.onKeyPress}/>
+                                <input type="text"
+                                       placeholder="Поиск..."
+                                       className="combo-box__search"
+                                       onChange={this.searchInput}
+                                       onKeyPress={this.onKeyPress}
+                                />
                             </div>
                             <div className="combo-box__dropdown-wrapper">
-                                {R.map((user) => <li key={user.id} onClick={() => this.selectItem(user)}
-                                                     className="combo-box__dropdown-item combo-box__dropdown-item_padding-10">
-                                    <Person user={user}/>
-                                </li>, (users === null ? R.filter((user) => GetUserName(user) !== null, usersProp) : users))}
+                                {
+                                    R.map(
+                                        (user) => <li key={user.id}
+                                                      onClick={() => this.selectItem(user)}
+                                                      className={itemClasses}
+                                        >
+                                            <Person user={user}/>
+                                        </li>,
+                                        filteredUsers,
+                                    )
+                                }
                             </div>
                         </div>
                     )

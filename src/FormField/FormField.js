@@ -15,11 +15,12 @@ export default class FormField extends Component {
         const {
                   hasError, id, disabled, type, value, onChange, placeholder, errorText,
               } = this.props;
+        const inputClass = 'form__input' + (type === 'number' ? ' form__input-number' : '');
         return <div className={'form__field' + (hasError ? ' form__field-error' : '')}>
 									<span className="form__input-wrapper">
 										<input id={id}
                                                disabled={disabled ? true : false}
-                                               className={'form__input' + (type === 'number' ? ' form__input-number' : '')}
+                                               className={inputClass}
                                                type={type}
                                                value={value}
                                                onChange={onChange}

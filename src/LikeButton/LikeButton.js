@@ -6,12 +6,13 @@ const LikeButton = ({
                         isLiked, onChange, numOfLikes,
                     }) => (
     <button className={'like-button' + (isLiked ? ' like-button_active' : '')}
-            onClick={onChange}>
-									<span className="like-button__icon">
-										<svg>
-											<use xlinkHref="/public/img/like-sprite/like.svg#icon-like"></use>
-										</svg>
-									</span>
+            onClick={onChange}
+    >
+        <span className="like-button__icon">
+            <svg>
+                <use xlinkHref="/public/img/like-sprite/like.svg#icon-like"></use>
+            </svg>
+        </span>
         <span className="like-button__count">{numOfLikes}</span>
     </button>
 );
