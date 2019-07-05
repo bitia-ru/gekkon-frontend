@@ -105,6 +105,8 @@ export default class SignUpForm extends Component {
                     return false;
                 }
                 return true;
+            default:
+                return true;
         }
     };
 

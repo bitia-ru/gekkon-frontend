@@ -573,6 +573,8 @@ class SpotsShow extends Authorization {
                 case 4:
                     dFrom.setYear(d.getFullYear() - 1);
                     break;
+                default:
+                    break;
             }
             params.filters.installed_at = [[dFrom], [d]];
         }
@@ -1224,6 +1226,8 @@ class SpotsShow extends Authorization {
                 break;
             case 4:
                 this.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
+                break;
+            default:
                 break;
         }
     };

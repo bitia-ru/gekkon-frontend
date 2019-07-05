@@ -92,6 +92,8 @@ export default class LogInForm extends Component {
                     return false;
                 }
                 return true;
+            default:
+                return true;
         }
     };
 
