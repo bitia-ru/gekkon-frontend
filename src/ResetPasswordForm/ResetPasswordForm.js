@@ -206,6 +206,9 @@ export default class ResetPasswordForm extends Component {
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
                     <div className="modal-block__padding-wrapper"
+                         role="button"
+                         tabIndex={0}
+                         style={{outline: 'none'}}
                          onMouseOver={() => {
                              this.mouseOver = true;
                          }}

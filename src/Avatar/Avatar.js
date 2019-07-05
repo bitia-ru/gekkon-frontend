@@ -6,7 +6,10 @@ import './Avatar.css';
 const Avatar = ({
                     user, onClick,
                 }) => (
-    <div className={'avatar' + (user ? ' avatar_login' : '')} onClick={onClick}>
+    <div className={'avatar' + (user ? ' avatar_login' : '')}
+         role="button"
+         onClick={onClick}
+    >
         {
             (user && user.avatar)
                 ? (

@@ -16,6 +16,9 @@ const SpotCard = ({
             <article className={'spot-card ' + spot.className}>
                 <Link to={'/spots/' + spot.id} id={'linkToRoutes' + spot.id}></Link>
                 <a className="spot-card__inner"
+                   role="link"
+                   tabIndex={0}
+                   style={{outline: 'none'}}
                    onClick={() => document.getElementById(`linkToRoutes${spot.id}`).click()}>
                     <h1 className="spot-card__title">{spot.name}</h1>
                     <div className="spot-card__content">

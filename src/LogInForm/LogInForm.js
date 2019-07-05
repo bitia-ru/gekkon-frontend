@@ -186,9 +186,11 @@ export default class LogInForm extends Component {
                         checked={rememberMe}
                         title="Запомнить меня"
                     />
-                    <a
-                        className="modal-block__link"
-                        onClick={() => this.resetPassword('phone')}
+                    <a role="link"
+                       tabIndex={0}
+                       style={{outline: 'none'}}
+                       className="modal-block__link"
+                       onClick={() => this.resetPassword('phone')}
                     >
                         Забыли пароль?
                     </a>
@@ -233,9 +235,11 @@ export default class LogInForm extends Component {
                         checked={rememberMe}
                         title="Запомнить меня"
                     />
-                    <a
-                        className="modal-block__link"
-                        onClick={() => this.resetPassword('email')}
+                    <a role="link"
+                       tabIndex={0}
+                       style={{outline: 'none'}}
+                       className="modal-block__link"
+                       onClick={() => this.resetPassword('email')}
                     >
                         Забыли пароль?
                     </a>
@@ -251,11 +255,16 @@ export default class LogInForm extends Component {
         const iconTwitter = "/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter";
         const iconInst = "/public/img/social-links-sprite/social-links-sprite.svg#icon-inst";
         const iconYoutube = "/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube";
-        return <div className="modal-overlay" onClick={() => {
-            if (!this.mouseOver) {
-                this.closeForm()
-            }
-        }}>
+        return <div role="button"
+                    tabIndex={0}
+                    style={{outline: 'none'}}
+                    className="modal-overlay"
+                    onClick={() => {
+                        if (!this.mouseOver) {
+                            this.closeForm()
+                        }
+                    }}
+        >
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
                     <div className="modal-block__padding-wrapper"

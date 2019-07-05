@@ -34,6 +34,9 @@ const RouteCard = ({
     const installedUntilValid = (installed_until && date >= installed_until);
     return (
         <div className="content__col-md-4 content__col-lg-3"
+             role="button"
+             tabIndex={0}
+             style={{outline: 'none'}}
              onClick={onRouteClick ? onRouteClick : null}>
             <div className="content__route-card">
                 <a className={'route-card' + statusClass}>

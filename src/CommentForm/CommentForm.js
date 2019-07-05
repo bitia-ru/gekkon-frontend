@@ -57,6 +57,9 @@ export default class CommentForm extends Component {
                     (user && !user.login && !user.name)
                         ? (
                             <a className="comment-form__input comment-form__link"
+                               role="link"
+                               tabIndex={0}
+                               style={{outline: 'none'}}
                                onClick={goToProfile}>
                                 Для комментирования задайте имя или логин
                             </a>

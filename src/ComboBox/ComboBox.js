@@ -32,6 +32,7 @@ export default class ComboBox extends Component {
         return <div
             className="combo-box__container"
             onBlur={() => this.setState({droppedDown: false})}
+            role="button"
             tabIndex={tabIndex}
         >
             <div

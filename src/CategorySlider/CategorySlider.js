@@ -97,6 +97,7 @@ export default class CategorySlider extends Component {
     render() {
         const {hide, category} = this.props;
         return <div className="category__slider category__slider_active"
+                    role="button"
                     style={{outline: 'none'}}
                     ref={(ref) => {
                         this.wrapperRef = ref;
@@ -126,6 +127,7 @@ export default class CategorySlider extends Component {
                 <div className="category__slider-bar-item category__slider-bar-item_middle"></div>
                 <div className="category__slider-bar-item category__slider-bar-item_last"></div>
                 <div className="category__slider-bar-handler"
+                     role="button"
                      style={{bottom: `calc(${this.positionFromCategory(category)}% - 4px`}}
                      onMouseDown={this.startChange}></div>
             </div>

@@ -14,6 +14,9 @@ const RouteStatus = ({
     }
     return (
         <div className={'route-status' + (complete ? ' route-status_complete' : '')}
+             role="button"
+             tabIndex={0}
+             style={{outline: 'none'}}
              onClick={changeAscentResult ? changeAscentResult : null}>
             <div
                 className={'route-status__type' + statusClass}>

@@ -162,6 +162,9 @@ export default class RoutesShowModal extends Component {
                     <CloseButton onClick={() => onClose()}/>
                 </div>
                 <div className="modal__track-block"
+                     role="button"
+                     tabIndex={0}
+                     style={{outline: 'none'}}
                      onMouseOver={() => {
                          this.mouseOver = true;
                      }}
