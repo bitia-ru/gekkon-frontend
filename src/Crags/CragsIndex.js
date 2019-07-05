@@ -43,8 +43,9 @@ class CragsIndex extends Authorization {
                   logInFormErrors,
                   profileFormErrors,
               } = this.state;
+        const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
         return <div
-            style={{overflow: (signUpFormVisible || logInFormVisible || profileFormVisible ? 'hidden' : '')}}>
+            style={{overflow: (showModal ? 'hidden' : '')}}>
             {
                 signUpFormVisible
                     ? (

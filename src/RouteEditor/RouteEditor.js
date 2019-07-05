@@ -25,7 +25,10 @@ export default class RouteEditor extends Component {
         if (event.nativeEvent.which === 1) {
             let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
             if (!this.isMoving) {
-                this.addPointer((event.pageX - imageContainerRect.x) / imageContainerRect.width * 100, (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100);
+                this.addPointer(
+                    (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100,
+                    (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100,
+                );
             }
         }
     };
@@ -37,8 +40,10 @@ export default class RouteEditor extends Component {
             let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
             let pointersCopy = R.clone(pointers);
             let index = movingPointerIndex;
-            pointersCopy[index].dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[index].x;
-            pointersCopy[index].dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[index].y;
+            const dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100;
+            const dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100;
+            pointersCopy[index].dx = dx - pointersCopy[index].x;
+            pointersCopy[index].dy = dy - pointersCopy[index].y;
             updatePointers(pointersCopy);
         }
     };
@@ -62,8 +67,10 @@ export default class RouteEditor extends Component {
             } else {
                 let pointersCopy = R.clone(pointers);
                 let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
-                let dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[movingPointerIndex].x;
-                let dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[movingPointerIndex].y;
+                const xShift = (event.pageX - imageContainerRect.x) / imageContainerRect.width;
+                const yShift = (event.pageY - imageContainerRect.y) / imageContainerRect.height;
+                let dx = xShift * 100 - pointersCopy[movingPointerIndex].x;
+                let dy = yShift * 100 - pointersCopy[movingPointerIndex].y;
                 pointersCopy[movingPointerIndex].x = pointersCopy[movingPointerIndex].x + dx;
                 pointersCopy[movingPointerIndex].y = pointersCopy[movingPointerIndex].y + dy;
                 pointersCopy[movingPointerIndex].dx = 0;
@@ -89,8 +96,10 @@ export default class RouteEditor extends Component {
         this.isMoving = true;
         let pointersCopy = R.clone(pointers);
         let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
-        pointersCopy[index].dx = (pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[index].x;
-        pointersCopy[index].dy = (pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[index].y;
+        const xShift = (pageX - imageContainerRect.x) / imageContainerRect.width;
+        const yShift = (pageY - imageContainerRect.y) / imageContainerRect.height;
+        pointersCopy[index].dx = xShift * 100 - pointersCopy[index].x;
+        pointersCopy[index].dy = yShift * 100 - pointersCopy[index].y;
         updatePointers(pointersCopy);
         this.setState({movingPointerIndex: index});
     };
@@ -102,22 +111,31 @@ export default class RouteEditor extends Component {
         let mapIndexed = R.addIndex(R.map);
         return <div className="modal__track-image-wrapper">
             <div className="route-editor__inner-container">
-                <div className="route-editor__img-container" ref={(ref) => this.imageContainerRef = ref}
+                <div className="route-editor__img-container"
+                     ref={(ref) => this.imageContainerRef = ref}
                      onMouseDown={editable ? this.onMouseDown : null}
                      onMouseUp={editable ? this.onMouseUp : null}
                      onMouseMove={editable ? this.onMouseMove : null}
                      onContextMenu={this.onContextMenu}>
                     <img className="route-editor__img"
                          src={routePhoto} alt={route.name}/>
-                    {mapIndexed((pointer, index) => <Marker key={index}
-                                                            removePointer={editable ? (() => this.removePointer(index)) : null}
-                                                            onStartMoving={editable ? ((x, y) => this.onStartMoving(index, x, y)) : null}
-                                                            angle={pointer.angle}
-                                                            radius={MARKER_RADIUS}
-                                                            dx={pointer.dx}
-                                                            dy={pointer.dy}
-                                                            left={pointer.x}
-                                                            top={pointer.y}/>, pointers)}
+                    {
+                        mapIndexed((pointer, index) =>
+                            <Marker key={index}
+                                    removePointer={
+                                        editable ? (() => this.removePointer(index)) : null
+                                    }
+                                    onStartMoving={
+                                        editable
+                                            ? ((x, y) => this.onStartMoving(index, x, y))
+                                            : null
+                                    }
+                                    angle={pointer.angle}
+                                    radius={MARKER_RADIUS}
+                                    dx={pointer.dx}
+                                    dy={pointer.dy}
+                                    left={pointer.x}
+                                    top={pointer.y}/>, pointers)}
                 </div>
             </div>
         </div>

@@ -13,11 +13,16 @@ const routesReducer = (state = {}, action) => {
         case acts.ADD_ROUTE:
             routes = R.clone(state);
             routes[action.spotId] = routes[action.spotId] || {};
-            routes[action.spotId][action.sectorId] = R.append(action.route, routes[action.spotId][action.sectorId]);
+            routes[action.spotId][action.sectorId] = R.append(
+                action.route,
+                routes[action.spotId][action.sectorId],
+            );
             return routes;
         case acts.UPDATE_ROUTE:
             routes = R.clone(state);
-            let index = R.findIndex(R.propEq('id', action.id))(routes[action.spotId][action.sectorId]);
+            let index = R.findIndex(
+                R.propEq('id', action.id),
+            )(routes[action.spotId][action.sectorId]);
             routes[action.spotId][action.sectorId][index] = action.route;
             return routes;
         default:
@@ -97,8 +102,14 @@ const selectedFiltersReducer = (state = {}, action) => {
         case acts.SET_DEFAULT_SELECTED_FILTERS:
             selectedFilters = state === null ? {} : R.clone(state);
             let defaultFilters = R.merge(DEFAULT_FILTERS, {'wasChanged': false});
-            let sectorsDefaultFilters = R.map((sectorId) => [sectorId, R.clone(defaultFilters)], action.sectorIds);
-            let spotFilters = R.merge({0: R.clone(defaultFilters)}, R.fromPairs(sectorsDefaultFilters));
+            let sectorsDefaultFilters = R.map(
+                (sectorId) => [sectorId, R.clone(defaultFilters)],
+                action.sectorIds,
+            );
+            let spotFilters = R.merge(
+                {0: R.clone(defaultFilters)},
+                R.fromPairs(sectorsDefaultFilters),
+            );
             selectedFilters[action.spotId] = spotFilters;
             localStorage.setItem('routeFilters', JSON.stringify(selectedFilters));
             return R.clone(selectedFilters);

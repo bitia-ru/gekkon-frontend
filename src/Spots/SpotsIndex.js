@@ -70,7 +70,12 @@ class SpotsIndex extends Authorization {
         code = url.searchParams.get("reset_password_code");
         if (code !== null) {
             let email = url.searchParams.get("user_email");
-            this.setState({resetPasswordFormVisible: true, email: email ? email : url.searchParams.get("user_login")})
+            this.setState(
+                {
+                    resetPasswordFormVisible: true,
+                    email: email ? email : url.searchParams.get("user_login")
+                }
+            )
         }
         if (Cookies.get('user_session_token') !== undefined) {
             let token = Cookies.get('user_session_token');
@@ -193,9 +198,10 @@ class SpotsIndex extends Authorization {
                   logInFormVisible,
                   profileFormVisible,
               } = this.state;
+        const showModal = (signUpFormVisible || logInFormVisible || profileFormVisible);
         return <React.Fragment>
             <div
-                style={{overflow: ((signUpFormVisible || logInFormVisible || profileFormVisible) ? 'hidden' : '')}}>
+                style={{overflow: (showModal ? 'hidden' : '')}}>
                 <StickyBar loading={numOfActiveRequests > 0} content={this.content()}/>
                 <Footer user={user}
                         logIn={this.logIn}

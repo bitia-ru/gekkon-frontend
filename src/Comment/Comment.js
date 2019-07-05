@@ -23,7 +23,10 @@ const Comment = ({
                 </a>
                 <div className="comment__text">{comment.content}</div>
                 <div className="comment__footer">
-                    <div className="comment__date" title={moment(created_at).format(COMMENT_DATETIME_FORMAT)}>
+                    <div
+                        className="comment__date"
+                        title={moment(created_at).format(COMMENT_DATETIME_FORMAT)}
+                    >
                         {TimeFromNow(moment(created_at))}
                     </div>
                     {

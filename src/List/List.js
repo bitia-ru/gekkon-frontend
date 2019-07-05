@@ -9,30 +9,47 @@ const List = ({
     let mapIndexed = R.addIndex(R.map);
     return (
         <ul className="list">
-            {mapIndexed((item, index) => <li key={index} style={{listStyleType: 'none'}}
-                                             className={item.separator ? 'list-item-decor' : 'list-item'}>
-                {
-                    item.separator
-                        ? ''
-                        : (
-                            <div onClick={item.clickable ? (() => onClick(item.id)) : null}
-                                 className={item.clickable ? 'list-link list-link-clickable' : 'list-link'}
-                                 style={{cursor: item.clickable ? 'pointer' : ''}}>
-                                {
-                                    item.svgSrc
-                                        ? (
-                                            <span className="list-icon">
-											<svg aria-hidden="true">
-												<use xlinkHref={item.svgSrc}></use>
-											</svg>
-										</span>
-                                        )
-                                        : ''
-                                }{item[textFieldName]}
-                            </div>
-                        )
-                }
-            </li>, items)}
+            {
+                mapIndexed((item, index) =>
+                        <li
+                            key={index}
+                            style={{listStyleType: 'none'}}
+                            className={item.separator ? 'list-item-decor' : 'list-item'}
+                        >
+                            {
+                                item.separator
+                                    ? ''
+                                    : (
+                                        <div onClick={
+                                            item.clickable
+                                                ? (() => onClick(item.id))
+                                                : null
+                                        }
+                                             className={
+                                                 item.clickable
+                                                     ? 'list-link list-link-clickable'
+                                                     : 'list-link'
+                                             }
+                                             style={{cursor: item.clickable ? 'pointer' : ''}}
+                                        >
+                                            {
+                                                item.svgSrc
+                                                    ? (
+                                                        <span className="list-icon">
+                                                            <svg aria-hidden="true">
+                                                                <use xlinkHref={item.svgSrc}></use>
+                                                            </svg>
+                                                        </span>
+                                                    )
+                                                    : ''
+                                            }{item[textFieldName]}
+                                        </div>
+                                    )
+                            }
+                        </li>,
+                    items
+                )
+            }
         </ul>
     );
 };

@@ -37,7 +37,10 @@ export default class UserIcon extends Component {
         const {user} = this.props;
         const {droppedDown} = this.state;
         let title = user ? GetUserName(user, true) : '';
-        return <div className="user-icon" onBlur={() => this.setState({droppedDown: false})} tabIndex={0}>
+        return <div className="user-icon"
+                    onBlur={() => this.setState({droppedDown: false})}
+                    tabIndex={0}
+        >
             <Avatar onClick={this.onAvatarClick}
                     user={user}/>
             {
@@ -45,7 +48,11 @@ export default class UserIcon extends Component {
                     ? (
                         <div className="user-icon__user-menu user-icon__user-menu_active">
                             <List
-                                items={user === null ? GUEST_ITEMS_DATA : R.prepend({title: title}, USER_ITEMS_DATA)}
+                                items={
+                                    user === null
+                                        ? GUEST_ITEMS_DATA
+                                        : R.prepend({title: title}, USER_ITEMS_DATA)
+                                }
                                 onClick={this.onItemSelect}
                                 textFieldName='title'/>
                         </div>

@@ -22,17 +22,25 @@ const RouteCardTable = ({
                             <a className="route-card route-card__edit"
                                onClick={addRoute}>
                                 <span className="route-card__edit-icon"></span>
-                                <span className="route-card__edit-title">Добавить новую трассу</span>
+                                <span className="route-card__edit-title">
+                                    Добавить новую трассу
+                                </span>
                             </a>
                         </div>
                     </div>
                 )
                 : ''
         }
-        {R.map((route) => <RouteCard key={route.id}
-                                     route={route}
-                                     ascent={R.find((ascent) => ascent.route_id === route.id, ascents)}
-                                     onRouteClick={() => onRouteClick(route.id)}/>, routes)}
+        {
+            R.map(
+                (route) =>
+                    <RouteCard key={route.id}
+                               route={route}
+                               ascent={R.find((ascent) => ascent.route_id === route.id, ascents)}
+                               onRouteClick={() => onRouteClick(route.id)}/>,
+                routes,
+            )
+        }
     </div>
 );
 

@@ -7,7 +7,13 @@ const CollapsableBlock = ({
                           }) => (
     <div>
         <button onClick={() => onCollapseChange(!isCollapsed)}
-                className={'collapsable-block__header' + (isCollapsed ? '' : ' collapsable-block__header_active')}>
+                className={
+                    'collapsable-block__header' + (
+                        isCollapsed
+                            ? ''
+                            : ' collapsable-block__header_active'
+                    )
+                }>
             {title}
         </button>
         <React.Fragment>

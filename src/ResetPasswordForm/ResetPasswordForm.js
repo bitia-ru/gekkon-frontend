@@ -67,13 +67,16 @@ export default class ResetPasswordForm extends Component {
         switch (field) {
             case 'password':
                 if (value === '' || value.length < PASSWORD_MIN_LENGTH) {
-                    this.setState({errors: R.merge(errors, {password: [`Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`]})});
+                    const msgErr = `Минимальная длина пароля ${PASSWORD_MIN_LENGTH} символов`;
+                    this.setState({errors: R.merge(errors, {password: [msgErr]})});
                     return false;
                 }
                 return true;
             case 'repeatPassword':
                 if (password !== value) {
-                    this.setState({errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})});
+                    this.setState(
+                        {errors: R.merge(errors, {repeatPassword: ['Пароли не совпадают']})}
+                    );
                     return false;
                 }
                 return true;
@@ -100,7 +103,13 @@ export default class ResetPasswordForm extends Component {
     errorText = (field) => {
         const {formErrors} = this.props;
         const {errors} = this.state;
-        return R.join(', ', R.concat(errors[field] ? errors[field] : [], formErrors[field] ? formErrors[field] : []));
+        return R.join(
+            ', ',
+            R.concat(
+                errors[field] ? errors[field] : [],
+                formErrors[field] ? formErrors[field] : [],
+            )
+        );
     };
 
     closeForm = () => {
@@ -130,9 +139,14 @@ export default class ResetPasswordForm extends Component {
                            hasError={this.hasError('passwordFromSms')}
                            errorText={this.errorText('passwordFromSms')}
                            value={passwordFromSms}/>
-                <Button size="medium" style="normal" title="Восстановить" fullLength={true} submit={true}
+                <Button size="medium"
+                        style="normal"
+                        title="Восстановить"
+                        fullLength={true}
+                        submit={true}
                         isWaiting={isWaiting}
-                        onClick={() => this.checkAndSubmit('phone', phone, passwordFromSms)}/>
+                        onClick={() => this.checkAndSubmit('phone', phone, passwordFromSms)}
+                />
             </form>
         );
     };
@@ -163,11 +177,20 @@ export default class ResetPasswordForm extends Component {
                            type="password"
                            hasError={this.hasError('repeatPassword')}
                            errorText={this.errorText('repeatPassword')}
-                           onEnter={() => this.checkAndSubmit('email', email, password, repeatPassword)}
+                           onEnter={
+                               () => this.checkAndSubmit('email', email, password, repeatPassword)
+                           }
                            value={repeatPassword}/>
-                <Button size="medium" style="normal" title="Сохранить" fullLength={true} submit={true}
+                <Button size="medium"
+                        style="normal"
+                        title="Сохранить"
+                        fullLength={true}
+                        submit={true}
                         isWaiting={isWaiting}
-                        onClick={() => this.checkAndSubmit('email', email, password, repeatPassword)}/>
+                        onClick={
+                            () => this.checkAndSubmit('email', email, password, repeatPassword)
+                        }
+                />
             </form>
         );
     };
@@ -190,7 +213,8 @@ export default class ResetPasswordForm extends Component {
                             Установка нового пароля
                         </h3>
                         <TabBar contentList={[this.firstTabContent(), this.secondTabContent()]}
-                                activeList={[false, true]} activeTab={2} test={this.firstTabContent()}
+                                activeList={[false, true]}
+                                activeTab={2}
                                 titleList={["Телефон", "Email"]}/>
                     </div>
                 </div>

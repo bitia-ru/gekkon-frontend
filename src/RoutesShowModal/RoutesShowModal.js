@@ -257,15 +257,27 @@ export default class RoutesShowModal extends Component {
                                           text={route.description ? route.description : ''}/>
                     </div>
                     <div className="modal__item">
-                        <CommentBlock startAnswer={this.startAnswer}
-                                      user={user}
-                                      removeComment={removeComment}
-                                      allShown={comments.length === R.min(numOfDisplayedComments, comments.length)}
-                                      numOfComments={numOfComments}
-                                      showPrevious={this.showPreviousComments}
-                                      onCollapseChange={this.onDescriptionCollapseChange}
-                                      comments={R.slice(comments.length - R.min(numOfDisplayedComments, comments.length), comments.length, comments)}
-                                      objectListTitle="route_comments"/>
+                        <CommentBlock
+                            startAnswer={this.startAnswer}
+                            user={user}
+                            removeComment={removeComment}
+                            allShown={
+                                comments.length === R.min(
+                                    numOfDisplayedComments,
+                                    comments.length
+                                )
+                            }
+                            numOfComments={numOfComments}
+                            showPrevious={this.showPreviousComments}
+                            onCollapseChange={this.onDescriptionCollapseChange}
+                            comments={
+                                R.slice(
+                                    comments.length - R.min(numOfDisplayedComments, comments.length),
+                                    comments.length,
+                                    comments
+                                )
+                            }
+                            objectListTitle="route_comments"/>
                     </div>
                     <div className="modal__enter-comment">
                         <CommentForm quoteComment={quoteComment}
@@ -290,7 +302,10 @@ export default class RoutesShowModal extends Component {
                     onClose()
                 }
             }}>
-                <StickyBar loading={numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+                <StickyBar loading={numOfActiveRequests > 0}
+                           content={this.content()}
+                           hideLoaded={true}
+                />
             </div>
         </React.Fragment>;
     }

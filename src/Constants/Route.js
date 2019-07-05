@@ -1,4 +1,7 @@
-export const ROUTE_KINDS = [{id: 0, title: 'boulder', text: 'боулдер', clickable: true}, {id: 1, title: 'sport', text: 'трудность', clickable: true}];
+export const ROUTE_KINDS = [
+    {id: 0, title: 'boulder', text: 'боулдер', clickable: true},
+    {id: 1, title: 'sport', text: 'трудность', clickable: true},
+];
 
 export const SOON_END_PERIOD = 7; //days
 

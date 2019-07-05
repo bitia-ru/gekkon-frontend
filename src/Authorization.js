@@ -155,7 +155,11 @@ export default class Authorization extends React.Component {
                     saveUser(response.data.payload);
                     saveToken(response.data.payload.user_session.token);
                     this.setState({signUpIsWaiting: false});
-                    this.showToastr('success', 'Вход выполнен', 'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.')
+                    this.showToastr(
+                        'success',
+                        'Вход выполнен',
+                        'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.'
+                    );
                     if (this.afterSubmitSignUpForm) {
                         this.afterSubmitSignUpForm(response.data.payload.id);
                     }
@@ -216,7 +220,8 @@ export default class Authorization extends React.Component {
                     });
                 }).catch(error => {
                 decreaseNumOfActiveRequests();
-                if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
+                const resp = error.response;
+                if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
                     this.setState({logInFormErrors: {email: ['Пользователь не найден']}});
                 } else {
                     this.displayError(error)
@@ -261,8 +266,13 @@ export default class Authorization extends React.Component {
                     this.setState({resetPasswordIsWaiting: false});
                 }).catch(error => {
                 decreaseNumOfActiveRequests();
-                if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
-                    this.showToastr('error', 'Ошибка', 'Срок действия ссылки для восстановления пароля истек или пользователь не найден');
+                const resp = error.response;
+                if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+                    this.showToastr(
+                        'error',
+                        'Ошибка',
+                        'Срок действия ссылки для восстановления пароля истек или пользователь не найден'
+                    );
                 } else {
                     this.displayError(error)
                 }
@@ -392,16 +402,29 @@ export default class Authorization extends React.Component {
             Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, {params: params})
                 .then(response => {
                     decreaseNumOfActiveRequests();
-                    this.showToastr('success', 'Восстановление пароля', 'На почту было отправлено сообщение для восстановления пароля');
+                    this.showToastr(
+                        'success',
+                        'Восстановление пароля',
+                        'На почту было отправлено сообщение для восстановления пароля'
+                    );
                 }).catch(error => {
                 decreaseNumOfActiveRequests();
-                if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
+                const resp = error.response;
+                if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
                     this.showToastr('error', 'Ошибка', 'Пользователь не найден');
                 } else {
-                    if (error.response.status === 400 && error.response.statusText === 'Bad Request' && error.response.data.email) {
-                        this.showToastr('warning', 'Восстановление пароля', 'Без почты невозможно восстановить пароль. Обратитесь к администратору.');
+                    if (resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
+                        this.showToastr(
+                            'warning',
+                            'Восстановление пароля',
+                            'Без почты невозможно восстановить пароль. Обратитесь к администратору.',
+                        );
                     } else {
-                        this.showToastr('warning', 'Восстановление пароля', 'Не удалось отправить на почту сообщение для восстановления пароля');
+                        this.showToastr(
+                            'warning',
+                            'Восстановление пароля',
+                            'Не удалось отправить на почту сообщение для восстановления пароля',
+                        );
                     }
                 }
             });

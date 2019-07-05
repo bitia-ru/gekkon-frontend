@@ -61,14 +61,17 @@ export default class CommentForm extends Component {
                             </a>
                         )
                         : (
-                            <textarea
-                                className="comment-form__input"
-                                ref={(ref) => setTextareaRef(ref)}
-                                disabled={user && (user.login || user.name) ? false : true}
-                                placeholder={user ? 'Комментировать...' : 'Залогиньтесь, чтобы написать комментарий'}
-                                value={content}
-                                onChange={(event) => onContentChange(event.target.value)}
-                                onKeyPress={this.onKeyPress}/>
+                            <textarea className="comment-form__input"
+                                      ref={(ref) => setTextareaRef(ref)}
+                                      disabled={user && (user.login || user.name) ? false : true}
+                                      placeholder={
+                                          user
+                                              ? 'Комментировать...'
+                                              : 'Залогиньтесь, чтобы написать комментарий'
+                                      }
+                                      value={content}
+                                      onChange={(event) => onContentChange(event.target.value)}
+                                      onKeyPress={this.onKeyPress}/>
                         )
                 }
             </div>
@@ -85,7 +88,9 @@ export default class CommentForm extends Component {
                             <Button size="small"
                                     style="normal"
                                     title="Отправить"
-                                    onClick={() => saveComment(quoteComment ? quoteComment.id : null)}>
+                                    onClick={
+                                        () => saveComment(quoteComment ? quoteComment.id : null)
+                                    }>
                             </Button>
                         </div>
                     )

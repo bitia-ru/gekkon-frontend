@@ -1,34 +1,40 @@
 import React      from 'react';
 import DatePicker from 'react-datepicker';
 import PropTypes  from 'prop-types';
+import classNames from 'classnames';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './DatePickerBlock.css';
 
 const DatePickerBlock = ({
                              date, dateFormat, onChange,
-                         }) => (
-    <div className="date-picker-block__container">
-        {
-            date
-                ? (
-                    <DatePicker
-                        dateFormat={dateFormat}
-                        className="date-picker-block__select date-picker-block__select-transparent date-picker-block__select_small"
-                        selected={date}
-                        onChange={onChange}
-                    />
-                )
-                : (
-                    <DatePicker
-                        dateFormat={dateFormat}
-                        className="date-picker-block__select date-picker-block__select-transparent date-picker-block__select_small"
-                        onChange={onChange}
-                    />
-                )
-        }
-    </div>
-);
+                         }) => {
+    const datePickerClasses = classNames({
+        'date-picker-block__select': true,
+        'date-picker-block__select-transparent': true,
+        'date-picker-block__select_small': true,
+    });
+    return (
+        <div className="date-picker-block__container">
+            {
+                date
+                    ? (
+                        <DatePicker dateFormat={dateFormat}
+                                    className={datePickerClasses}
+                                    selected={date}
+                                    onChange={onChange}
+                        />
+                    )
+                    : (
+                        <DatePicker dateFormat={dateFormat}
+                                    className={datePickerClasses}
+                                    onChange={onChange}
+                        />
+                    )
+            }
+        </div>
+    )
+};
 
 DatePickerBlock.propTypes = {
     date: PropTypes.object,

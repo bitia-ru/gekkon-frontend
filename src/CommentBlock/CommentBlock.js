@@ -21,10 +21,13 @@ export default class CommentBlock extends Component {
         if (numOfComments % 10 === 1 && numOfComments % 100 !== 11) {
             return 'й'
         }
-        if ((numOfComments % 10 >= 2 && numOfComments % 10 <= 4) && (numOfComments % 100 < 12 || numOfComments % 100 > 14)) {
-            return 'я'
+        if (!(numOfComments % 10 >= 2 && numOfComments % 10 <= 4)) {
+            return 'ев'
         }
-        return 'ев'
+        if (!(numOfComments % 100 < 12 || numOfComments % 100 > 14)) {
+            return 'ев'
+        }
+        return 'я'
     };
 
     onScroll = () => {
@@ -65,15 +68,40 @@ export default class CommentBlock extends Component {
                             </button>
                         )
                 }
-                <div className="comment-block__list" ref={(ref) => this.commentWindow = ref} onScroll={this.onScroll}>
-                    {R.map((comment) =>
-                        <React.Fragment key={comment.id}>
-                            <Comment startAnswer={startAnswer} removeComment={removeComment}
-                                     user={user} comment={comment}/>
-                            {R.map((innerComment) => <div key={innerComment.id} className="comment-block__inner">
-                                <Comment startAnswer={startAnswer} removeComment={removeComment}
-                                         user={user} comment={innerComment}/>
-                            </div>, comment[objectListTitle])}</React.Fragment>, comments)}
+                <div
+                    className="comment-block__list"
+                    ref={(ref) => this.commentWindow = ref}
+                    onScroll={this.onScroll}
+                >
+                    {
+                        R.map(
+                            (comment) =>
+                                <React.Fragment key={comment.id}>
+                                    <Comment startAnswer={startAnswer}
+                                             removeComment={removeComment}
+                                             user={user}
+                                             comment={comment}
+                                    />
+                                    {
+                                        R.map(
+                                            (innerComment) =>
+                                                <div
+                                                    key={innerComment.id}
+                                                    className="comment-block__inner"
+                                                >
+                                                    <Comment startAnswer={startAnswer}
+                                                             removeComment={removeComment}
+                                                             user={user}
+                                                             comment={innerComment}
+                                                    />
+                                                </div>,
+                                            comment[objectListTitle]
+                                        )
+                                    }
+                                </React.Fragment>,
+                            comments
+                        )
+                    }
                 </div>
             </div>
         </React.Fragment>;

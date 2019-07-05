@@ -77,7 +77,8 @@ export const TimeFromNow = (datetime) => {
                 return Object.values(LOOK_UP_FUTURE_DATE_FORMATTER[i - 1])[0](datetime);
             }
         }
-        return Object.values(LOOK_UP_FUTURE_DATE_FORMATTER[LOOK_UP_FUTURE_DATE_FORMATTER.length - 1])[0](datetime);
+        const formatter = LOOK_UP_FUTURE_DATE_FORMATTER;
+        return Object.values(formatter[formatter.length - 1])[0](datetime);
     } else {
         for (let i in LOOK_UP_PAST_DATE_FORMATTER) {
             let s = parseInt(Object.keys(LOOK_UP_PAST_DATE_FORMATTER[i])[0], 10);
@@ -85,6 +86,7 @@ export const TimeFromNow = (datetime) => {
                 return Object.values(LOOK_UP_PAST_DATE_FORMATTER[i - 1])[0](datetime);
             }
         }
-        return Object.values(LOOK_UP_PAST_DATE_FORMATTER[LOOK_UP_PAST_DATE_FORMATTER.length - 1])[0](datetime);
+        const formatter = LOOK_UP_PAST_DATE_FORMATTER;
+        return Object.values(formatter[formatter.length - 1])[0](datetime);
     }
 };

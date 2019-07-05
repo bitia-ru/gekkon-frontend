@@ -53,6 +53,9 @@ class MainNav extends Component {
                   openProfile,
               } = this.props;
         const {searchOpened} = this.state;
+        const inputClass = (searchOpened ? ' main-nav__search-input_active' : '');
+        const tab1Class = (tab === 1 ? ' main-nav__nav-list-link_active' : '');
+        const tab2Class = (tab === 2 ? ' main-nav__nav-list-link_active' : '');
         return <div className="main-nav__container">
             <Link to="/crags" id="linkToCrags"></Link>
             <Link to="/" id="linkToSpots"></Link>
@@ -69,11 +72,15 @@ class MainNav extends Component {
                     </button>
                     <div className="main-nav__block">
                         <input type="text"
-                               onChange={(event) => this.setState({searchString: event.target.value})}
+                               onChange={
+                                   (event) => this.setState({searchString: event.target.value})
+                               }
                                onFocus={() => this.setState({searchStarted: true})}
                                onKeyPress={this.keyPress}
                                placeholder="Введите строку для поиска"
-                               className={'main-nav__search-input' + (searchOpened ? ' main-nav__search-input_active' : '')}/>
+                               className={
+                                   'main-nav__search-input' + inputClass
+                               }/>
                         <nav className="main-nav__nav">
                             <ul className="main-nav__nav-list">
                                 <li className="main-nav__nav-list-item">
@@ -82,7 +89,10 @@ class MainNav extends Component {
                                            changeTabProp(1);
                                            document.getElementById('linkToSpots').click()
                                        }}
-                                       className={'main-nav__nav-list-link' + (tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
+                                       className={'main-nav__nav-list-link' + tab1Class}
+                                    >
+                                        Скалодромы
+                                    </a>
                                 </li>
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
@@ -90,7 +100,10 @@ class MainNav extends Component {
                                            changeTabProp(2);
                                            document.getElementById('linkToCrags').click()
                                        }}
-                                       className={'main-nav__nav-list-link' + (tab === 2 ? ' main-nav__nav-list-link_active' : '')}>Скалы</a>
+                                       className={'main-nav__nav-list-link' + tab2Class}
+                                    >
+                                        Скалы
+                                    </a>
                                 </li>
                             </ul>
                         </nav>

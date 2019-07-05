@@ -16,10 +16,24 @@ const Pagination = ({
                  onClick={() => onPageChange(firstPage)}>
 
             </div>
-            {R.map((currentPage) => <div
-                key={currentPage}
-                onClick={() => onPageChange(currentPage)}
-                className={'pagination__item' + (currentPage === page ? ' pagination__item_active' : '')}>{currentPage}</div>, pagesList)}
+            {
+                R.map(
+                    (currentPage) =>
+                        <div key={currentPage}
+                             onClick={() => onPageChange(currentPage)}
+                             className={
+                                 'pagination__item' + (
+                                     currentPage === page
+                                         ? ' pagination__item_active'
+                                         : ''
+                                 )
+                             }
+                        >
+                            {currentPage}
+                        </div>,
+                    pagesList
+                )
+            }
             <div className="pagination__item pagination__toggle pagination__toggle-next"
                  onClick={() => onPageChange(lastPage)}>
 

@@ -66,7 +66,16 @@ export default class RoutesEditModal extends Component {
         const {
                   currentPointers, currentPointersOld, route, photo,
               } = this.state;
-        let paramList = ['number', 'name', 'author_id', 'category', 'kind', 'installed_at', 'installed_until', 'description'];
+        let paramList = [
+            'number',
+            'name',
+            'author_id',
+            'category',
+            'kind',
+            'installed_at',
+            'installed_until',
+            'description'
+        ];
         let formData = new FormData();
         let pointersChanged = this.changed(currentPointers, currentPointersOld);
         let holdsColorsChanged = this.changed(routeProp.holds_color, route.holds_color);
@@ -178,7 +187,9 @@ export default class RoutesEditModal extends Component {
         const {route, photo} = this.state;
         route.photo = src;
         route.photoFile = photo.file;
-        if (crop.width === 0 || crop.height === 0 || (Math.abs(image.width - crop.width) < 1 && Math.abs(image.height - crop.height) < 1)) {
+        const isFullWidth = Math.abs(image.width - crop.width) < 1;
+        const isFullHeight = Math.abs(image.height - crop.height) < 1;
+        if (crop.width === 0 || crop.height === 0 || (isFullWidth && isFullHeight)) {
             let photoCopy = R.clone(photo);
             photoCopy.crop = null;
             photoCopy.rotate = (rotate === 0 ? null : rotate);
@@ -200,12 +211,21 @@ export default class RoutesEditModal extends Component {
 
     content = () => {
         const {
-                  onClose, route: routeProp, cancel, isWaiting, sector, user, routeMarkColors, users,
+                  onClose,
+                  route: routeProp,
+                  cancel,
+                  isWaiting,
+                  sector,
+                  user,
+                  routeMarkColors,
+                  users,
               } = this.props;
         const {
                   route, fieldsOld, currentPointers, currentPointersOld,
               } = this.state;
-        let saveDisabled = (JSON.stringify(route) === JSON.stringify(fieldsOld) && JSON.stringify(currentPointers) === JSON.stringify(currentPointersOld));
+        const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
+        const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
+        let saveDisabled = (!routeChanged && !markChanged);
         return <div className="modal-overlay__wrapper">
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
@@ -225,7 +245,11 @@ export default class RoutesEditModal extends Component {
                                 ? (
                                     <RouteEditor
                                         route={routeProp}
-                                        routePhoto={typeof(route.photo) === 'string' ? route.photo : route.photo.url}
+                                        routePhoto={
+                                            typeof(route.photo) === 'string'
+                                                ? route.photo
+                                                : route.photo.url
+                                        }
                                         pointers={currentPointers}
                                         editable={true}
                                         updatePointers={this.updatePointers}/>
@@ -245,7 +269,9 @@ export default class RoutesEditModal extends Component {
                                                 xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
                                             />
                                             <ButtonHandler
-                                                onClick={() => this.onRouteParamChange(null, 'photo')}
+                                                onClick={
+                                                    () => this.onRouteParamChange(null, 'photo')
+                                                }
                                                 title="Удалить фото"
                                                 xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
                                             />
@@ -279,14 +305,26 @@ export default class RoutesEditModal extends Component {
                      onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track-header">
                         <h1 className="modal__title">
-                            № <input type="text"
-                                     onChange={(event) => this.onRouteParamChange(event.target.value, 'number')}
-                                     className="modal__title-input modal__number-input modal__title-input_dark"
-                                     maxLength="6"
-                                     value={route.number === null ? '' : route.number}/>
+                            №
+                            <input
+                                type="text"
+                                onChange={
+                                    (event) => this.onRouteParamChange(
+                                        event.target.value,
+                                        'number',
+                                    )
+                                }
+                                className="modal__title-input modal__number-input modal__title-input_dark"
+                                maxLength="6"
+                                value={route.number === null ? '' : route.number}/>
                             <span className="modal__title-place">(“</span>
                             <input type="text"
-                                   onChange={(event) => this.onRouteParamChange(event.target.value, 'name')}
+                                   onChange={
+                                       (event) => this.onRouteParamChange(
+                                           event.target.value,
+                                           'name'
+                                       )
+                                   }
                                    className="modal__title-input"
                                    value={route.name === null ? '' : route.name}/>
                             <span
@@ -301,12 +339,20 @@ export default class RoutesEditModal extends Component {
                     </div>
                     <div className="modal__item modal__descr-item">
                         <div>
-                            <button className="collapsable-block__header collapsable-block__header_edit">
+                            <button
+                                className="collapsable-block__header collapsable-block__header_edit"
+                            >
                                 Описание
                             </button>
                             <textarea className="modal__descr-edit"
-                                      onChange={(event) => this.onRouteParamChange(event.target.value, 'description')}
-                                      value={route.description ? route.description : ''}></textarea>
+                                      onChange={
+                                          (event) => this.onRouteParamChange(
+                                              event.target.value,
+                                              'description'
+                                          )
+                                      }
+                                      value={route.description ? route.description : ''}>
+                            </textarea>
                         </div>
                     </div>
                 </div>
