@@ -8,12 +8,17 @@ import "react-image-crop/dist/ReactCrop.css";
 import './RoutePhotoCropper.css';
 
 export default class RoutePhotoCropper extends Component {
-    state = {
-        crop: CROP_DEFAULT,
-        rotate: 0,
-        image: null,
-        src: this.props.src
-    };
+    constructor(props) {
+        super(props);
+
+        const {src} = this.props;
+        this.state = {
+            crop: CROP_DEFAULT,
+            rotate: 0,
+            image: null,
+            src: src,
+        };
+    }
 
     onImageLoaded = (image) => {
         this.imageRef = image;
@@ -74,6 +79,7 @@ export default class RoutePhotoCropper extends Component {
     };
 
     rotate = () => {
+        const {rotate} = this.state;
         let image = this.imageRef;
         let canvas = document.createElement('canvas');
         canvas.width = image.naturalHeight;
@@ -92,17 +98,27 @@ export default class RoutePhotoCropper extends Component {
         ctx.translate(-x, -y);
 
         let new_image_url = canvas.toDataURL();
-        this.setState({rotate: (this.state.rotate + 90) % 360, src: new_image_url, crop: CROP_DEFAULT})
+        this.setState({rotate: (rotate + 90) % 360, src: new_image_url, crop: CROP_DEFAULT})
     };
 
     render() {
+        const {close, save, src: srcProp} = this.props;
+        const {
+                  croppedImageUrl, crop, rotate, image, src,
+              } = this.state;
         return <React.Fragment>
-            <div style={{position: 'absolute', marginTop: 20, marginLeft: 'calc(100% - 65px)', zIndex: 300, display: 'flex'}}>
+            <div style={{
+                position: 'absolute',
+                marginTop: 20,
+                marginLeft: 'calc(100% - 65px)',
+                zIndex: 300,
+                display: 'flex'
+            }}>
                 <ButtonHandler onClick={this.rotate}
                                title="Поворот"
                                xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"/>
                 <ButtonHandler
-                    onClick={this.props.close} title="Закрыть"
+                    onClick={close} title="Закрыть"
                     xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"/>
             </div>
             <div style={{
@@ -112,8 +128,8 @@ export default class RoutePhotoCropper extends Component {
                 zIndex: 300
             }}>
                 <Button size="small" style="normal" title="Сохранить"
-                        onClick={() => this.state.croppedImageUrl.then(
-                            (e) => this.props.save(e, this.state.crop, this.state.rotate, this.state.image)
+                        onClick={() => croppedImageUrl.then(
+                            (e) => save(e, crop, rotate, image)
                         )}>
                 </Button>
             </div>
@@ -127,10 +143,10 @@ export default class RoutePhotoCropper extends Component {
             }}>
                 <div style={{zIndex: 200}}>
                     {
-                        this.props.src
+                        srcProp
                             ? (
-                                <ReactCrop src={this.state.src}
-                                           crop={this.state.crop}
+                                <ReactCrop src={src}
+                                           crop={crop}
                                            onImageLoaded={this.onImageLoaded}
                                            onComplete={this.onCropComplete}
                                            onChange={this.onCropChange}
@@ -145,6 +161,11 @@ export default class RoutePhotoCropper extends Component {
 }
 
 RoutePhotoCropper.propTypes = {
+    src: PropTypes.string,
     close: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired
+    save: PropTypes.func.isRequired,
+};
+
+RoutePhotoCropper.defaultProps = {
+    src: null,
 };

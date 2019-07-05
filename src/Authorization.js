@@ -1,4 +1,5 @@
 import React                     from 'react';
+import PropTypes                 from 'prop-types';
 import Cookies                   from "js-cookie";
 import Axios                     from "axios/index";
 import {SALT_ROUNDS}             from "./Constants/Bcrypt";
@@ -30,34 +31,53 @@ export default class Authorization extends React.Component {
     }
 
     logOut = () => {
-        this.props.increaseNumOfActiveRequests();
-        Axios({url: `${ApiUrl}/v1/user_sessions/actions/log_out`, method: 'patch', data: {token: this.props.token}, headers: {'TOKEN': this.props.token}})
+        const {
+                  increaseNumOfActiveRequests,
+                  token,
+                  decreaseNumOfActiveRequests,
+                  removeToken,
+                  saveUser,
+              } = this.props;
+        increaseNumOfActiveRequests();
+        Axios({
+            url: `${ApiUrl}/v1/user_sessions/actions/log_out`,
+            method: 'patch',
+            data: {token: token},
+            headers: {'TOKEN': token}
+        })
             .then(response => {
-                this.props.decreaseNumOfActiveRequests();
-                this.props.removeToken();
-                this.props.saveUser(null);
+                decreaseNumOfActiveRequests();
+                removeToken();
+                saveUser(null);
                 if (this.afterLogOut) {
                     this.afterLogOut();
                 }
             }).catch(error => {
-            this.props.decreaseNumOfActiveRequests();
+            decreaseNumOfActiveRequests();
             this.displayError(error);
         });
     };
 
-    signIn = (token, afterSignIn) => {
-        this.props.increaseNumOfActiveRequests();
-        Axios.get(`${ApiUrl}/v1/users/self`, {headers: {'TOKEN': (token ? token : this.props.token)}})
+    signIn = (tokenNew, afterSignIn) => {
+        const {
+                  increaseNumOfActiveRequests,
+                  token,
+                  decreaseNumOfActiveRequests,
+                  removeToken,
+                  saveUser,
+              } = this.props;
+        increaseNumOfActiveRequests();
+        Axios.get(`${ApiUrl}/v1/users/self`, {headers: {'TOKEN': (tokenNew ? tokenNew : token)}})
             .then(response => {
-                this.props.decreaseNumOfActiveRequests();
-                this.props.saveUser(response.data.payload);
+                decreaseNumOfActiveRequests();
+                saveUser(response.data.payload);
                 if (afterSignIn) {
                     afterSignIn(response.data.payload);
                 }
             }).catch(error => {
-            this.props.decreaseNumOfActiveRequests();
+            decreaseNumOfActiveRequests();
             Cookies.remove('user_session_token', {path: '', domain: Domain()});
-            this.props.removeToken();
+            removeToken();
         });
     };
 
@@ -112,6 +132,12 @@ export default class Authorization extends React.Component {
     };
 
     submitSignUpForm = (type, data, password) => {
+        const {
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+                  saveToken,
+                  saveUser,
+              } = this.props;
         if (type === 'phone') {
             console.log("phone");
             console.log(data);
@@ -121,20 +147,20 @@ export default class Authorization extends React.Component {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
             let hash = bcrypt.hashSync(password, salt);
             let params = {user: {password_digest: hash, email: data}};
-            this.props.increaseNumOfActiveRequests();
+            increaseNumOfActiveRequests();
             Axios.post(`${ApiUrl}/v1/users`, params)
                 .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
+                    decreaseNumOfActiveRequests();
                     this.closeSignUpForm();
-                    this.props.saveUser(response.data.payload);
-                    this.props.saveToken(response.data.payload.user_session.token);
+                    saveUser(response.data.payload);
+                    saveToken(response.data.payload.user_session.token);
                     this.setState({signUpIsWaiting: false});
                     this.showToastr('success', 'Вход выполнен', 'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.')
                     if (this.afterSubmitSignUpForm) {
                         this.afterSubmitSignUpForm(response.data.payload.id);
                     }
                 }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
+                decreaseNumOfActiveRequests();
                 if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                     this.setState({signUpFormErrors: error.response.data});
                 } else {
@@ -146,6 +172,11 @@ export default class Authorization extends React.Component {
     };
 
     submitLogInForm = (type, data, password, rememberMe) => {
+        const {
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+                  saveToken,
+              } = this.props;
         if (type === 'phone') {
             console.log("phone");
             console.log(data);
@@ -158,15 +189,15 @@ export default class Authorization extends React.Component {
             } else {
                 params = {user_session: {user: {login: data}}, rememberMe: rememberMe};
             }
-            this.props.increaseNumOfActiveRequests();
+            increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/user_sessions/new`, {params: params})
                 .then(response => {
                     let hash = bcrypt.hashSync(password, response.data);
                     params.user_session.user.password_digest = hash;
                     Axios.post(`${ApiUrl}/v1/user_sessions`, params)
                         .then(response => {
-                            this.props.decreaseNumOfActiveRequests();
-                            this.props.saveToken(response.data.payload.token);
+                            decreaseNumOfActiveRequests();
+                            saveToken(response.data.payload.token);
                             this.signIn(response.data.payload.token, () => {
                                 this.closeLogInForm();
                                 if (this.afterSubmitLogInForm) {
@@ -175,7 +206,7 @@ export default class Authorization extends React.Component {
                                 this.setState({logInIsWaiting: false});
                             });
                         }).catch(error => {
-                        this.props.decreaseNumOfActiveRequests();
+                        decreaseNumOfActiveRequests();
                         if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                             this.setState({logInFormErrors: error.response.data});
                         } else {
@@ -184,7 +215,7 @@ export default class Authorization extends React.Component {
                         this.setState({logInIsWaiting: false});
                     });
                 }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
+                decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.setState({logInFormErrors: {email: ['Пользователь не найден']}});
                 } else {
@@ -196,6 +227,10 @@ export default class Authorization extends React.Component {
     };
 
     submitResetPasswordForm = (type, data, password) => {
+        const {
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+              } = this.props;
         if (type === 'phone') {
             console.log("phone");
             console.log(data);
@@ -217,15 +252,15 @@ export default class Authorization extends React.Component {
                     token: url.searchParams.get("reset_password_code")
                 };
             }
-            this.props.increaseNumOfActiveRequests();
+            increaseNumOfActiveRequests();
             Axios({url: `${ApiUrl}/v1/users/reset_password`, method: 'patch', data: params})
                 .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
+                    decreaseNumOfActiveRequests();
                     this.closeResetPasswordForm();
                     this.submitLogInForm('email', data, password);
                     this.setState({resetPasswordIsWaiting: false});
                 }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
+                decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.showToastr('error', 'Ошибка', 'Срок действия ссылки для восстановления пароля истек или пользователь не найден');
                 } else {
@@ -237,29 +272,36 @@ export default class Authorization extends React.Component {
     };
 
     submitProfileForm = (data, afterSuccess) => {
+        const {
+                  user,
+                  token,
+                  saveUser,
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+              } = this.props;
         this.setState({profileIsWaiting: true});
         if (data.password) {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
             data.password_digest = bcrypt.hashSync(data.password, salt);
             delete data.password;
         }
-        this.props.increaseNumOfActiveRequests();
+        increaseNumOfActiveRequests();
         Axios({
-            url: `${ApiUrl}/v1/users/${this.props.user.id}`,
+            url: `${ApiUrl}/v1/users/${user.id}`,
             method: 'patch',
             data: data,
-            headers: {'TOKEN': this.props.token},
+            headers: {'TOKEN': token},
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         })
             .then(response => {
-                this.props.decreaseNumOfActiveRequests();
-                this.props.saveUser(response.data.payload);
+                decreaseNumOfActiveRequests();
+                saveUser(response.data.payload);
                 this.setState({profileIsWaiting: false});
                 if (afterSuccess) {
                     afterSuccess(response.data.payload);
                 }
             }).catch(error => {
-            this.props.decreaseNumOfActiveRequests();
+            decreaseNumOfActiveRequests();
             if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
                 this.setState({profileFormErrors: error.response.data});
             } else {
@@ -282,46 +324,59 @@ export default class Authorization extends React.Component {
     };
 
     enterWithVk = (type) => {
+        const {token} = this.props;
         this.w = window.open(`https://oauth.vk.com/authorize?client_id=${CLIENT_ID}&scope=email%2Cphotos&redirect_uri=${REDIRECT_URI}&response_type=code&v=5.74&state=${JSON.stringify({
             method: type,
-            token: (this.props.token ? this.props.token : '')
+            token: (token ? token : '')
         })}`, "VK", "resizable,scrollbars,status");
         let self = this;
         window.addEventListener("message", this.afterVkEnter);
     };
 
     afterVkEnter = (ev) => {
+        const {saveToken} = this.props;
         if (ev.data.result !== 'success') {
             return;
         }
         ev.source.close();
         let token = Cookies.get('user_session_token');
-        this.props.saveToken(token);
+        saveToken(token);
         this.signIn(token);
         this.setState({signUpFormVisible: false, logInFormVisible: false});
         window.removeEventListener("message", this.afterVkEnter);
     };
 
     removeVk = (afterSuccess) => {
+        const {
+                  user,
+                  token,
+                  saveUser,
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+              } = this.props;
         this.setState({profileIsWaiting: true});
-        this.props.increaseNumOfActiveRequests();
+        increaseNumOfActiveRequests();
         Axios({
-            url: `${ApiUrl}/v1/users/${this.props.user.id}/integrations/vk`,
+            url: `${ApiUrl}/v1/users/${user.id}/integrations/vk`,
             method: 'delete',
-            headers: {'TOKEN': this.props.token}
+            headers: {'TOKEN': token}
         })
             .then(response => {
-                this.props.decreaseNumOfActiveRequests();
-                this.props.saveUser(response.data.payload);
+                decreaseNumOfActiveRequests();
+                saveUser(response.data.payload);
                 this.setState({profileIsWaiting: false});
             }).catch(error => {
-            this.props.decreaseNumOfActiveRequests();
+            decreaseNumOfActiveRequests();
             this.displayError(error);
             this.setState({profileIsWaiting: false});
         });
     };
 
     resetPassword = (type, data) => {
+        const {
+                  increaseNumOfActiveRequests,
+                  decreaseNumOfActiveRequests,
+              } = this.props;
         if (type === 'phone') {
             console.log("phone");
             console.log(data);
@@ -333,13 +388,13 @@ export default class Authorization extends React.Component {
             } else {
                 params = {user: {login: data}};
             }
-            this.props.increaseNumOfActiveRequests();
+            increaseNumOfActiveRequests();
             Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, {params: params})
                 .then(response => {
-                    this.props.decreaseNumOfActiveRequests();
+                    decreaseNumOfActiveRequests();
                     this.showToastr('success', 'Восстановление пароля', 'На почту было отправлено сообщение для восстановления пароля');
                 }).catch(error => {
-                this.props.decreaseNumOfActiveRequests();
+                decreaseNumOfActiveRequests();
                 if (error.response.status === 404 && error.response.statusText === 'Not Found' && error.response.data.model === 'User') {
                     this.showToastr('error', 'Ошибка', 'Пользователь не найден');
                 } else {
@@ -354,4 +409,23 @@ export default class Authorization extends React.Component {
     };
 }
 
+Authorization.propTypes = {
+    user: PropTypes.object,
+    token: PropTypes.string,
+    saveUser: PropTypes.func,
+    saveToken: PropTypes.func,
+    removeToken: PropTypes.func,
+    decreaseNumOfActiveRequests: PropTypes.func,
+    increaseNumOfActiveRequests: PropTypes.func,
+};
+
+Authorization.defaultProps = {
+    user: null,
+    token: null,
+    saveUser: null,
+    saveToken: null,
+    removeToken: null,
+    decreaseNumOfActiveRequests: null,
+    increaseNumOfActiveRequests: null,
+};
 

@@ -7,8 +7,9 @@ export default class TabBar extends Component {
     constructor(props) {
         super(props);
 
+        const {activeTab} = this.props;
         this.state = {
-            tab: this.props.activeTab
+            tab: activeTab
         }
     }
 
@@ -17,19 +18,22 @@ export default class TabBar extends Component {
     };
 
     render() {
+        const {activeList, titleList, contentList} = this.props;
+        const {tab} = this.state;
         let mapIndexed = R.addIndex(R.map);
         return <div className="tab">
             <ul className="tab__list">
                 {mapIndexed((title, index) => <li key={index} className="tab__list-item">
-                    <a className={'tab__list-link' + (this.state.tab === (index + 1) ? ' tab__list-link_active' : '')}
-                       onClick={this.props.activeList[index] ? () => this.changeTab(index + 1) : null}
-                       style={this.props.activeList[index] ? {} : {color: 'grey'}}>{title}</a>
-                </li>, this.props.titleList)}
+                    <a className={'tab__list-link' + (tab === (index + 1) ? ' tab__list-link_active' : '')}
+                       onClick={activeList[index] ? () => this.changeTab(index + 1) : null}
+                       style={activeList[index] ? {} : {color: 'grey'}}>{title}</a>
+                </li>, titleList)}
             </ul>
             <ul className="tab__content">
-                {mapIndexed((content, index) => <li key={index} className="tab__content-item" style={{display: (this.state.tab === (index + 1) ? '' : 'none')}}>
+                {mapIndexed((content, index) => <li key={index} className="tab__content-item"
+                                                    style={{display: (tab === (index + 1) ? '' : 'none')}}>
                     {content}
-                </li>, this.props.contentList)}
+                </li>, contentList)}
             </ul>
         </div>
             ;

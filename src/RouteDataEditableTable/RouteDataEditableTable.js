@@ -22,14 +22,20 @@ export default class RouteDataEditableTable extends Component {
     }
 
     onHoldsColorSelect = (holdsColor) => {
-        this.props.onRouteParamChange(holdsColor, 'holds_color');
+        const {onRouteParamChange} = this.props;
+        onRouteParamChange(holdsColor, 'holds_color');
     };
 
     onMarksColorSelect = (marksColor) => {
-        this.props.onRouteParamChange(marksColor, 'marks_color');
+        const {onRouteParamChange} = this.props;
+        onRouteParamChange(marksColor, 'marks_color');
     };
 
     render() {
+        const {
+                  route, onRouteParamChange, routeMarkColors, sector, users,
+              } = this.props;
+        const {showSlider} = this.state;
         return <div className="route-data-table">
             <div className="route-data-table-row">
                 <div className="route-data-table-item route-data-table-item_header">
@@ -37,19 +43,20 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="route-data-table__table-item route-data-table__table-item-right">
                     <div className="route-data-table__category-track-wrap">
-                        <div className="route-data-table__category-track-info" onClick={() => this.setState({showSlider: !this.state.showSlider})}>
-                            <div className="route-data-table__category-track">{this.props.route.category}</div>
+                        <div className="route-data-table__category-track-info"
+                             onClick={() => this.setState({showSlider: !showSlider})}>
+                            <div className="route-data-table__category-track">{route.category}</div>
                             <div
                                 className="route-data-table__category-track-color"
-                                style={{backgroundColor: GetCategoryColor(this.props.route.category)}}></div>
+                                style={{backgroundColor: GetCategoryColor(route.category)}}></div>
                         </div>
                         {
-                            this.state.showSlider
+                            showSlider
                                 ? (
                                     <CategorySlider
-                                        category={this.props.route.category}
+                                        category={route.category}
                                         hide={() => this.setState({showSlider: false})}
-                                        changeCategory={(category) => this.props.onRouteParamChange(category, 'category')}
+                                        changeCategory={(category) => onRouteParamChange(category, 'category')}
                                     />
                                 )
                                 : ''
@@ -62,8 +69,8 @@ export default class RouteDataEditableTable extends Component {
                     Цвет зацепов:
                 </div>
                 <div className="route-data-table-item">
-                    <RouteColorPicker editable={true} routeMarkColors={this.props.routeMarkColors}
-                                      route={this.props.route}
+                    <RouteColorPicker editable={true} routeMarkColors={routeMarkColors}
+                                      route={route}
                                       fieldName='holds_color'
                                       onSelect={this.onHoldsColorSelect}/>
                 </div>
@@ -73,8 +80,8 @@ export default class RouteDataEditableTable extends Component {
                     Цвет маркировки:
                 </div>
                 <div className="route-data-table-item">
-                    <RouteColorPicker editable={true} routeMarkColors={this.props.routeMarkColors}
-                                      route={this.props.route}
+                    <RouteColorPicker editable={true} routeMarkColors={routeMarkColors}
+                                      route={route}
                                       fieldName='marks_color'
                                       onSelect={this.onMarksColorSelect}/>
                 </div>
@@ -85,21 +92,21 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="route-data-table-item">
                     {
-                        this.props.sector.kind === 'mixed'
+                        sector.kind === 'mixed'
                             ? (
                                 <div className="modal__field-select">
                                     <ComboBox
-                                        onChange={(id) => this.props.onRouteParamChange(R.find(R.propEq('id', id), ROUTE_KINDS).title, 'kind')}
+                                        onChange={(id) => onRouteParamChange(R.find(R.propEq('id', id), ROUTE_KINDS).title, 'kind')}
                                         size='small'
                                         style='transparent'
-                                        currentId={this.props.route.kind ? R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).id : 0}
+                                        currentId={route.kind ? R.find(R.propEq('title', route.kind), ROUTE_KINDS).id : 0}
                                         textFieldName='text'
                                         items={ROUTE_KINDS}/>
                                 </div>
                             )
                             : (
                                 <React.Fragment>
-                                    {R.find(R.propEq('title', this.props.route.kind), ROUTE_KINDS).text}
+                                    {R.find(R.propEq('title', route.kind), ROUTE_KINDS).text}
                                 </React.Fragment>
                             )
                     }
@@ -111,9 +118,9 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
-                        <DatePickerBlock date={this.props.route.installed_at ? moment(this.props.route.installed_at) : null}
+                        <DatePickerBlock date={route.installed_at ? moment(route.installed_at) : null}
                                          dateFormat={DATE_FORMAT}
-                                         onChange={(date) => this.props.onRouteParamChange(date.format(), 'installed_at')}/>
+                                         onChange={(date) => onRouteParamChange(date.format(), 'installed_at')}/>
                     </div>
                 </div>
             </div>
@@ -123,23 +130,23 @@ export default class RouteDataEditableTable extends Component {
                 </div>
                 <div className="modal__table-item modal__table-item-right">
                     <div className="modal__field-select">
-                        <DatePickerBlock date={this.props.route.installed_until ? moment(this.props.route.installed_until) : null}
+                        <DatePickerBlock date={route.installed_until ? moment(route.installed_until) : null}
                                          dateFormat={DATE_FORMAT}
-                                         onChange={(date) => this.props.onRouteParamChange(date.format(), 'installed_until')}/>
+                                         onChange={(date) => onRouteParamChange(date.format(), 'installed_until')}/>
                     </div>
                 </div>
             </div>
             {
-                (!this.props.route.data.personal)
+                (!route.data.personal)
                     ? (
                         <div className="route-data-table-row">
                             <div className="route-data-table-item route-data-table-item_header">
                                 Накрутчик:
                             </div>
                             <ComboBoxPerson
-                                selectedUser={this.props.route.author}
-                                users={this.props.users}
-                                onSelect={(author) => this.props.onRouteParamChange(author, 'author')}/>
+                                selectedUser={route.author}
+                                users={users}
+                                onSelect={(author) => onRouteParamChange(author, 'author')}/>
                         </div>
                     )
                     : ''

@@ -18,8 +18,9 @@ export default class ComboBoxPerson extends Component {
     }
 
     selectItem = (user) => {
+        const {onSelect} = this.props;
         this.setState({droppedDown: false});
-        this.props.onSelect(R.clone(user));
+        onSelect(R.clone(user));
     };
 
     onKeyPress = (event) => {
@@ -36,6 +37,7 @@ export default class ComboBoxPerson extends Component {
     };
 
     updateUserList = (value) => {
+        const {users} = this.props;
         if (value === this.lastSearchText) {
             return
         }
@@ -43,7 +45,7 @@ export default class ComboBoxPerson extends Component {
             users: R.filter((user) => {
                 let name = GetUserName(user);
                 return (name !== null && name.match(value) !== null)
-            }, this.props.users)
+            }, users)
         });
         this.lastSearchText = value;
     };
@@ -55,7 +57,9 @@ export default class ComboBoxPerson extends Component {
     };
 
     render() {
-        let name = this.props.selectedUser ? GetUserName(this.props.selectedUser) : 'Неизвестный накрутчик';
+        const {selectedUser, users: usersProp} = this.props;
+        const {users, droppedDown} = this.state;
+        let name = selectedUser ? GetUserName(selectedUser) : 'Неизвестный накрутчик';
         return <div className="combo-box__container"
                     onBlur={this.onBlur}
                     tabIndex={1}
@@ -63,11 +67,11 @@ export default class ComboBoxPerson extends Component {
                     onMouseOver={() => this.mouseOver = true}>
             <button
                 className="combo-box__select combo-box__select-transparent combo-box__select_small modal__link modal__link_edit"
-                onClick={() => this.setState({droppedDown: !this.state.droppedDown})}>
+                onClick={() => this.setState({droppedDown: !droppedDown})}>
                 {name === null ? 'Неизвестный накрутчик' : name}
             </button>
             {
-                this.state.droppedDown
+                droppedDown
                     ? (
                         <div className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
                             <div className="combo-box__search-wrapper">
@@ -78,7 +82,7 @@ export default class ComboBoxPerson extends Component {
                                 {R.map((user) => <li key={user.id} onClick={() => this.selectItem(user)}
                                                      className="combo-box__dropdown-item combo-box__dropdown-item_padding-10">
                                     <Person user={user}/>
-                                </li>, (this.state.users === null ? R.filter((user) => GetUserName(user) !== null, this.props.users) : this.state.users))}
+                                </li>, (users === null ? R.filter((user) => GetUserName(user) !== null, usersProp) : users))}
                             </div>
                         </div>
                     )
@@ -89,6 +93,11 @@ export default class ComboBoxPerson extends Component {
 }
 
 ComboBoxPerson.propTypes = {
+    selectedUser: PropTypes.object,
     users: PropTypes.array.isRequired,
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+};
+
+ComboBoxPerson.defaultProps = {
+    selectedUser: null,
 };

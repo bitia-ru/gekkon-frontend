@@ -20,8 +20,9 @@ export default class RoutesShowModal extends Component {
     constructor(props) {
         super(props);
 
+        const {route} = this.props;
         this.state = {
-            url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
+            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
             object_id: null,
             quoteComment: null,
             commentContent: '',
@@ -43,8 +44,9 @@ export default class RoutesShowModal extends Component {
     }
 
     onKeyDown = (event) => {
+        const {onClose} = this.props;
         if (event.key === 'Escape') {
-            this.props.onClose();
+            onClose();
         }
     };
 
@@ -66,33 +68,37 @@ export default class RoutesShowModal extends Component {
     };
 
     showPreviousComments = () => {
+        const {comments} = this.props;
         this.setState(
             {
                 descriptionCollapsed: true,
-                numOfDisplayedComments: this.props.comments.length
+                numOfDisplayedComments: comments.length
             });
     };
 
     saveComment = (route_comment_id) => {
+        const {route, user, saveComment} = this.props;
+        const {commentContent} = this.state;
         let params = {
             route_comment: {
-                route_id: this.props.route.id,
-                author_id: this.props.user.id,
-                content: this.state.commentContent
+                route_id: route.id,
+                author_id: user.id,
+                content: commentContent
             }
         };
         if (route_comment_id !== null) {
             params.route_comment.route_comment_id = route_comment_id;
         }
         let self = this;
-        this.props.saveComment(params, () => {
+        saveComment(params, () => {
             self.removeQuoteComment();
             self.onCommentContentChange('');
         });
     };
 
     loadPointers = () => {
-        let pointers = (this.props.route.mark && this.props.route.mark.pointers) ? this.props.route.mark.pointers : {
+        const {route} = this.props;
+        let pointers = (route.mark && route.mark.pointers) ? route.mark.pointers : {
             x: [],
             y: [],
             angle: []
@@ -127,12 +133,39 @@ export default class RoutesShowModal extends Component {
     };
 
     content = () => {
+        const {
+                  onClose,
+                  route,
+                  numOfLikes,
+                  isLiked,
+                  onLikeChange,
+                  user,
+                  numOfRedpoints,
+                  numOfFlash,
+                  ctrlPressed,
+                  removeRoute,
+                  openEdit,
+                  ascent,
+                  changeAscentResult,
+                  removeComment,
+                  comments,
+                  numOfComments,
+                  goToProfile,
+              } = this.props;
+        const {
+                  currentPointers,
+                  descriptionCollapsed,
+                  numOfDisplayedComments,
+                  quoteComment,
+                  commentContent,
+              } = this.state;
         return <div className="modal-overlay__wrapper">
             <div className="modal modal-overlay__modal">
                 <div className="modal-block__close">
-                    <CloseButton onClick={() => this.props.onClose()}/>
+                    <CloseButton onClick={() => onClose()}/>
                 </div>
-                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true}
+                     onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track">
                         <div className="modal__track-descr">
                             <div className="modal__track-descr-picture"></div>
@@ -141,11 +174,11 @@ export default class RoutesShowModal extends Component {
                             </div>
                         </div>
                         {
-                            this.props.route.photo
+                            route.photo
                                 ? (
-                                    <RouteEditor route={this.props.route}
-                                                 routePhoto={this.props.route.photo.url}
-                                                 pointers={this.state.currentPointers}
+                                    <RouteEditor route={route}
+                                                 routePhoto={route.photo.url}
+                                                 pointers={currentPointers}
                                                  editable={false}
                                                  updatePointers={this.updatePointers}
                                     />
@@ -157,33 +190,33 @@ export default class RoutesShowModal extends Component {
                         className="modal__track-footer">
                         <div className="modal__track-information">
                             <div className="modal__track-count">
-                                <LikeButton numOfLikes={this.props.numOfLikes} isLiked={this.props.isLiked}
-                                            onChange={this.props.user === null ? null : this.props.onLikeChange}/>
+                                <LikeButton numOfLikes={numOfLikes} isLiked={isLiked}
+                                            onChange={user === null ? null : onLikeChange}/>
                             </div>
                             <div className="modal__track-count">
-                                <Counter number={this.props.numOfRedpoints} text="redpoints"/>
+                                <Counter number={numOfRedpoints} text="redpoints"/>
                             </div>
                             <div className="modal__track-count">
-                                <Counter number={this.props.numOfFlash} text="flash"/>
+                                <Counter number={numOfFlash} text="flash"/>
                             </div>
                         </div>
                         {
-                            (this.props.user && this.canEditRoute(this.props.user, this.props.route))
+                            (user && this.canEditRoute(user, route))
                                 ?
                                 (
-                                    this.props.ctrlPressed
+                                    ctrlPressed
                                         ? (
                                             <Button size="small"
                                                     style="normal"
                                                     title="Удалить"
-                                                    onClick={this.props.removeRoute}>
+                                                    onClick={removeRoute}>
                                             </Button>
                                         )
                                         : (
                                             <Button size="small"
                                                     style="normal"
                                                     title="Редактировать"
-                                                    onClick={this.props.openEdit}>
+                                                    onClick={openEdit}>
                                             </Button>
                                         )
                                 )
@@ -191,13 +224,14 @@ export default class RoutesShowModal extends Component {
                         }
                     </div>
                 </div>
-                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true} onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true}
+                     onMouseLeave={() => this.mouseOver = false}>
                     <div className="modal__track-status">
                         {
-                            this.props.user
+                            user
                                 ? (
-                                    <RouteStatus ascent={this.props.ascent}
-                                                 changeAscentResult={this.props.changeAscentResult}
+                                    <RouteStatus ascent={ascent}
+                                                 changeAscentResult={changeAscentResult}
                                     />
                                 )
                                 : ''
@@ -206,39 +240,39 @@ export default class RoutesShowModal extends Component {
                     <div className="modal__track-header">
                         <h1 className="modal__title">
                             {
-                                this.props.route.number
-                                    ? `№ ${this.props.route.number}`
-                                    : `# ${this.props.route.id}`
+                                route.number
+                                    ? `№ ${route.number}`
+                                    : `# ${route.id}`
                             }
                             <span
                                 className="modal__title-place">
-                                {this.props.route.name ? `(“${this.props.route.name}”)` : ''}
+                                {route.name ? `(“${route.name}”)` : ''}
                             </span>
                         </h1>
-                        <RouteDataTable route={this.props.route} user={this.props.user}/>
+                        <RouteDataTable route={route} user={user}/>
                     </div>
                     <div className="modal__item modal__descr-item">
-                        <CollapsableBlock title="Описание" isCollapsed={this.state.descriptionCollapsed}
+                        <CollapsableBlock title="Описание" isCollapsed={descriptionCollapsed}
                                           onCollapseChange={this.onDescriptionCollapseChange}
-                                          text={this.props.route.description ? this.props.route.description : ''}/>
+                                          text={route.description ? route.description : ''}/>
                     </div>
                     <div className="modal__item">
                         <CommentBlock startAnswer={this.startAnswer}
-                                      user={this.props.user}
-                                      removeComment={this.props.removeComment}
-                                      allShown={this.props.comments.length === R.min(this.state.numOfDisplayedComments, this.props.comments.length)}
-                                      numOfComments={this.props.numOfComments}
+                                      user={user}
+                                      removeComment={removeComment}
+                                      allShown={comments.length === R.min(numOfDisplayedComments, comments.length)}
+                                      numOfComments={numOfComments}
                                       showPrevious={this.showPreviousComments}
                                       onCollapseChange={this.onDescriptionCollapseChange}
-                                      comments={R.slice(this.props.comments.length - R.min(this.state.numOfDisplayedComments, this.props.comments.length), this.props.comments.length, this.props.comments)}
+                                      comments={R.slice(comments.length - R.min(numOfDisplayedComments, comments.length), comments.length, comments)}
                                       objectListTitle="route_comments"/>
                     </div>
                     <div className="modal__enter-comment">
-                        <CommentForm quoteComment={this.state.quoteComment}
+                        <CommentForm quoteComment={quoteComment}
                                      setTextareaRef={this.setTextareaRef}
-                                     goToProfile={this.props.goToProfile}
-                                     user={this.props.user}
-                                     content={this.state.commentContent}
+                                     goToProfile={goToProfile}
+                                     user={user}
+                                     content={commentContent}
                                      saveComment={this.saveComment}
                                      onContentChange={this.onCommentContentChange}
                                      removeQuoteComment={this.removeQuoteComment}/>
@@ -249,15 +283,22 @@ export default class RoutesShowModal extends Component {
     };
 
     render() {
+        const {onClose, numOfActiveRequests} = this.props;
         return <React.Fragment>
-            <div className="modal-overlay" onClick={() => {if (!this.mouseOver) {this.props.onClose()}}}>
-                <StickyBar loading={this.props.numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
+            <div className="modal-overlay" onClick={() => {
+                if (!this.mouseOver) {
+                    onClose()
+                }
+            }}>
+                <StickyBar loading={numOfActiveRequests > 0} content={this.content()} hideLoaded={true}/>
             </div>
         </React.Fragment>;
     }
 }
 
 RoutesShowModal.propTypes = {
+    user: PropTypes.object,
+    ascent: PropTypes.object,
     route: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
     openEdit: PropTypes.func.isRequired,
@@ -265,7 +306,7 @@ RoutesShowModal.propTypes = {
     removeRoute: PropTypes.func.isRequired,
     goToProfile: PropTypes.func.isRequired,
     comments: PropTypes.array.isRequired,
-    numOfComments:  PropTypes.number.isRequired,
+    numOfComments: PropTypes.number.isRequired,
     removeComment: PropTypes.func.isRequired,
     saveComment: PropTypes.func.isRequired,
     numOfLikes: PropTypes.number.isRequired,
@@ -275,4 +316,9 @@ RoutesShowModal.propTypes = {
     numOfFlash: PropTypes.number.isRequired,
     changeAscentResult: PropTypes.func.isRequired,
     numOfActiveRequests: PropTypes.number.isRequired
+};
+
+RoutesShowModal.defaultProps = {
+    user: null,
+    ascent: null,
 };

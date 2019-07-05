@@ -7,17 +7,19 @@ import './InfoBlock.css';
 export default class InfoBlock extends Component {
 
     onClick = () => {
-        let sectorNum = R.findIndex((s) => s.id === this.props.sectorId, this.props.sectors) + 1;
-        if (sectorNum < this.props.sectors.length) {
-            this.props.changeSectorFilter(this.props.sectors[sectorNum].id);
+        const {sectorId, sectors, changeSectorFilter} = this.props;
+        let sectorNum = R.findIndex((s) => s.id === sectorId, sectors) + 1;
+        if (sectorNum < sectors.length) {
+            changeSectorFilter(sectors[sectorNum].id);
         } else {
-            this.props.changeSectorFilter(0);
+            changeSectorFilter(0);
         }
     };
 
     render() {
+        const {sectorId, sectors, infoData} = this.props;
         let mapIndexed = R.addIndex(R.map);
-        let sectorNum = R.findIndex((s) => s.id === this.props.sectorId, this.props.sectors) + 1;
+        let sectorNum = R.findIndex((s) => s.id === sectorId, sectors) + 1;
         return <div className="info-block__bottom">
             <div className="info-block__info">
                 <div className="info-block__info-inner">
@@ -30,7 +32,7 @@ export default class InfoBlock extends Component {
                                 {el.label}
                             </p>
                         </div>
-                    </div>, this.props.infoData)}
+                    </div>, infoData)}
                 </div>
 
                 <button className="info-block__info-button" onClick={this.onClick}>
@@ -41,7 +43,7 @@ export default class InfoBlock extends Component {
 					</span>
                 </button>
             </div>
-            <Slider numOfPositions={this.props.sectors.length} position={this.props.sectorId === 0 ? 0 : sectorNum}/>
+            <Slider numOfPositions={sectors.length} position={sectorId === 0 ? 0 : sectorNum}/>
         </div>;
     }
 }
@@ -50,5 +52,5 @@ InfoBlock.propTypes = {
     sectors: PropTypes.array.isRequired,
     infoData: PropTypes.array.isRequired,
     changeSectorFilter: PropTypes.func.isRequired,
-    sectorId: PropTypes.number.isRequired
+    sectorId: PropTypes.number.isRequired,
 };

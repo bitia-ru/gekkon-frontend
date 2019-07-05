@@ -16,8 +16,9 @@ class CragsIndex extends Authorization {
     }
 
     componentWillUnmount() {
+        const {changeTab: changeTabProp} = this.props;
         alert("Раздел находится в разработке");
-        this.props.changeTab(1);
+        changeTabProp(1);
     }
 
     changeNameFilter = (searchString) => {
@@ -33,48 +34,57 @@ class CragsIndex extends Authorization {
     };
 
     render() {
+        const {user} = this.props;
+        const {
+                  signUpFormVisible,
+                  logInFormVisible,
+                  profileFormVisible,
+                  signUpFormErrors,
+                  logInFormErrors,
+                  profileFormErrors,
+              } = this.state;
         return <div
-            style={{overflow: (this.state.signUpFormVisible || this.state.logInFormVisible || this.state.profileFormVisible ? 'hidden' : '')}}>
+            style={{overflow: (signUpFormVisible || logInFormVisible || profileFormVisible ? 'hidden' : '')}}>
             {
-                this.state.signUpFormVisible
+                signUpFormVisible
                     ? (
                         <SignUpForm onFormSubmit={this.submitSignUpForm}
                                     closeForm={this.closeSignUpForm}
-                                    formErrors={this.state.signUpFormErrors}
+                                    formErrors={signUpFormErrors}
                                     resetErrors={this.signUpResetErrors}
                         />
                     )
                     : ''
             }
             {
-                this.state.logInFormVisible
+                logInFormVisible
                     ? (
                         <LogInForm onFormSubmit={this.submitLogInForm}
                                    closeForm={this.closeLogInForm}
                                    resetPassword={this.resetPassword}
-                                   formErrors={this.state.logInFormErrors}
+                                   formErrors={logInFormErrors}
                                    resetErrors={this.logInResetErrors}
                         />
                     ) : ''
             }
             {
-                (this.props.user && this.state.profileFormVisible)
+                (user && profileFormVisible)
                     ? (
-                        <Profile user={this.props.user}
+                        <Profile user={user}
                                  onFormSubmit={this.submitProfileForm}
                                  closeForm={this.closeProfileForm}
-                                 formErrors={this.state.profileFormErrors}
+                                 formErrors={profileFormErrors}
                                  resetErrors={this.profileResetErrors}
                         />
                     ) : ''
             }
             <MainPageHeader changeNameFilter={this.changeNameFilter}
-                            user={this.props.user}
+                            user={user}
                             openProfile={this.openProfileForm}
                             logIn={this.logIn}
                             signUp={this.signUp}
                             logOut={this.logOut}/>
-            <Footer user={this.props.user}
+            <Footer user={user}
                     logIn={this.logIn}
                     signUp={this.signUp}
                     logOut={this.logOut}/>

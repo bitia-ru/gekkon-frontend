@@ -14,8 +14,9 @@ export default class RouteColorPicker extends Component {
     }
 
     selectItem = (routeMarkColor) => {
+        const {onSelect} = this.props;
         this.setState({droppedDown: false});
-        this.props.onSelect(routeMarkColor);
+        onSelect(routeMarkColor);
     };
 
     onBlur = () => {
@@ -25,24 +26,28 @@ export default class RouteColorPicker extends Component {
     };
 
     render() {
-        let routeColor = this.props.route[this.props.fieldName];
+        const {
+                  route, fieldName, editable, routeMarkColors,
+              } = this.props;
+        const {droppedDown} = this.state;
+        let routeColor = route[fieldName];
         let hasPhotoOrColor = routeColor && (routeColor.photo || routeColor.color);
         return <div className="mark-color-picker__wrap" onClick={() => {
-            if (this.props.editable) {
-                this.setState({droppedDown: !this.state.droppedDown})
+            if (editable) {
+                this.setState({droppedDown: !droppedDown})
             }
         }} onBlur={this.onBlur} tabIndex={1} onMouseLeave={() => this.mouseOver = false}
                     onMouseOver={() => this.mouseOver = true}>
             <div className="mark-color-picker__info">
                 <div
                     className="mark-color-picker__color"
-                    style={(hasPhotoOrColor) ? (this.props.route[this.props.fieldName].photo ? {
-                        backgroundImage: `url(${this.props.route[this.props.fieldName].photo.url})`,
+                    style={(hasPhotoOrColor) ? (route[fieldName].photo ? {
+                        backgroundImage: `url(${route[fieldName].photo.url})`,
                         backgroundPosition: 'center',
                         backgroundSize: 'contain',
                         backgroundRepeat: 'no-repeat'
                     } : {
-                        backgroundColor: this.props.route[this.props.fieldName].color
+                        backgroundColor: route[fieldName].color
                     }) : {
                         backgroundImage: 'url(/public/img/route-img/no_color.png)',
                         backgroundPosition: 'center',
@@ -52,13 +57,13 @@ export default class RouteColorPicker extends Component {
             </div>
             <div className="mark-color-picker__name">
                 {
-                    this.props.route[this.props.fieldName]
-                        ? this.props.route[this.props.fieldName].name
+                    route[fieldName]
+                        ? route[fieldName].name
                         : 'не задан'
                 }
             </div>
             {
-                this.state.droppedDown
+                droppedDown
                     ? (
                         <div
                             className="combo-box__dropdown modal__combo-box-drowdown combo-box__dropdown_active">
@@ -84,7 +89,7 @@ export default class RouteColorPicker extends Component {
                                                 })}></div>
                                             <div className="mark-color-picker__item-text">{routeMarkColor.name}</div>
                                         </div>
-                                    </li>, this.props.routeMarkColors)}
+                                    </li>, routeMarkColors)}
                             </div>
                         </div>
                     )
@@ -95,7 +100,14 @@ export default class RouteColorPicker extends Component {
 }
 
 RouteColorPicker.propTypes = {
+    onSelect: PropTypes.func,
+    routeMarkColors: PropTypes.array,
     route: PropTypes.object.isRequired,
     editable: PropTypes.bool.isRequired,
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+};
+
+RouteColorPicker.defaultProps = {
+    onSelect: null,
+    routeMarkColors: null,
 };

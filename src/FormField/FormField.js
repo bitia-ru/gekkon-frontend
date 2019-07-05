@@ -5,30 +5,34 @@ import './FormField.css';
 export default class FormField extends Component {
 
     onKeyPress = (event) => {
-        if (event.key === 'Enter' && this.props.onEnter) {
-            this.props.onEnter();
+        const {onEnter} = this.props;
+        if (event.key === 'Enter' && onEnter) {
+            onEnter();
         }
     };
 
     render() {
-        return <div className={'form__field' + (this.props.hasError ? ' form__field-error' : '')}>
+        const {
+                  hasError, id, disabled, type, value, onChange, placeholder, errorText,
+              } = this.props;
+        return <div className={'form__field' + (hasError ? ' form__field-error' : '')}>
 									<span className="form__input-wrapper">
-										<input id={this.props.id}
-                           disabled={this.props.disabled ? true : false}
-                           className={'form__input' + (this.props.type === 'number' ? ' form__input-number' : '')}
-                           type={this.props.type}
-                           value={this.props.value}
-                           onChange={this.props.onChange}
-                           onKeyPress={this.onKeyPress}
-                           placeholder={this.props.placeholder}/>
-										<label htmlFor={this.props.id}
-                           className="form__label">{this.props.placeholder}</label>
+										<input id={id}
+                                               disabled={disabled ? true : false}
+                                               className={'form__input' + (type === 'number' ? ' form__input-number' : '')}
+                                               type={type}
+                                               value={value}
+                                               onChange={onChange}
+                                               onKeyPress={this.onKeyPress}
+                                               placeholder={placeholder}/>
+										<label htmlFor={id}
+                                               className="form__label">{placeholder}</label>
 									</span>
             {
-                this.props.hasError
+                hasError
                     ? (
                         <div className="form__field-error-message">
-                            {this.props.errorText}
+                            {errorText}
                         </div>
                     )
                     : ''
@@ -38,11 +42,24 @@ export default class FormField extends Component {
 }
 
 FormField.propTypes = {
+    onEnter: PropTypes.func,
+    onChange: PropTypes.func,
+    hasError: PropTypes.array,
+    disabled: PropTypes.bool,
+    errorText: PropTypes.string,
     placeholder: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.string.isRequired,
-        PropTypes.number.isRequired
+        PropTypes.number.isRequired,
     ])
+};
+
+FormField.defaultProps = {
+    onEnter: null,
+    hasError: null,
+    disabled: false,
+    onChange: null,
+    errorText: null,
 };

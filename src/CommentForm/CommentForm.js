@@ -7,61 +7,73 @@ import './CommentForm.css';
 export default class CommentForm extends Component {
 
     cancel = () => {
-        this.props.removeQuoteComment();
-        this.props.onContentChange('');
+        const {removeQuoteComment, onContentChange} = this.props;
+        removeQuoteComment();
+        onContentChange('');
     };
 
     onKeyPress = (event) => {
+        const {saveComment, quoteComment} = this.props;
         if (event.key === 'Enter' && event.ctrlKey) {
-            this.props.saveComment(this.props.quoteComment ? this.props.quoteComment.id : null)
+            saveComment(quoteComment ? quoteComment.id : null)
         }
     };
 
     render() {
+        const {
+                  user,
+                  quoteComment,
+                  removeQuoteComment,
+                  goToProfile,
+                  setTextareaRef,
+                  content,
+                  onContentChange,
+                  saveComment,
+              } = this.props;
         return <div className="comment-form">
             {
-                this.props.quoteComment
+                quoteComment
                     ? (
                         <div className="comment-form__answer">
                             <div className="comment-form__answer-content">
                                 <div className="comment-form__answer-author">
-                                    {this.props.quoteComment.author.name}
+                                    {quoteComment.author.name}
                                 </div>
                                 <div className="comment-form__answer-text">
-                                    {this.props.quoteComment.content}
+                                    {quoteComment.content}
                                 </div>
                             </div>
                             <button className="comment-form__answer-close"
-                                    onClick={this.props.removeQuoteComment}>
+                                    onClick={removeQuoteComment}>
                             </button>
                         </div>
                     )
                     : ''
             }
             <div className="comment-form__inner-wrap">
-                <AvatarRound user={this.props.user}/>
+                <AvatarRound user={user}/>
                 {
-                    (this.props.user && !this.props.user.login && !this.props.user.name)
+                    (user && !user.login && !user.name)
                         ? (
                             <a className="comment-form__input comment-form__link"
-                               onClick={this.props.goToProfile}>
+                               onClick={goToProfile}>
                                 Для комментирования задайте имя или логин
                             </a>
                         )
                         : (
                             <textarea
                                 className="comment-form__input"
-                                ref={(ref) => this.props.setTextareaRef(ref)}
-                                disabled={this.props.user && (this.props.user.login || this.props.user.name) ? false : true}
-                                placeholder={this.props.user ? 'Комментировать...' : 'Залогиньтесь, чтобы написать комментарий'}
-                                value={this.props.content}
-                                onChange={(event) => this.props.onContentChange(event.target.value)}
+                                ref={(ref) => setTextareaRef(ref)}
+                                disabled={user && (user.login || user.name) ? false : true}
+                                placeholder={user ? 'Комментировать...' : 'Залогиньтесь, чтобы написать комментарий'}
+                                value={content}
+                                onChange={(event) => onContentChange(event.target.value)}
                                 onKeyPress={this.onKeyPress}/>
                         )
                 }
             </div>
             {
-                this.props.content === ''
+                content === ''
                     ? ''
                     : (
                         <div className="comment-form__btn-wrap">
@@ -73,7 +85,7 @@ export default class CommentForm extends Component {
                             <Button size="small"
                                     style="normal"
                                     title="Отправить"
-                                    onClick={() => this.props.saveComment(this.props.quoteComment ? this.props.quoteComment.id : null)}>
+                                    onClick={() => saveComment(quoteComment ? quoteComment.id : null)}>
                             </Button>
                         </div>
                     )
@@ -83,9 +95,17 @@ export default class CommentForm extends Component {
 }
 
 CommentForm.propTypes = {
+    user: PropTypes.object,
+    quoteComment: PropTypes.object,
+    removeQuoteComment: PropTypes.func.isRequired,
     content: PropTypes.string.isRequired,
     saveComment: PropTypes.func.isRequired,
     onContentChange: PropTypes.func.isRequired,
     goToProfile: PropTypes.func.isRequired,
-    setTextareaRef: PropTypes.func.isRequired
+    setTextareaRef: PropTypes.func.isRequired,
+};
+
+CommentForm.defaultProps = {
+    user: null,
+    quoteComment: null,
 };

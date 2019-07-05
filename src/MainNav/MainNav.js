@@ -22,15 +22,18 @@ class MainNav extends Component {
     };
 
     hideSearch = () => {
-        if (this.state.searchStarted) {
+        const {searchStarted} = this.state;
+        if (searchStarted) {
             return
         }
         this.setState({searchOpened: false})
     };
 
     searchSubmitted = () => {
+        const {changeNameFilter} = this.props;
+        const {searchString} = this.state;
         this.setState({searchOpened: false, searchStarted: false, searchString: ''});
-        this.props.changeNameFilter(this.state.searchString);
+        changeNameFilter(searchString);
     };
 
     keyPress = (event) => {
@@ -40,6 +43,16 @@ class MainNav extends Component {
     };
 
     render() {
+        const {
+                  changeTab: changeTabProp,
+                  tab,
+                  logIn,
+                  logOut,
+                  signUp,
+                  user,
+                  openProfile,
+              } = this.props;
+        const {searchOpened} = this.state;
         return <div className="main-nav__container">
             <Link to="/crags" id="linkToCrags"></Link>
             <Link to="/" id="linkToSpots"></Link>
@@ -60,41 +73,51 @@ class MainNav extends Component {
                                onFocus={() => this.setState({searchStarted: true})}
                                onKeyPress={this.keyPress}
                                placeholder="Введите строку для поиска"
-                               className={'main-nav__search-input' + (this.state.searchOpened ? ' main-nav__search-input_active' : '')}/>
+                               className={'main-nav__search-input' + (searchOpened ? ' main-nav__search-input_active' : '')}/>
                         <nav className="main-nav__nav">
                             <ul className="main-nav__nav-list">
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
                                        onClick={() => {
-                                           this.props.changeTab(1);
+                                           changeTabProp(1);
                                            document.getElementById('linkToSpots').click()
                                        }}
-                                       className={'main-nav__nav-list-link' + (this.props.tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
+                                       className={'main-nav__nav-list-link' + (tab === 1 ? ' main-nav__nav-list-link_active' : '')}>Скалодромы</a>
                                 </li>
                                 <li className="main-nav__nav-list-item">
                                     <a href="#"
                                        onClick={() => {
-                                           this.props.changeTab(2);
+                                           changeTabProp(2);
                                            document.getElementById('linkToCrags').click()
                                        }}
-                                       className={'main-nav__nav-list-link' + (this.props.tab === 2 ? ' main-nav__nav-list-link_active' : '')}>Скалы</a>
+                                       className={'main-nav__nav-list-link' + (tab === 2 ? ' main-nav__nav-list-link_active' : '')}>Скалы</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                <UserIcon logIn={this.props.logIn} logOut={this.props.logOut} signUp={this.props.signUp} user={this.props.user} openProfile={this.props.openProfile}/>
+                <UserIcon logIn={logIn} logOut={logOut} signUp={signUp}
+                          user={user} openProfile={openProfile}/>
             </div>
         </div>;
     }
 }
 
 MainNav.propTypes = {
+    changeTab: PropTypes.func,
+    user: PropTypes.object,
+    tab: PropTypes.number,
     changeNameFilter: PropTypes.func.isRequired,
     logIn: PropTypes.func.isRequired,
     logOut: PropTypes.func.isRequired,
     signUp: PropTypes.func.isRequired,
     openProfile: PropTypes.func.isRequired
+};
+
+MainNav.defaultProps = {
+    user: null,
+    changeTab: null,
+    tab: null,
 };
 
 const mapStateToProps = state => ({

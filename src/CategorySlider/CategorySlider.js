@@ -23,22 +23,23 @@ export default class CategorySlider extends Component {
     }
 
     onKeyDown = (event) => {
+        const {category, changeCategory, hide} = this.props;
         if (event.key === 'ArrowUp') {
             event.preventDefault();
-            let index = R.findIndex((c) => c === this.props.category)(CATEGORIES);
+            let index = R.findIndex((c) => c === category)(CATEGORIES);
             if (index + 1 < CATEGORIES.length) {
-                this.props.changeCategory(CATEGORIES[index + 1]);
+                changeCategory(CATEGORIES[index + 1]);
             }
         }
         if (event.key === 'ArrowDown') {
             event.preventDefault();
-            let index = R.findIndex((c) => c === this.props.category)(CATEGORIES);
+            let index = R.findIndex((c) => c === category)(CATEGORIES);
             if (index > 0) {
-                this.props.changeCategory(CATEGORIES[index - 1]);
+                changeCategory(CATEGORIES[index - 1]);
             }
         }
         if (event.key === 'Enter') {
-            this.props.hide();
+            hide();
         }
     };
 
@@ -48,7 +49,9 @@ export default class CategorySlider extends Component {
     };
 
     change = (event) => {
-        if (this.state.editing) {
+        const {changeCategory} = this.props;
+        const {editing} = this.state;
+        if (editing) {
             let sliderBarRect = this.sliderBarRef.getBoundingClientRect();
             let newPosition = (1 - (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height) * 100;
             if (newPosition > 100) {
@@ -57,11 +60,12 @@ export default class CategorySlider extends Component {
             if (newPosition < 0) {
                 newPosition = 0;
             }
-            this.props.changeCategory(this.categoryFromPosition(newPosition));
+            changeCategory(this.categoryFromPosition(newPosition));
         }
     };
 
     onMouseUp = (event) => {
+        const {changeCategory} = this.props;
         let sliderBarRect = this.sliderBarRef.getBoundingClientRect();
         let newPosition = (1 - (event.nativeEvent.clientY - sliderBarRect.top) / sliderBarRect.height) * 100;
         if (newPosition > 100) {
@@ -70,7 +74,7 @@ export default class CategorySlider extends Component {
         if (newPosition < 0) {
             newPosition = 0;
         }
-        this.props.changeCategory(this.categoryFromPosition(newPosition));
+        changeCategory(this.categoryFromPosition(newPosition));
         this.stopEditing();
     };
 
@@ -88,10 +92,11 @@ export default class CategorySlider extends Component {
     };
 
     render() {
+        const {hide, category} = this.props;
         return <div className="category__slider category__slider_active"
                     style={{outline: 'none'}}
                     ref={(ref) => this.wrapperRef = ref}
-                    onBlur={() => this.props.hide()}
+                    onBlur={() => hide()}
                     tabIndex={0}
                     onMouseUp={this.onMouseUp}
                     onMouseLeave={this.stopEditing}
@@ -101,14 +106,15 @@ export default class CategorySlider extends Component {
                     className="category__slider-ruler-item category__slider-ruler-item_first">{CATEGORIES[CATEGORIES.length - 1].toUpperCase()}</div>
                 <div
                     className="category__slider-ruler-item">{CATEGORIES[parseInt((CATEGORIES.length - 1) / 2, 10)].toUpperCase()}</div>
-                <div className="category__slider-ruler-item category__slider-ruler-item_last">{CATEGORIES[0].toUpperCase()}</div>
+                <div
+                    className="category__slider-ruler-item category__slider-ruler-item_last">{CATEGORIES[0].toUpperCase()}</div>
             </div>
             <div className="category__slider-bar" ref={(ref) => this.sliderBarRef = ref}>
                 <div className="category__slider-bar-item category__slider-bar-item_first"></div>
                 <div className="category__slider-bar-item category__slider-bar-item_middle"></div>
                 <div className="category__slider-bar-item category__slider-bar-item_last"></div>
                 <div className="category__slider-bar-handler"
-                     style={{bottom: `calc(${this.positionFromCategory(this.props.category)}% - 4px`}}
+                     style={{bottom: `calc(${this.positionFromCategory(category)}% - 4px`}}
                      onMouseDown={this.startChange}></div>
             </div>
         </div>;

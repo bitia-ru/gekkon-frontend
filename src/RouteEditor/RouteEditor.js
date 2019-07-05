@@ -9,23 +9,16 @@ export default class RouteEditor extends Component {
     constructor(props) {
         super(props);
 
+        const {route} = this.props;
         this.state = {
-            url: (this.props.route.photo === null ? '/public/img/route-img/route.jpg' : this.props.route.photo.url),
+            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
             movingPointerIndex: null
         }
     }
 
-    componentDidMount() {
-        window.addEventListener("resize", this.props.updateDimensions);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.props.updateDimensions);
-    }
-
-
     addPointer = (x, y) => {
-        this.props.updatePointers(R.append({x: x, y: y, dx: 0, dy: 0, angle: 0}, this.props.pointers));
+        const {updatePointers, pointers} = this.props;
+        updatePointers(R.append({x: x, y: y, dx: 0, dy: 0, angle: 0}, pointers));
     };
 
     onMouseDown = (event) => {
@@ -38,39 +31,44 @@ export default class RouteEditor extends Component {
     };
 
     onMouseMove = (event) => {
-        if (this.state.movingPointerIndex !== null) {
+        const {updatePointers, pointers} = this.props;
+        const {movingPointerIndex} = this.state;
+        if (movingPointerIndex !== null) {
             let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
-            let pointers = R.clone(this.props.pointers);
-            let index = this.state.movingPointerIndex;
-            pointers[index].dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointers[index].x;
-            pointers[index].dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointers[index].y;
-            this.props.updatePointers(pointers);
+            let pointersCopy = R.clone(pointers);
+            let index = movingPointerIndex;
+            pointersCopy[index].dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[index].x;
+            pointersCopy[index].dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[index].y;
+            updatePointers(pointersCopy);
         }
     };
 
     rotate = (index) => {
-        let pointers = R.clone(this.props.pointers);
-        pointers[index].angle = (pointers[index].angle + 90) % 360;
-        this.props.updatePointers(pointers);
+        const {updatePointers, pointers} = this.props;
+        let pointersCopy = R.clone(pointers);
+        pointersCopy[index].angle = (pointersCopy[index].angle + 90) % 360;
+        updatePointers(pointersCopy);
     };
 
     onMouseUp = (event) => {
+        const {updatePointers, pointers} = this.props;
+        const {movingPointerIndex} = this.state;
         if (this.isMoving) {
-            let dx = this.props.pointers[this.state.movingPointerIndex].dx;
-            let dy = this.props.pointers[this.state.movingPointerIndex].dy;
+            let dx = pointers[movingPointerIndex].dx;
+            let dy = pointers[movingPointerIndex].dy;
             if ((dx ** 2 + dy ** 2) ** 0.5 <= 1) {
-                this.rotate(this.state.movingPointerIndex);
+                this.rotate(movingPointerIndex);
                 this.setState({movingPointerIndex: null});
             } else {
-                let pointers = R.clone(this.props.pointers);
+                let pointersCopy = R.clone(pointers);
                 let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
-                let dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointers[this.state.movingPointerIndex].x;
-                let dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointers[this.state.movingPointerIndex].y;
-                pointers[this.state.movingPointerIndex].x = pointers[this.state.movingPointerIndex].x + dx;
-                pointers[this.state.movingPointerIndex].y = pointers[this.state.movingPointerIndex].y + dy;
-                pointers[this.state.movingPointerIndex].dx = 0;
-                pointers[this.state.movingPointerIndex].dy = 0;
-                this.props.updatePointers(pointers);
+                let dx = (event.pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[movingPointerIndex].x;
+                let dy = (event.pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[movingPointerIndex].y;
+                pointersCopy[movingPointerIndex].x = pointersCopy[movingPointerIndex].x + dx;
+                pointersCopy[movingPointerIndex].y = pointersCopy[movingPointerIndex].y + dy;
+                pointersCopy[movingPointerIndex].dx = 0;
+                pointersCopy[movingPointerIndex].dy = 0;
+                updatePointers(pointersCopy);
                 this.setState({movingPointerIndex: null});
             }
             this.isMoving = false;
@@ -78,7 +76,8 @@ export default class RouteEditor extends Component {
     };
 
     removePointer = (index) => {
-        this.props.updatePointers(R.remove(index, 1, this.props.pointers));
+        const {updatePointers, pointers} = this.props;
+        updatePointers(R.remove(index, 1, pointers));
     };
 
     onContextMenu = (event) => {
@@ -86,42 +85,39 @@ export default class RouteEditor extends Component {
     };
 
     onStartMoving = (index, pageX, pageY) => {
+        const {updatePointers, pointers} = this.props;
         this.isMoving = true;
-        let pointers = R.clone(this.props.pointers);
+        let pointersCopy = R.clone(pointers);
         let imageContainerRect = this.imageContainerRef.getBoundingClientRect();
-        pointers[index].dx = (pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointers[index].x;
-        pointers[index].dy = (pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointers[index].y;
-        this.props.updatePointers(pointers);
+        pointersCopy[index].dx = (pageX - imageContainerRect.x) / imageContainerRect.width * 100 - pointersCopy[index].x;
+        pointersCopy[index].dy = (pageY - imageContainerRect.y) / imageContainerRect.height * 100 - pointersCopy[index].y;
+        updatePointers(pointersCopy);
         this.setState({movingPointerIndex: index});
     };
 
-    overflow = () => {
-        if (this.props.realImageW / this.props.realImageH > this.props.currentContainerW / this.props.currentContainerH) {
-            return true;
-        }
-        return false;
-    };
-
     render() {
+        const {
+                  editable, routePhoto, route, pointers,
+              } = this.props;
         let mapIndexed = R.addIndex(R.map);
         return <div className="modal__track-image-wrapper">
             <div className="route-editor__inner-container">
                 <div className="route-editor__img-container" ref={(ref) => this.imageContainerRef = ref}
-                     onMouseDown={this.props.editable ? this.onMouseDown : null}
-                     onMouseUp={this.props.editable ? this.onMouseUp : null}
-                     onMouseMove={this.props.editable ? this.onMouseMove : null}
+                     onMouseDown={editable ? this.onMouseDown : null}
+                     onMouseUp={editable ? this.onMouseUp : null}
+                     onMouseMove={editable ? this.onMouseMove : null}
                      onContextMenu={this.onContextMenu}>
                     <img className="route-editor__img"
-                         src={this.props.routePhoto} alt={this.props.route.name}/>
+                         src={routePhoto} alt={route.name}/>
                     {mapIndexed((pointer, index) => <Marker key={index}
-                                                            removePointer={this.props.editable ? (() => this.removePointer(index)) : null}
-                                                            onStartMoving={this.props.editable ? ((x, y) => this.onStartMoving(index, x, y)) : null}
+                                                            removePointer={editable ? (() => this.removePointer(index)) : null}
+                                                            onStartMoving={editable ? ((x, y) => this.onStartMoving(index, x, y)) : null}
                                                             angle={pointer.angle}
                                                             radius={MARKER_RADIUS}
                                                             dx={pointer.dx}
                                                             dy={pointer.dy}
                                                             left={pointer.x}
-                                                            top={pointer.y}/>, this.props.pointers)}
+                                                            top={pointer.y}/>, pointers)}
                 </div>
             </div>
         </div>
@@ -133,5 +129,5 @@ RouteEditor.propTypes = {
     route: PropTypes.object.isRequired,
     pointers: PropTypes.array.isRequired,
     editable: PropTypes.bool.isRequired,
-    updatePointers: PropTypes.func.isRequired
+    updatePointers: PropTypes.func.isRequired,
 };
