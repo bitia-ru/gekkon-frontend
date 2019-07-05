@@ -83,7 +83,7 @@ export default class ResetPasswordForm extends Component {
         }
     };
 
-    checkAndSubmit = (type, data, passwordNew, repeatPasswordNew = null) => {
+    checkAndSubmit = (type, data, passwordNew) => {
         const {onFormSubmit} = this.props;
         const {password, repeatPassword} = this.state;
         let res = !this.check('password', password);

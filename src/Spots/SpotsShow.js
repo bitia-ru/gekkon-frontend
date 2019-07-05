@@ -1,8 +1,8 @@
-import React              from 'react';
-import {withRouter, Link} from 'react-router-dom';
-import Axios              from 'axios';
-import Qs                 from 'qs';
-import ApiUrl             from '../ApiUrl';
+import React             from 'react';
+import {withRouter}      from 'react-router-dom';
+import Axios             from 'axios';
+import Qs                from 'qs';
+import ApiUrl            from '../ApiUrl';
 import {
     setSelectedPage,
     setDefaultSelectedPages,
@@ -19,25 +19,25 @@ import {
     updateRoute,
     addRoute,
     loadFromLocalStorageSelectedFilters
-}                         from '../actions';
-import {connect}          from 'react-redux';
-import Content            from '../Content/Content'
-import Header             from '../Header/Header';
-import Footer             from '../Footer/Footer';
-import RoutesShowModal    from '../RoutesShowModal/RoutesShowModal';
-import RoutesEditModal    from '../RoutesEditModal/RoutesEditModal';
-import * as R             from 'ramda';
-import Cookies            from "js-cookie";
-import SignUpForm         from '../SignUpForm/SignUpForm';
-import LogInForm          from '../LogInForm/LogInForm';
-import Profile            from '../Profile/Profile';
-import Authorization      from '../Authorization';
-import {ToastContainer}   from 'react-toastr';
-import StickyBar          from '../StickyBar/StickyBar';
-import {RESULT_FILTERS}   from '../Constants/ResultFilters'
-import {CARDS_PER_PAGE}   from '../Constants/RouteCardTable';
-import {DEFAULT_FILTERS}  from '../Constants/DefaultFilters';
-import {CATEGORIES}       from '../Constants/Categories';
+}                        from '../actions';
+import {connect}         from 'react-redux';
+import Content           from '../Content/Content'
+import Header            from '../Header/Header';
+import Footer            from '../Footer/Footer';
+import RoutesShowModal   from '../RoutesShowModal/RoutesShowModal';
+import RoutesEditModal   from '../RoutesEditModal/RoutesEditModal';
+import * as R            from 'ramda';
+import Cookies           from "js-cookie";
+import SignUpForm        from '../SignUpForm/SignUpForm';
+import LogInForm         from '../LogInForm/LogInForm';
+import Profile           from '../Profile/Profile';
+import Authorization     from '../Authorization';
+import {ToastContainer}  from 'react-toastr';
+import StickyBar         from '../StickyBar/StickyBar';
+import {RESULT_FILTERS}  from '../Constants/ResultFilters'
+import {CARDS_PER_PAGE}  from '../Constants/RouteCardTable';
+import {DEFAULT_FILTERS} from '../Constants/DefaultFilters';
+import {CATEGORIES}      from '../Constants/Categories';
 
 const NumOfDays = 7;
 
@@ -251,7 +251,6 @@ class SpotsShow extends Authorization {
     onRouteClick = (id) => {
         const {routes, history} = this.props;
         const {spotId, sectorId} = this.state;
-        let self = this;
         if (sectorId === 0) {
             history.push(`/spots/${spotId}/routes/${id}`);
         } else {
@@ -772,7 +771,7 @@ class SpotsShow extends Authorization {
                 method: 'delete',
                 headers: {'TOKEN': token}
             })
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequestsProp();
                     this.reloadRoutes();
                     this.closeRoutesModal();
@@ -895,7 +894,7 @@ class SpotsShow extends Authorization {
             method: 'delete',
             headers: {'TOKEN': token}
         })
-            .then(response => {
+            .then(() => {
                 decreaseNumOfActiveRequestsProp();
                 this.reloadComments(currentShown.id);
             }).catch(error => {
@@ -913,7 +912,7 @@ class SpotsShow extends Authorization {
         const {currentShown} = this.state;
         increaseNumOfActiveRequestsProp();
         Axios.post(`${ApiUrl}/v1/route_comments`, params, {headers: {'TOKEN': token}})
-            .then(response => {
+            .then(() => {
                 decreaseNumOfActiveRequestsProp();
                 this.reloadComments(currentShown.id);
                 if (afterSuccess) {
@@ -967,7 +966,7 @@ class SpotsShow extends Authorization {
                 method: 'delete',
                 headers: {'TOKEN': token}
             })
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequestsProp();
                     this.reloadLikes(currentShown.id);
                 }).catch(error => {
@@ -977,7 +976,7 @@ class SpotsShow extends Authorization {
         } else {
             let params = {like: {user_id: user.id, route_id: currentShown.id}};
             Axios.post(`${ApiUrl}/v1/likes`, params, {headers: {'TOKEN': token}})
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequestsProp();
                     this.reloadLikes(currentShown.id);
                 }).catch(error => {
@@ -1044,7 +1043,7 @@ class SpotsShow extends Authorization {
                 params: params,
                 headers: {'TOKEN': token}
             })
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequestsProp();
                     this.reloadAscents(currentShown.id);
                 }).catch(error => {
@@ -1056,7 +1055,7 @@ class SpotsShow extends Authorization {
             let result = "red_point";
             let params = {ascent: {result: result, user_id: user.id, route_id: currentShown.id}};
             Axios.post(`${ApiUrl}/v1/ascents`, params, {headers: {'TOKEN': token}})
-                .then(response => {
+                .then(() => {
                     decreaseNumOfActiveRequestsProp();
                     this.reloadAscents(currentShown.id);
                 }).catch(error => {

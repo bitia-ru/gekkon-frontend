@@ -40,7 +40,6 @@ export default class RouteColorPicker extends Component {
                   route, fieldName, editable, routeMarkColors,
               } = this.props;
         const {droppedDown} = this.state;
-        let routeColor = route[fieldName];
         const droppedDownClasses = classNames({
             'combo-box__dropdown': true,
             'modal__combo-box-drowdown': true,
