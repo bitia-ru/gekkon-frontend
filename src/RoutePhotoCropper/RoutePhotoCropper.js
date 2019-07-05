@@ -4,6 +4,7 @@ import PropTypes          from 'prop-types';
 import Button             from '../Button/Button';
 import ButtonHandler      from '../ButtonHandler/ButtonHandler';
 import {CROP_DEFAULT}     from '../Constants/Route';
+import * as R             from 'ramda';
 import "react-image-crop/dist/ReactCrop.css";
 import './RoutePhotoCropper.css';
 
@@ -66,12 +67,13 @@ export default class RoutePhotoCropper extends Component {
 
         return new Promise((resolve) => {
             canvas.toBlob(blob => {
-                if (!blob) {
+                let blobCopy = R.clone(blob);
+                if (!blobCopy) {
                     return;
                 }
-                blob.name = fileName;
+                blobCopy.name = fileName;
                 window.URL.revokeObjectURL(this.fileUrl);
-                this.fileUrl = window.URL.createObjectURL(blob);
+                this.fileUrl = window.URL.createObjectURL(blobCopy);
                 resolve(this.fileUrl);
             }, "image/jpeg");
         });

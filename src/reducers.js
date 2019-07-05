@@ -118,10 +118,11 @@ const selectedFiltersReducer = (state = {}, action) => {
             if (action.sectorId === 0) {
                 let spotSelectedFilters = R.clone(selectedFilters[action.spotId]);
                 selectedFilters[action.spotId] = R.map((filters) => {
-                    if (!filters.wasChanged) {
-                        filters[action.filterName] = action.filterValue
+                    const filtersCopy = R.clone(filters);
+                    if (!filtersCopy.wasChanged) {
+                        filtersCopy[action.filterName] = action.filterValue
                     }
-                    return filters
+                    return filtersCopy;
                 }, spotSelectedFilters)
             } else {
                 selectedFilters[action.spotId][action.sectorId][action.filterName] = action.filterValue;
