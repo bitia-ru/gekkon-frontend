@@ -22,12 +22,14 @@ import Profile           from '../Profile/Profile';
 import Authorization     from '../Authorization';
 import {ToastContainer}  from 'react-toastr';
 import StickyBar         from '../StickyBar/StickyBar';
+import * as R            from 'ramda';
 
 Axios.interceptors.request.use(config => {
-    config.paramsSerializer = params => {
+    let configCopy = R.clone(config);
+    configCopy.paramsSerializer = params => {
         return Qs.stringify(params, {arrayFormat: "brackets"});
     };
-    return config;
+    return configCopy;
 });
 
 class SpotsIndex extends Authorization {

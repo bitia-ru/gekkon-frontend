@@ -280,16 +280,17 @@ export default class Authorization extends React.Component {
                   decreaseNumOfActiveRequests,
               } = this.props;
         this.setState({profileIsWaiting: true});
-        if (data.password) {
+        let dataCopy = R.clone(data);
+        if (dataCopy.password) {
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
-            data.password_digest = bcrypt.hashSync(data.password, salt);
-            delete data.password;
+            dataCopy.password_digest = bcrypt.hashSync(dataCopy.password, salt);
+            delete dataCopy.password;
         }
         increaseNumOfActiveRequests();
         Axios({
             url: `${ApiUrl}/v1/users/${user.id}`,
             method: 'patch',
-            data: data,
+            data: dataCopy,
             headers: {'TOKEN': token},
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         })

@@ -42,10 +42,11 @@ import {CATEGORIES}      from '../Constants/Categories';
 const NumOfDays = 7;
 
 Axios.interceptors.request.use(config => {
-    config.paramsSerializer = params => {
+    let configCopy = R.clone(config);
+    configCopy.paramsSerializer = params => {
         return Qs.stringify(params, {arrayFormat: "brackets"});
     };
-    return config;
+    return configCopy;
 });
 
 class SpotsShow extends Authorization {
