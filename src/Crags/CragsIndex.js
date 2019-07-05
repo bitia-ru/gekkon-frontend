@@ -21,8 +21,7 @@ class CragsIndex extends Authorization {
         changeTabProp(1);
     }
 
-    changeNameFilter = (searchString) => {
-        console.log(searchString);
+    changeNameFilter = () => {
     };
 
     openProfileForm = () => {

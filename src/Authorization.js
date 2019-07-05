@@ -140,10 +140,6 @@ export default class Authorization extends React.Component {
                   saveToken,
                   saveUser,
               } = this.props;
-        if (type === 'phone') {
-            console.log("phone");
-            console.log(data);
-        }
         if (type === 'email') {
             this.setState({signUpIsWaiting: true});
             let salt = bcrypt.genSaltSync(SALT_ROUNDS);
@@ -183,10 +179,6 @@ export default class Authorization extends React.Component {
                   decreaseNumOfActiveRequests,
                   saveToken,
               } = this.props;
-        if (type === 'phone') {
-            console.log("phone");
-            console.log(data);
-        }
         if (type === 'email') {
             this.setState({logInIsWaiting: true});
             let params;
@@ -238,10 +230,6 @@ export default class Authorization extends React.Component {
                   increaseNumOfActiveRequests,
                   decreaseNumOfActiveRequests,
               } = this.props;
-        if (type === 'phone') {
-            console.log("phone");
-            console.log(data);
-        }
         if (type === 'email') {
             this.setState({resetPasswordIsWaiting: true});
             let url = new URL(window.location.href);
@@ -388,10 +376,6 @@ export default class Authorization extends React.Component {
                   increaseNumOfActiveRequests,
                   decreaseNumOfActiveRequests,
               } = this.props;
-        if (type === 'phone') {
-            console.log("phone");
-            console.log(data);
-        }
         if (type === 'email') {
             let params;
             if (R.test(reEmail, data)) {
