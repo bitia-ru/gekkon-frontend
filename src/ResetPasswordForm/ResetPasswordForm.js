@@ -80,6 +80,8 @@ export default class ResetPasswordForm extends Component {
                     return false;
                 }
                 return true;
+            default:
+                return true;
         }
     };
 

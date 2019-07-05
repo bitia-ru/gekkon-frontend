@@ -226,6 +226,8 @@ export default class Profile extends Component {
                     return false;
                 }
                 return true;
+            default:
+                return true;
         }
     };
 

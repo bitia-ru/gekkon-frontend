@@ -23,6 +23,8 @@ const LOOK_UP_PAST_DATE_FORMATTER = [
                     return 'в субботу';
                 case 'вс':
                     return 'в воскресенье';
+                default:
+                    return '';
             }
         }
     }, // 7 days
@@ -57,6 +59,8 @@ const LOOK_UP_FUTURE_DATE_FORMATTER = [
                     return 'в субботу';
                 case 'вс':
                     return 'в воскресенье';
+                default:
+                    return '';
             }
         }
     }, // 7 days

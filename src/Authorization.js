@@ -116,6 +116,8 @@ export default class Authorization extends React.Component {
             case 'warning':
                 this.container.warning(msg, title, {closeButton: true});
                 break;
+            default:
+                break;
         }
     };
 
