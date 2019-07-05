@@ -85,8 +85,7 @@ class SpotsIndex extends Authorization {
 
     }
 
-    changeNameFilter = (searchString) => {
-        console.log(searchString);
+    changeNameFilter = () => {
     };
 
     openProfileForm = () => {

@@ -67,7 +67,6 @@ export default class RoutePhotoCropper extends Component {
         return new Promise((resolve) => {
             canvas.toBlob(blob => {
                 if (!blob) {
-                    console.error("Canvas is empty");
                     return;
                 }
                 blob.name = fileName;
