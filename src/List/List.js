@@ -20,7 +20,8 @@ const List = ({
                                 item.separator
                                     ? ''
                                     : (
-                                        <div onClick={
+                                        <div role="button"
+                                             onClick={
                                             item.clickable
                                                 ? (() => onClick(item.id))
                                                 : null
@@ -30,7 +31,12 @@ const List = ({
                                                      ? 'list-link list-link-clickable'
                                                      : 'list-link'
                                              }
-                                             style={{cursor: item.clickable ? 'pointer' : ''}}
+                                             style={
+                                                 {
+                                                     cursor: item.clickable ? 'pointer' : '',
+                                                     outline: 'none',
+                                                 }
+                                             }
                                         >
                                             {
                                                 item.svgSrc

@@ -332,6 +332,9 @@ export default class Profile extends Component {
                           method="post"
                           encType="multipart/form-data"
                           className="form"
+                          role="button"
+                          tabIndex={0}
+                          style={{outline: 'none'}}
                           onMouseOver={() => {
                               this.mouseOver = true;
                           }}

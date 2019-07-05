@@ -13,6 +13,9 @@ const Pagination = ({
     <div className="content__pagination">
         <div className="pagination">
             <div className="pagination__item pagination__toggle pagination__toggle-prev"
+                 role="button"
+                 tabIndex={0}
+                 style={{outline: 'none'}}
                  onClick={() => onPageChange(firstPage)}>
 
             </div>
@@ -20,6 +23,9 @@ const Pagination = ({
                 R.map(
                     (currentPage) =>
                         <div key={currentPage}
+                             role="button"
+                             tabIndex={0}
+                             style={{outline: 'none'}}
                              onClick={() => onPageChange(currentPage)}
                              className={
                                  'pagination__item' + (
@@ -35,6 +41,9 @@ const Pagination = ({
                 )
             }
             <div className="pagination__item pagination__toggle pagination__toggle-next"
+                 role="button"
+                 tabIndex={0}
+                 style={{outline: 'none'}}
                  onClick={() => onPageChange(lastPage)}>
 
             </div>

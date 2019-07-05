@@ -114,6 +114,9 @@ export default class RouteEditor extends Component {
                      ref={(ref) => {
                          this.imageContainerRef = ref;
                      }}
+                     role="button"
+                     tabIndex={0}
+                     style={{outline: 'none'}}
                      onMouseDown={editable ? this.onMouseDown : null}
                      onMouseUp={editable ? this.onMouseUp : null}
                      onMouseMove={editable ? this.onMouseMove : null}

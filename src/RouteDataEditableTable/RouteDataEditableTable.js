@@ -48,6 +48,9 @@ export default class RouteDataEditableTable extends Component {
                 <div className="route-data-table__table-item route-data-table__table-item-right">
                     <div className="route-data-table__category-track-wrap">
                         <div className="route-data-table__category-track-info"
+                             role="button"
+                             tabIndex={0}
+                             style={{outline: 'none'}}
                              onClick={() => this.setState({showSlider: !showSlider})}>
                             <div className="route-data-table__category-track">
                                 {route.category}

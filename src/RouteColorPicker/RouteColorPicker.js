@@ -49,7 +49,9 @@ export default class RouteColorPicker extends Component {
             'combo-box__dropdown-item': true,
             'combo-box__dropdown-item_padding-10': true,
         });
-        return <div className="mark-color-picker__wrap" onClick={() => {
+        return <div className="mark-color-picker__wrap"
+                    role="button"
+                    onClick={() => {
             if (editable) {
                 this.setState({droppedDown: !droppedDown})
             }

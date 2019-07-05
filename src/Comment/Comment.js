@@ -14,7 +14,11 @@ const Comment = ({
         <div className="comment">
             <AvatarRound user={comment.author}/>
             <div className="comment__content">
-                <a className="comment__name">
+                <a role="link"
+                   tabIndex={0}
+                   style={{outline: 'none'}}
+                   className="comment__name"
+                >
                     {
                         comment.author.name
                             ? comment.author.name
@@ -33,7 +37,10 @@ const Comment = ({
                         (user && (user.name || user.login))
                             ? (
                                 <React.Fragment>
-                                    <a className="comment__answer"
+                                    <a role="link"
+                                       tabIndex={0}
+                                       style={{outline: 'none'}}
+                                       className="comment__answer"
                                        onClick={() => startAnswer(comment)}>
                                         Ответить
                                     </a>&nbsp;
@@ -45,6 +52,9 @@ const Comment = ({
                         (user && (user.id === comment.author_id || user.role === 'admin'))
                             ? (
                                 <a className="comment__answer"
+                                   role="link"
+                                   tabIndex={0}
+                                   style={{outline: 'none'}}
                                    onClick={() => removeComment(comment)}>
                                     Удалить
                                 </a>
