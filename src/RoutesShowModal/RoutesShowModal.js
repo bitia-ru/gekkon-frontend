@@ -22,14 +22,11 @@ export default class RoutesShowModal extends Component {
 
         const {route} = this.props;
         this.state = {
-            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
-            object_id: null,
             quoteComment: null,
             commentContent: '',
             numOfDisplayedComments: DEFAULT_COMMENTS_DISPLAYED,
             descriptionCollapsed: false,
             currentPointers: [],
-            currentPointersOld: []
         };
         this.mouseOver = false;
     }

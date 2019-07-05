@@ -11,7 +11,6 @@ export default class RouteEditor extends Component {
 
         const {route} = this.props;
         this.state = {
-            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
             movingPointerIndex: null
         }
     }

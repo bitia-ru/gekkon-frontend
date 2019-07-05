@@ -18,8 +18,6 @@ export default class RoutesEditModal extends Component {
 
         const {route} = this.props;
         this.state = {
-            url: (route.photo === null ? '/public/img/route-img/route.jpg' : route.photo.url),
-            object_id: null,
             currentPointers: [],
             currentPointersOld: [],
             route: R.clone(route),
