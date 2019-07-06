@@ -229,8 +229,13 @@ export default class RoutesEditModal extends Component {
                 <div className="modal-block__close">
                     <CloseButton onClick={() => onClose()}/>
                 </div>
-                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true}
-                     onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-block"
+                     onMouseOver={() => {
+                         this.mouseOver = true;
+                     }}
+                     onMouseLeave={() => {
+                         this.mouseOver = false;
+                     }}>
                     <div className="modal__track">
                         <div className="modal__track-descr">
                             <div className="modal__track-descr-picture"></div>
@@ -255,7 +260,10 @@ export default class RoutesEditModal extends Component {
                                 : ''
                         }
                         <div className="btn-handler__track-toggles">
-                            <input type="file" hidden={true} ref={(ref) => this.fileInput = ref}
+                            <input type="file" hidden={true}
+                                   ref={(ref) => {
+                                       this.fileInput = ref;
+                                   }}
                                    onChange={(event) => this.onFileChosen(event.target.files[0])}/>
                             {
                                 route.photo
@@ -299,8 +307,13 @@ export default class RoutesEditModal extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true}
-                     onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-info"
+                     onMouseOver={() => {
+                         this.mouseOver = true;
+                     }}
+                     onMouseLeave={() => {
+                         this.mouseOver = false;
+                     }}>
                     <div className="modal__track-header">
                         <h1 className="modal__title">
                             №

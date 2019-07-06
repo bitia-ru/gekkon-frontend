@@ -332,8 +332,12 @@ export default class Profile extends Component {
                           method="post"
                           encType="multipart/form-data"
                           className="form"
-                          onMouseOver={() => this.mouseOver = true}
-                          onMouseLeave={() => this.mouseOver = false}
+                          onMouseOver={() => {
+                              this.mouseOver = true;
+                          }}
+                          onMouseLeave={() => {
+                              this.mouseOver = false;
+                          }}
                     >
                         <div className="modal-block__avatar-block">
                             <div className="modal-block__avatar modal-block__avatar_login">

@@ -98,24 +98,30 @@ export default class CategorySlider extends Component {
         const {hide, category} = this.props;
         return <div className="category__slider category__slider_active"
                     style={{outline: 'none'}}
-                    ref={(ref) => this.wrapperRef = ref}
+                    ref={(ref) => {
+                        this.wrapperRef = ref;
+                    }}
                     onBlur={() => hide()}
                     tabIndex={0}
                     onMouseUp={this.onMouseUp}
                     onMouseLeave={this.stopEditing}
                     onMouseMove={this.change}>
             <div className="category__slider-ruler">
-                <div className="category__slider-ruler-item category__slider-ruler-item_first" >
+                <div className="category__slider-ruler-item category__slider-ruler-item_first">
                     {CATEGORIES[CATEGORIES.length - 1].toUpperCase()}
                 </div>
-                <div className="category__slider-ruler-item" >
+                <div className="category__slider-ruler-item">
                     {CATEGORIES[parseInt((CATEGORIES.length - 1) / 2, 10)].toUpperCase()}
                 </div>
-                <div className="category__slider-ruler-item category__slider-ruler-item_last" >
+                <div className="category__slider-ruler-item category__slider-ruler-item_last">
                     {CATEGORIES[0].toUpperCase()}
                 </div>
             </div>
-            <div className="category__slider-bar" ref={(ref) => this.sliderBarRef = ref}>
+            <div className="category__slider-bar"
+                 ref={(ref) => {
+                     this.sliderBarRef = ref;
+                 }}
+            >
                 <div className="category__slider-bar-item category__slider-bar-item_first"></div>
                 <div className="category__slider-bar-item category__slider-bar-item_middle"></div>
                 <div className="category__slider-bar-item category__slider-bar-item_last"></div>

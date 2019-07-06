@@ -53,8 +53,13 @@ export default class RouteColorPicker extends Component {
             if (editable) {
                 this.setState({droppedDown: !droppedDown})
             }
-        }} onBlur={this.onBlur} tabIndex={1} onMouseLeave={() => this.mouseOver = false}
-                    onMouseOver={() => this.mouseOver = true}>
+        }} onBlur={this.onBlur} tabIndex={1}
+                    onMouseLeave={() => {
+                        this.mouseOver = false;
+                    }}
+                    onMouseOver={() => {
+                        this.mouseOver = true;
+                    }}>
             <div className="mark-color-picker__info">
                 <div
                     className="mark-color-picker__color"
