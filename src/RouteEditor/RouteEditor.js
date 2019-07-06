@@ -111,7 +111,9 @@ export default class RouteEditor extends Component {
         return <div className="modal__track-image-wrapper">
             <div className="route-editor__inner-container">
                 <div className="route-editor__img-container"
-                     ref={(ref) => this.imageContainerRef = ref}
+                     ref={(ref) => {
+                         this.imageContainerRef = ref;
+                     }}
                      onMouseDown={editable ? this.onMouseDown : null}
                      onMouseUp={editable ? this.onMouseUp : null}
                      onMouseMove={editable ? this.onMouseMove : null}

@@ -1428,7 +1428,9 @@ class SpotsShow extends Authorization {
                     : ''
             }
             <ToastContainer
-                ref={ref => this.container = ref}
+                ref={ref => {
+                    this.container = ref;
+                }}
                 onClick={() => this.container.clear()}
                 className="toast-top-right"
             />

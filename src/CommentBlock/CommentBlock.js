@@ -69,7 +69,9 @@ export default class CommentBlock extends Component {
                 }
                 <div
                     className="comment-block__list"
-                    ref={(ref) => this.commentWindow = ref}
+                    ref={(ref) => {
+                        this.commentWindow = ref;
+                    }}
                     onScroll={this.onScroll}
                 >
                     {

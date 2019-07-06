@@ -259,8 +259,12 @@ export default class LogInForm extends Component {
             <div className="modal-overlay__wrapper">
                 <div className="modal-block">
                     <div className="modal-block__padding-wrapper"
-                         onMouseOver={() => this.mouseOver = true}
-                         onMouseLeave={() => this.mouseOver = false}
+                         onMouseOver={() => {
+                             this.mouseOver = true;
+                         }}
+                         onMouseLeave={() => {
+                             this.mouseOver = false;
+                         }}
                     >
                         <div className="modal-block__close">
                             <CloseButton onClick={this.closeForm}/>

@@ -85,8 +85,12 @@ export default class ComboBoxPerson extends Component {
         return <div className="combo-box__container"
                     onBlur={this.onBlur}
                     tabIndex={1}
-                    onMouseLeave={() => this.mouseOver = false}
-                    onMouseOver={() => this.mouseOver = true}>
+                    onMouseLeave={() => {
+                        this.mouseOver = false;
+                    }}
+                    onMouseOver={() => {
+                        this.mouseOver = true;
+                    }}>
             <button
                 className={buttonClasses}
                 type="button"

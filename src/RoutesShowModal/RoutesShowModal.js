@@ -161,8 +161,13 @@ export default class RoutesShowModal extends Component {
                 <div className="modal-block__close">
                     <CloseButton onClick={() => onClose()}/>
                 </div>
-                <div className="modal__track-block" onMouseOver={() => this.mouseOver = true}
-                     onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-block"
+                     onMouseOver={() => {
+                         this.mouseOver = true;
+                     }}
+                     onMouseLeave={() => {
+                         this.mouseOver = false;
+                     }}>
                     <div className="modal__track">
                         <div className="modal__track-descr">
                             <div className="modal__track-descr-picture"></div>
@@ -221,8 +226,13 @@ export default class RoutesShowModal extends Component {
                         }
                     </div>
                 </div>
-                <div className="modal__track-info" onMouseOver={() => this.mouseOver = true}
-                     onMouseLeave={() => this.mouseOver = false}>
+                <div className="modal__track-info"
+                     onMouseOver={() => {
+                         this.mouseOver = true;
+                     }}
+                     onMouseLeave={() => {
+                         this.mouseOver = false;
+                     }}>
                     <div className="modal__track-status">
                         {
                             user

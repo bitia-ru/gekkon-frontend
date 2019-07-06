@@ -177,7 +177,9 @@ class SpotsIndex extends Authorization {
                     )
                     : ''
             }
-            <ToastContainer ref={ref => this.container = ref}
+            <ToastContainer ref={ref => {
+                this.container = ref;
+            }}
                             onClick={() => this.container.clear()}
                             className="toast-top-right"
             />
