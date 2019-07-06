@@ -1,9 +1,9 @@
-import React     from 'react';
+import React from 'react';
 
 const RouteCardList = () => (
-    <div>
+  <div>
         List
-    </div>
+  </div>
 );
 
 export default RouteCardList;
