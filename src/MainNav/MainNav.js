@@ -62,6 +62,7 @@ class MainNav extends Component {
             <div className="main-nav">
                 <div className="main-nav" onMouseLeave={this.hideSearch}>
                     <button className="main-nav__search"
+                            type="button"
                             onMouseEnter={this.showSearch}
                             onClick={this.searchSubmitted}>
                         <div className="main-nav__search-icon">

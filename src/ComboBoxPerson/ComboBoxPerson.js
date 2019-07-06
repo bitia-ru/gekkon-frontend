@@ -89,6 +89,7 @@ export default class ComboBoxPerson extends Component {
                     onMouseOver={() => this.mouseOver = true}>
             <button
                 className={buttonClasses}
+                type="button"
                 onClick={() => this.setState({droppedDown: !droppedDown})}>
                 {name === null ? 'Неизвестный накрутчик' : name}
             </button>

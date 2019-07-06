@@ -10,6 +10,7 @@ const ViewModeSwitcher = ({
                           }) => (
     <div className="content__toggle">
         <button
+            type="button"
             className={
                 'view-mode-switcher' + (
                     viewMode === 'table'
@@ -24,6 +25,7 @@ const ViewModeSwitcher = ({
             </svg>
         </button>
         <button
+            type="button"
             className={
                 'view-mode-switcher' + (
                     viewMode === 'list'

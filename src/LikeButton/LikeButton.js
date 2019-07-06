@@ -6,6 +6,7 @@ const LikeButton = ({
                         isLiked, onChange, numOfLikes,
                     }) => (
     <button className={'like-button' + (isLiked ? ' like-button_active' : '')}
+            type="button"
             onClick={onChange}
     >
         <span className="like-button__icon">

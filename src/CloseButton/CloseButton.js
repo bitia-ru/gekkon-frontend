@@ -5,7 +5,10 @@ import './CloseButton.css';
 const CloseButton = ({
                          onClick,
                      }) => (
-    <button className="close" onClick={onClick}></button>
+    <button className="close"
+            type="button"
+            onClick={onClick}
+    ></button>
 );
 
 CloseButton.propTypes = {

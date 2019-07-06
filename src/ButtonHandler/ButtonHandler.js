@@ -6,7 +6,11 @@ const ButtonHandler = ({
                            title, onClick, xlinkHref,
                        }) => (
     <div className="btn-handler__track-toggles-item">
-        <button className="btn-handler" title={title} onClick={onClick}>
+        <button className="btn-handler"
+                type="button"
+                title={title}
+                onClick={onClick}
+        >
             <svg aria-hidden="true">
                 <use xlinkHref={xlinkHref}></use>
             </svg>

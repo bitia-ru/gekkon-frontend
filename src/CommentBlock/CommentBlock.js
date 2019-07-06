@@ -61,6 +61,7 @@ export default class CommentBlock extends Component {
                         ? ''
                         : (
                             <button className="comment-block__show-comments"
+                                    type="button"
                                     onClick={showPrevious}>
                                 Показать предыдущие комментарии
                             </button>

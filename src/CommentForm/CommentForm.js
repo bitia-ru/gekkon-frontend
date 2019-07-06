@@ -44,6 +44,7 @@ export default class CommentForm extends Component {
                                 </div>
                             </div>
                             <button className="comment-form__answer-close"
+                                    type="button"
                                     onClick={removeQuoteComment}>
                             </button>
                         </div>
