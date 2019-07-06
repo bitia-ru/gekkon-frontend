@@ -7,6 +7,7 @@ const CollapsableBlock = ({
                           }) => (
     <div>
         <button onClick={() => onCollapseChange(!isCollapsed)}
+                type="button"
                 className={
                     'collapsable-block__header' + (
                         isCollapsed

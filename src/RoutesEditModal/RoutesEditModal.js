@@ -338,6 +338,7 @@ export default class RoutesEditModal extends Component {
                     <div className="modal__item modal__descr-item">
                         <div>
                             <button
+                                type="button"
                                 className="collapsable-block__header collapsable-block__header_edit"
                             >
                                 Описание
