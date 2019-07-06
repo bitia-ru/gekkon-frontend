@@ -1,105 +1,114 @@
-import React                 from 'react';
-import MainPageHeader        from '../MainPageHeader/MainPageHeader';
-import Footer                from '../Footer/Footer';
-import {saveUser, changeTab} from '../actions';
-import {connect}             from 'react-redux';
-import {withRouter}          from 'react-router-dom';
-import Authorization         from '../Authorization';
-import SignUpForm            from '../SignUpForm/SignUpForm';
-import LogInForm             from '../LogInForm/LogInForm';
-import Profile               from '../Profile/Profile';
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import MainPageHeader from '../MainPageHeader/MainPageHeader';
+import Footer from '../Footer/Footer';
+import { saveUser, changeTab } from '../actions';
+import Authorization from '../Authorization';
+import SignUpForm from '../SignUpForm/SignUpForm';
+import LogInForm from '../LogInForm/LogInForm';
+import Profile from '../Profile/Profile';
 
 class CragsIndex extends Authorization {
+  componentDidMount() {
+    window.history.back();
+  }
 
-    componentDidMount() {
-        window.history.back();
-    }
-
-    componentWillUnmount() {
-        const {changeTab: changeTabProp} = this.props;
-        alert("Раздел находится в разработке");
-        changeTabProp(1);
-    }
+  componentWillUnmount() {
+    const { changeTab: changeTabProp } = this.props;
+    alert('Раздел находится в разработке');
+    changeTabProp(1);
+  }
 
     changeNameFilter = () => {
     };
 
     openProfileForm = () => {
-        this.setState({profileFormVisible: true});
+      this.setState({ profileFormVisible: true });
     };
 
     closeProfileForm = () => {
-        this.setState({profileFormVisible: false});
+      this.setState({ profileFormVisible: false });
     };
 
     render() {
-        const {user} = this.props;
-        const {
-                  signUpFormVisible,
-                  logInFormVisible,
-                  profileFormVisible,
-                  signUpFormErrors,
-                  logInFormErrors,
-                  profileFormErrors,
-              } = this.state;
-        const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
-        return <div
-            style={{overflow: (showModal ? 'hidden' : '')}}>
-            {
-                signUpFormVisible
-                    ? (
-                        <SignUpForm onFormSubmit={this.submitSignUpForm}
-                                    closeForm={this.closeSignUpForm}
-                                    formErrors={signUpFormErrors}
-                                    resetErrors={this.signUpResetErrors}
-                        />
-                    )
-                    : ''
-            }
-            {
-                logInFormVisible
-                    ? (
-                        <LogInForm onFormSubmit={this.submitLogInForm}
-                                   closeForm={this.closeLogInForm}
-                                   resetPassword={this.resetPassword}
-                                   formErrors={logInFormErrors}
-                                   resetErrors={this.logInResetErrors}
-                        />
-                    ) : ''
-            }
-            {
-                (user && profileFormVisible)
-                    ? (
-                        <Profile user={user}
-                                 onFormSubmit={this.submitProfileForm}
-                                 closeForm={this.closeProfileForm}
-                                 formErrors={profileFormErrors}
-                                 resetErrors={this.profileResetErrors}
-                        />
-                    ) : ''
-            }
-            <MainPageHeader changeNameFilter={this.changeNameFilter}
-                            user={user}
-                            openProfile={this.openProfileForm}
-                            logIn={this.logIn}
-                            signUp={this.signUp}
-                            logOut={this.logOut}/>
-            <Footer user={user}
-                    logIn={this.logIn}
-                    signUp={this.signUp}
-                    logOut={this.logOut}/>
+      const { user } = this.props;
+      const {
+        signUpFormVisible,
+        logInFormVisible,
+        profileFormVisible,
+        signUpFormErrors,
+        logInFormErrors,
+        profileFormErrors,
+      } = this.state;
+      const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
+      return (
+        <div
+          style={{ overflow: (showModal ? 'hidden' : '') }}
+        >
+          {
+            signUpFormVisible
+              ? (
+                <SignUpForm
+                  onFormSubmit={this.submitSignUpForm}
+                  closeForm={this.closeSignUpForm}
+                  formErrors={signUpFormErrors}
+                  resetErrors={this.signUpResetErrors}
+                />
+              )
+              : ''
+          }
+          {
+            logInFormVisible
+              ? (
+                <LogInForm
+                  onFormSubmit={this.submitLogInForm}
+                  closeForm={this.closeLogInForm}
+                  resetPassword={this.resetPassword}
+                  formErrors={logInFormErrors}
+                  resetErrors={this.logInResetErrors}
+                />
+              ) : ''
+          }
+          {
+            (user && profileFormVisible)
+              ? (
+                <Profile
+                  user={user}
+                  onFormSubmit={this.submitProfileForm}
+                  closeForm={this.closeProfileForm}
+                  formErrors={profileFormErrors}
+                  resetErrors={this.profileResetErrors}
+                />
+              ) : ''
+          }
+          <MainPageHeader
+            changeNameFilter={this.changeNameFilter}
+            user={user}
+            openProfile={this.openProfileForm}
+            logIn={this.logIn}
+            signUp={this.signUp}
+            logOut={this.logOut}
+          />
+          <Footer
+            user={user}
+            logIn={this.logIn}
+            signUp={this.signUp}
+            logOut={this.logOut}
+          />
         </div>
+      );
     }
 }
 
 const mapStateToProps = state => ({
-    user: state.user,
-    tab: state.tab
+  user: state.user,
+  tab: state.tab,
 });
 
 const mapDispatchToProps = dispatch => ({
-    saveUser: user => dispatch(saveUser(user)),
-    changeTab: tab => dispatch(changeTab(tab))
+  saveUser: user => dispatch(saveUser(user)),
+  changeTab: tab => dispatch(changeTab(tab)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CragsIndex));

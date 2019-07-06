@@ -1,6 +1,6 @@
+import * as R from 'ramda';
 import { RESULT_FILTERS } from './ResultFilters';
 import { CATEGORIES } from './Categories';
-import * as R from 'ramda';
 
 const result = R.map(e => e.value, RESULT_FILTERS);
 const resultFilters = R.map(

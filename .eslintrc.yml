@@ -10,6 +10,7 @@ parserOptions:
     jsx: true
   ecmaVersion: 2018
   sourceType: module
+parser: "babel-eslint"
 plugins:
   - react
 rules:
@@ -19,3 +20,6 @@ rules:
   "jsx-a11y/click-events-have-key-events": [0]
   "jsx-a11y/anchor-is-valid": [0]
   "react/forbid-prop-types": [0]
+  "indent": ["error", 2]
+  "react/no-unused-state": "off"
+  "jsx-a11y/label-has-for": "off"
