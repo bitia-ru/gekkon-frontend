@@ -10,3 +10,10 @@
     margin-right: auto;
     margin-left: auto;
 }
+
+@media screen and (max-width: 1440px) {
+    .content {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+}

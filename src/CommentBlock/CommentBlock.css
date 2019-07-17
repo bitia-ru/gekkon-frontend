@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    max-height: 100%;
 }
 
 .comment-block__header {
@@ -12,11 +13,25 @@
     margin-bottom: 15px;
 }
 
+@media screen and (max-width: 1440px) {
+    .comment-block__header {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+}
+
 .comment-block__count-comment {
     font-family: GilroyBold, sans-serif;
     font-size: 18px;
     color: #1f1f1f;
     margin-bottom: 8px;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment-block__count-comment {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
 }
 
 .comment-block__list {

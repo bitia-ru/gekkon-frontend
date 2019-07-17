@@ -10,6 +10,12 @@
     outline: none;
 }
 
+@media screen and (max-width: 1440px) {
+    .like-button {
+        height: 24px;
+    }
+}
+
 .like-button:hover .like-button__count {
     color: #1f1f1f;
 }
@@ -26,6 +32,14 @@
     margin-top: -3px;
 }
 
+
+@media screen and (max-width: 1440px) {
+    .like-button__icon {
+        margin-top: -2px;
+    }
+}
+
+
 .like-button__icon svg {
     transition: fill .4s ease-out;
     fill: #828282;
@@ -36,6 +50,12 @@
     font-size: 16px;
     transition: color .4s ease-out;
     line-height: 1.5em;
+}
+
+@media screen and (max-width: 1440px) {
+    .like-button__count {
+        font-size: 14px;
+    }
 }
 
 .like-button_active .like-button__count {

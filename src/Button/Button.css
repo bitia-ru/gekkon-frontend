@@ -4,10 +4,9 @@
     color: #ffffff;
     text-decoration: none;
     font-size: 18px;
-    line-height: 36px;
     padding: 0 62px;
-    line-height: 71px;
-    height: 71px;
+    line-height: 70px;
+    height: 70px;
     border: none;
     box-shadow: none;
     box-sizing: border-box;
@@ -16,6 +15,16 @@
     display: flex;
     justify-content: center;
     white-space: nowrap;
+}
+
+@media screen and (max-width: 1600px) {
+    .btn {
+        font-size: 14px;
+        height: 58px;
+        line-height: 58px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
 }
 
 .btn:hover {

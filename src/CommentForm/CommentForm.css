@@ -64,6 +64,16 @@
     display: flex;
 }
 
+@media screen and (max-width: 1440px) {
+    .comment-form__inner-wrap {
+        padding: 8px 0;
+    }
+
+    .comment-form__inner-wrap .avatar-round{
+        align-self: center;
+    }
+}
+
 .comment-form__btn-wrap {
     display: flex;
     justify-content: flex-end;
@@ -82,6 +92,13 @@
     padding: 14px 0 0 0;
     box-sizing: border-box;
     background-color: transparent;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment-form__input {
+        padding-top: 16px;
+        font-size: 14px;
+    }
 }
 
 .comment-form__input::placeholder {

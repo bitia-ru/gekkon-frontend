@@ -4,6 +4,12 @@
     background-color: #ffffff;
 }
 
+@media screen and (max-width: 1440px) {
+    .main-nav {
+       height: 65px;
+    }
+}
+
 .main-nav__search {
     display: flex;
     flex-shrink: 0;
@@ -18,6 +24,13 @@
     position: relative;
     transition: background-color .4s ease-out;
     outline: none;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__search {
+        width: 65px;
+        height: 65px;
+    }
 }
 
 .main-nav__search::after {
@@ -58,6 +71,12 @@
     position: relative;
 }
 
+@media screen and (max-width: 1440px) {
+    .main-nav__block {
+       height: 65px;
+    }
+}
+
 .main-nav__search-input {
     position: absolute;
     left: 0;
@@ -80,6 +99,12 @@
     font-size: 18px;
     z-index: 3;
     color: #1f1f1f;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__search-input {
+        font-size: 16px;
+    }
 }
 
 .main-nav__search-input::placeholder {
@@ -114,6 +139,12 @@
     height: 100%;
 }
 
+@media screen and (max-width: 1440px) {
+    .main-nav__nav {
+        margin-right: 20px;
+    }
+}
+
 .main-nav__nav-list {
     display: flex;
     margin: 0;
@@ -133,6 +164,16 @@
     padding-right: 45px;
 }
 
+@media screen and (max-width: 1440px) {
+    .main-nav__nav-list-item:not(:first-child) {
+        padding-left: 0;
+    }
+
+    .main-nav__nav-list-item:not(:last-child) {
+        padding-right: 0;
+    }
+}
+
 .main-nav__nav-list-link {
     text-decoration: none;
     display: flex;
@@ -142,6 +183,12 @@
     height: 100%;
     color: #606060;
     font-size: 18px;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__nav-list-link {
+        font-size: 16px;
+    }
 }
 
 .main-nav__nav-list-link:hover {
@@ -170,3 +217,13 @@
     margin-left: auto;
     box-sizing: border-box;
 }
+
+@media screen and (max-width: 1440px) {
+    .main-nav__container {
+        height: 65px;
+        display: flex;
+        margin-left: auto;
+        box-sizing: border-box;
+    }
+}
+

@@ -14,7 +14,9 @@
 }
 
 .modal-block__profile {
-    max-width: 360px;
+    max-width: 360px !important;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .modal-block__close {

@@ -3,14 +3,32 @@
     padding: 5px 0 5px;
 }
 
+@media screen and (max-width: 1440px) {
+    .route-data-table-row  {
+        padding: 3px 0 3px;
+    }
+}
+
 .route-data-table-item {
     max-width: 215px;
     width: 100%;
     font-size: 16px;
 }
 
+@media screen and (max-width: 1440px) {
+    .route-data-table-item {
+        font-size: 14px;
+    }
+}
+
 .route-data-table-item_header {
     color: #828282;
+}
+
+@media screen and (max-width: 1440px) {
+    .route-data-table-item_header {
+        min-width: 150px;
+    }
 }
 
 .route-data-table__table-item-right {
@@ -52,6 +70,12 @@
 .route-data-table__link {
     color: #006CEB;
     text-decoration: none;
+}
+
+@media screen and (max-width: 1440px) {
+    .route-data-table__link {
+        white-space: nowrap;
+    }
 }
 
 .route-data-table__link:hover {

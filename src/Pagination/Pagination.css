@@ -110,3 +110,9 @@
     display: flex;
     justify-content: center;
 }
+
+@media screen and (max-width: 1440px) {
+    .content__pagination {
+        margin-top: 40px;
+    }
+}

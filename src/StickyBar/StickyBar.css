@@ -5,6 +5,7 @@
     width: 100%;
     background-color: transparent;
     overflow: hidden;
+    z-index: 2;
 }
 
 @keyframes loading {

@@ -1,8 +1,25 @@
+.content__col-md-4 {
+    width: calc(33.33% - 30px);
+    margin-left: 15px;
+    margin-right: 15px;
+    display: flex;
+}
+
+@media screen and (min-width: 1200px) {
+    .content__col-lg-3 {
+        width: calc(25% - 30px);
+        margin-left: 15px;
+        margin-right: 15px;
+        display: flex;
+    }
+}
+
 .route-card {
     width: 100%;
     height: 100%;
     min-height: 350px;
-    padding: 25px;
+    padding: 24px;
+    padding-bottom: 22px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
     transition: box-shadow .4s ease-out;
     display: flex;
@@ -77,6 +94,12 @@
     background-color: #ffffff;
 }
 
+@media screen and (max-width: 1440px) {
+    .route-card__info {
+        padding-top: 20px;
+    }
+}
+
 .route-card__header {
     display: inline-flex;
     align-items: baseline;
@@ -88,6 +111,12 @@
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
+}
+
+@media screen and (max-width: 1440px) {
+    .route-card__footer {
+        margin-top: 10px;
+    }
 }
 
 .route-card__number {
@@ -124,6 +153,12 @@
     line-height: 16px;
 }
 
+@media screen and (max-width: 1440px) {
+    .route-card__date {
+        font-size: 14px;
+    }
+}
+
 .route-card__date_end-soon {
     color: #E24D4D;
 }
@@ -138,9 +173,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 15px;
+    margin-right: 16px;
     margin-top: -1px;
 }
+
+@media screen and (max-width: 1440px) {
+    .route-card__date-icon{
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+    }
+}
+
 
 .route-card__date-icon svg {
     width: 100%;
@@ -160,22 +204,6 @@
 
 .route-card_done:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
-}
-
-.content__col-md-4 {
-    width: calc(33.33% - 30px);
-    margin-left: 15px;
-    margin-right: 15px;
-    display: flex;
-}
-
-@media screen and (min-width: 1600px) {
-    .content__col-lg-3 {
-        width: calc(25% - 30px);
-        margin-left: 15px;
-        margin-right: 15px;
-        display: flex;
-    }
 }
 
 .content__route-card {

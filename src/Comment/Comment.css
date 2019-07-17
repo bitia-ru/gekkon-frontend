@@ -3,8 +3,20 @@
     display: flex;
 }
 
+@media screen and (max-width: 1440px) {
+    .comment {
+        padding: 10px 0;
+    }
+}
+
 .comment__content {
     padding-left: 18px;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment__content {
+        padding-left: 12px;
+    }
 }
 
 .comment__name {
@@ -16,20 +28,45 @@
     display: block;
 }
 
+@media screen and (max-width: 1440px) {
+    .comment__name {
+        font-size: 16px;
+        line-height: 20px;
+        margin-bottom: 4px;
+    }
+}
+
 .comment__footer {
     display: flex;
-    padding-top: 7px;
+    padding-top: 8px;
 }
 
 .comment__date {
     padding-right: 24px;
+    font-size: 16px;
     color: #9F9F9F;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment__date {
+        font-size: 12px;
+        line-height: 12px;
+    }
 }
 
 .comment__answer {
     color: #006CEB;
     text-decoration: none;
     cursor: pointer;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment__answer {
+        font-size: 12px;
+        line-height: 12px;
+    }
 }
 
 .comment__answer:hover {
@@ -38,4 +75,10 @@
 
 .comment__text {
     line-height: 1.3em;
+}
+
+@media screen and (max-width: 1440px) {
+    .comment__text {
+        font-size: 14px;
+    }
 }

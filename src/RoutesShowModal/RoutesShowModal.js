@@ -262,10 +262,10 @@ export default class RoutesShowModal extends Component {
                       ? `№ ${route.number}`
                       : `# ${route.id}`
                   }
-                  <span
-                    className="modal__title-place"
-                  >
-                    {route.name ? `(“${route.name}”)` : ''}
+                  <span className="modal__title-place-wrapper">
+                    <span className="modal__title-place">
+                      {route.name ? `(“${route.name}”)` : ''}
+                    </span>
                   </span>
                 </h1>
                 <RouteDataTable route={route} user={user} />

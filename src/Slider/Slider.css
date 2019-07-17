@@ -6,9 +6,9 @@
     position: relative;
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1440px) {
     .slider__decor {
-        height: 65px;
+        height: 52px;
     }
 }
 

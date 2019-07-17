@@ -331,7 +331,7 @@ export default class RoutesEditModal extends Component {
             >
               <div className="modal__track-header">
                 <h1 className="modal__title">
-                            №
+                  {'№ '}
                   <input
                     type="text"
                     onChange={

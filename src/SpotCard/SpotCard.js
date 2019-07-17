@@ -12,7 +12,7 @@ const SpotCard = ({
   const iconPlace = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-place';
   const iconNext = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-next';
   return (
-    <div className="spot-card-container__col-lg-4">
+    <div className="spot-card-container__col-lg-4 spot-card-container__col-md-2">
       <article className={`spot-card ${spot.className}`}>
         <Link to={`/spots/${spot.id}`} id={`linkToRoutes${spot.id}`} />
         <a

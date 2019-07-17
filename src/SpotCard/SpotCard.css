@@ -1,5 +1,12 @@
 .spot-card-container__col-lg-4 {
-    width: 33.33%;
+    width: 25%;
+}
+
+
+@media screen and (max-width: 1200px) {
+    .spot-card-container__col-md-2 {
+       width: 50%;
+    }
 }
 
 .spot-card {
@@ -25,7 +32,7 @@
 }
 
 .spot-card__inner {
-    padding: 60px 30px 0 30px;
+    padding: 70px 40px 0 40px;
     display: flex;
     flex-direction: column;
     text-decoration: none;
@@ -34,14 +41,14 @@
     cursor: pointer;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (max-width: 1600px) {
     .spot-card__inner {
-        padding: 70px 40px 0 40px;
+        padding: 50px 24px 0 24px;
     }
 }
 
 .spot-card__title {
-    font-family: GilroyBold, sans-serif;
+    font-family: GilroyMedium, sans-serif;
     font-size: 34px;
     font-weight: normal;
     color: #ffffff;
@@ -50,29 +57,36 @@
     margin-bottom: 45px;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (max-width: 1600px) {
     .spot-card__title {
-        font-size: 40px;
+        font-size: 26px;
+        margin-bottom: 36px;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .spot-card__title {
+        font-size: 24px;
     }
 }
 
 .spot-card__content {
-    height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
+    flex-grow: 1;
 }
 
 .spot-card__list {
     padding: 0;
     margin: 0;
     color: #ffffff;
-    margin-bottom: 50px;
+    margin-bottom: 70px;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (max-width: 1600px) {
     .spot-card__list {
-        margin-bottom: 70px;
+        margin-bottom: 40px;
     }
 }
 
@@ -80,21 +94,27 @@
     list-style: none;
     font-size: 16px;
     line-height: 1.4em;
-    font-size: GilroyRegular, sans-serif;
+    font-family: GilroyRegular, sans-serif;
     display: flex;
+}
+
+@media screen and (max-width: 1440px) {
+    .spot-card__list-item {
+        font-size: 14px;
+    }
 }
 
 .spot-card__list-item:not(:last-child) {
     margin-bottom: 20px;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 1440px) {
     .spot-card__list-item:not(:last-child) {
         margin-bottom: 27px;
     }
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 1440px) {
     .spot-card__list-item {
         font-size: 18px;
     }
@@ -156,29 +176,39 @@
 
 .spot-card__descr-text {
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
+    line-height: 1.5em;
     color: #ffffff;
-    margin-bottom: 60px;
+    margin-bottom: 90px;
 }
 
-@media screen and (min-width: 1600px) {
+@media screen and (max-width: 1600px) {
     .spot-card__descr-text {
-        font-size: 18px;
-        line-height: 1.5em;
-        margin-bottom: 90px;
+        font-size: 16px;
+        margin-bottom: 60px;
     }
 }
+
+@media screen and (max-width: 1440px) {
+    .spot-card__descr-text {
+        font-size: 14px;
+        margin-bottom: 40px;
+    }
+}
+
+
 
 .spot-card__link {
     display: flex;
     align-items: center;
-    font-size: 18px;
+    font-size: 20px;
     color: #ffffff;
+    font-family: GilroyMedium, sans-serif;
 }
 
-@media screen and (min-width: 1600px) {
+@media screen and (max-width: 1600px) {
     .spot-card__link {
-        font-size: 20px;
+        font-size: 16px;
     }
 }
 
