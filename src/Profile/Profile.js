@@ -460,34 +460,14 @@ export default class Profile extends Component {
                             withRemoveButton={user.data.vk_user_id !== undefined}
                           />
                         </li>
-                        <li>
-                          <SocialLinkButton
-                            xlinkHref={iconFB}
-                            dark
-                            unactive
-                          />
-                        </li>
-                        <li>
-                          <SocialLinkButton
-                            xlinkHref={iconTwitter}
-                            dark
-                            unactive
-                          />
-                        </li>
-                        <li>
-                          <SocialLinkButton
-                            xlinkHref={iconInst}
-                            dark
-                            unactive
-                          />
-                        </li>
-                        <li>
-                          <SocialLinkButton
-                            xlinkHref={iconYoutube}
-                            dark
-                            unactive
-                          />
-                        </li>
+                        { false
+                            && <>
+                              <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
+                              <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
+                              <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
+                              <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
+                            </>
+                        }
                       </ul>
                     </div>
                   </div>

@@ -77,7 +77,7 @@ const Footer = ({
               <Link to="/" className="footer__list-link">Скалодромы</Link>
             </li>
             <li className="footer__list-item">
-              <Link to="/crags" className="footer__list-link">Скалы</Link>
+              <Link to="/crags" className="footer__list-link footer__list-link-disabled">Скалы</Link>
             </li>
           </ul>
         </div>

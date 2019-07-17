@@ -305,41 +305,15 @@ export default class LogInForm extends Component {
                 </div>
                 <div className="modal-block__social">
                   <ul className="social-links">
-                    <li>
-                      <SocialLinkButton
-                        onClick={() => enterWithVk('logIn')}
-                        xlinkHref={iconVk}
-                        dark
-                      />
-                    </li>
-                    <li>
-                      <SocialLinkButton
-                        xlinkHref={iconFB}
-                        dark
-                        unactive
-                      />
-                    </li>
-                    <li>
-                      <SocialLinkButton
-                        xlinkHref={iconTwitter}
-                        dark
-                        unactive
-                      />
-                    </li>
-                    <li>
-                      <SocialLinkButton
-                        xlinkHref={iconInst}
-                        dark
-                        unactive
-                      />
-                    </li>
-                    <li>
-                      <SocialLinkButton
-                        xlinkHref={iconYoutube}
-                        dark
-                        unactive
-                      />
-                    </li>
+                    <li><SocialLinkButton onClick={() => enterWithVk('logIn')} xlinkHref={iconVk} dark /></li>
+                    { false
+                        && <>
+                          <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
+                        </>
+                    }
                   </ul>
                 </div>
               </div>

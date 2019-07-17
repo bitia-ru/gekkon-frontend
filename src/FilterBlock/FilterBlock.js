@@ -63,10 +63,7 @@ const FilterBlock = ({
         />
       </div>
     </div>
-    <ViewModeSwitcher
-      onViewModeChange={onViewModeChange}
-      viewMode={viewMode}
-    />
+    { false && <ViewModeSwitcher onViewModeChange={onViewModeChange} viewMode={viewMode} /> }
   </div>
 );
 

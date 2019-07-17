@@ -62,18 +62,20 @@ class MainNav extends Component {
           <Link to="/" id="linkToSpots" />
           <div className="main-nav">
             <div className="main-nav" onMouseLeave={this.hideSearch}>
-              <button
-                className="main-nav__search"
-                type="button"
-                onMouseEnter={this.showSearch}
-                onClick={this.searchSubmitted}
-              >
-                <div className="main-nav__search-icon">
-                  <svg aria-hidden="true">
-                    <use xlinkHref="/public/img/main-nav-img/search.svg#search" />
-                  </svg>
-                </div>
-              </button>
+              { false
+                  && <button
+                    className="main-nav__search"
+                    type="button"
+                    onMouseEnter={this.showSearch}
+                    onClick={this.searchSubmitted}
+                  >
+                    <div className="main-nav__search-icon">
+                      <svg aria-hidden="true">
+                        <use xlinkHref="/public/img/main-nav-img/search.svg#search" />
+                      </svg>
+                    </div>
+                  </button>
+              }
               <div className="main-nav__block">
                 <input
                   type="text"
@@ -108,7 +110,7 @@ class MainNav extends Component {
                           changeTabProp(2);
                           document.getElementById('linkToCrags').click();
                         }}
-                        className={`main-nav__nav-list-link${tab2Class}`}
+                        className={`main-nav__nav-list-link${tab2Class} main-nav__nav-list-link-disabled`}
                       >
                         Скалы
                       </a>

@@ -67,6 +67,11 @@
     cursor: pointer;
 }
 
+.footer__list-link-disabled {
+    pointer-events: none;
+    color: #444444;
+}
+
 .footer__list-link:hover {
     color: #FCFCFC;
 }
