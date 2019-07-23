@@ -1,0 +1,29 @@
+.about-us-content {
+    padding-top: 75px;
+    padding-bottom: 75px;
+}
+
+.about-us-content__container {
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-us-content__title {
+    font-size: 34px;
+    margin-bottom: 40px;
+    margin-top: 0;
+    font-family: GilroyBold, sans-serif;
+    max-width: 380px;
+    line-height: 42px;
+    color: #1F1F1F;
+}
+
+.about-us-content__text {
+    font-size: 18px;
+    line-height: 32px;
+    margin-bottom: 28px;
+    margin-top: 28px;
+    color: #1f1f1f;
+}

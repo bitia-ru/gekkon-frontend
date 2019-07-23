@@ -1,0 +1,53 @@
+.about-us-header {
+    background-color: #EBEBE2;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 40vh;
+}
+
+.about-us-header__top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-us-header__title {
+    font-size: 100px;
+    line-height: 1em;
+    color: #FDFDFD;
+    font-weight: normal;
+    font-family: GilroyBold, sans-serif;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 1600px) {
+    .about-us-header__title {
+        font-size: 70px;
+        margin-bottom: 60px;
+    }
+}
+
+.about-us-header__content {
+    height: calc(40vh - 75px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 900px;
+    width: 82%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-us-header__logo {
+    width: 75px;
+    height: 75px;
+}
+
+.about-us-header__nav {
+    height: 75px;
+    display: flex;
+    margin-left: auto;
+    box-sizing: border-box;
+}
