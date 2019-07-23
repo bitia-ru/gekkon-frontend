@@ -18,6 +18,7 @@ import Profile from '../Profile/Profile';
 import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, ABOUT_DATA } from '../Constants/About';
 import aboutImage from '../../img/about-us-header-img/about-us.jpg';
+import ScrollToTopOnMount from '../ScrollToTopOnMount';
 
 class About extends Authorization {
   componentDidMount() {
@@ -144,6 +145,7 @@ class About extends Authorization {
     const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
     return (
       <div style={{ overflow: (showModal ? 'hidden' : '') }}>
+        <ScrollToTopOnMount />
         <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
         <Footer
           user={user}

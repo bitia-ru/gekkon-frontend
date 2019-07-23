@@ -8,6 +8,7 @@ import Authorization from '../Authorization';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
+import ScrollToTopOnMount from '../ScrollToTopOnMount';
 
 class CragsIndex extends Authorization {
   componentDidMount() {
@@ -82,6 +83,7 @@ class CragsIndex extends Authorization {
                 />
               ) : ''
           }
+          <ScrollToTopOnMount />
           <MainPageHeader
             changeNameFilter={this.changeNameFilter}
             user={user}

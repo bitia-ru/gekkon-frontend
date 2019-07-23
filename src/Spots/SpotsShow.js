@@ -38,6 +38,7 @@ import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import { CATEGORIES } from '../Constants/Categories';
+import ScrollToTopOnMount from '../ScrollToTopOnMount';
 
 const NumOfDays = 7;
 
@@ -1490,6 +1491,7 @@ class SpotsShow extends Authorization {
         <div
           style={{ overflow: (routesModalVisible || showModal ? 'hidden' : '') }}
         >
+          <ScrollToTopOnMount />
           <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
           <Footer
             user={user}

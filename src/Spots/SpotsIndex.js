@@ -23,6 +23,7 @@ import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
 import Profile from '../Profile/Profile';
 import Authorization from '../Authorization';
 import StickyBar from '../StickyBar/StickyBar';
+import ScrollToTopOnMount from '../ScrollToTopOnMount';
 
 Axios.interceptors.request.use((config) => {
   const configCopy = R.clone(config);
@@ -212,6 +213,7 @@ class SpotsIndex extends Authorization {
           <div
             style={{ overflow: (showModal ? 'hidden' : '') }}
           >
+            <ScrollToTopOnMount />
             <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
             <Footer
               user={user}
