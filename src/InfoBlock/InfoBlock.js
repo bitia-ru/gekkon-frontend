@@ -23,18 +23,24 @@ export default class InfoBlock extends Component {
         <div className="info-block__bottom">
           <div className="info-block__info">
             <div className="info-block__info-inner">
-              {mapIndexed((el, index) => (
-                <div key={index} className="info-block__info-item">
-                  <div className="info-block">
-                    <div className="info-block__number">
-                      {el.count}
-                    </div>
-                    <p className="info-block__descr">
-                      {el.label}
-                    </p>
-                  </div>
-                </div>
-              ), infoData)}
+              {
+                infoData && (
+                  <>
+                    {mapIndexed((el, index) => (
+                      <div key={index} className="info-block__info-item">
+                        <div className="info-block">
+                          <div className="info-block__number">
+                            {el.count}
+                          </div>
+                          <p className="info-block__descr">
+                            {el.label}
+                          </p>
+                        </div>
+                      </div>
+                    ), infoData)}
+                  </>
+                )
+              }
             </div>
 
             <button
@@ -56,8 +62,8 @@ export default class InfoBlock extends Component {
 }
 
 InfoBlock.propTypes = {
+  infoData: PropTypes.array,
   sectors: PropTypes.array.isRequired,
-  infoData: PropTypes.array.isRequired,
   changeSectorFilter: PropTypes.func.isRequired,
   sectorId: PropTypes.number.isRequired,
 };

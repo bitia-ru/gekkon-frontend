@@ -21,10 +21,18 @@ export default class UserIcon extends Component {
       } = this.props;
       this.setState({ droppedDown: false });
       if (id === 1) {
-        user ? openProfile() : signUp();
+        if (user) {
+          openProfile();
+        } else {
+          signUp();
+        }
       }
       if (id === 2) {
-        user ? logOut() : logIn();
+        if (user) {
+          logOut();
+        } else {
+          logIn();
+        }
       }
     };
 
@@ -53,7 +61,7 @@ export default class UserIcon extends Component {
                 <div className="user-icon__user-menu user-icon__user-menu_active">
                   <List
                     items={
-                      user === null
+                      !user
                         ? GUEST_ITEMS_DATA
                         : R.prepend({ title }, USER_ITEMS_DATA)
                     }
@@ -75,8 +83,4 @@ UserIcon.propTypes = {
   logOut: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
   openProfile: PropTypes.func.isRequired,
-};
-
-UserIcon.defaultProps = {
-  user: null,
 };

@@ -51,8 +51,4 @@ RouteCardView.propTypes = {
   onRouteClick: PropTypes.func.isRequired,
 };
 
-RouteCardView.defaultProps = {
-  user: null,
-};
-
 export default RouteCardView;

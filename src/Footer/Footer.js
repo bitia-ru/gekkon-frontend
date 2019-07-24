@@ -7,6 +7,7 @@ import {
   FACEBOOK_LINK,
   TWITTER_LINK,
 } from '../Constants/SocialLinks';
+import { notReady, notExist } from '../Utils';
 import './Footer.css';
 
 const Footer = ({
@@ -21,43 +22,49 @@ const Footer = ({
           </h3>
           <ul className="footer__list">
             {
-              user === null
-                ? (
-                  <React.Fragment>
-                    <li className="footer__list-item">
-                      <a
-                        onClick={logIn}
-                        role="link"
-                        tabIndex={0}
-                        className="footer__list-link"
-                      >
-                        Вход
-                      </a>
-                    </li>
-                    <li className="footer__list-item">
-                      <a
-                        onClick={signUp}
-                        role="link"
-                        tabIndex={0}
-                        className="footer__list-link"
-                      >
-                        Регистрация
-                      </a>
-                    </li>
-                  </React.Fragment>
-                )
-                : (
-                  <li className="footer__list-item">
-                    <a
-                      onClick={logOut}
-                      role="link"
-                      tabIndex={0}
-                      className="footer__list-link"
-                    >
-                      Выход
-                    </a>
-                  </li>
-                )
+              !notReady(user) && (
+                <>
+                  {
+                    notExist(user)
+                      ? (
+                        <>
+                          <li className="footer__list-item">
+                            <a
+                              onClick={logIn}
+                              role="link"
+                              tabIndex={0}
+                              className="footer__list-link"
+                            >
+                              Вход
+                            </a>
+                          </li>
+                          <li className="footer__list-item">
+                            <a
+                              onClick={signUp}
+                              role="link"
+                              tabIndex={0}
+                              className="footer__list-link"
+                            >
+                              Регистрация
+                            </a>
+                          </li>
+                        </>
+                      )
+                      : (
+                        <li className="footer__list-item">
+                          <a
+                            onClick={logOut}
+                            role="link"
+                            tabIndex={0}
+                            className="footer__list-link"
+                          >
+                            Выход
+                          </a>
+                        </li>
+                      )
+                  }
+                </>
+              )
             }
           </ul>
         </div>
@@ -126,10 +133,6 @@ Footer.propTypes = {
   logIn: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
-};
-
-Footer.defaultProps = {
-  user: null,
 };
 
 export default Footer;

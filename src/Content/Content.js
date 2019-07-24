@@ -112,7 +112,3 @@ Content.propTypes = {
   sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
 };
-
-Content.defaultProps = {
-  user: null,
-};

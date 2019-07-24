@@ -38,6 +38,8 @@ import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import { CATEGORIES } from '../Constants/Categories';
+import { avail, notAvail } from '../Utils';
+import { userStateToUser } from '../Utils/Workarounds';
 
 const NumOfDays = 7;
 
@@ -60,7 +62,7 @@ class SpotsShow extends Authorization {
       numOfPages: 1,
       perPage: CARDS_PER_PAGE,
       spot: {},
-      infoData: [],
+      infoData: undefined,
       routesModalVisible: false,
       currentShown: {},
       editMode: false,
@@ -68,12 +70,13 @@ class SpotsShow extends Authorization {
       ctrlPressed: false,
       comments: [],
       numOfComments: 0,
-      numOfLikes: 0,
+      numOfLikes: undefined,
       isLiked: false,
       likeId: 0,
+      likeBtnIsBusy: false,
       ascent: null,
-      numOfRedpoints: 0,
-      numOfFlash: 0,
+      numOfRedpoints: undefined,
+      numOfFlash: undefined,
       users: [],
       editRouteIsWaiting: false,
     });
@@ -86,6 +89,7 @@ class SpotsShow extends Authorization {
       user,
       history,
       saveToken: saveTokenProp,
+      saveUser: saveUserProp,
       loadFromLocalStorageSelectedFilters: loadFromLocalStorageSelectedFiltersProp,
       routeMarkColors,
     } = this.props;
@@ -96,7 +100,7 @@ class SpotsShow extends Authorization {
           const sectorId = parseInt(data[4], 10);
           if (data.length > 5 && data[5] === 'routes') {
             if (data[6] === 'new') {
-              if (user && (user.role === 'admin' || user.role === 'creator')) {
+              if (avail(user.id) && (user.role === 'admin' || user.role === 'creator')) {
                 this.addRoute();
               } else {
                 window.location = '/';
@@ -104,7 +108,7 @@ class SpotsShow extends Authorization {
             } else {
               this.loadingRouteId = data[6];
               if (data.length > 7 && data[7] === 'edit') {
-                if (user && (user.role === 'admin' || user.role === 'creator')) {
+                if (avail(user.id) && (user.role === 'admin' || user.role === 'creator')) {
                   this.loadUsers();
                   this.loadEditMode = true;
                   this.setState({ sectorId });
@@ -129,7 +133,7 @@ class SpotsShow extends Authorization {
         } else {
           if (data.length > 3 && data[3] === 'routes') {
             if (data[4] === 'new') {
-              if (user && (user.role === 'admin' || user.role === 'creator')) {
+              if (avail(user.id) && (user.role === 'admin' || user.role === 'creator')) {
                 this.addRoute();
               } else {
                 window.location = '/';
@@ -137,7 +141,7 @@ class SpotsShow extends Authorization {
             } else {
               this.loadingRouteId = data[4];
               if (data.length > 5 && data[5] === 'edit') {
-                if (user && (user.role === 'admin' || user.role === 'creator')) {
+                if (avail(user.id) && (user.role === 'admin' || user.role === 'creator')) {
                   this.loadUsers();
                   this.loadEditMode = true;
                   this.setState({ sectorId: 0 });
@@ -197,6 +201,7 @@ class SpotsShow extends Authorization {
       } else {
         this.reloadSector(sectorId);
       }
+      saveUserProp({ id: null });
     }
     loadFromLocalStorageSelectedFiltersProp();
     if (routeMarkColors.length === 0) {
@@ -229,7 +234,7 @@ class SpotsShow extends Authorization {
         increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
         decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
       } = this.props;
-      const id = (userId || (user ? user.id : null));
+      const id = (userId || (avail(user.id) ? user.id : null));
       if (!id) {
         this.setState({ ascents: [] });
         return;
@@ -300,12 +305,13 @@ class SpotsShow extends Authorization {
         routesModalVisible: false,
         comments: [],
         numOfComments: 0,
-        numOfLikes: 0,
+        numOfLikes: undefined,
         isLiked: false,
         likeId: 0,
+        likeBtnIsBusy: false,
         ascent: null,
-        numOfRedpoints: 0,
-        numOfFlash: 0,
+        numOfRedpoints: undefined,
+        numOfFlash: undefined,
       });
       if (sectorId === 0) {
         this.reloadSpot();
@@ -347,7 +353,7 @@ class SpotsShow extends Authorization {
       const { spotId } = this.state;
       let currentUserId;
       if (userId === null || userId === undefined) {
-        if (user === null) {
+        if (notAvail(user.id)) {
           currentUserId = 0;
         } else {
           currentUserId = user.id;
@@ -391,7 +397,7 @@ class SpotsShow extends Authorization {
       } = this.props;
       let currentUserId;
       if (userId === null || userId === undefined) {
-        if (user === null) {
+        if (notAvail(user.id)) {
           currentUserId = 0;
         } else {
           currentUserId = user.id;
@@ -548,7 +554,7 @@ class SpotsShow extends Authorization {
           personal: currentPersonal,
         },
       };
-      if (userCurr || user) {
+      if (userCurr || avail(user.id)) {
         params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
       }
       if (currentName !== '') {
@@ -631,11 +637,11 @@ class SpotsShow extends Authorization {
       if (id !== 0) {
         this.reloadSector(id);
         history.push(`/spots/${spotId}/sectors/${id}`);
-        this.setState({ sectorId: id });
+        this.setState({ sectorId: id, infoData: undefined });
       } else {
         this.reloadSpot();
         history.push(`/spots/${spotId}`);
-        this.setState({ sectorId: id });
+        this.setState({ sectorId: id, infoData: undefined });
       }
       this.reloadRoutes({ sectorId: id }, null);
     };
@@ -932,18 +938,20 @@ class SpotsShow extends Authorization {
         .then((response) => {
           decreaseNumOfActiveRequestsProp();
           const like = (
-            user === null
+            notAvail(user.id)
               ? 0
               : (R.find(R.propEq('user_id', user.id))(response.data.payload))
           );
-          const isLiked = user === null ? false : (like !== undefined);
+          const isLiked = notAvail(user.id) ? false : (like !== undefined);
           this.setState({
             numOfLikes: response.data.metadata.all,
             isLiked,
+            likeBtnIsBusy: false,
             likeId: like === undefined ? 0 : like.id,
           });
         }).catch((error) => {
           decreaseNumOfActiveRequestsProp();
+          this.setState({ likeBtnIsBusy: false });
           this.displayError(error);
         });
     };
@@ -957,6 +965,7 @@ class SpotsShow extends Authorization {
       } = this.props;
       const { isLiked, likeId, currentShown } = this.state;
       increaseNumOfActiveRequestsProp();
+      this.setState({ likeBtnIsBusy: true });
       if (isLiked) {
         Axios({
           url: `${ApiUrl}/v1/likes/${likeId}`,
@@ -969,6 +978,7 @@ class SpotsShow extends Authorization {
           }).catch((error) => {
             decreaseNumOfActiveRequestsProp();
             this.displayError(error);
+            this.setState({ likeBtnIsBusy: false });
           });
       } else {
         const params = { like: { user_id: user.id, route_id: currentShown.id } };
@@ -979,6 +989,7 @@ class SpotsShow extends Authorization {
           }).catch((error) => {
             decreaseNumOfActiveRequestsProp();
             this.displayError(error);
+            this.setState({ likeBtnIsBusy: false });
           });
       }
     };
@@ -994,7 +1005,7 @@ class SpotsShow extends Authorization {
         .then((response) => {
           decreaseNumOfActiveRequestsProp();
           const ascent = (
-            user === null
+            notAvail(user.id)
               ? null
               : (R.find(R.propEq('user_id', user.id))(response.data.payload))
           );
@@ -1118,6 +1129,7 @@ class SpotsShow extends Authorization {
             numOfComments: 0,
             numOfLikes: 0,
             isLiked: false,
+            likeBtnIsBusy: false,
             likeId: 0,
             numOfRedpoints: 0,
             numOfFlash: 0,
@@ -1251,6 +1263,7 @@ class SpotsShow extends Authorization {
         numOfComments,
         numOfLikes,
         isLiked,
+        likeBtnIsBusy,
         ascent,
         numOfRedpoints,
         numOfFlash,
@@ -1315,8 +1328,16 @@ class SpotsShow extends Authorization {
           sectors,
         );
       }
+      let data;
+      if (sectorId === 0) {
+        data = spot;
+      } else if (sector.id === sectorId) {
+        data = sector;
+      } else {
+        data = {};
+      }
       return (
-        <React.Fragment>
+        <>
           {
             routesModalVisible
               ? (
@@ -1332,7 +1353,7 @@ class SpotsShow extends Authorization {
                       cancel={this.cancelEdit}
                       users={users}
                       routeMarkColors={routeMarkColors}
-                      user={user}
+                      user={userStateToUser(user)}
                       numOfActiveRequests={numOfActiveRequests}
                       createRoute={this.createRoute}
                       updateRoute={this.updateRoute}
@@ -1353,8 +1374,9 @@ class SpotsShow extends Authorization {
                       numOfComments={numOfComments}
                       numOfLikes={numOfLikes}
                       isLiked={isLiked}
+                      likeBtnIsBusy={likeBtnIsBusy}
                       onLikeChange={this.onLikeChange}
-                      user={user}
+                      user={userStateToUser(user)}
                       numOfActiveRequests={numOfActiveRequests}
                       ascent={ascent}
                       numOfRedpoints={numOfRedpoints}
@@ -1410,22 +1432,20 @@ class SpotsShow extends Authorization {
               : ''
           }
           {
-            (user && profileFormVisible)
-              ? (
-                <Profile
-                  user={user}
-                  onFormSubmit={this.submitProfileForm}
-                  removeVk={this.removeVk}
-                  numOfActiveRequests={numOfActiveRequests}
-                  showToastr={this.showToastr}
-                  enterWithVk={this.enterWithVk}
-                  isWaiting={profileIsWaiting}
-                  closeForm={this.closeProfileForm}
-                  formErrors={profileFormErrors}
-                  resetErrors={this.profileResetErrors}
-                />
-              )
-              : ''
+            (avail(user.id) && profileFormVisible) && (
+              <Profile
+                user={user}
+                onFormSubmit={this.submitProfileForm}
+                removeVk={this.removeVk}
+                numOfActiveRequests={numOfActiveRequests}
+                showToastr={this.showToastr}
+                enterWithVk={this.enterWithVk}
+                isWaiting={profileIsWaiting}
+                closeForm={this.closeProfileForm}
+                formErrors={profileFormErrors}
+                resetErrors={this.profileResetErrors}
+              />
+            )
           }
           <ToastContainer
             ref={(ref) => {
@@ -1435,13 +1455,13 @@ class SpotsShow extends Authorization {
             className="toast-top-right"
           />
           <Header
-            data={sectorId === 0 ? spot : sector}
+            data={data}
             sectors={sectors}
             sectorId={sectorId}
             infoData={infoData}
             changeSectorFilter={this.changeSectorFilter}
             changeNameFilter={this.changeNameFilter}
-            user={user}
+            user={userStateToUser(user)}
             openProfile={this.openProfileForm}
             signUp={this.signUp}
             logIn={this.logIn}
@@ -1450,7 +1470,7 @@ class SpotsShow extends Authorization {
           <Content
             routes={R.pathOr([], [spotId, sectorId], routes)}
             ascents={ascents}
-            user={user}
+            user={userStateToUser(user)}
             ctrlPressed={ctrlPressed}
             addRoute={this.goToNew}
             sectorId={sectorId}
@@ -1461,11 +1481,7 @@ class SpotsShow extends Authorization {
             }
             numOfPages={numOfPages}
             period={period}
-            filters={
-              user
-                ? filters
-                : defaultFilters
-            }
+            filters={avail(user.id) ? filters : defaultFilters}
             categoryId={categoryId}
             onRouteClick={this.onRouteClick}
             onCategoryChange={this.onCategoryChange}
@@ -1473,7 +1489,7 @@ class SpotsShow extends Authorization {
             onFilterChange={this.onFilterChange}
             changePage={this.changePage}
           />
-        </React.Fragment>
+        </>
       );
     };
 
@@ -1490,7 +1506,7 @@ class SpotsShow extends Authorization {
         <div className={routesModalVisible || showModal ? null : 'page__scroll'}>
           <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
           <Footer
-            user={user}
+            user={userStateToUser(user)}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}

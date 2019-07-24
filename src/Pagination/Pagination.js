@@ -9,48 +9,52 @@ const Pagination = ({
   page,
   pagesList,
   lastPage,
-}) => (
-  <div className="content__pagination">
-    <div className="pagination">
-      <div
-        className="pagination__item pagination__toggle pagination__toggle-prev"
-        role="button"
-        tabIndex={0}
-        style={{ outline: 'none' }}
-        onClick={() => onPageChange(firstPage)}
-      />
+}) => {
+  const pageActiveClass = currentPage => (
+    currentPage === page ? ' pagination__item_active' : ''
+  );
+  return (
+    <div className="content__pagination">
       {
-        R.map(
-          currentPage => (
+        pagesList.length > 1 && (
+          <div className="pagination">
             <div
-              key={currentPage}
+              className="pagination__item pagination__toggle pagination__toggle-prev"
               role="button"
               tabIndex={0}
               style={{ outline: 'none' }}
-              onClick={() => onPageChange(currentPage)}
-              className={
-                `pagination__item${
-                  currentPage === page
-                    ? ' pagination__item_active'
-                    : ''}`
-              }
-            >
-              {currentPage}
-            </div>
-          ),
-          pagesList,
+              onClick={() => onPageChange(firstPage)}
+            />
+            {
+              R.map(
+                currentPage => (
+                  <div
+                    key={currentPage}
+                    role="button"
+                    tabIndex={0}
+                    style={{ outline: 'none' }}
+                    onClick={() => onPageChange(currentPage)}
+                    className={`pagination__item${pageActiveClass(currentPage)}`}
+                  >
+                    {currentPage}
+                  </div>
+                ),
+                pagesList,
+              )
+            }
+            <div
+              className="pagination__item pagination__toggle pagination__toggle-next"
+              role="button"
+              tabIndex={0}
+              style={{ outline: 'none' }}
+              onClick={() => onPageChange(lastPage)}
+            />
+          </div>
         )
       }
-      <div
-        className="pagination__item pagination__toggle pagination__toggle-next"
-        role="button"
-        tabIndex={0}
-        style={{ outline: 'none' }}
-        onClick={() => onPageChange(lastPage)}
-      />
     </div>
-  </div>
-);
+  );
+};
 
 Pagination.propTypes = {
   page: PropTypes.number.isRequired,

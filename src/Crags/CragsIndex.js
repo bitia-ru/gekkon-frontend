@@ -8,6 +8,8 @@ import Authorization from '../Authorization';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
+import { avail } from '../Utils';
+import { userStateToUser } from '../Utils/Workarounds';
 
 class CragsIndex extends Authorization {
   componentDidMount() {
@@ -69,27 +71,26 @@ class CragsIndex extends Authorization {
               ) : ''
           }
           {
-            (user && profileFormVisible)
-              ? (
-                <Profile
-                  user={user}
-                  onFormSubmit={this.submitProfileForm}
-                  closeForm={this.closeProfileForm}
-                  formErrors={profileFormErrors}
-                  resetErrors={this.profileResetErrors}
-                />
-              ) : ''
+            (avail(user.id) && profileFormVisible) && (
+              <Profile
+                user={user}
+                onFormSubmit={this.submitProfileForm}
+                closeForm={this.closeProfileForm}
+                formErrors={profileFormErrors}
+                resetErrors={this.profileResetErrors}
+              />
+            )
           }
           <MainPageHeader
             changeNameFilter={this.changeNameFilter}
-            user={user}
+            user={userStateToUser(user)}
             openProfile={this.openProfileForm}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}
           />
           <Footer
-            user={user}
+            user={userStateToUser(user)}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}

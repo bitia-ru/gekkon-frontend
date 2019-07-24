@@ -26,7 +26,7 @@ const RouteDataTable = ({
     <div className="route-data-table">
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Сложность:
+          Сложность:
         </div>
         <div className="route-data-table-item">
           <div className="route-data-table__category-track">{route.category}</div>
@@ -38,7 +38,7 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Цвет зацепов:
+          Цвет зацепов:
         </div>
         <div className="route-data-table-item">
           <RouteColorPicker editable={false} route={route} fieldName="holds_color" />
@@ -46,7 +46,7 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Цвет маркировки:
+          Цвет маркировки:
         </div>
         <div className="route-data-table-item">
           <RouteColorPicker editable={false} route={route} fieldName="marks_color" />
@@ -54,13 +54,13 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Народная категория:
+          Народная категория:
         </div>
         <div className="route-data-table-item" />
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Тип:
+          Тип:
         </div>
         <div className="route-data-table-item">
           {R.find(R.propEq('title', route.kind), ROUTE_KINDS).text}
@@ -68,7 +68,7 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Дата накрутки:
+          Дата накрутки:
         </div>
         <div className="route-data-table-item">
           {
@@ -82,7 +82,7 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Дата cкрутки:
+          Дата cкрутки:
         </div>
         <div className="route-data-table-item">
           {
@@ -96,7 +96,7 @@ const RouteDataTable = ({
       </div>
       <div className="route-data-table-row">
         <div className="route-data-table-item route-data-table-item_header">
-                    Накрутчик:
+          Накрутчик:
         </div>
         <div className="route-data-table-item">
           <a className="route-data-table__link">{isCurrentUserRoute ? 'Вы' : name}</a>
@@ -109,10 +109,6 @@ const RouteDataTable = ({
 RouteDataTable.propTypes = {
   user: PropTypes.object,
   route: PropTypes.object.isRequired,
-};
-
-RouteDataTable.defaultProps = {
-  user: null,
 };
 
 export default RouteDataTable;

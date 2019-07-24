@@ -157,7 +157,7 @@ export default class RouteEditor extends Component {
 
     render() {
       const {
-        editable, routePhoto, route, pointers,
+        editable, routePhoto, route, pointers, onImageLoad, routeImageLoading,
       } = this.props;
       const mapIndexed = R.addIndex(R.map);
       return (
@@ -182,27 +182,35 @@ export default class RouteEditor extends Component {
                 className="route-editor__img"
                 src={routePhoto}
                 alt={route.name}
+                onLoad={onImageLoad}
+                style={{ visibility: routeImageLoading ? 'hidden' : 'visible' }}
               />
               {
-                mapIndexed((pointer, index) => (
-                  <Marker
-                    key={index}
-                    removePointer={
-                      editable ? (() => this.removePointer(index)) : null
-                    }
-                    onStartMoving={
-                      editable
-                        ? ((x, y) => this.onStartMoving(index, x, y))
-                        : null
-                    }
-                    angle={pointer.angle}
-                    radius={MARKER_RADIUS}
-                    dx={pointer.dx}
-                    dy={pointer.dy}
-                    left={pointer.x}
-                    top={pointer.y}
-                  />
-                ), pointers)}
+                !routeImageLoading && (
+                <>
+                  {
+                    mapIndexed((pointer, index) => (
+                      <Marker
+                        key={index}
+                        removePointer={
+                          editable ? (() => this.removePointer(index)) : null
+                        }
+                        onStartMoving={
+                          editable
+                            ? ((x, y) => this.onStartMoving(index, x, y))
+                            : null
+                        }
+                        angle={pointer.angle}
+                        radius={MARKER_RADIUS}
+                        dx={pointer.dx}
+                        dy={pointer.dy}
+                        left={pointer.x}
+                        top={pointer.y}
+                      />
+                    ), pointers)}
+                </>
+                )
+              }
             </div>
           </div>
         </div>
@@ -211,9 +219,15 @@ export default class RouteEditor extends Component {
 }
 
 RouteEditor.propTypes = {
+  routeImageLoading: PropTypes.bool,
   routePhoto: PropTypes.string.isRequired,
   route: PropTypes.object.isRequired,
   pointers: PropTypes.array.isRequired,
   editable: PropTypes.bool.isRequired,
   updatePointers: PropTypes.func.isRequired,
+  onImageLoad: PropTypes.func.isRequired,
+};
+
+RouteEditor.defaultProps = {
+  routeImageLoading: false,
 };

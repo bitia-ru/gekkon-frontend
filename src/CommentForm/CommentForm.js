@@ -64,7 +64,7 @@ export default class CommentForm extends Component {
                     style={{ outline: 'none' }}
                     onClick={goToProfile}
                   >
-                                Для комментирования задайте имя или логин
+                    Для комментирования задайте имя или логин
                   </a>
                 )
                 : (
@@ -123,6 +123,5 @@ CommentForm.propTypes = {
 };
 
 CommentForm.defaultProps = {
-  user: null,
   quoteComment: null,
 };

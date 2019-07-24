@@ -25,6 +25,7 @@ export default class RoutesEditModal extends Component {
       photo: {
         content: null, file: null, crop: null, rotate: null,
       },
+      routeImageLoading: true,
     };
     this.mouseOver = false;
   }
@@ -216,7 +217,7 @@ export default class RoutesEditModal extends Component {
         users,
       } = this.props;
       const {
-        route, fieldsOld, currentPointers, currentPointersOld,
+        route, fieldsOld, currentPointers, currentPointersOld, routeImageLoading,
       } = this.state;
       const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
       const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
@@ -237,12 +238,14 @@ export default class RoutesEditModal extends Component {
               }}
             >
               <div className="modal__track">
-                <div className="modal__track-descr">
-                  <div className="modal__track-descr-picture" />
-                  <div className="modal__track-descr-text">
-                                Загрузите фото трассы
-                  </div>
-                </div>
+                {
+                  (!route.photo || !routeImageLoading) && (
+                    <div className="modal__track-descr">
+                      <div className="modal__track-descr-picture" />
+                      <div className="modal__track-descr-text">Загрузите фото трассы</div>
+                    </div>
+                  )
+                }
                 {
                   route.photo
                     ? (
@@ -256,6 +259,8 @@ export default class RoutesEditModal extends Component {
                         pointers={currentPointers}
                         editable
                         updatePointers={this.updatePointers}
+                        routeImageLoading={routeImageLoading}
+                        onImageLoad={() => this.setState({ routeImageLoading: false })}
                       />
                     )
                     : ''
@@ -356,11 +361,7 @@ export default class RoutesEditModal extends Component {
                     className="modal__title-input"
                     value={route.name === null ? '' : route.name}
                   />
-                  <span
-                    className="modal__title-place"
-                  >
-”)
-                  </span>
+                  <span className="modal__title-place">”)</span>
                 </h1>
                 <RouteDataEditableTable
                   route={route}
@@ -377,7 +378,7 @@ export default class RoutesEditModal extends Component {
                     type="button"
                     className="collapsable-block__header collapsable-block__header_edit"
                   >
-                                Описание
+                    Описание
                   </button>
                   <textarea
                     className="modal__descr-edit"
@@ -445,8 +446,4 @@ RoutesEditModal.propTypes = {
   isWaiting: PropTypes.bool.isRequired,
   numOfActiveRequests: PropTypes.number.isRequired,
   routeMarkColors: PropTypes.array.isRequired,
-};
-
-RoutesEditModal.defaultProps = {
-  user: null,
 };

@@ -23,6 +23,8 @@ import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
 import Profile from '../Profile/Profile';
 import Authorization from '../Authorization';
 import StickyBar from '../StickyBar/StickyBar';
+import { avail } from '../Utils';
+import { userStateToUser } from '../Utils/Workarounds';
 
 Axios.interceptors.request.use((config) => {
   const configCopy = R.clone(config);
@@ -81,6 +83,8 @@ class SpotsIndex extends Authorization {
       const token = Cookies.get('user_session_token');
       saveTokenProp(token);
       this.signIn(token);
+    } else {
+      saveUserProp({ id: null });
     }
   }
 
@@ -117,7 +121,7 @@ class SpotsIndex extends Authorization {
         profileFormErrors,
       } = this.state;
       return (
-        <React.Fragment>
+        <>
           {
             signUpFormVisible
               ? (
@@ -162,7 +166,7 @@ class SpotsIndex extends Authorization {
               : ''
           }
           {
-            (user && profileFormVisible)
+            (avail(user.id) && profileFormVisible)
               ? (
                 <Profile
                   user={user}
@@ -188,14 +192,14 @@ class SpotsIndex extends Authorization {
           />
           <MainPageHeader
             changeNameFilter={this.changeNameFilter}
-            user={user}
+            user={userStateToUser(user)}
             openProfile={this.openProfileForm}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}
           />
           <MainPageContent />
-        </React.Fragment>
+        </>
       );
     };
 
@@ -208,17 +212,17 @@ class SpotsIndex extends Authorization {
       } = this.state;
       const showModal = (signUpFormVisible || logInFormVisible || profileFormVisible);
       return (
-        <React.Fragment>
+        <>
           <div className={showModal ? null : 'page__scroll'}>
             <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
             <Footer
-              user={user}
+              user={userStateToUser(user)}
               logIn={this.logIn}
               signUp={this.signUp}
               logOut={this.logOut}
             />
           </div>
-        </React.Fragment>
+        </>
       );
     }
 }

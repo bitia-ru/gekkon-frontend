@@ -15,26 +15,24 @@ const RouteCardTable = ({
 }) => (
   <div className="content__inner">
     {
-      (sectorId !== 0 && user && ctrlPressed)
-        ? (
-          <div className="content__col-md-4 content__col-lg-3">
-            <div className="content__route-card">
-              <a
-                className="route-card route-card__edit"
-                role="link"
-                tabIndex={0}
-                style={{ outline: 'none' }}
-                onClick={addRoute}
-              >
-                <span className="route-card__edit-icon" />
-                <span className="route-card__edit-title">
-                                    Добавить новую трассу
-                </span>
-              </a>
-            </div>
+      (sectorId !== 0 && user && ctrlPressed) && (
+        <div className="content__col-md-4 content__col-lg-3">
+          <div className="content__route-card">
+            <a
+              className="route-card route-card__edit"
+              role="link"
+              tabIndex={0}
+              style={{ outline: 'none' }}
+              onClick={addRoute}
+            >
+              <span className="route-card__edit-icon" />
+              <span className="route-card__edit-title">
+                Добавить новую трассу
+              </span>
+            </a>
           </div>
-        )
-        : ''
+        </div>
+      )
     }
     {
       R.map(
@@ -60,10 +58,6 @@ RouteCardTable.propTypes = {
   addRoute: PropTypes.func.isRequired,
   sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
-};
-
-RouteCardTable.defaultProps = {
-  user: null,
 };
 
 export default RouteCardTable;

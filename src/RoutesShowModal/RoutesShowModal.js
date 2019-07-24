@@ -26,6 +26,7 @@ export default class RoutesShowModal extends Component {
       numOfDisplayedComments: DEFAULT_COMMENTS_DISPLAYED,
       descriptionCollapsed: false,
       currentPointers: [],
+      routeImageLoading: true,
     };
     this.mouseOver = false;
   }
@@ -131,6 +132,7 @@ export default class RoutesShowModal extends Component {
         route,
         numOfLikes,
         isLiked,
+        likeBtnIsBusy,
         onLikeChange,
         user,
         numOfRedpoints,
@@ -151,7 +153,11 @@ export default class RoutesShowModal extends Component {
         numOfDisplayedComments,
         quoteComment,
         commentContent,
+        routeImageLoading,
       } = this.state;
+      const showLoadPhotoMsg = (
+        (!route.photo || !routeImageLoading) && user && this.canEditRoute(user, route)
+      );
       return (
         <div className="modal-overlay__wrapper">
           <div className="modal modal-overlay__modal">
@@ -171,12 +177,14 @@ export default class RoutesShowModal extends Component {
               }}
             >
               <div className="modal__track">
-                <div className="modal__track-descr">
-                  <div className="modal__track-descr-picture" />
-                  <div className="modal__track-descr-text">
-                                Загрузите фото трассы
-                  </div>
-                </div>
+                {
+                  showLoadPhotoMsg && (
+                    <div className="modal__track-descr">
+                      <div className="modal__track-descr-picture" />
+                      <div className="modal__track-descr-text">Загрузите фото трассы</div>
+                    </div>
+                  )
+                }
                 {
                   route.photo
                     ? (
@@ -186,6 +194,8 @@ export default class RoutesShowModal extends Component {
                         pointers={currentPointers}
                         editable={false}
                         updatePointers={this.updatePointers}
+                        routeImageLoading={routeImageLoading}
+                        onImageLoad={() => this.setState({ routeImageLoading: false })}
                       />
                     )
                     : ''
@@ -199,7 +209,8 @@ export default class RoutesShowModal extends Component {
                     <LikeButton
                       numOfLikes={numOfLikes}
                       isLiked={isLiked}
-                      onChange={user === null ? null : onLikeChange}
+                      busy={likeBtnIsBusy}
+                      onChange={!user ? null : onLikeChange}
                     />
                   </div>
                   <div className="modal__track-count">
@@ -210,27 +221,25 @@ export default class RoutesShowModal extends Component {
                   </div>
                 </div>
                 {
-                  (user && this.canEditRoute(user, route))
-                    ? (
-                      ctrlPressed
-                        ? (
-                          <Button
-                            size="small"
-                            style="normal"
-                            title="Удалить"
-                            onClick={removeRoute}
-                          />
-                        )
-                        : (
-                          <Button
-                            size="small"
-                            style="normal"
-                            title="Редактировать"
-                            onClick={openEdit}
-                          />
-                        )
-                    )
-                    : ''
+                  (user && this.canEditRoute(user, route)) && (
+                    ctrlPressed
+                      ? (
+                        <Button
+                          size="small"
+                          style="normal"
+                          title="Удалить"
+                          onClick={removeRoute}
+                        />
+                      )
+                      : (
+                        <Button
+                          size="small"
+                          style="normal"
+                          title="Редактировать"
+                          onClick={openEdit}
+                        />
+                      )
+                  )
                 }
               </div>
             </div>
@@ -245,23 +254,17 @@ export default class RoutesShowModal extends Component {
             >
               <div className="modal__track-status">
                 {
-                  user
-                    ? (
-                      <RouteStatus
-                        ascent={ascent}
-                        changeAscentResult={changeAscentResult}
-                      />
-                    )
-                    : ''
+                  user && (
+                    <RouteStatus
+                      ascent={ascent}
+                      changeAscentResult={changeAscentResult}
+                    />
+                  )
                 }
               </div>
               <div className="modal__track-header">
                 <h1 className="modal__title">
-                  {
-                    route.number
-                      ? `№ ${route.number}`
-                      : `# ${route.id}`
-                  }
+                  {route.number ? `№ ${route.number}` : `# ${route.id}`}
                   <span className="modal__title-place-wrapper">
                     <span className="modal__title-place">
                       {route.name ? `(“${route.name}”)` : ''}
@@ -323,7 +326,7 @@ export default class RoutesShowModal extends Component {
     render() {
       const { onClose, numOfActiveRequests } = this.props;
       return (
-        <React.Fragment>
+        <>
           <div
             className="modal-overlay"
             onClick={() => {
@@ -338,7 +341,7 @@ export default class RoutesShowModal extends Component {
               hideLoaded
             />
           </div>
-        </React.Fragment>
+        </>
       );
     }
 }
@@ -346,6 +349,9 @@ export default class RoutesShowModal extends Component {
 RoutesShowModal.propTypes = {
   user: PropTypes.object,
   ascent: PropTypes.object,
+  numOfRedpoints: PropTypes.number,
+  numOfFlash: PropTypes.number,
+  numOfLikes: PropTypes.number,
   route: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   openEdit: PropTypes.func.isRequired,
@@ -356,16 +362,13 @@ RoutesShowModal.propTypes = {
   numOfComments: PropTypes.number.isRequired,
   removeComment: PropTypes.func.isRequired,
   saveComment: PropTypes.func.isRequired,
-  numOfLikes: PropTypes.number.isRequired,
   isLiked: PropTypes.bool.isRequired,
+  likeBtnIsBusy: PropTypes.bool.isRequired,
   onLikeChange: PropTypes.func.isRequired,
-  numOfRedpoints: PropTypes.number.isRequired,
-  numOfFlash: PropTypes.number.isRequired,
   changeAscentResult: PropTypes.func.isRequired,
   numOfActiveRequests: PropTypes.number.isRequired,
 };
 
 RoutesShowModal.defaultProps = {
-  user: null,
   ascent: null,
 };

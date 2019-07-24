@@ -11,23 +11,13 @@ const Avatar = ({
     role="button"
     onClick={onClick}
   >
-    {
-      (user && user.avatar)
-        ? (
-          <img src={user.avatar.url} alt={GetUserName(user)} />
-        )
-        : ''
-    }
+    {user && user.avatar && <img src={user.avatar.url} alt={GetUserName(user)} />}
   </div>
 );
 
 Avatar.propTypes = {
   user: PropTypes.object,
   onClick: PropTypes.func.isRequired,
-};
-
-Avatar.defaultProps = {
-  user: null,
 };
 
 export default Avatar;

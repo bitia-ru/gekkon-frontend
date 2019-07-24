@@ -98,7 +98,7 @@ class MainNav extends Component {
                         }}
                         className={`main-nav__nav-list-link${tab1Class}`}
                       >
-                                        Скалодромы
+                        Скалодромы
                       </a>
                     </li>
                     <li className="main-nav__nav-list-item">
@@ -110,7 +110,7 @@ class MainNav extends Component {
                         }}
                         className={`main-nav__nav-list-link${tab2Class}`}
                       >
-                                        Скалы
+                        Скалы
                       </a>
                     </li>
                   </ul>
@@ -142,7 +142,6 @@ MainNav.propTypes = {
 };
 
 MainNav.defaultProps = {
-  user: null,
   changeTab: null,
   tab: null,
 };

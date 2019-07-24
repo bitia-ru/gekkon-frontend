@@ -17,6 +17,8 @@ import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
 import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, ABOUT_DATA } from '../Constants/About';
+import { avail } from '../Utils';
+import { userStateToUser } from '../Utils/Workarounds';
 import aboutImage from '../../img/about-us-header-img/about-us.jpg';
 
 class About extends Authorization {
@@ -24,6 +26,7 @@ class About extends Authorization {
     const {
       history,
       saveToken: saveTokenProp,
+      saveUser: saveUserProp,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
@@ -34,6 +37,8 @@ class About extends Authorization {
       const token = Cookies.get('user_session_token');
       saveTokenProp(token);
       this.signIn(token);
+    } else {
+      saveUserProp({ id: null });
     }
   }
 
@@ -91,7 +96,7 @@ class About extends Authorization {
           )
         }
         {
-          (user && profileFormVisible) && (
+          (avail(user.id) && profileFormVisible) && (
             <Profile
               user={user}
               onFormSubmit={this.submitProfileForm}
@@ -115,7 +120,7 @@ class About extends Authorization {
         />
         <InfoPageHeader
           changeNameFilter={this.changeNameFilter}
-          user={user}
+          user={userStateToUser(user)}
           openProfile={this.openProfileForm}
           logIn={this.logIn}
           signUp={this.signUp}
@@ -140,7 +145,7 @@ class About extends Authorization {
       <div className={showModal ? null : 'page__scroll'}>
           <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
         <Footer
-          user={user}
+          user={userStateToUser(user)}
           logIn={this.logIn}
           signUp={this.signUp}
           logOut={this.logOut}

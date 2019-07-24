@@ -48,15 +48,15 @@ export default class CommentBlock extends Component {
         comments,
       } = this.props;
       return (
-        <React.Fragment>
+        <>
           <div className="comment-block">
             <div className="comment-block__header">
-                    Коментарии
+              Коментарии
             </div>
             <div className="comment-block__count-comment">
               {numOfComments}
               {' '}
-комментари
+              комментари
               {this.ending()}
             </div>
             {
@@ -68,7 +68,7 @@ export default class CommentBlock extends Component {
                     type="button"
                     onClick={showPrevious}
                   >
-                                Показать предыдущие комментарии
+                    Показать предыдущие комментарии
                   </button>
                 )
             }
@@ -114,7 +114,7 @@ export default class CommentBlock extends Component {
               }
             </div>
           </div>
-        </React.Fragment>
+        </>
       );
     }
 }
@@ -132,6 +132,5 @@ CommentBlock.propTypes = {
 };
 
 CommentBlock.defaultProps = {
-  user: null,
   onCollapseChange: null,
 };
