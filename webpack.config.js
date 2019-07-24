@@ -7,7 +7,7 @@ module.exports = () => ({
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, '/dist'),
-    filename: 'index-[contenthash].js',
+    filename: 'index-[hash].js',
     publicPath: '/',
   },
   module: {
@@ -40,6 +40,7 @@ module.exports = () => ({
     }),
     new webpack.EnvironmentPlugin({
       API_URL: '',
+      SENTRY_DSN: '',
       CLIENT_ID: '',
     }),
   ],
