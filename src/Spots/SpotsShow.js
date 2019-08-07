@@ -1487,9 +1487,7 @@ class SpotsShow extends Authorization {
       } = this.state;
       const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
       return (
-        <div
-          style={{ overflow: (routesModalVisible || showModal ? 'hidden' : '') }}
-        >
+        <div className={routesModalVisible || showModal ? null : 'page__scroll'}>
           <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
           <Footer
             user={user}

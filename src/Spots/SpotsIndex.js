@@ -209,9 +209,7 @@ class SpotsIndex extends Authorization {
       const showModal = (signUpFormVisible || logInFormVisible || profileFormVisible);
       return (
         <React.Fragment>
-          <div
-            style={{ overflow: (showModal ? 'hidden' : '') }}
-          >
+          <div className={showModal ? null : 'page__scroll'}>
             <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
             <Footer
               user={user}
