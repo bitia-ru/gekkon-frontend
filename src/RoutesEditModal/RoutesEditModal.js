@@ -11,6 +11,10 @@ import StickyBar from '../StickyBar/StickyBar';
 import RoutePhotoCropper from '../RoutePhotoCropper/RoutePhotoCropper';
 import SchemeModal from '../SchemeModal/SchemeModal';
 import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
+import {
+  isNeeded as exifRotateIgnoredIsNeeded,
+  fixRoutePhotoUpdateParams,
+} from '../Workarounds/EXIFRotateIgnored';
 import './RoutesEditModal.css';
 
 export default class RoutesEditModal extends Component {
@@ -186,21 +190,24 @@ export default class RoutesEditModal extends Component {
       this.setState({ photo: photoCopy });
     };
 
-    saveCropped = (src, crop, rotate, image) => {
+    saveCropped = (src, crop, rotate, image, exifAngle) => {
       const { route, photo } = this.state;
       route.photo = src;
       route.photoFile = photo.file;
       const isFullWidth = Math.abs(image.width - crop.width) < 1;
       const isFullHeight = Math.abs(image.height - crop.height) < 1;
       if (crop.width === 0 || crop.height === 0 || (isFullWidth && isFullHeight)) {
-        const photoCopy = R.clone(photo);
+        let photoCopy = R.clone(photo);
         photoCopy.crop = null;
         photoCopy.rotate = (rotate === 0 ? null : rotate);
+        if (exifRotateIgnoredIsNeeded(exifAngle)) {
+          photoCopy = fixRoutePhotoUpdateParams(exifAngle, photoCopy);
+        }
         this.setState({ route, showCropper: false, photo: photoCopy });
       } else {
         const scaleX = image.naturalWidth / image.width;
         const scaleY = image.naturalHeight / image.height;
-        const photoCopy = R.clone(photo);
+        let photoCopy = R.clone(photo);
         photoCopy.crop = {
           x: crop.x * scaleX,
           y: crop.y * scaleY,
@@ -208,6 +215,9 @@ export default class RoutesEditModal extends Component {
           height: crop.height * scaleY,
         };
         photoCopy.rotate = (rotate === 0 ? null : rotate);
+        if (exifRotateIgnoredIsNeeded(exifAngle)) {
+          photoCopy = fixRoutePhotoUpdateParams(exifAngle, photoCopy);
+        }
         this.setState({ route, showCropper: false, photo: photoCopy });
       }
     };
