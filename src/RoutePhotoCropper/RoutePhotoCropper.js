@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactCrop from 'react-image-crop';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+import EXIF from 'exif-js';
 import Button from '../Button/Button';
 import ButtonHandler from '../ButtonHandler/ButtonHandler';
 import { CROP_DEFAULT } from '../Constants/Route';
@@ -19,10 +20,20 @@ export default class RoutePhotoCropper extends Component {
       image: null,
       src,
     };
+    this.exifAngle = null;
   }
 
     onImageLoaded = (image) => {
       this.imageRef = image;
+      const self = this;
+      EXIF.getData(image, function () {
+        const orient = EXIF.getTag(this, 'Orientation');
+        if (orient === undefined) { return; }
+        const lookUp = {
+          1: 0, 3: 180, 6: 90, 8: 270,
+        };
+        self.exifAngle = lookUp[orient];
+      });
     };
 
     onCropComplete = (crop) => {
@@ -98,8 +109,8 @@ export default class RoutePhotoCropper extends Component {
       ctx.rotate(-90 * Math.PI / 180);
       ctx.translate(-x, -y);
 
-      const new_image_url = canvas.toDataURL();
-      this.setState({ rotate: (rotate + 90) % 360, src: new_image_url, crop: CROP_DEFAULT });
+      const newImageUrl = canvas.toDataURL();
+      this.setState({ rotate: (rotate + 90) % 360, src: newImageUrl, crop: CROP_DEFAULT });
     };
 
     render() {
@@ -142,7 +153,7 @@ export default class RoutePhotoCropper extends Component {
               style="normal"
               title="Сохранить"
               onClick={() => croppedImageUrl.then(
-                e => save(e, crop, rotate, image),
+                e => save(e, crop, rotate, image, this.exifAngle),
               )}
             />
           </div>
