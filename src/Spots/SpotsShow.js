@@ -325,7 +325,7 @@ class SpotsShow extends Authorization {
     };
 
     afterLogOut = () => {
-      const { personal, sectorId } = this.state;
+      const { personal, outdated, sectorId } = this.state;
       this.setState({ ascents: [] });
       this.reloadRoutes();
       if (sectorId === 0) {
@@ -333,7 +333,7 @@ class SpotsShow extends Authorization {
       } else {
         this.reloadSector(sectorId, 0);
       }
-      const resultFilters = [];
+      let filters = [];
       const personalNew = {
         clickable: true,
         id: 'personal',
@@ -341,7 +341,16 @@ class SpotsShow extends Authorization {
         text: `Авторские трассы ${personal ? ' ✓' : ''}`,
         value: 'personal',
       };
-      this.setState({ filters: R.append(personalNew, resultFilters) });
+      filters = R.append(personalNew, filters);
+      const outdatedNew = {
+        clickable: true,
+        id: 'outdated',
+        selected: outdated,
+        text: `Скрученные ${outdated ? ' ✓' : ''}`,
+        value: 'outdated',
+      };
+      filters = R.append(outdatedNew, filters);
+      this.setState({ filters });
     };
 
     reloadSpot = (userId) => {
@@ -543,6 +552,11 @@ class SpotsShow extends Authorization {
           ? selectedFilters[spotId][currentSectorId].personal
           : filters.personal
       );
+      const currentOutdated = (
+        (filters.outdated === null || filters.outdated === undefined)
+          ? selectedFilters[spotId][currentSectorId].outdated
+          : filters.outdated
+      );
       const currentPage = (
         (page === null || page === undefined)
           ? selectedPages[spotId][currentSectorId]
@@ -552,6 +566,7 @@ class SpotsShow extends Authorization {
         filters: {
           category: [[currentCategoryFrom], [currentCategoryTo]],
           personal: currentPersonal,
+          outdated: currentOutdated,
         },
       };
       if (userCurr || avail(user.id)) {
@@ -685,15 +700,17 @@ class SpotsShow extends Authorization {
       this.reloadRoutes({ result });
     };
 
-    changePersonalFilter = (personal) => {
+    changeFilter = (name, value) => {
       const {
         setSelectedFilter: setSelectedFilterProp,
         setSelectedPage: setSelectedPageProp,
       } = this.props;
       const { spotId, sectorId } = this.state;
-      setSelectedFilterProp(spotId, sectorId, 'personal', personal);
+      setSelectedFilterProp(spotId, sectorId, name, value);
       setSelectedPageProp(spotId, sectorId, 1);
-      this.reloadRoutes({ personal });
+      const state = {};
+      state[name] = value;
+      this.reloadRoutes(state);
     };
 
     changeNameFilter = (searchString) => {
@@ -724,8 +741,8 @@ class SpotsShow extends Authorization {
         filters[index].text = `${filters[index].text} ✓`;
       }
       filters[index].selected = !filters[index].selected;
-      if (id === 'personal') {
-        this.changePersonalFilter(filters[index].selected);
+      if (R.contains(id, ['personal', 'outdated'])) {
+        this.changeFilter(id, filters[index].selected);
       }
       if (R.contains(id, R.map(e => e.id, RESULT_FILTERS))) {
         const resultFilters = R.filter(
