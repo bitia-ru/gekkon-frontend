@@ -138,6 +138,10 @@
     margin-right: 10px;
 }
 
+.modal__track-count {
+    position: relative;
+}
+
 .modal__track-count:not(:last-child) {
     margin-right: 30px;
 }
