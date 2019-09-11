@@ -75,12 +75,15 @@ class SpotsShow extends Authorization {
       comments: [],
       numOfComments: 0,
       numOfLikes: undefined,
+      likes: [],
       isLiked: false,
       likeId: 0,
       likeBtnIsBusy: false,
       ascent: null,
       numOfRedpoints: undefined,
+      redpoints: [],
       numOfFlash: undefined,
+      flashes: [],
       users: [],
       editRouteIsWaiting: false,
       viewMode: DEFAULT_VIEW_MODE,
@@ -311,12 +314,15 @@ class SpotsShow extends Authorization {
         comments: [],
         numOfComments: 0,
         numOfLikes: undefined,
+        likes: [],
         isLiked: false,
         likeId: 0,
         likeBtnIsBusy: false,
         ascent: null,
         numOfRedpoints: undefined,
+        redpoints: [],
         numOfFlash: undefined,
+        flashes: [],
       });
       if (sectorId === 0) {
         this.reloadSpot();
@@ -1012,6 +1018,7 @@ class SpotsShow extends Authorization {
           const isLiked = notAvail(user.id) ? false : (like !== undefined);
           this.setState({
             numOfLikes: response.data.metadata.all,
+            likes: response.data.payload,
             isLiked,
             likeBtnIsBusy: false,
             likeId: like === undefined ? 0 : like.id,
@@ -1078,10 +1085,18 @@ class SpotsShow extends Authorization {
           );
           this.setState({
             ascent: ascent === undefined ? null : ascent,
+            redpoints: R.filter(
+              R.propEq('result', 'red_point'),
+              response.data.payload,
+            ),
             numOfRedpoints: R.filter(
               R.propEq('result', 'red_point'),
               response.data.payload,
             ).length,
+            flashes: R.filter(
+              R.propEq('result', 'flash'),
+              response.data.payload,
+            ),
             numOfFlash: R.filter(
               R.propEq('result', 'flash'),
               response.data.payload,
@@ -1195,11 +1210,14 @@ class SpotsShow extends Authorization {
             ascent: null,
             numOfComments: 0,
             numOfLikes: 0,
+            likes: [],
             isLiked: false,
             likeBtnIsBusy: false,
             likeId: 0,
             numOfRedpoints: 0,
+            redpoints: [],
             numOfFlash: 0,
+            flashes: [],
           });
         }).catch((error) => {
           decreaseNumOfActiveRequestsProp();
@@ -1355,11 +1373,14 @@ class SpotsShow extends Authorization {
         comments,
         numOfComments,
         numOfLikes,
+        likes,
         isLiked,
         likeBtnIsBusy,
         ascent,
         numOfRedpoints,
+        redpoints,
         numOfFlash,
+        flashes,
         signUpFormVisible,
         signUpIsWaiting,
         signUpFormErrors,
@@ -1477,6 +1498,7 @@ class SpotsShow extends Authorization {
                     saveComment={this.saveComment}
                     numOfComments={numOfComments}
                     numOfLikes={numOfLikes}
+                    likes={likes}
                     isLiked={isLiked}
                     likeBtnIsBusy={likeBtnIsBusy}
                     onLikeChange={this.onLikeChange}
@@ -1484,7 +1506,9 @@ class SpotsShow extends Authorization {
                     numOfActiveRequests={numOfActiveRequests}
                     ascent={ascent}
                     numOfRedpoints={numOfRedpoints}
+                    redpoints={redpoints}
                     numOfFlash={numOfFlash}
+                    flashes={flashes}
                     changeAscentResult={this.changeAscentResult}
                     route={currentShown}
                     diagram={
