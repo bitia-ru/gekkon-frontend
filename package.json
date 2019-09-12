@@ -45,7 +45,6 @@
     "qs": "^6.7.0",
     "ramda": "^0.25.0",
     "react": "^16.5.2",
-    "react-datepicker": "^1.8.0",
     "react-dnd": "^7.0.2",
     "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.5.2",

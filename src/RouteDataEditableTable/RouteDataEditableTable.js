@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import moment from 'moment';
 import CategorySlider from '../CategorySlider/CategorySlider';
 import { GetCategoryColor } from '../Constants/Categories';
 import ComboBox from '../ComboBox/ComboBox';
 import { ROUTE_KINDS } from '../Constants/Route';
-import DatePickerBlock from '../DatePickerBlock/DatePickerBlock';
 import ComboBoxPerson from '../ComboBoxPerson/ComboBoxPerson';
-import { DATE_FORMAT } from '../Constants/Date';
 import RouteColorPicker from '../RouteColorPicker/RouteColorPicker';
+import DatePicker from '../DatePicker/DatePicker';
 import './RouteDataEditableTable.css';
 
 export default class RouteDataEditableTable extends Component {
@@ -145,10 +143,13 @@ export default class RouteDataEditableTable extends Component {
             </div>
             <div className="modal__table-item modal__table-item-right">
               <div className="modal__field-select">
-                <DatePickerBlock
-                  date={route.installed_at ? moment(route.installed_at) : null}
-                  dateFormat={DATE_FORMAT}
-                  onChange={date => onRouteParamChange(date.format(), 'installed_at')}
+                <DatePicker
+                  date={route.installed_at}
+                  size="small"
+                  borderStyle="transparent"
+                  onSelect={
+                    date => onRouteParamChange(date ? date.format() : null, 'installed_at')
+                  }
                 />
               </div>
             </div>
@@ -159,11 +160,12 @@ export default class RouteDataEditableTable extends Component {
             </div>
             <div className="modal__table-item modal__table-item-right">
               <div className="modal__field-select">
-                <DatePickerBlock
-                  date={route.installed_until ? moment(route.installed_until) : null}
-                  dateFormat={DATE_FORMAT}
-                  onChange={
-                    date => onRouteParamChange(date.format(), 'installed_until')
+                <DatePicker
+                  date={route.installed_until}
+                  size="small"
+                  borderStyle="transparent"
+                  onSelect={
+                    date => onRouteParamChange(date ? date.format() : null, 'installed_until')
                   }
                 />
               </div>
