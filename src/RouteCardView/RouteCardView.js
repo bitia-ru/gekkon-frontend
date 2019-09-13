@@ -29,7 +29,6 @@ const RouteCardView = ({
       : (
         <RouteCardList
           routes={routes}
-          ascents={ascents}
           addRoute={addRoute}
           sectorId={sectorId}
           onRouteClick={onRouteClick}

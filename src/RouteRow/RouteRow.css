@@ -1,0 +1,60 @@
+.table-card__card {
+    display: flex;
+    padding: 36px 44px;
+    border-top: 2px solid #D1D5E2;
+    position: relative;
+    background-color: transparent;
+    transition: box-shadow .4s ease-out, background-color .4s ease-out;
+}
+
+.table-card__card:hover {
+    box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.12);
+    background-color: #e2f6ff;
+}
+
+.table-card__link {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.table-card__item {
+    color: #000000;
+    font-size: 20px;
+    font-family: GilroyRegular, sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-right: 24px;
+    box-sizing: border-box;
+}
+
+.table-card__number {
+    width: 10%;
+}
+
+.table-card__name {
+    width: 22%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.table-card__category {
+    width: 18%;
+}
+
+.table-card__hooks {
+    width: 15%;
+}
+
+.table-card__marking {
+    width: 15%;
+}
+
+.table-card__author {
+    width: 20%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

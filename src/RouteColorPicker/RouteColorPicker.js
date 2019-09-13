@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { getColorStyle } from '../Constants/Route';
 import './RouteColorPicker.css';
 
 export default class RouteColorPicker extends Component {
@@ -24,14 +25,6 @@ export default class RouteColorPicker extends Component {
       if (!this.mouseOver) {
         this.setState({ droppedDown: false });
       }
-    };
-
-    getColorStyle = (routeMarkColor) => {
-      if (routeMarkColor && routeMarkColor.photo) return { backgroundImage: `url(${routeMarkColor.photo.url})` };
-      if (routeMarkColor && routeMarkColor.color) {
-        return { backgroundColor: routeMarkColor.color };
-      }
-      return { backgroundImage: 'url(/public/img/route-img/no_color.png)' };
     };
 
     render() {
@@ -69,7 +62,7 @@ export default class RouteColorPicker extends Component {
           <div className="mark-color-picker__info">
             <div
               className="mark-color-picker__color"
-              style={this.getColorStyle(route[fieldName])}
+              style={getColorStyle(route[fieldName])}
             />
           </div>
           <div className="mark-color-picker__name">
@@ -97,7 +90,7 @@ export default class RouteColorPicker extends Component {
                         <div className="mark-color-picker__item">
                           <div
                             className="mark-color-picker__color"
-                            style={this.getColorStyle(routeMarkColor)}
+                            style={getColorStyle(routeMarkColor)}
                           />
                           <div className="mark-color-picker__item-text">
                             {routeMarkColor.name}
