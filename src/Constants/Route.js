@@ -19,3 +19,11 @@ export const CROP_DEFAULT = {
 };
 
 export const SHORT_CLICK_DELAY = 500; // ms
+
+export const getColorStyle = (routeMarkColor) => {
+  if (routeMarkColor && routeMarkColor.photo) return { backgroundImage: `url(${routeMarkColor.photo.url})` };
+  if (routeMarkColor && routeMarkColor.color) {
+    return { backgroundColor: routeMarkColor.color };
+  }
+  return { backgroundImage: 'url(/public/img/route-img/no_color.png)' };
+};
