@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as R from 'ramda';
-import { GetCategoryColor } from '../Constants/Categories';
+import { getCategoryColor } from '../Constants/Categories';
 import { GetUserName } from '../Constants/User';
 import { ROUTE_KINDS } from '../Constants/Route';
 import RouteColorPicker from '../RouteColorPicker/RouteColorPicker';
@@ -32,7 +32,7 @@ const RouteDataTable = ({
           <div className="route-data-table__category-track">{route.category}</div>
           <div
             className="route-data-table__category-track-color"
-            style={{ backgroundColor: GetCategoryColor(route.category) }}
+            style={{ backgroundColor: getCategoryColor(route.category) }}
           />
         </div>
       </div>

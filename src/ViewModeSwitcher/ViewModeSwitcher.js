@@ -1,52 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as R from 'ramda';
+import ModeButton from '../ModeButton/ModeButton';
 import './ViewModeSwitcher.css';
 
-const tableIcon = '/public/img/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-table';
-const listIcon = '/public/img/view-mode-switcher-sprite/view-mode-switcher-sprite.svg#toggle-list';
-
 const ViewModeSwitcher = ({
-  viewMode, onViewModeChange,
+  viewMode, onViewModeChange, viewModeData,
 }) => (
   <div className="content__toggle">
-    <button
-      type="button"
-      className={
-        `view-mode-switcher${
-          viewMode === 'table'
-            ? ' view-mode-switcher_active'
-            : ''}`
-      }
-      onClick={() => onViewModeChange('table')}
-    >
-      <svg>
-        <use
-          xlinkHref={tableIcon}
-        />
-      </svg>
-    </button>
-    <button
-      type="button"
-      className={
-        `view-mode-switcher${
-          viewMode === 'list'
-            ? ' view-mode-switcher_active'
-            : ''}`
-      }
-      onClick={() => onViewModeChange('list')}
-    >
-      <svg>
-        <use
-          xlinkHref={listIcon}
-        />
-      </svg>
-    </button>
+    {
+      R.map(
+        (e) => {
+          const name = e[0];
+          return (<ModeButton
+            key={name}
+            mode={name}
+            title={viewModeData[name] && viewModeData[name].title}
+            disabled={viewModeData[name] && viewModeData[name].disabled}
+            onClick={() => onViewModeChange(name)}
+            active={viewMode === name}
+          />);
+        },
+        R.toPairs(viewModeData),
+      )
+    }
   </div>
 );
 
 ViewModeSwitcher.propTypes = {
+  viewModeData: PropTypes.object,
   viewMode: PropTypes.string.isRequired,
   onViewModeChange: PropTypes.func.isRequired,
+};
+
+ViewModeSwitcher.defaultProps = {
+  viewModeData: {},
 };
 
 export default ViewModeSwitcher;

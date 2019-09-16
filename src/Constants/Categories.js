@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+export const DEFAULT_CATEGORY = '5a';
+
 export const CATEGORIES_ITEMS = [
   { id: 0, title: 'Все', clickable: true },
   { id: 1, title: '6A+ и ниже', clickable: true },
@@ -19,7 +21,7 @@ export const CATEGORIES = [
 
 const COLORS = ['ffffff', 'ffe602', '48ff66', '7c81ff', 'eb002a', '141414'];
 
-export const GetCategoryColor = (category) => {
+export const getCategoryColor = (category) => {
   const index = R.findIndex(c => c === category)(CATEGORIES);
   let i;
   if (index >= 0 && index <= 11) { i = 0; }

@@ -9,6 +9,8 @@ import ButtonHandler from '../ButtonHandler/ButtonHandler';
 import { CATEGORIES } from '../Constants/Categories';
 import StickyBar from '../StickyBar/StickyBar';
 import RoutePhotoCropper from '../RoutePhotoCropper/RoutePhotoCropper';
+import SchemeModal from '../SchemeModal/SchemeModal';
+import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
 import './RoutesEditModal.css';
 
 export default class RoutesEditModal extends Component {
@@ -26,6 +28,7 @@ export default class RoutesEditModal extends Component {
         content: null, file: null, crop: null, rotate: null,
       },
       routeImageLoading: true,
+      schemeModalVisible: false,
     };
     this.mouseOver = false;
   }
@@ -120,6 +123,10 @@ export default class RoutesEditModal extends Component {
       if (routeProp.data.personal || user.id === route.author_id) {
         formData.append('data[personal]', true);
       }
+      if (JSON.stringify(routeProp.data.position) !== JSON.stringify(route.data.position)) {
+        formData.append('data[position][left]', route.data.position.left);
+        formData.append('data[position][top]', route.data.position.top);
+      }
       if (routeProp.id !== null) {
         updateRoute(formData);
       } else {
@@ -205,6 +212,18 @@ export default class RoutesEditModal extends Component {
       }
     };
 
+    saveRoutePositionAndClose = (position) => {
+      const { route } = this.state;
+      const data = R.clone(route.data);
+      data.position = R.clone(position);
+      this.onRouteParamChange(data, 'data');
+      this.setState({ schemeModalVisible: false });
+    };
+
+    resetRoutePositionAndClose = () => {
+      this.setState({ schemeModalVisible: false });
+    };
+
     content = () => {
       const {
         onClose,
@@ -215,9 +234,15 @@ export default class RoutesEditModal extends Component {
         user,
         routeMarkColors,
         users,
+        diagram,
       } = this.props;
       const {
-        route, fieldsOld, currentPointers, currentPointersOld, routeImageLoading,
+        route,
+        fieldsOld,
+        currentPointers,
+        currentPointersOld,
+        routeImageLoading,
+        schemeModalVisible,
       } = this.state;
       const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
       const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
@@ -226,173 +251,200 @@ export default class RoutesEditModal extends Component {
         <div className="modal-overlay__wrapper">
           <div className="modal modal-overlay__modal">
             <div className="modal-block__close">
-              <CloseButton onClick={() => onClose()} />
+              <CloseButton
+                onClick={
+                  schemeModalVisible
+                    ? this.resetRoutePositionAndClose
+                    : () => onClose()
+                }
+              />
             </div>
-            <div
-              className="modal__track-block"
-              onMouseOver={() => {
-                this.mouseOver = true;
-              }}
-              onMouseLeave={() => {
-                this.mouseOver = false;
-              }}
-            >
-              <div className="modal__track">
-                {
-                  (!route.photo || !routeImageLoading) && (
-                    <div className="modal__track-descr">
-                      <div className="modal__track-descr-picture" />
-                      <div className="modal__track-descr-text">Загрузите фото трассы</div>
-                    </div>
-                  )
-                }
-                {
-                  route.photo
-                    ? (
-                      <RouteEditor
-                        route={routeProp}
-                        routePhoto={
-                          typeof (route.photo) === 'string'
-                            ? route.photo
-                            : route.photo.url
-                        }
-                        pointers={currentPointers}
-                        editable
-                        updatePointers={this.updatePointers}
-                        routeImageLoading={routeImageLoading}
-                        onImageLoad={() => this.setState({ routeImageLoading: false })}
-                      />
-                    )
-                    : ''
-                }
-                <div className="btn-handler__track-toggles">
-                  <input
-                    type="file"
-                    hidden
-                    ref={(ref) => {
-                      this.fileInput = ref;
-                    }}
-                    onChange={event => this.onFileChosen(event.target.files[0])}
+            {
+              schemeModalVisible
+                ? (
+                  <SchemeModal
+                    currentRoute={route}
+                    editable
+                    diagram={diagram}
+                    save={this.saveRoutePositionAndClose}
+                    close={this.resetRoutePositionAndClose}
                   />
-                  {
-                    route.photo
-                      ? (
-                        <React.Fragment>
-                          <ButtonHandler
-                            onClick={() => this.fileInput.click()}
-                            title="Обновить фото"
-                            xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
-                          />
-                          <ButtonHandler
-                            onClick={
-                              () => this.onRouteParamChange(null, 'photo')
-                            }
-                            title="Удалить фото"
-                            xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
-                          />
-                        </React.Fragment>
-                      )
-                      : (
-                        <ButtonHandler
-                          onClick={() => this.fileInput.click()}
-                          title="Загрузить фото"
-                          xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-download"
+                )
+                : (
+                  <>
+                    <div
+                      className="modal__track-block"
+                      onMouseOver={() => {
+                        this.mouseOver = true;
+                      }}
+                      onMouseLeave={() => {
+                        this.mouseOver = false;
+                      }}
+                    >
+                      <div className="modal__track">
+                        <ShowSchemeButton
+                          disabled={diagram === null}
+                          title={diagram === null ? 'Схема зала ещё не загружена' : ''}
+                          onClick={() => this.setState({ schemeModalVisible: true })}
                         />
-                      )
-                  }
-                </div>
-              </div>
-              <div
-                className="modal__track-footer modal__track-footer-edit-mode"
-              >
-                <div className="modal__track-footer-edit-mode-item">
-                  <Button
-                    size="small"
-                    style="gray"
-                    title="Отмена"
-                    onClick={cancel}
-                  />
-                </div>
-                <div className="modal__track-footer-edit-mode-item">
-                  <Button
-                    size="small"
-                    style="normal"
-                    title="Сохранить"
-                    isWaiting={isWaiting}
-                    disabled={saveDisabled}
-                    onClick={this.save}
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              className="modal__track-info"
-              onMouseOver={() => {
-                this.mouseOver = true;
-              }}
-              onMouseLeave={() => {
-                this.mouseOver = false;
-              }}
-            >
-              <div className="modal__track-header">
-                <h1 className="modal__title">
-                  {'№ '}
-                  <input
-                    type="text"
-                    onChange={
-                      event => this.onRouteParamChange(
-                        event.target.value,
-                        'number',
-                      )
-                    }
-                    className="modal__title-input modal__number-input modal__title-input_dark"
-                    maxLength="6"
-                    value={route.number === null ? '' : route.number}
-                  />
-                  <span className="modal__title-place">(“</span>
-                  <input
-                    type="text"
-                    onChange={
-                      event => this.onRouteParamChange(
-                        event.target.value,
-                        'name',
-                      )
-                    }
-                    className="modal__title-input"
-                    value={route.name === null ? '' : route.name}
-                  />
-                  <span className="modal__title-place">”)</span>
-                </h1>
-                <RouteDataEditableTable
-                  route={route}
-                  sector={sector}
-                  onRouteParamChange={this.onRouteParamChange}
-                  user={user}
-                  routeMarkColors={routeMarkColors}
-                  users={users}
-                />
-              </div>
-              <div className="modal__item modal__descr-item">
-                <div>
-                  <button
-                    type="button"
-                    className="collapsable-block__header collapsable-block__header_edit"
-                  >
-                    Описание
-                  </button>
-                  <textarea
-                    className="modal__descr-edit"
-                    onChange={
-                      event => this.onRouteParamChange(
-                        event.target.value,
-                        'description',
-                      )
-                    }
-                    value={route.description ? route.description : ''}
-                  />
-                </div>
-              </div>
-            </div>
+                        {
+                          (!route.photo || !routeImageLoading) && (
+                            <div className="modal__track-descr">
+                              <div className="modal__track-descr-picture" />
+                              <div className="modal__track-descr-text">Загрузите фото трассы</div>
+                            </div>
+                          )
+                        }
+                        {
+                          route.photo
+                            ? (
+                              <RouteEditor
+                                route={routeProp}
+                                routePhoto={
+                                  typeof (route.photo) === 'string'
+                                    ? route.photo
+                                    : route.photo.url
+                                }
+                                pointers={currentPointers}
+                                editable
+                                updatePointers={this.updatePointers}
+                                routeImageLoading={routeImageLoading}
+                                onImageLoad={() => this.setState({ routeImageLoading: false })}
+                              />
+                            )
+                            : ''
+                        }
+                        <div className="btn-handler__track-toggles">
+                          <input
+                            type="file"
+                            hidden
+                            ref={(ref) => {
+                              this.fileInput = ref;
+                            }}
+                            onChange={event => this.onFileChosen(event.target.files[0])}
+                          />
+                          {
+                            route.photo
+                              ? (
+                                <React.Fragment>
+                                  <ButtonHandler
+                                    onClick={() => this.fileInput.click()}
+                                    title="Обновить фото"
+                                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
+                                  />
+                                  <ButtonHandler
+                                    onClick={
+                                      () => this.onRouteParamChange(null, 'photo')
+                                    }
+                                    title="Удалить фото"
+                                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
+                                  />
+                                </React.Fragment>
+                              )
+                              : (
+                                <ButtonHandler
+                                  onClick={() => this.fileInput.click()}
+                                  title="Загрузить фото"
+                                  xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-download"
+                                />
+                              )
+                          }
+                        </div>
+                      </div>
+                      <div
+                        className="modal__track-footer modal__track-footer-edit-mode"
+                      >
+                        <div className="modal__track-footer-edit-mode-item">
+                          <Button
+                            size="small"
+                            style="gray"
+                            title="Отмена"
+                            onClick={cancel}
+                          />
+                        </div>
+                        <div className="modal__track-footer-edit-mode-item">
+                          <Button
+                            size="small"
+                            style="normal"
+                            title="Сохранить"
+                            isWaiting={isWaiting}
+                            disabled={saveDisabled}
+                            onClick={this.save}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="modal__track-info"
+                      onMouseOver={() => {
+                        this.mouseOver = true;
+                      }}
+                      onMouseLeave={() => {
+                        this.mouseOver = false;
+                      }}
+                    >
+                      <div className="modal__track-header">
+                        <h1 className="modal__title">
+                          {'№ '}
+                          <input
+                            type="text"
+                            onChange={
+                              event => this.onRouteParamChange(
+                                event.target.value,
+                                'number',
+                              )
+                            }
+                            className="modal__title-input modal__number-input modal__title-input_dark"
+                            maxLength="6"
+                            value={route.number === null ? '' : route.number}
+                          />
+                          <span className="modal__title-place">(“</span>
+                          <input
+                            type="text"
+                            onChange={
+                              event => this.onRouteParamChange(
+                                event.target.value,
+                                'name',
+                              )
+                            }
+                            className="modal__title-input"
+                            value={route.name === null ? '' : route.name}
+                          />
+                          <span className="modal__title-place">”)</span>
+                        </h1>
+                        <RouteDataEditableTable
+                          route={route}
+                          sector={sector}
+                          onRouteParamChange={this.onRouteParamChange}
+                          user={user}
+                          routeMarkColors={routeMarkColors}
+                          users={users}
+                        />
+                      </div>
+                      <div className="modal__item modal__descr-item">
+                        <div>
+                          <button
+                            type="button"
+                            className="collapsable-block__header collapsable-block__header_edit"
+                          >
+                            Описание
+                          </button>
+                          <textarea
+                            className="modal__descr-edit"
+                            onChange={
+                              event => this.onRouteParamChange(
+                                event.target.value,
+                                'description',
+                              )
+                            }
+                            value={route.description ? route.description : ''}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )
+            }
           </div>
         </div>
       );
@@ -400,9 +452,12 @@ export default class RoutesEditModal extends Component {
 
     render() {
       const { onClose, numOfActiveRequests } = this.props;
-      const { showCropper, photo } = this.state;
+      const {
+        showCropper,
+        photo,
+      } = this.state;
       return (
-        <React.Fragment>
+        <>
           <div
             className="modal-overlay"
             onClick={showCropper ? null : () => {
@@ -429,13 +484,14 @@ export default class RoutesEditModal extends Component {
                 )
             }
           </div>
-        </React.Fragment>
+        </>
       );
     }
 }
 
 RoutesEditModal.propTypes = {
   user: PropTypes.object,
+  diagram: PropTypes.string,
   route: PropTypes.object.isRequired,
   sector: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,

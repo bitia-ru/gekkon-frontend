@@ -1,0 +1,23 @@
+.modal__track-show-map {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    cursor: pointer;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    transition: opacity .3s ease-out;
+    z-index: 10;
+}
+
+.modal__track-show-map:hover {
+    opacity: .8;
+}
+
+.modal__track-show-map svg {
+    width: 100%;
+    height: 100%;
+    fill: #4F4F4F;
+}
