@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RouteCardTable from '../RouteCardTable/RouteCardTable';
 import RouteCardList from '../RouteCardList/RouteCardList';
+import RouteCardScheme from '../RouteCardScheme/RouteCardScheme';
 
 const RouteCardView = ({
   viewMode,
@@ -12,10 +13,11 @@ const RouteCardView = ({
   onRouteClick,
   ctrlPressed,
   user,
+  diagram,
 }) => (
   <React.Fragment>
-    {viewMode === 'table'
-      ? (
+    {
+      viewMode === 'table' && (
         <RouteCardTable
           routes={routes}
           ascents={ascents}
@@ -26,7 +28,9 @@ const RouteCardView = ({
           user={user}
         />
       )
-      : (
+    }
+    {
+      viewMode === 'list' && (
         <RouteCardList
           routes={routes}
           addRoute={addRoute}
@@ -36,11 +40,22 @@ const RouteCardView = ({
         />
       )
     }
+    {
+      viewMode === 'scheme' && (
+        <RouteCardScheme
+          ascents={ascents}
+          routes={routes}
+          onRouteClick={onRouteClick}
+          diagram={diagram}
+        />
+      )
+    }
   </React.Fragment>
 );
 
 RouteCardView.propTypes = {
   user: PropTypes.object,
+  diagram: PropTypes.string,
   viewMode: PropTypes.string.isRequired,
   routes: PropTypes.array.isRequired,
   ascents: PropTypes.array.isRequired,

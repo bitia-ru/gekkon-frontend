@@ -13,6 +13,8 @@ import RouteEditor from '../RouteEditor/RouteEditor';
 import CloseButton from '../CloseButton/CloseButton';
 import { DEFAULT_COMMENTS_DISPLAYED } from '../Constants/Comments';
 import StickyBar from '../StickyBar/StickyBar';
+import SchemeModal from '../SchemeModal/SchemeModal';
+import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
 import './RoutesShowModal.css';
 
 export default class RoutesShowModal extends Component {
@@ -27,6 +29,7 @@ export default class RoutesShowModal extends Component {
       descriptionCollapsed: false,
       currentPointers: [],
       routeImageLoading: true,
+      schemeModalVisible: false,
     };
     this.mouseOver = false;
   }
@@ -146,6 +149,7 @@ export default class RoutesShowModal extends Component {
         comments,
         numOfComments,
         goToProfile,
+        diagram,
       } = this.props;
       const {
         currentPointers,
@@ -154,6 +158,7 @@ export default class RoutesShowModal extends Component {
         quoteComment,
         commentContent,
         routeImageLoading,
+        schemeModalVisible,
       } = this.state;
       const showLoadPhotoMsg = (
         (!route.photo || !routeImageLoading) && user && this.canEditRoute(user, route)
@@ -162,169 +167,196 @@ export default class RoutesShowModal extends Component {
         <div className="modal-overlay__wrapper">
           <div className="modal modal-overlay__modal">
             <div className="modal-block__close">
-              <CloseButton onClick={() => onClose()} />
+              <CloseButton
+                onClick={
+                  schemeModalVisible
+                    ? () => this.setState({ schemeModalVisible: false })
+                    : () => onClose()
+                }
+              />
             </div>
-            <div
-              className="modal__track-block"
-              role="button"
-              tabIndex={0}
-              style={{ outline: 'none' }}
-              onMouseOver={() => {
-                this.mouseOver = true;
-              }}
-              onMouseLeave={() => {
-                this.mouseOver = false;
-              }}
-            >
-              <div className="modal__track">
-                {
-                  showLoadPhotoMsg && (
-                    <div className="modal__track-descr">
-                      <div className="modal__track-descr-picture" />
-                      <div className="modal__track-descr-text">Загрузите фото трассы</div>
+            {
+              schemeModalVisible
+                ? (
+                  <SchemeModal
+                    currentRoute={route}
+                    diagram={diagram}
+                    save={() => this.setState({ schemeModalVisible: false })}
+                    close={() => this.setState({ schemeModalVisible: false })}
+                  />
+                )
+                : (
+                  <>
+                    <div
+                      className="modal__track-block"
+                      role="button"
+                      tabIndex={0}
+                      style={{ outline: 'none' }}
+                      onMouseOver={() => {
+                        this.mouseOver = true;
+                      }}
+                      onMouseLeave={() => {
+                        this.mouseOver = false;
+                      }}
+                    >
+                      <div className="modal__track">
+                        <ShowSchemeButton
+                          disabled={route.data.position === undefined}
+                          onClick={() => this.setState({ schemeModalVisible: true })}
+                        />
+                        {
+                          showLoadPhotoMsg && (
+                            <div className="modal__track-descr">
+                              <div className="modal__track-descr-picture" />
+                              <div className="modal__track-descr-text">Загрузите фото трассы</div>
+                            </div>
+                          )
+                        }
+                        {
+                          route.photo
+                            ? (
+                              <RouteEditor
+                                route={route}
+                                routePhoto={route.photo.url}
+                                pointers={currentPointers}
+                                editable={false}
+                                updatePointers={this.updatePointers}
+                                routeImageLoading={routeImageLoading}
+                                onImageLoad={() => this.setState({ routeImageLoading: false })}
+                              />
+                            )
+                            : ''
+                        }
+                      </div>
+                      <div
+                        className="modal__track-footer"
+                      >
+                        <div className="modal__track-information">
+                          <div className="modal__track-count">
+                            <LikeButton
+                              numOfLikes={numOfLikes}
+                              isLiked={isLiked}
+                              busy={likeBtnIsBusy}
+                              onChange={!user ? null : onLikeChange}
+                            />
+                          </div>
+                          <div className="modal__track-count">
+                            <Counter number={numOfRedpoints} text="redpoints" />
+                          </div>
+                          <div className="modal__track-count">
+                            <Counter number={numOfFlash} text="flash" />
+                          </div>
+                        </div>
+                        {
+                          (user && this.canEditRoute(user, route)) && (
+                            ctrlPressed
+                              ? (
+                                <Button
+                                  size="small"
+                                  style="normal"
+                                  title="Удалить"
+                                  onClick={removeRoute}
+                                />
+                              )
+                              : (
+                                <Button
+                                  size="small"
+                                  style="normal"
+                                  title="Редактировать"
+                                  onClick={openEdit}
+                                />
+                              )
+                          )
+                        }
+                      </div>
                     </div>
-                  )
-                }
-                {
-                  route.photo
-                    ? (
-                      <RouteEditor
-                        route={route}
-                        routePhoto={route.photo.url}
-                        pointers={currentPointers}
-                        editable={false}
-                        updatePointers={this.updatePointers}
-                        routeImageLoading={routeImageLoading}
-                        onImageLoad={() => this.setState({ routeImageLoading: false })}
-                      />
-                    )
-                    : ''
-                }
-              </div>
-              <div
-                className="modal__track-footer"
-              >
-                <div className="modal__track-information">
-                  <div className="modal__track-count">
-                    <LikeButton
-                      numOfLikes={numOfLikes}
-                      isLiked={isLiked}
-                      busy={likeBtnIsBusy}
-                      onChange={!user ? null : onLikeChange}
-                    />
-                  </div>
-                  <div className="modal__track-count">
-                    <Counter number={numOfRedpoints} text="redpoints" />
-                  </div>
-                  <div className="modal__track-count">
-                    <Counter number={numOfFlash} text="flash" />
-                  </div>
-                </div>
-                {
-                  (user && this.canEditRoute(user, route)) && (
-                    ctrlPressed
-                      ? (
-                        <Button
-                          size="small"
-                          style="normal"
-                          title="Удалить"
-                          onClick={removeRoute}
+                    <div
+                      className="modal__track-info"
+                      onMouseOver={() => {
+                        this.mouseOver = true;
+                      }}
+                      onMouseLeave={() => {
+                        this.mouseOver = false;
+                      }}
+                    >
+                      <div className="modal__track-status">
+                        {
+                          user && (
+                            <RouteStatus
+                              ascent={ascent}
+                              changeAscentResult={changeAscentResult}
+                            />
+                          )
+                        }
+                      </div>
+                      <div className="modal__track-header">
+                        <h1 className="modal__title">
+                          {route.number ? `№ ${route.number}` : `# ${route.id}`}
+                          <span className="modal__title-place-wrapper">
+                            <span className="modal__title-place">
+                              {route.name ? `(“${route.name}”)` : ''}
+                            </span>
+                          </span>
+                        </h1>
+                        <RouteDataTable route={route} user={user} />
+                      </div>
+                      <div className="modal__item modal__descr-item">
+                        <CollapsableBlock
+                          title="Описание"
+                          isCollapsed={descriptionCollapsed}
+                          onCollapseChange={this.onDescriptionCollapseChange}
+                          text={route.description ? route.description : ''}
                         />
-                      )
-                      : (
-                        <Button
-                          size="small"
-                          style="normal"
-                          title="Редактировать"
-                          onClick={openEdit}
+                      </div>
+                      <div className="modal__item">
+                        <CommentBlock
+                          startAnswer={this.startAnswer}
+                          user={user}
+                          removeComment={removeComment}
+                          allShown={
+                            comments.length === R.min(
+                              numOfDisplayedComments,
+                              comments.length,
+                            )
+                          }
+                          numOfComments={numOfComments}
+                          showPrevious={this.showPreviousComments}
+                          onCollapseChange={this.onDescriptionCollapseChange}
+                          comments={
+                            R.slice(
+                              comments.length - R.min(numOfDisplayedComments, comments.length),
+                              comments.length,
+                              comments,
+                            )
+                          }
+                          objectListTitle="route_comments"
                         />
-                      )
-                  )
-                }
-              </div>
-            </div>
-            <div
-              className="modal__track-info"
-              onMouseOver={() => {
-                this.mouseOver = true;
-              }}
-              onMouseLeave={() => {
-                this.mouseOver = false;
-              }}
-            >
-              <div className="modal__track-status">
-                {
-                  user && (
-                    <RouteStatus
-                      ascent={ascent}
-                      changeAscentResult={changeAscentResult}
-                    />
-                  )
-                }
-              </div>
-              <div className="modal__track-header">
-                <h1 className="modal__title">
-                  {route.number ? `№ ${route.number}` : `# ${route.id}`}
-                  <span className="modal__title-place-wrapper">
-                    <span className="modal__title-place">
-                      {route.name ? `(“${route.name}”)` : ''}
-                    </span>
-                  </span>
-                </h1>
-                <RouteDataTable route={route} user={user} />
-              </div>
-              <div className="modal__item modal__descr-item">
-                <CollapsableBlock
-                  title="Описание"
-                  isCollapsed={descriptionCollapsed}
-                  onCollapseChange={this.onDescriptionCollapseChange}
-                  text={route.description ? route.description : ''}
-                />
-              </div>
-              <div className="modal__item">
-                <CommentBlock
-                  startAnswer={this.startAnswer}
-                  user={user}
-                  removeComment={removeComment}
-                  allShown={
-                    comments.length === R.min(
-                      numOfDisplayedComments,
-                      comments.length,
-                    )
-                  }
-                  numOfComments={numOfComments}
-                  showPrevious={this.showPreviousComments}
-                  onCollapseChange={this.onDescriptionCollapseChange}
-                  comments={
-                    R.slice(
-                      comments.length - R.min(numOfDisplayedComments, comments.length),
-                      comments.length,
-                      comments,
-                    )
-                  }
-                  objectListTitle="route_comments"
-                />
-              </div>
-              <div className="modal__enter-comment">
-                <CommentForm
-                  quoteComment={quoteComment}
-                  setTextareaRef={this.setTextareaRef}
-                  goToProfile={goToProfile}
-                  user={user}
-                  content={commentContent}
-                  saveComment={this.saveComment}
-                  onContentChange={this.onCommentContentChange}
-                  removeQuoteComment={this.removeQuoteComment}
-                />
-              </div>
-            </div>
+                      </div>
+                      <div className="modal__enter-comment">
+                        <CommentForm
+                          quoteComment={quoteComment}
+                          setTextareaRef={this.setTextareaRef}
+                          goToProfile={goToProfile}
+                          user={user}
+                          content={commentContent}
+                          saveComment={this.saveComment}
+                          onContentChange={this.onCommentContentChange}
+                          removeQuoteComment={this.removeQuoteComment}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )
+            }
           </div>
         </div>
       );
     };
 
     render() {
-      const { onClose, numOfActiveRequests } = this.props;
+      const {
+        onClose, numOfActiveRequests,
+      } = this.props;
       return (
         <>
           <div
@@ -348,6 +380,7 @@ export default class RoutesShowModal extends Component {
 
 RoutesShowModal.propTypes = {
   user: PropTypes.object,
+  diagram: PropTypes.string,
   ascent: PropTypes.object,
   numOfRedpoints: PropTypes.number,
   numOfFlash: PropTypes.number,

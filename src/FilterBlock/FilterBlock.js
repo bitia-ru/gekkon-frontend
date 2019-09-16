@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import ViewModeSwitcher from '../ViewModeSwitcher/ViewModeSwitcher';
+import DatePicker from '../DatePicker/DatePicker';
 import ComboBox from '../ComboBox/ComboBox';
 import { PERIOD_FILTERS } from '../Constants/PeriodFilters';
 import { CATEGORIES_ITEMS } from '../Constants/Categories';
@@ -9,9 +10,12 @@ import './FilterBlock.css';
 
 const FilterBlock = ({
   categoryId,
+  viewModeData,
   onCategoryChange,
   period,
+  date,
   changePeriodFilter,
+  changeDateFilter,
   filters,
   onFilterChange,
   viewMode,
@@ -32,14 +36,27 @@ const FilterBlock = ({
     </div>
     <div className="content__filter-item content__filter-item_period">
       <div>
-        <span className="filter-block__title">Период</span>
-        <ComboBox
-          tabIndex={2}
-          onChange={changePeriodFilter}
-          currentId={period}
-          textFieldName="text"
-          items={PERIOD_FILTERS}
-        />
+        {
+          viewMode === 'scheme'
+            ? (
+              <>
+                <span className="filter-block__title">Дата</span>
+                <DatePicker date={date} onSelect={changeDateFilter} />
+              </>
+            )
+            : (
+              <>
+                <span className="filter-block__title">Период</span>
+                <ComboBox
+                  tabIndex={2}
+                  onChange={changePeriodFilter}
+                  currentId={period}
+                  textFieldName="text"
+                  items={PERIOD_FILTERS}
+                />
+              </>
+            )
+        }
       </div>
     </div>
     <div className="content__filter-item content__filter-item_result">
@@ -63,11 +80,17 @@ const FilterBlock = ({
         />
       </div>
     </div>
-    <ViewModeSwitcher onViewModeChange={onViewModeChange} viewMode={viewMode} />
+    <ViewModeSwitcher
+      viewModeData={viewModeData}
+      onViewModeChange={onViewModeChange}
+      viewMode={viewMode}
+    />
   </div>
 );
 
 FilterBlock.propTypes = {
+  viewModeData: PropTypes.object,
+  date: PropTypes.string,
   viewMode: PropTypes.string.isRequired,
   onViewModeChange: PropTypes.func.isRequired,
   categoryId: PropTypes.number.isRequired,
@@ -75,6 +98,7 @@ FilterBlock.propTypes = {
   filters: PropTypes.array.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   changePeriodFilter: PropTypes.func.isRequired,
+  changeDateFilter: PropTypes.func.isRequired,
   onCategoryChange: PropTypes.func.isRequired,
 };
 
