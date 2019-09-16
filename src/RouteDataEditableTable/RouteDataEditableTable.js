@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import CategorySlider from '../CategorySlider/CategorySlider';
-import { GetCategoryColor } from '../Constants/Categories';
+import { getCategoryColor } from '../Constants/Categories';
 import ComboBox from '../ComboBox/ComboBox';
 import { ROUTE_KINDS } from '../Constants/Route';
 import ComboBoxPerson from '../ComboBoxPerson/ComboBoxPerson';
@@ -58,7 +58,7 @@ export default class RouteDataEditableTable extends Component {
                   </div>
                   <div
                     className="route-data-table__category-track-color"
-                    style={{ backgroundColor: GetCategoryColor(route.category) }}
+                    style={{ backgroundColor: getCategoryColor(route.category) }}
                   />
                 </div>
                 {

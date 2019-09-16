@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import moment from 'moment/moment';
 import Axios from 'axios';
 import Qs from 'qs';
 import { connect } from 'react-redux';
@@ -38,8 +39,10 @@ import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import { CATEGORIES } from '../Constants/Categories';
+import { DEFAULT_VIEW_MODE } from '../Constants/ViewModeSwitcher';
 import { avail, notAvail } from '../Utils';
 import { userStateToUser } from '../Utils/Workarounds';
+import { BACKEND_DATE_FORMAT } from '../Constants/Date';
 
 const NumOfDays = 7;
 
@@ -79,6 +82,7 @@ class SpotsShow extends Authorization {
       numOfFlash: undefined,
       users: [],
       editRouteIsWaiting: false,
+      viewMode: DEFAULT_VIEW_MODE,
     });
     this.loadingRouteId = match.params.route_id;
     this.loadEditMode = false;
@@ -501,7 +505,7 @@ class SpotsShow extends Authorization {
         });
     };
 
-    reloadRoutes = (filters = {}, page = 1, userCurr) => {
+    reloadRoutes = (filters = {}, page = 1, userCurr, viewModeCurr) => {
       const {
         user,
         selectedFilters,
@@ -512,8 +516,9 @@ class SpotsShow extends Authorization {
         loadRoutes: loadRoutesProp,
       } = this.props;
       const {
-        spotId, sectorId, name, perPage,
+        spotId, sectorId, name, perPage, viewMode,
       } = this.state;
+      const currentViewMode = viewModeCurr || viewMode;
       const currentSectorId = parseInt(
         (
           (filters.sectorId === null || filters.sectorId === undefined)
@@ -542,6 +547,12 @@ class SpotsShow extends Authorization {
           ? selectedFilters[spotId][currentSectorId].period
           : filters.period
       );
+      let currentDate = (
+        (filters.date === null || filters.date === undefined)
+          ? selectedFilters[spotId][currentSectorId].date
+          : filters.date
+      );
+      currentDate = currentDate || DEFAULT_FILTERS.date;
       const currentResult = (
         (filters.result === null || filters.result === undefined)
           ? selectedFilters[spotId][currentSectorId].result
@@ -569,7 +580,7 @@ class SpotsShow extends Authorization {
           outdated: currentOutdated,
         },
       };
-      if (userCurr || avail(user.id)) {
+      if ((userCurr && avail(userCurr.id)) || avail(user.id)) {
         params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
       }
       if (currentName !== '') {
@@ -596,8 +607,16 @@ class SpotsShow extends Authorization {
         }
         params.filters.installed_at = [[dFrom], [d]];
       }
-      params.limit = perPage;
-      params.offset = (currentPage - 1) * perPage;
+      if (currentViewMode === 'scheme') {
+        params.filters.installed_at = [[null], [moment(currentDate).format(BACKEND_DATE_FORMAT)]];
+        params.filters.installed_until = [
+          [moment(currentDate).add(1, 'days').format(BACKEND_DATE_FORMAT)],
+          [null],
+        ];
+      } else {
+        params.limit = perPage;
+        params.offset = (currentPage - 1) * perPage;
+      }
       if (token) params.token = token;
       if (currentSectorId === 0) {
         increaseNumOfActiveRequestsProp();
@@ -647,18 +666,18 @@ class SpotsShow extends Authorization {
     };
 
     changeSectorFilter = (id) => {
-      const { history } = this.props;
+      const { history, user } = this.props;
       const { spotId } = this.state;
       if (id !== 0) {
         this.reloadSector(id);
         history.push(`/spots/${spotId}/sectors/${id}`);
-        this.setState({ sectorId: id, infoData: undefined });
+        this.setState({ sectorId: id, infoData: undefined, viewMode: DEFAULT_VIEW_MODE });
       } else {
         this.reloadSpot();
         history.push(`/spots/${spotId}`);
-        this.setState({ sectorId: id, infoData: undefined });
+        this.setState({ sectorId: id, infoData: undefined, viewMode: DEFAULT_VIEW_MODE });
       }
-      this.reloadRoutes({ sectorId: id }, null);
+      this.reloadRoutes({ sectorId: id }, null, user, DEFAULT_VIEW_MODE);
     };
 
     changeCategoryFilter = (categoryFrom, categoryTo) => {
@@ -686,7 +705,16 @@ class SpotsShow extends Authorization {
       const { spotId, sectorId } = this.state;
       setSelectedFilterProp(spotId, sectorId, 'period', period);
       setSelectedPageProp(spotId, sectorId, 1);
-      this.reloadRoutes({ period, period });
+      this.reloadRoutes({ period });
+    };
+
+    changeDateFilter = (date) => {
+      const {
+        setSelectedFilter: setSelectedFilterProp,
+      } = this.props;
+      const { spotId, sectorId } = this.state;
+      setSelectedFilterProp(spotId, sectorId, 'date', date ? date.format() : undefined);
+      this.reloadRoutes({ date: date ? date.format() : DEFAULT_FILTERS.date });
     };
 
     changeResultFilter = (result) => {
@@ -1166,7 +1194,11 @@ class SpotsShow extends Authorization {
         increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
         decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
       } = this.props;
-      const { spotId, sectorId, currentShown } = this.state;
+      const {
+        spotId,
+        sectorId,
+        currentShown,
+      } = this.state;
       increaseNumOfActiveRequestsProp();
       this.setState({ editRouteIsWaiting: true });
       Axios({
@@ -1184,7 +1216,11 @@ class SpotsShow extends Authorization {
             history.push(`/spots/${spotId}/sectors/${sectorId}/routes/${currentShown.id}`);
           }
           this.setState(
-            { editRouteIsWaiting: false, editMode: false, currentShown: response.data.payload },
+            {
+              editRouteIsWaiting: false,
+              editMode: false,
+              currentShown: response.data.payload,
+            },
           );
           updateRouteProp(spotId, sectorId, currentShown.id, response.data.payload);
         }).catch((error) => {
@@ -1255,6 +1291,24 @@ class SpotsShow extends Authorization {
       }
     };
 
+    changeViewMode = (viewMode) => {
+      const {
+        user, selectedFilters, setSelectedFilter: setSelectedFilterProp,
+      } = this.props;
+      let date = '';
+      if (viewMode === 'scheme') {
+        const { spotId, sectorId } = this.state;
+        date = (
+          (selectedFilters && selectedFilters[spotId])
+            ? selectedFilters[spotId][sectorId].date
+            : DEFAULT_FILTERS.date
+        );
+        setSelectedFilterProp(spotId, sectorId, 'date', date);
+      }
+      this.reloadRoutes({ date }, null, user, viewMode);
+      this.setState({ viewMode });
+    };
+
     content = () => {
       const {
         selectedPages,
@@ -1300,6 +1354,7 @@ class SpotsShow extends Authorization {
         infoData,
         ascents,
         numOfPages,
+        viewMode,
       } = this.state;
       const categoryFrom = (
         (selectedFilters && selectedFilters[spotId])
@@ -1316,6 +1371,12 @@ class SpotsShow extends Authorization {
           ? selectedFilters[spotId][sectorId].period
           : DEFAULT_FILTERS.period
       );
+      let date = (
+        (selectedFilters && selectedFilters[spotId])
+          ? selectedFilters[spotId][sectorId].date
+          : undefined
+      );
+      date = date || DEFAULT_FILTERS.date;
       const filters = (
         (selectedFilters && selectedFilters[spotId])
           ? selectedFilters[spotId][sectorId].filters
@@ -1356,54 +1417,62 @@ class SpotsShow extends Authorization {
       return (
         <>
           {
-            routesModalVisible
-              ? (
-                editMode
-                  ? (
-                    <RoutesEditModal
-                      onClose={this.closeRoutesModal}
-                      sector={
-                        sectorId === 0
-                          ? currentSector
-                          : sector
-                      }
-                      cancel={this.cancelEdit}
-                      users={users}
-                      routeMarkColors={routeMarkColors}
-                      user={userStateToUser(user)}
-                      numOfActiveRequests={numOfActiveRequests}
-                      createRoute={this.createRoute}
-                      updateRoute={this.updateRoute}
-                      isWaiting={editRouteIsWaiting}
-                      route={currentShown}
-                    />
-                  )
-                  : (
-                    <RoutesShowModal
-                      onClose={this.closeRoutesModal}
-                      openEdit={this.openEdit}
-                      removeRoute={this.removeRoute}
-                      ctrlPressed={ctrlPressed}
-                      goToProfile={this.goToProfile}
-                      comments={comments}
-                      removeComment={this.removeComment}
-                      saveComment={this.saveComment}
-                      numOfComments={numOfComments}
-                      numOfLikes={numOfLikes}
-                      isLiked={isLiked}
-                      likeBtnIsBusy={likeBtnIsBusy}
-                      onLikeChange={this.onLikeChange}
-                      user={userStateToUser(user)}
-                      numOfActiveRequests={numOfActiveRequests}
-                      ascent={ascent}
-                      numOfRedpoints={numOfRedpoints}
-                      numOfFlash={numOfFlash}
-                      changeAscentResult={this.changeAscentResult}
-                      route={currentShown}
-                    />
-                  )
-              )
-              : ''
+            routesModalVisible && (
+              editMode
+                ? (
+                  <RoutesEditModal
+                    onClose={this.closeRoutesModal}
+                    sector={
+                      sectorId === 0
+                        ? currentSector
+                        : sector
+                    }
+                    cancel={this.cancelEdit}
+                    users={users}
+                    routeMarkColors={routeMarkColors}
+                    user={userStateToUser(user)}
+                    numOfActiveRequests={numOfActiveRequests}
+                    createRoute={this.createRoute}
+                    updateRoute={this.updateRoute}
+                    isWaiting={editRouteIsWaiting}
+                    route={currentShown}
+                    diagram={
+                      sectorId === 0
+                        ? (currentSector.diagram && currentSector.diagram.url)
+                        : (sector.diagram && sector.diagram.url)
+                    }
+                  />
+                )
+                : (
+                  <RoutesShowModal
+                    onClose={this.closeRoutesModal}
+                    openEdit={this.openEdit}
+                    removeRoute={this.removeRoute}
+                    ctrlPressed={ctrlPressed}
+                    goToProfile={this.goToProfile}
+                    comments={comments}
+                    removeComment={this.removeComment}
+                    saveComment={this.saveComment}
+                    numOfComments={numOfComments}
+                    numOfLikes={numOfLikes}
+                    isLiked={isLiked}
+                    likeBtnIsBusy={likeBtnIsBusy}
+                    onLikeChange={this.onLikeChange}
+                    user={userStateToUser(user)}
+                    numOfActiveRequests={numOfActiveRequests}
+                    ascent={ascent}
+                    numOfRedpoints={numOfRedpoints}
+                    numOfFlash={numOfFlash}
+                    changeAscentResult={this.changeAscentResult}
+                    route={currentShown}
+                    diagram={
+                      sectorId === 0
+                        ? (currentSector.diagram && currentSector.diagram.url)
+                        : (sector.diagram && sector.diagram.url)
+                    }
+                  />
+                )
+            )
           }
           {
             signUpFormVisible
@@ -1491,6 +1560,7 @@ class SpotsShow extends Authorization {
             ctrlPressed={ctrlPressed}
             addRoute={this.goToNew}
             sectorId={sectorId}
+            diagram={sector.diagram && sector.diagram.url}
             page={
               (selectedPages && selectedPages[spotId])
                 ? selectedPages[spotId][sectorId]
@@ -1498,13 +1568,17 @@ class SpotsShow extends Authorization {
             }
             numOfPages={numOfPages}
             period={period}
+            date={date}
             filters={avail(user.id) ? filters : defaultFilters}
             categoryId={categoryId}
             onRouteClick={this.onRouteClick}
             onCategoryChange={this.onCategoryChange}
             changePeriodFilter={this.changePeriodFilter}
+            changeDateFilter={this.changeDateFilter}
             onFilterChange={this.onFilterChange}
             changePage={this.changePage}
+            viewMode={viewMode}
+            changeViewMode={this.changeViewMode}
           />
         </>
       );
