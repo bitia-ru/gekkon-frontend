@@ -9,18 +9,6 @@ import './Content.css';
 const NUM_OF_DISPLAYED_PAGES = 5;
 
 export default class Content extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      viewMode: 'table',
-    };
-  }
-
-    changeViewMode = (viewMode) => {
-      this.setState({ viewMode });
-    };
-
     pagesList = () => {
       const { numOfPages, page } = this.props;
       if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
@@ -42,52 +30,76 @@ export default class Content extends Component {
         page,
         numOfPages,
         user,
+        date,
         period,
         onFilterChange,
         filters,
         categoryId,
         onCategoryChange,
         changePeriodFilter,
+        changeDateFilter,
         ctrlPressed,
         addRoute,
         sectorId,
+        diagram,
         routes,
         ascents,
         onRouteClick,
         changePage,
+        viewMode,
+        changeViewMode,
       } = this.props;
-      const { viewMode } = this.state;
       return (
         <div className="content">
           <div className="content__container">
             <FilterBlock
               viewMode={viewMode}
-              onViewModeChange={this.changeViewMode}
+              viewModeData={
+                sectorId !== 0
+                  ? {
+                    scheme: {
+                      title: diagram ? undefined : 'Схема зала ещё не загружена',
+                      disabled: diagram === null,
+                    },
+                    table: {},
+                    list: {},
+                  }
+                  : {
+                    table: {},
+                    list: {},
+                  }
+              }
+              onViewModeChange={changeViewMode}
               period={period}
+              date={date}
               onFilterChange={onFilterChange}
               filters={filters}
               user={user}
               categoryId={categoryId}
               onCategoryChange={onCategoryChange}
               changePeriodFilter={changePeriodFilter}
+              changeDateFilter={changeDateFilter}
             />
             <RouteCardView
               viewMode={viewMode}
               ctrlPressed={ctrlPressed}
               addRoute={addRoute}
               sectorId={sectorId}
+              diagram={diagram}
               user={user}
               routes={routes}
               ascents={ascents}
               onRouteClick={onRouteClick}
             />
-            <Pagination
-              onPageChange={changePage}
-              page={page}
-              pagesList={this.pagesList()}
-              firstPage={1}
-              lastPage={numOfPages}
-            />
+            {
+              viewMode !== 'scheme' && <Pagination
+                onPageChange={changePage}
+                page={page}
+                pagesList={this.pagesList()}
+                firstPage={1}
+                lastPage={numOfPages}
+              />
+            }
           </div>
         </div>
       );
@@ -96,6 +108,8 @@ export default class Content extends Component {
 
 Content.propTypes = {
   user: PropTypes.object,
+  diagram: PropTypes.string,
+  date: PropTypes.string,
   routes: PropTypes.array.isRequired,
   ascents: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
@@ -107,8 +121,11 @@ Content.propTypes = {
   onCategoryChange: PropTypes.func.isRequired,
   changePage: PropTypes.func.isRequired,
   changePeriodFilter: PropTypes.func.isRequired,
+  changeDateFilter: PropTypes.func.isRequired,
   ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
   sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
+  viewMode: PropTypes.string.isRequired,
+  changeViewMode: PropTypes.func.isRequired,
 };

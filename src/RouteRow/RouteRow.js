@@ -1,7 +1,7 @@
-import React           from 'react';
-import PropTypes       from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { GetUserName } from '../Constants/User';
-import RouteColor      from '../RouteColor/RouteColor';
+import RouteColor from '../RouteColor/RouteColor';
 import './RouteRow.css';
 
 const RouteRow = ({ onRouteClick, route, user }) => {
@@ -16,7 +16,7 @@ const RouteRow = ({ onRouteClick, route, user }) => {
       name = `Пользователь #${route.author.id}`;
     }
   }
-  return <div className="table-card__card">
+  return (<div className="table-card__card">
     <div
       role="button"
       tabIndex={0}
@@ -38,7 +38,7 @@ const RouteRow = ({ onRouteClick, route, user }) => {
     <div className="table-card__item table-card__author">
       {isCurrentUserRoute ? 'Вы' : name}
     </div>
-  </div>;
+  </div>);
 };
 
 RouteRow.propTypes = {

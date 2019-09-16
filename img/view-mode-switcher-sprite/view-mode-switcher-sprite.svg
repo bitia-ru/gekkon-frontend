@@ -15,4 +15,8 @@
 		<rect y="24" width="6" height="6" />
 		<rect x="9" y="24" width="21" height="6" />
 	</symbol>
+
+	<symbol id="toggle-track" viewBox="0 0 30 30">
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M2 0H12V4H4V12H0V2V0H2ZM0 28V18H4V26H12V30H2H0V28ZM30 12V2V0H28H18V4H26V12H30ZM28 30H19V26H26V18H30V28V30H28ZM15 21C18.3137 21 21 18.3137 21 15C21 11.6863 18.3137 9 15 9C11.6863 9 9 11.6863 9 15C9 18.3137 11.6863 21 15 21Z"/>
+	</symbol>
 </svg>

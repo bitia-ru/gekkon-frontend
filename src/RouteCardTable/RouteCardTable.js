@@ -37,12 +37,21 @@ const RouteCardTable = ({
     {
       R.map(
         route => (
-          <RouteCard
+          <div
             key={route.id}
-            route={route}
-            ascent={R.find(ascent => ascent.route_id === route.id, ascents)}
-            onRouteClick={() => onRouteClick(route.id)}
-          />
+            className="content__col-md-4 content__col-lg-3"
+            role="button"
+            tabIndex={0}
+            style={{ outline: 'none' }}
+            onClick={() => onRouteClick(route.id) || null}
+          >
+            <div className="content__route-card">
+              <RouteCard
+                route={route}
+                ascent={R.find(ascent => ascent.route_id === route.id, ascents)}
+              />
+            </div>
+          </div>
         ),
         routes,
       )
