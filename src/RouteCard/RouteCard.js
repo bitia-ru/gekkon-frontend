@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { SOON_END_PERIOD } from '../Constants/Route';
 import RouteStatus from '../RouteStatus/RouteStatus';
-import { TimeFromNow } from '../Constants/DateTimeFormatter';
+import { timeFromNow } from '../Constants/DateTimeFormatter';
 import './RouteCard.css';
 
 export default class RouteCard extends Component {
@@ -92,7 +92,7 @@ export default class RouteCard extends Component {
                               </svg>
                             }
                           </span>
-                          {TimeFromNow(moment(route.installed_until))}
+                          {timeFromNow(moment(route.installed_until))}
                         </span>
                       )
                       : (

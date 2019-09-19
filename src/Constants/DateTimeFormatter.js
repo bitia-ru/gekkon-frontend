@@ -72,7 +72,7 @@ const LOOK_UP_FUTURE_DATE_FORMATTER = [
   { 31536000: datetime => datetime.fromNow() },
 ];
 
-export const TimeFromNow = (datetime) => {
+export const timeFromNow = (datetime) => {
   const secondsFromNow = moment().diff(datetime, 'seconds');
   if (secondsFromNow < 0) {
     for (const i in LOOK_UP_FUTURE_DATE_FORMATTER) {

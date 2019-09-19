@@ -1,0 +1,26 @@
+.tooltip__row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.tooltip__count {
+    font-size: 16px;
+    color: #1f1f1f;
+    width: 20px;
+    text-align: right;
+}
+
+.tooltip__count-multiplication {
+    font-size: 16px;
+    color: #1f1f1f;
+    width: 20px;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tooltip__levels {
+    padding: 6px 14px;
+}
