@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../Constants/Date';
-import { TimeFromNow } from '../Constants/DateTimeFormatter';
+import { timeFromNow } from '../Constants/DateTimeFormatter';
 import './Comment.css';
 
 const Comment = ({
@@ -32,7 +32,7 @@ const Comment = ({
             className="comment__date"
             title={moment(created_at).format(COMMENT_DATETIME_FORMAT)}
           >
-            {TimeFromNow(moment(created_at))}
+            {timeFromNow(moment(created_at))}
           </div>
           {
             (user && (user.name || user.login))

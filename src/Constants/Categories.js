@@ -30,3 +30,9 @@ export const GetCategoryColor = (category) => {
   if (index >= 20 && index <= 35) { i = 5; }
   return `#${COLORS[i]}`;
 };
+
+export const routeCategoriesDiff = (route1, route2) => {
+  const index1 = R.findIndex(c => c === route1.category)(CATEGORIES);
+  const index2 = R.findIndex(c => c === route2.category)(CATEGORIES);
+  return index1 - index2;
+};
