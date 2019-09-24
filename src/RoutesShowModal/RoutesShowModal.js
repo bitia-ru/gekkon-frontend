@@ -15,6 +15,10 @@ import { DEFAULT_COMMENTS_DISPLAYED } from '../Constants/Comments';
 import StickyBar from '../StickyBar/StickyBar';
 import SchemeModal from '../SchemeModal/SchemeModal';
 import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
+import NoticeButton from '../NoticeButton/NoticeButton';
+import NoticeForm from '../NoticeForm/NoticeForm';
+import Tooltip from '../Tooltip/Tooltip';
+import { avail } from '../Utils';
 import TooltipPerson from '../TooltipPerson/TooltipPerson';
 import { HIDE_DELAY } from '../Constants/TooltipPerson';
 import numToStr from '../Constants/NumToStr';
@@ -24,7 +28,6 @@ export default class RoutesShowModal extends Component {
   constructor(props) {
     super(props);
 
-    const { route } = this.props;
     this.state = {
       quoteComment: null,
       commentContent: '',
@@ -33,6 +36,8 @@ export default class RoutesShowModal extends Component {
       currentPointers: [],
       routeImageLoading: true,
       schemeModalVisible: false,
+      showNoticeForm: false,
+      showTooltip: false,
       showLikesTooltip: false,
       showRedpointsTooltip: false,
       showFlashesTooltip: false,
@@ -153,6 +158,22 @@ export default class RoutesShowModal extends Component {
     );
   };
 
+  showNoticeForm = (event) => {
+    event.stopPropagation();
+    this.setState({ showTooltip: false, showNoticeForm: true });
+  };
+
+  cancelNoticeForm = (event) => {
+    event.stopPropagation();
+    this.setState({ showTooltip: false, showNoticeForm: false });
+  };
+
+  submitNoticeForm = (msg) => {
+    const { submitNoticeForm } = this.props;
+    submitNoticeForm(msg);
+    this.setState({ showTooltip: false, showNoticeForm: false });
+  };
+
   content = () => {
     const {
       onClose,
@@ -189,6 +210,8 @@ export default class RoutesShowModal extends Component {
       showLikesTooltip,
       showRedpointsTooltip,
       showFlashesTooltip,
+      showNoticeForm,
+      showTooltip,
     } = this.state;
     const showLoadPhotoMsg = (
       (!route.photo || !routeImageLoading) && user && this.canEditRoute(user, route)
@@ -205,6 +228,25 @@ export default class RoutesShowModal extends Component {
               }
             />
           </div>
+          {
+            (user && avail(user.id)) && <div
+              className="modal-block__notice"
+              onMouseEnter={() => this.setState({ showTooltip: true })}
+              onMouseLeave={() => this.setState({ showTooltip: false })}
+              onClick={event => event.stopPropagation()}
+            >
+              <NoticeButton onClick={this.showNoticeForm} />
+              <div className="modal-block__notice-tooltip">
+                {showTooltip && <Tooltip text="Сообщить об ошибке" />}
+              </div>
+              {
+                showNoticeForm && <NoticeForm
+                  submit={this.submitNoticeForm}
+                  cancel={this.cancelNoticeForm}
+                />
+              }
+            </div>
+          }
           {
             schemeModalVisible
               ? (
@@ -505,6 +547,7 @@ RoutesShowModal.propTypes = {
   onLikeChange: PropTypes.func.isRequired,
   changeAscentResult: PropTypes.func.isRequired,
   numOfActiveRequests: PropTypes.number.isRequired,
+  submitNoticeForm: PropTypes.func.isRequired,
 };
 
 RoutesShowModal.defaultProps = {
