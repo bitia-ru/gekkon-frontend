@@ -143,6 +143,26 @@ const selectedFiltersReducer = (state = {}, action) => {
   }
 };
 
+const selectedViewModesReducer = (state = {}, action) => {
+  let selectedViewModes;
+  switch (action.type) {
+  case acts.SET_SELECTED_VIEW_MODE:
+    selectedViewModes = R.clone(state);
+    selectedViewModes[action.spotId] = selectedViewModes[action.spotId] || {};
+    selectedViewModes[action.spotId][action.sectorId] = action.viewMode;
+    localStorage.setItem('viewModes', JSON.stringify(selectedViewModes));
+    return selectedViewModes;
+  default:
+    if (R.equals(state, {})) {
+      selectedViewModes = localStorage.getItem('viewModes');
+      selectedViewModes = selectedViewModes ? JSON.parse(selectedViewModes) : {};
+    } else {
+      selectedViewModes = R.clone(state);
+    }
+    return selectedViewModes;
+  }
+};
+
 const routeMarkColorsReducer = (state = [], action) => {
   switch (action.type) {
   case acts.LOAD_ROUTE_MARK_COLORS:
@@ -162,4 +182,5 @@ export default combineReducers({
   selectedPages: selectedPagesReducer,
   selectedFilters: selectedFiltersReducer,
   routeMarkColors: routeMarkColorsReducer,
+  selectedViewModes: selectedViewModesReducer,
 });
