@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import { ToastContainer } from 'react-toastr';
 import { ApiUrl } from '../Environ';
 import {
+  setSelectedViewMode,
   setSelectedPage,
   setDefaultSelectedPages,
   setSelectedFilter,
@@ -39,7 +40,10 @@ import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import { CATEGORIES } from '../Constants/Categories';
-import { DEFAULT_VIEW_MODE } from '../Constants/ViewModeSwitcher';
+import {
+  DEFAULT_SPOT_VIEW_MODE,
+  DEFAULT_SECTOR_VIEW_MODE_LIST,
+} from '../Constants/ViewModeSwitcher';
 import { avail, notAvail } from '../Utils';
 import { userStateToUser } from '../Utils/Workarounds';
 import { BACKEND_DATE_FORMAT } from '../Constants/Date';
@@ -86,7 +90,6 @@ class SpotsShow extends Authorization {
       flashes: [],
       users: [],
       editRouteIsWaiting: false,
-      viewMode: DEFAULT_VIEW_MODE,
     });
     this.loadingRouteId = match.params.route_id;
     this.loadEditMode = false;
@@ -535,7 +538,9 @@ class SpotsShow extends Authorization {
 
     reloadRoutes = (filters = {}, page = 1, userCurr, viewModeCurr) => {
       const {
+        sectors,
         user,
+        selectedViewModes,
         selectedFilters,
         selectedPages,
         token,
@@ -544,9 +549,8 @@ class SpotsShow extends Authorization {
         loadRoutes: loadRoutesProp,
       } = this.props;
       const {
-        spotId, sectorId, name, perPage, viewMode,
+        spotId, sectorId, name, perPage,
       } = this.state;
-      const currentViewMode = viewModeCurr || viewMode;
       const currentSectorId = parseInt(
         (
           (filters.sectorId === null || filters.sectorId === undefined)
@@ -555,6 +559,18 @@ class SpotsShow extends Authorization {
         ),
         10,
       );
+      let viewMode;
+      const viewModes = selectedViewModes;
+      if (viewModes && viewModes[spotId] && viewModes[spotId][currentSectorId]) {
+        viewMode = selectedViewModes[spotId][currentSectorId];
+      } else if (currentSectorId === 0) {
+        viewMode = DEFAULT_SPOT_VIEW_MODE;
+      } else if (R.find(s => s.id === currentSectorId, sectors).diagram) {
+        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
+      } else {
+        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+      }
+      const currentViewMode = viewModeCurr || viewMode;
       const currentCategoryFrom = (
         (filters.categoryFrom === null || filters.categoryFrom === undefined)
           ? selectedFilters[spotId][currentSectorId].categoryFrom
@@ -699,13 +715,12 @@ class SpotsShow extends Authorization {
       if (id !== 0) {
         this.reloadSector(id);
         history.push(`/spots/${spotId}/sectors/${id}`);
-        this.setState({ sectorId: id, infoData: undefined, viewMode: DEFAULT_VIEW_MODE });
       } else {
         this.reloadSpot();
         history.push(`/spots/${spotId}`);
-        this.setState({ sectorId: id, infoData: undefined, viewMode: DEFAULT_VIEW_MODE });
       }
-      this.reloadRoutes({ sectorId: id }, null, user, DEFAULT_VIEW_MODE);
+      this.setState({ sectorId: id, infoData: undefined });
+      this.reloadRoutes({ sectorId: id }, null, user);
     };
 
     changeCategoryFilter = (categoryFrom, categoryTo) => {
@@ -1333,11 +1348,15 @@ class SpotsShow extends Authorization {
 
     changeViewMode = (viewMode) => {
       const {
-        user, selectedFilters, setSelectedFilter: setSelectedFilterProp,
+        user,
+        selectedFilters,
+        setSelectedFilter: setSelectedFilterProp,
+        setSelectedViewMode: setSelectedViewModeProp,
       } = this.props;
+      const { spotId, sectorId } = this.state;
       let date = '';
+      setSelectedViewModeProp(spotId, sectorId, viewMode);
       if (viewMode === 'scheme') {
-        const { spotId, sectorId } = this.state;
         date = (
           (selectedFilters && selectedFilters[spotId])
             ? selectedFilters[spotId][sectorId].date
@@ -1346,13 +1365,13 @@ class SpotsShow extends Authorization {
         setSelectedFilterProp(spotId, sectorId, 'date', date);
       }
       this.reloadRoutes({ date }, null, user, viewMode);
-      this.setState({ viewMode });
     };
 
     content = () => {
       const {
         selectedPages,
         selectedFilters,
+        selectedViewModes,
         sectors,
         routeMarkColors,
         user,
@@ -1397,8 +1416,17 @@ class SpotsShow extends Authorization {
         infoData,
         ascents,
         numOfPages,
-        viewMode,
       } = this.state;
+      let viewMode;
+      if (selectedViewModes && selectedViewModes[spotId] && selectedViewModes[spotId][sectorId]) {
+        viewMode = selectedViewModes[spotId][sectorId];
+      } else if (sectorId === 0) {
+        viewMode = DEFAULT_SPOT_VIEW_MODE;
+      } else if (R.find(s => s.id === sectorId, sectors).diagram) {
+        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
+      } else {
+        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+      }
       const categoryFrom = (
         (selectedFilters && selectedFilters[spotId])
           ? selectedFilters[spotId][sectorId].categoryFrom
@@ -1654,6 +1682,7 @@ class SpotsShow extends Authorization {
 }
 
 const mapStateToProps = state => ({
+  selectedViewModes: state.selectedViewModes,
   selectedPages: state.selectedPages,
   selectedFilters: state.selectedFilters,
   routes: state.routes,
@@ -1666,6 +1695,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   loadRoutes: (spotId, sectorId, routes) => dispatch(loadRoutes(spotId, sectorId, routes)),
+  setSelectedViewMode: (spotId, sectorId, viewMode) => (
+    dispatch(setSelectedViewMode(spotId, sectorId, viewMode))
+  ),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
   setDefaultSelectedPages: (spotId, sectorIds) => (
     dispatch(setDefaultSelectedPages(spotId, sectorIds))
