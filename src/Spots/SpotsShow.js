@@ -621,7 +621,7 @@ class SpotsShow extends Authorization {
         filters: {
           category: [[currentCategoryFrom], [currentCategoryTo]],
           personal: currentPersonal,
-          outdated: currentOutdated,
+          outdated: currentViewMode === 'scheme' ? true : currentOutdated,
         },
       };
       if ((userCurr && avail(userCurr.id)) || avail(user.id)) {
