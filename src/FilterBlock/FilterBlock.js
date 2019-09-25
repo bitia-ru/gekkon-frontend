@@ -20,73 +20,80 @@ const FilterBlock = ({
   onFilterChange,
   viewMode,
   onViewModeChange,
-}) => (
-  <div className="content__filter">
-    <div className="content__filter-item content__filter-item_category">
-      <div>
-        <span className="filter-block__title">Категория</span>
-        <ComboBox
-          tabIndex={1}
-          onChange={onCategoryChange}
-          currentId={categoryId}
-          textFieldName="title"
-          items={CATEGORIES_ITEMS}
-        />
+}) => {
+  const currentFilters = (
+    viewMode === 'scheme'
+      ? R.filter(f => f.id !== 'outdated', filters)
+      : filters
+  );
+  return (
+    <div className="content__filter">
+      <div className="content__filter-item content__filter-item_category">
+        <div>
+          <span className="filter-block__title">Категория</span>
+          <ComboBox
+            tabIndex={1}
+            onChange={onCategoryChange}
+            currentId={categoryId}
+            textFieldName="title"
+            items={CATEGORIES_ITEMS}
+          />
+        </div>
       </div>
-    </div>
-    <div className="content__filter-item content__filter-item_period">
-      <div>
-        {
-          viewMode === 'scheme'
-            ? (
-              <>
-                <span className="filter-block__title">Дата</span>
-                <DatePicker date={date} onSelect={changeDateFilter} />
-              </>
-            )
-            : (
-              <>
-                <span className="filter-block__title">Период</span>
-                <ComboBox
-                  tabIndex={2}
-                  onChange={changePeriodFilter}
-                  currentId={period}
-                  textFieldName="text"
-                  items={PERIOD_FILTERS}
-                />
-              </>
-            )
-        }
-      </div>
-    </div>
-    <div className="content__filter-item content__filter-item_result">
-      <div>
-        <span className="filter-block__title">Фильтры</span>
-        <ComboBox
-          tabIndex={3}
-          onChange={onFilterChange}
-          multipleSelect
-          currentValue={
-            R.join(
-              ', ',
-              R.map(
-                e => R.slice(0, -2, e.text),
-                R.filter(e => e.selected, filters),
-              ),
-            )
+      <div className="content__filter-item content__filter-item_period">
+        <div>
+          {
+            viewMode === 'scheme'
+              ? (
+                <>
+                  <span className="filter-block__title">Дата</span>
+                  <DatePicker date={date} onSelect={changeDateFilter}/>
+                </>
+              )
+              : (
+                <>
+                  <span className="filter-block__title">Период</span>
+                  <ComboBox
+                    tabIndex={2}
+                    onChange={changePeriodFilter}
+                    currentId={period}
+                    textFieldName="text"
+                    items={PERIOD_FILTERS}
+                  />
+                </>
+              )
           }
-          textFieldName="text"
-          items={filters}
-        />
+        </div>
       </div>
+      <div className="content__filter-item content__filter-item_result">
+        <div>
+          <span className="filter-block__title">Фильтры</span>
+          <ComboBox
+            tabIndex={3}
+            onChange={onFilterChange}
+            multipleSelect
+            currentValue={
+              R.join(
+                ', ',
+                R.map(
+                  e => R.slice(0, -2, e.text),
+                  R.filter(e => e.selected, currentFilters),
+                ),
+              )
+            }
+            textFieldName="text"
+            items={currentFilters}
+          />
+        </div>
+      </div>
+      <ViewModeSwitcher
+        viewModeData={viewModeData}
+        onViewModeChange={onViewModeChange}
+        viewMode={viewMode}
+      />
     </div>
-    <ViewModeSwitcher
-      viewModeData={viewModeData}
-      onViewModeChange={onViewModeChange}
-      viewMode={viewMode}
-    />
-  </div>
-);
+  );
+};
 
 FilterBlock.propTypes = {
   viewModeData: PropTypes.object,
