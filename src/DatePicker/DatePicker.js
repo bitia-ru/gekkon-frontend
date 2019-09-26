@@ -36,6 +36,7 @@ export default class DatePicker extends Component {
       onSelect,
       size,
       borderStyle,
+      formatter: formatterProp,
     } = this.props;
     const dateClass = 'date-picker-block__select';
     const styleClass = (
@@ -44,6 +45,7 @@ export default class DatePicker extends Component {
         : ''
     );
     const sizeClass = size === 'small' ? ' date-picker-block__select_small' : '';
+    const formatter = formatterProp || (d => moment(d).format(DATE_FORMAT));
     return (
       <div
         className="date-picker-block__container"
@@ -57,7 +59,7 @@ export default class DatePicker extends Component {
           className={`${dateClass}${styleClass}${sizeClass}`}
           value={
             date
-              ? moment(date).format(DATE_FORMAT)
+              ? formatter(date)
               : ''
           }
           readOnly
@@ -78,6 +80,7 @@ export default class DatePicker extends Component {
 
 DatePicker.propTypes = {
   size: PropTypes.string,
+  formatter: PropTypes.func,
   borderStyle: PropTypes.string,
   date: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
