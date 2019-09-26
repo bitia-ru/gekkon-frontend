@@ -6,6 +6,7 @@ import DatePicker from '../DatePicker/DatePicker';
 import ComboBox from '../ComboBox/ComboBox';
 import { PERIOD_FILTERS } from '../Constants/PeriodFilters';
 import { CATEGORIES_ITEMS } from '../Constants/Categories';
+import { dateToTextFormatter } from '../Constants/Date';
 import './FilterBlock.css';
 
 const FilterBlock = ({
@@ -26,6 +27,7 @@ const FilterBlock = ({
       ? R.filter(f => f.id !== 'outdated', filters)
       : filters
   );
+
   return (
     <div className="content__filter">
       <div className="content__filter-item content__filter-item_category">
@@ -47,7 +49,11 @@ const FilterBlock = ({
               ? (
                 <>
                   <span className="filter-block__title">Дата</span>
-                  <DatePicker date={date} onSelect={changeDateFilter}/>
+                  <DatePicker
+                    date={date}
+                    onSelect={changeDateFilter}
+                    formatter={dateToTextFormatter}
+                  />
                 </>
               )
               : (
