@@ -18,6 +18,10 @@ import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
 import TooltipPerson from '../TooltipPerson/TooltipPerson';
 import { HIDE_DELAY } from '../Constants/TooltipPerson';
 import numToStr from '../Constants/NumToStr';
+import NoticeButton from '../NoticeButton/NoticeButton';
+import NoticeForm from '../NoticeForm/NoticeForm';
+import Tooltip from '../Tooltip/Tooltip';
+import { avail } from '../Utils';
 import './RoutesShowModal.css';
 
 export default class RoutesShowModal extends Component {
@@ -36,6 +40,8 @@ export default class RoutesShowModal extends Component {
       showLikesTooltip: false,
       showRedpointsTooltip: false,
       showFlashesTooltip: false,
+      showNoticeForm: false,
+      showTooltip: false,
     };
     this.mouseOver = false;
   }
@@ -153,6 +159,22 @@ export default class RoutesShowModal extends Component {
     );
   };
 
+  showNoticeForm = (event) => {
+    event.stopPropagation();
+    this.setState({ showTooltip: false, showNoticeForm: true });
+  };
+
+  cancelNoticeForm = (event) => {
+    event.stopPropagation();
+    this.setState({ showTooltip: false, showNoticeForm: false });
+  };
+
+  submitNoticeForm = (msg) => {
+    const { submitNoticeForm } = this.props;
+    submitNoticeForm(msg);
+    this.setState({ showTooltip: false, showNoticeForm: false });
+  };
+
   content = () => {
     const {
       onClose,
@@ -167,6 +189,7 @@ export default class RoutesShowModal extends Component {
       redpoints,
       numOfFlash,
       flashes,
+      numOfFlash,
       ctrlPressed,
       removeRoute,
       openEdit,
@@ -189,6 +212,8 @@ export default class RoutesShowModal extends Component {
       showLikesTooltip,
       showRedpointsTooltip,
       showFlashesTooltip,
+      showNoticeForm,
+      showTooltip,
     } = this.state;
     const showLoadPhotoMsg = (
       (!route.photo || !routeImageLoading) && user && this.canEditRoute(user, route)
@@ -205,6 +230,25 @@ export default class RoutesShowModal extends Component {
               }
             />
           </div>
+          {
+            (user && avail(user.id)) && <div
+              className="modal-block__notice"
+              onMouseEnter={() => this.setState({ showTooltip: true })}
+              onMouseLeave={() => this.setState({ showTooltip: false })}
+              onClick={event => event.stopPropagation()}
+            >
+              <NoticeButton onClick={this.showNoticeForm} />
+              <div className="modal-block__notice-tooltip">
+                {showTooltip && <Tooltip text="Сообщить об ошибке" />}
+              </div>
+              {
+                showNoticeForm && <NoticeForm
+                  submit={this.submitNoticeForm}
+                  cancel={this.cancelNoticeForm}
+                />
+              }
+            </div>
+          }
           {
             schemeModalVisible
               ? (
@@ -505,6 +549,7 @@ RoutesShowModal.propTypes = {
   onLikeChange: PropTypes.func.isRequired,
   changeAscentResult: PropTypes.func.isRequired,
   numOfActiveRequests: PropTypes.number.isRequired,
+  submitNoticeForm: PropTypes.func.isRequired,
 };
 
 RoutesShowModal.defaultProps = {
