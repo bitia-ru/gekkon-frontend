@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import Scheme from '../Scheme/Scheme';
-import CloseButton from '../CloseButton/CloseButton';
 import BackButton from '../BackButton/BackButton';
 import './SchemeModal.css';
 
@@ -20,11 +19,12 @@ export default class SchemeModal extends Component {
     if (event.nativeEvent.which === 1) {
       const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
       const { currentRoute } = this.state;
-      currentRoute.data.position = {
+      const newCurrentRoute = R.clone(currentRoute);
+      newCurrentRoute.data.position = {
         left: (event.pageX - schemeContainerRect.x) / schemeContainerRect.width * 100,
         top: (event.pageY - schemeContainerRect.y) / schemeContainerRect.height * 100,
       };
-      this.setState({ currentRoute });
+      this.setState({ currentRoute: newCurrentRoute });
     }
   };
 
@@ -37,7 +37,6 @@ export default class SchemeModal extends Component {
   render() {
     const {
       save,
-      diagram,
       editable,
     } = this.props;
     const { currentRoute } = this.state;
@@ -57,9 +56,8 @@ export default class SchemeModal extends Component {
           onMouseDown={editable ? this.onMouseDown : null}
         >
           <Scheme
-            routes={[currentRoute]}
+            currentRoutes={[currentRoute]}
             showCards={false}
-            diagram={diagram}
           />
         </div>
       </>
@@ -68,7 +66,6 @@ export default class SchemeModal extends Component {
 }
 
 SchemeModal.propTypes = {
-  diagram: PropTypes.string,
   editable: PropTypes.bool,
   currentRoute: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,

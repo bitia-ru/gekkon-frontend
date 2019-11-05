@@ -39,9 +39,7 @@ export default class Header extends Component {
       logOut,
       user,
       data,
-      sectors,
       infoData,
-      sectorId,
       changeSectorFilter,
     } = this.props;
     const { bgImageLoaded } = this.state;
@@ -75,9 +73,7 @@ export default class Header extends Component {
           </li>
         </ul>
         <InfoBlock
-          sectors={sectors}
           infoData={infoData}
-          sectorId={sectorId}
           changeSectorFilter={changeSectorFilter}
         />
       </header>
@@ -89,12 +85,10 @@ Header.propTypes = {
   user: PropTypes.object,
   infoData: PropTypes.array,
   data: PropTypes.object.isRequired,
-  sectors: PropTypes.array.isRequired,
   changeSectorFilter: PropTypes.func.isRequired,
   changeNameFilter: PropTypes.func.isRequired,
   logIn: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
   openProfile: PropTypes.func.isRequired,
-  sectorId: PropTypes.number.isRequired,
 };

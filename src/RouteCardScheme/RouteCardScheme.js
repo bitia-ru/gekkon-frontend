@@ -1,24 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Scheme from '../Scheme/Scheme';
+import getArrayByIds from '../../v1/utils/getArrayByIds';
 import './RouteCardScheme.css';
 
 const RouteCardScheme = ({
   onRouteClick,
-  routes,
-  ascents,
   diagram,
+  routeIds,
+  routes,
 }) => (
   <div className="hall-scheme">
-    <Scheme routes={routes} diagram={diagram} onRouteClick={onRouteClick} ascents={ascents} />
+    <Scheme
+      diagram={diagram}
+      onRouteClick={onRouteClick}
+      currentRoutes={getArrayByIds(routeIds, routes)}
+    />
   </div>
 );
 
 RouteCardScheme.propTypes = {
   diagram: PropTypes.string,
-  ascents: PropTypes.array.isRequired,
-  routes: PropTypes.array.isRequired,
   onRouteClick: PropTypes.func.isRequired,
+  routeIds: PropTypes.array.isRequired,
+  routes: PropTypes.object.isRequired,
 };
 
-export default RouteCardScheme;
+const mapStateToProps = state => ({
+  routeIds: state.routeIds,
+  routes: state.routes,
+});
+
+export default withRouter(connect(mapStateToProps)(RouteCardScheme));

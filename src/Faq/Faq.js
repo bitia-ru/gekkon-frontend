@@ -142,7 +142,9 @@ class Faq extends Authorization {
     const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
     return (
       <div className={showModal ? null : 'page__scroll'}>
-          <StickyBar loading={numOfActiveRequests > 0} content={this.content()} />
+          <StickyBar loading={numOfActiveRequests > 0}>
+            {this.content()}
+          </StickyBar>
         <Footer
           user={userStateToUser(user)}
           logIn={this.logIn}

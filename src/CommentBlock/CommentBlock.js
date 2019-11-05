@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import Comment from '../Comment/Comment';
+import RouteContext from '../contexts/RouteContext';
 import './CommentBlock.css';
 
 export default class CommentBlock extends Component {
@@ -13,8 +14,7 @@ export default class CommentBlock extends Component {
     };
   }
 
-    ending = () => {
-      const { numOfComments } = this.props;
+    ending = (numOfComments) => {
       if (numOfComments % 10 === 1 && numOfComments % 100 !== 11) {
         return 'й';
       }
@@ -39,7 +39,6 @@ export default class CommentBlock extends Component {
     render() {
       const {
         user,
-        numOfComments,
         allShown,
         showPrevious,
         startAnswer,
@@ -48,73 +47,77 @@ export default class CommentBlock extends Component {
         comments,
       } = this.props;
       return (
-        <>
-          <div className="comment-block">
-            <div className="comment-block__header">
-              Коментарии
-            </div>
-            <div className="comment-block__count-comment">
-              {numOfComments}
-              {' '}
-              комментари
-              {this.ending()}
-            </div>
-            {
-              allShown
-                ? ''
-                : (
-                  <button
-                    className="comment-block__show-comments"
-                    type="button"
-                    onClick={showPrevious}
-                  >
-                    Показать предыдущие комментарии
-                  </button>
-                )
-            }
-            <div
-              className="comment-block__list"
-              ref={(ref) => {
-                this.commentWindow = ref;
-              }}
-              onScroll={this.onScroll}
-            >
-              {
-                R.map(
-                  comment => (
-                    <React.Fragment key={comment.id}>
-                      <Comment
-                        startAnswer={startAnswer}
-                        removeComment={removeComment}
-                        user={user}
-                        comment={comment}
-                      />
-                      {
-                        R.map(
-                          innerComment => (
-                            <div
-                              key={innerComment.id}
-                              className="comment-block__inner"
-                            >
-                              <Comment
-                                startAnswer={startAnswer}
-                                removeComment={removeComment}
-                                user={user}
-                                comment={innerComment}
-                              />
-                            </div>
-                          ),
-                          comment[objectListTitle],
-                        )
-                      }
-                    </React.Fragment>
-                  ),
-                  comments,
-                )
-              }
-            </div>
-          </div>
-        </>
+        <RouteContext.Consumer>
+          {
+            ({ route }) => (
+              <div className="comment-block">
+                <div className="comment-block__header">
+                  Коментарии
+                </div>
+                <div className="comment-block__count-comment">
+                  { route.numOfComments }
+                  {' '}
+                  комментари
+                  {this.ending(route.numOfComments)}
+                </div>
+                {
+                  allShown
+                    ? ''
+                    : (
+                      <button
+                        className="comment-block__show-comments"
+                        type="button"
+                        onClick={showPrevious}
+                      >
+                        Показать предыдущие комментарии
+                      </button>
+                    )
+                }
+                <div
+                  className="comment-block__list"
+                  ref={(ref) => {
+                    this.commentWindow = ref;
+                  }}
+                  onScroll={this.onScroll}
+                >
+                  {
+                    R.map(
+                      comment => (
+                        <React.Fragment key={comment.id}>
+                          <Comment
+                            startAnswer={startAnswer}
+                            removeComment={removeComment}
+                            user={user}
+                            comment={comment}
+                          />
+                          {
+                            R.map(
+                              innerComment => (
+                                <div
+                                  key={innerComment.id}
+                                  className="comment-block__inner"
+                                >
+                                  <Comment
+                                    startAnswer={startAnswer}
+                                    removeComment={removeComment}
+                                    user={user}
+                                    comment={innerComment}
+                                  />
+                                </div>
+                              ),
+                              comment[objectListTitle],
+                            )
+                          }
+                        </React.Fragment>
+                      ),
+                      comments,
+                    )
+                  }
+                </div>
+              </div>
+            )
+          }
+        </RouteContext.Consumer>
       );
     }
 }
@@ -127,7 +130,6 @@ CommentBlock.propTypes = {
   removeComment: PropTypes.func.isRequired,
   comments: PropTypes.array.isRequired,
   showPrevious: PropTypes.func.isRequired,
-  numOfComments: PropTypes.number.isRequired,
   allShown: PropTypes.bool.isRequired,
 };
 

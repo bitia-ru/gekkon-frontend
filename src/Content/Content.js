@@ -4,6 +4,7 @@ import * as R from 'ramda';
 import RouteCardView from '../RouteCardView/RouteCardView';
 import FilterBlock from '../FilterBlock/FilterBlock';
 import Pagination from '../Pagination/Pagination';
+import SectorContext from '../contexts/SectorContext';
 import './Content.css';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
@@ -40,68 +41,70 @@ export default class Content extends Component {
         changeDateFilter,
         ctrlPressed,
         addRoute,
-        sectorId,
-        diagram,
-        routes,
-        ascents,
         onRouteClick,
         changePage,
         viewMode,
         changeViewMode,
       } = this.props;
       return (
-        <div className="content">
-          <div className="content__container">
-            <FilterBlock
-              viewMode={viewMode}
-              viewModeData={
-                sectorId !== 0
-                  ? {
-                    scheme: {
-                      title: diagram ? undefined : 'Схема зала ещё не загружена',
-                      disabled: diagram === null,
-                    },
-                    table: {},
-                    list: {},
-                  }
-                  : {
-                    table: {},
-                    list: {},
-                  }
-              }
-              onViewModeChange={changeViewMode}
-              period={period}
-              date={date}
-              onFilterChange={onFilterChange}
-              filters={filters}
-              user={user}
-              categoryId={categoryId}
-              onCategoryChange={onCategoryChange}
-              changePeriodFilter={changePeriodFilter}
-              changeDateFilter={changeDateFilter}
-            />
-            <RouteCardView
-              viewMode={viewMode}
-              ctrlPressed={ctrlPressed}
-              addRoute={addRoute}
-              sectorId={sectorId}
-              diagram={diagram}
-              user={user}
-              routes={routes}
-              ascents={ascents}
-              onRouteClick={onRouteClick}
-            />
-            {
-              viewMode !== 'scheme' && <Pagination
-                onPageChange={changePage}
-                page={page}
-                pagesList={this.pagesList()}
-                firstPage={1}
-                lastPage={numOfPages}
-              />
+        <SectorContext.Consumer>
+          {
+            ({ sector }) => {
+              const diagram = sector && sector.diagram && sector.diagram.url;
+              return (
+                <div className="content">
+                  <div className="content__container">
+                    <FilterBlock
+                      viewMode={viewMode}
+                      viewModeData={
+                        sector
+                          ? {
+                            scheme: {
+                              title: diagram ? undefined : 'Схема зала ещё не загружена',
+                              disabled: diagram === null,
+                            },
+                            table: {},
+                            list: {},
+                          }
+                          : {
+                            table: {},
+                            list: {},
+                          }
+                      }
+                      onViewModeChange={changeViewMode}
+                      period={period}
+                      date={date}
+                      onFilterChange={onFilterChange}
+                      filters={filters}
+                      user={user}
+                      categoryId={categoryId}
+                      onCategoryChange={onCategoryChange}
+                      changePeriodFilter={changePeriodFilter}
+                      changeDateFilter={changeDateFilter}
+                    />
+                    <RouteCardView
+                      viewMode={viewMode}
+                      ctrlPressed={ctrlPressed}
+                      addRoute={addRoute}
+                      diagram={diagram}
+                      user={user}
+                      onRouteClick={onRouteClick}
+                    />
+                    {
+                      viewMode !== 'scheme' && <Pagination
+                        onPageChange={changePage}
+                        page={page}
+                        pagesList={this.pagesList()}
+                        firstPage={1}
+                        lastPage={numOfPages}
+                      />
+                    }
+                  </div>
+                </div>
+              );
             }
-          </div>
-        </div>
+          }
+        </SectorContext.Consumer>
       );
     }
 }
@@ -110,8 +113,6 @@ Content.propTypes = {
   user: PropTypes.object,
   diagram: PropTypes.string,
   date: PropTypes.string,
-  routes: PropTypes.array.isRequired,
-  ascents: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
   numOfPages: PropTypes.number.isRequired,
   period: PropTypes.number.isRequired,
@@ -124,7 +125,6 @@ Content.propTypes = {
   changeDateFilter: PropTypes.func.isRequired,
   ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
-  sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
   viewMode: PropTypes.string.isRequired,
   changeViewMode: PropTypes.func.isRequired,

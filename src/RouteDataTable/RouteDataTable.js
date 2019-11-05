@@ -15,13 +15,14 @@ const RouteDataTable = ({
   let name = route.author ? GetUserName(route.author) : null;
   name = name || 'Неизвестный накрутчик';
   if (!isCurrentUserRoute && name === 'Неизвестный накрутчик' && route.author_id !== null) {
-    if (user.role === 'admin') {
+    if (user && user.role === 'admin') {
       name = GetUserName(route.author, true);
     }
-    if (user.role === 'creator') {
+    if (user && user.role === 'creator') {
       name = `Пользователь #${route.author.id}`;
     }
   }
+  const kind = R.find(R.propEq('title', route.kind), ROUTE_KINDS);
   return (
     <div className="route-data-table">
       <div className="route-data-table-row">
@@ -63,7 +64,7 @@ const RouteDataTable = ({
           Тип:
         </div>
         <div className="route-data-table-item">
-          {R.find(R.propEq('title', route.kind), ROUTE_KINDS).text}
+          {kind && kind.text}
         </div>
       </div>
       <div className="route-data-table-row">

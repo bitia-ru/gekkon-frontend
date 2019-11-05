@@ -6,10 +6,7 @@ import RouteCardScheme from '../RouteCardScheme/RouteCardScheme';
 
 const RouteCardView = ({
   viewMode,
-  routes,
-  ascents,
   addRoute,
-  sectorId,
   onRouteClick,
   ctrlPressed,
   user,
@@ -19,10 +16,7 @@ const RouteCardView = ({
     {
       viewMode === 'table' && (
         <RouteCardTable
-          routes={routes}
-          ascents={ascents}
           addRoute={addRoute}
-          sectorId={sectorId}
           onRouteClick={onRouteClick}
           ctrlPressed={ctrlPressed}
           user={user}
@@ -32,9 +26,7 @@ const RouteCardView = ({
     {
       viewMode === 'list' && (
         <RouteCardList
-          routes={routes}
           addRoute={addRoute}
-          sectorId={sectorId}
           onRouteClick={onRouteClick}
           user={user}
         />
@@ -43,8 +35,6 @@ const RouteCardView = ({
     {
       viewMode === 'scheme' && (
         <RouteCardScheme
-          ascents={ascents}
-          routes={routes}
           onRouteClick={onRouteClick}
           diagram={diagram}
         />
@@ -57,11 +47,8 @@ RouteCardView.propTypes = {
   user: PropTypes.object,
   diagram: PropTypes.string,
   viewMode: PropTypes.string.isRequired,
-  routes: PropTypes.array.isRequired,
-  ascents: PropTypes.array.isRequired,
   ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
-  sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
 };
 

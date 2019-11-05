@@ -4,6 +4,7 @@ import * as R from 'ramda';
 import Marker from '../Marker/Marker';
 import { MARKER_RADIUS } from '../Constants/Marker';
 import { SHORT_CLICK_DELAY } from '../Constants/Route';
+import RouteContext from '../contexts/RouteContext';
 import './RouteEditor.css';
 
 export default class RouteEditor extends Component {
@@ -157,63 +158,69 @@ export default class RouteEditor extends Component {
 
     render() {
       const {
-        editable, routePhoto, route, pointers, onImageLoad, routeImageLoading,
+        editable, routePhoto, pointers, onImageLoad, routeImageLoading,
       } = this.props;
       const mapIndexed = R.addIndex(R.map);
       return (
-        <div className="modal__track-image-wrapper" draggable={false}>
-          <div className="route-editor__inner-container" draggable={false}>
-            <div
-              draggable={false}
-              className="route-editor__img-container"
-              ref={(ref) => {
-                this.imageContainerRef = ref;
-              }}
-              role="button"
-              tabIndex={0}
-              style={{ outline: 'none' }}
-              onMouseDown={editable ? this.onMouseDown : null}
-              onMouseUp={editable ? this.onMouseUp : null}
-              onMouseMove={editable ? this.onMouseMove : null}
-              onContextMenu={this.onContextMenu}
-            >
-              <img
-                draggable={false}
-                className="route-editor__img"
-                src={routePhoto}
-                alt={route.name}
-                onLoad={onImageLoad}
-                style={{ visibility: routeImageLoading ? 'hidden' : 'visible' }}
-              />
-              {
-                !routeImageLoading && (
-                <>
-                  {
-                    mapIndexed((pointer, index) => (
-                      <Marker
-                        key={index}
-                        removePointer={
-                          editable ? (() => this.removePointer(index)) : null
-                        }
-                        onStartMoving={
-                          editable
-                            ? ((x, y) => this.onStartMoving(index, x, y))
-                            : null
-                        }
-                        angle={pointer.angle}
-                        radius={MARKER_RADIUS}
-                        dx={pointer.dx}
-                        dy={pointer.dy}
-                        left={pointer.x}
-                        top={pointer.y}
-                      />
-                    ), pointers)}
-                </>
-                )
-              }
-            </div>
-          </div>
-        </div>
+        <RouteContext.Consumer>
+          {
+            ({ route }) => (
+              <div className="modal__track-image-wrapper" draggable={false}>
+                <div className="route-editor__inner-container" draggable={false}>
+                  <div
+                    draggable={false}
+                    className="route-editor__img-container"
+                    ref={(ref) => {
+                      this.imageContainerRef = ref;
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    style={{ outline: 'none' }}
+                    onMouseDown={editable ? this.onMouseDown : null}
+                    onMouseUp={editable ? this.onMouseUp : null}
+                    onMouseMove={editable ? this.onMouseMove : null}
+                    onContextMenu={this.onContextMenu}
+                  >
+                    <img
+                      draggable={false}
+                      className="route-editor__img"
+                      src={routePhoto}
+                      alt={route.name}
+                      onLoad={onImageLoad}
+                      style={{ visibility: routeImageLoading ? 'hidden' : 'visible' }}
+                    />
+                    {
+                      !routeImageLoading && (
+                        <>
+                          {
+                            mapIndexed((pointer, index) => (
+                              <Marker
+                                key={index}
+                                removePointer={
+                                  editable ? (() => this.removePointer(index)) : null
+                                }
+                                onStartMoving={
+                                  editable
+                                    ? ((x, y) => this.onStartMoving(index, x, y))
+                                    : null
+                                }
+                                angle={pointer.angle}
+                                radius={MARKER_RADIUS}
+                                dx={pointer.dx}
+                                dy={pointer.dy}
+                                left={pointer.x}
+                                top={pointer.y}
+                              />
+                            ), pointers)}
+                        </>
+                      )
+                    }
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        </RouteContext.Consumer>
       );
     }
 }
@@ -221,10 +228,9 @@ export default class RouteEditor extends Component {
 RouteEditor.propTypes = {
   routeImageLoading: PropTypes.bool,
   routePhoto: PropTypes.string.isRequired,
-  route: PropTypes.object.isRequired,
   pointers: PropTypes.array.isRequired,
   editable: PropTypes.bool.isRequired,
-  updatePointers: PropTypes.func.isRequired,
+  updatePointers: PropTypes.func,
   onImageLoad: PropTypes.func.isRequired,
 };
 

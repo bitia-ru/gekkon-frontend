@@ -1,72 +1,84 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import RouteCard from '../RouteCard/RouteCard';
+import getArrayByIds from '../../v1/utils/getArrayByIds';
+import SectorContext from '../contexts/SectorContext';
 import './RouteCardTable.css';
 
 const RouteCardTable = ({
   user,
-  sectorId,
   ctrlPressed,
   addRoute,
-  ascents,
   onRouteClick,
   routes,
+  routeIds,
 }) => (
-  <div className="content__inner">
+  <SectorContext.Consumer>
     {
-      (sectorId !== 0 && user && ctrlPressed) && (
-        <div className="content__col-md-4 content__col-lg-3">
-          <div className="content__route-card">
-            <a
-              className="route-card route-card__edit"
-              role="link"
-              tabIndex={0}
-              style={{ outline: 'none' }}
-              onClick={addRoute}
-            >
-              <span className="route-card__edit-icon" />
-              <span className="route-card__edit-title">
-                Добавить новую трассу
-              </span>
-            </a>
-          </div>
+      ({ sector }) => (
+        <div className="content__inner">
+          {
+            (sector && user && ctrlPressed) && (
+              <div className="content__col-md-4 content__col-lg-3">
+                <div className="content__route-card">
+                  <a
+                    className="route-card route-card__edit"
+                    role="link"
+                    tabIndex={0}
+                    style={{ outline: 'none' }}
+                    onClick={addRoute}
+                  >
+                    <span className="route-card__edit-icon" />
+                    <span className="route-card__edit-title">
+                      Добавить новую трассу
+                    </span>
+                  </a>
+                </div>
+              </div>
+            )
+          }
+          {
+            R.map(
+              route => (
+                <div
+                  key={route.id}
+                  className="content__col-md-4 content__col-lg-3"
+                  role="button"
+                  tabIndex={0}
+                  style={{ outline: 'none' }}
+                  onClick={() => onRouteClick(route.id) || null}
+                >
+                  <div className="content__route-card">
+                    <RouteCard
+                      route={route}
+                    />
+                  </div>
+                </div>
+              ),
+              getArrayByIds(routeIds, routes),
+            )
+          }
         </div>
       )
     }
-    {
-      R.map(
-        route => (
-          <div
-            key={route.id}
-            className="content__col-md-4 content__col-lg-3"
-            role="button"
-            tabIndex={0}
-            style={{ outline: 'none' }}
-            onClick={() => onRouteClick(route.id) || null}
-          >
-            <div className="content__route-card">
-              <RouteCard
-                route={route}
-                ascent={R.find(ascent => ascent.route_id === route.id, ascents)}
-              />
-            </div>
-          </div>
-        ),
-        routes,
-      )
-    }
-  </div>
+  </SectorContext.Consumer>
 );
 
 RouteCardTable.propTypes = {
   user: PropTypes.object,
-  routes: PropTypes.array.isRequired,
-  ascents: PropTypes.array.isRequired,
+  routes: PropTypes.object.isRequired,
+  routeIds: PropTypes.array.isRequired,
   ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
-  sectorId: PropTypes.number.isRequired,
   onRouteClick: PropTypes.func.isRequired,
 };
 
-export default RouteCardTable;
+const mapStateToProps = state => ({
+  routes: state.routes,
+  routeIds: state.routeIds,
+});
+
+export default withRouter(connect(mapStateToProps)(RouteCardTable));

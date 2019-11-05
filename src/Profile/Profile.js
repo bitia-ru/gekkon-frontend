@@ -498,9 +498,10 @@ export default class Profile extends Component {
         <div className="modal-overlay">
           <StickyBar
             loading={numOfActiveRequests > 0}
-            content={this.content()}
             hideLoaded
-          />
+          >
+            {this.content()}
+          </StickyBar>
         </div>
       );
     }

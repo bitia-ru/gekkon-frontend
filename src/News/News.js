@@ -57,7 +57,7 @@ export default class News extends Component {
             <div className="news__author-info">
               <div className="news__author-title">
                 <div className="news__author-name" style={{ cursor: 'pointer' }}>
-                  {GetUserName(user)}
+                  {user && GetUserName(user)}
                 </div>
                 <div className="news__author-data">{message}</div>
               </div>
