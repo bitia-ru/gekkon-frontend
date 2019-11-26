@@ -4,7 +4,7 @@ import SpotCard from '../SpotCard/SpotCard';
 import NewsBlock from '../NewsBlock/NewsBlock';
 import './MainPageContent.css';
 
-import { SpotsData } from '../data';
+import { SpotsData } from '../Constants/Spots';
 import NEWS from '../Constants/NewsDemoData';
 
 const MainPageContent = () => (

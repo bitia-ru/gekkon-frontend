@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './ShowSchemeButton.css';
 
-import iconImage from '../../img/btn-handler/btn-handler-sprite.svg';
-
 const ShowSchemeButton = ({ onClick, disabled, title }) => (
   <button
     type="button"
@@ -12,7 +10,13 @@ const ShowSchemeButton = ({ onClick, disabled, title }) => (
     title={title}
     style={disabled ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}
   >
-    <svg><use xlinkHref={`${iconImage}#icon-show-map`} /></svg>
+    <svg>
+      <use
+        xlinkHref={
+          `${require('../../img/btn-handler/btn-handler-sprite.svg')}#icon-show-map`
+        }
+      />
+    </svg>
   </button>
 );
 

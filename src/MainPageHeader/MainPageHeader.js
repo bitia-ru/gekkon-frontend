@@ -6,7 +6,7 @@ import Button from '../Button/Button';
 import { notReady, notExist } from '../Utils';
 import './MainPageHeader.css';
 
-const bgImage = '/public/img/main-page-header-img/main-page-header.jpg';
+const bgImage = require('./images/main-page-header.jpg');
 
 export default class MainPageHeader extends Component {
   constructor(props) {
@@ -34,7 +34,6 @@ export default class MainPageHeader extends Component {
       openProfile,
     } = this.props;
     const { bgImageLoaded, posterPhotoLoaded } = this.state;
-    const srcSet = '/public/img/main-page-header-img/main-page-header-img_desktop-md.png';
     return (
       <header
         className="main-page-header"
@@ -82,9 +81,12 @@ export default class MainPageHeader extends Component {
           </div>
           <div className="main-page-header__img">
             <picture>
-              <source media="(max-width: 1600px)" srcSet={srcSet} />
+              <source
+                media="(max-width: 1600px)"
+                srcSet={require('./images/main-page-header-img_desktop-md.png')}
+              />
               <img
-                src="/public/img/main-page-header-img/main-page-header-img.png"
+                src={require('./images/main-page-header-img.png')}
                 alt="Скалолаз"
                 onLoad={() => this.setState({ posterPhotoLoaded: true })}
                 style={{ visibility: posterPhotoLoaded ? 'visible' : 'hidden' }}

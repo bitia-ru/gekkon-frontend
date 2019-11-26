@@ -25,5 +25,5 @@ export const getColorStyle = (routeMarkColor) => {
   if (routeMarkColor && routeMarkColor.color) {
     return { backgroundColor: routeMarkColor.color };
   }
-  return { backgroundImage: 'url(/public/img/route-img/no_color.png)' };
+  return { backgroundImage: `url(${require('../../img/route-img/no_color.png')})` };
 };

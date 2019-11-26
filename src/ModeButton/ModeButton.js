@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import icons from '../../img/view-mode-switcher-sprite/view-mode-switcher-sprite.svg';
 import './ModeButton.css';
+
+const icons = require('./images/view-mode-switcher-sprite.svg');
 
 const schemeIcon = `${icons}#toggle-track`;
 const tableIcon = `${icons}#toggle-table`;

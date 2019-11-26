@@ -14,7 +14,7 @@ const LikeButton = ({
   >
     <span className="like-button__icon">
       <svg>
-        <use xlinkHref="/public/img/like-sprite/like.svg#icon-like" />
+        <use xlinkHref={`${require('./images/like.svg')}#icon-like`} />
       </svg>
     </span>
     <span className="like-button__count">{notAvail(numOfLikes) ? <>&nbsp;</> : numOfLikes}</span>

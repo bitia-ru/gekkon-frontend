@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Logo.css';
 
-import logoImage from '../../img/logo-img/logo-75x75.png';
-
 const Logo = () => (
   <div className="logo__container">
     <Link to="/" className="logo">
       <span className="logo__icon">
-        <img src={logoImage} alt="Gekkon" />
+        <img src={require('./images/logo-75x75.png')} alt="Gekkon" />
       </span>
     </Link>
   </div>

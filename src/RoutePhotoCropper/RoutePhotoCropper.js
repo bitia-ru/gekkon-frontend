@@ -118,6 +118,7 @@ export default class RoutePhotoCropper extends Component {
       const {
         croppedImageUrl, crop, rotate, image, src,
       } = this.state;
+      const iconImage = require('../../img/btn-handler/btn-handler-sprite.svg');
       return (
         <React.Fragment>
           <div
@@ -132,12 +133,12 @@ export default class RoutePhotoCropper extends Component {
             <ButtonHandler
               onClick={this.rotate}
               title="Поворот"
-              xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
+              xlinkHref={`${iconImage}#icon-btn-reload`}
             />
             <ButtonHandler
               onClick={close}
               title="Закрыть"
-              xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
+              xlinkHref={`${iconImage}#icon-btn-close`}
             />
           </div>
           <div

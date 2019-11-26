@@ -260,11 +260,14 @@ export default class LogInForm extends Component {
 
     render() {
       const { enterWithVk } = this.props;
-      const iconVk = '/public/img/social-links-sprite/social-links-sprite.svg#icon-vk';
-      const iconFB = '/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook';
-      const iconTwitter = '/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter';
-      const iconInst = '/public/img/social-links-sprite/social-links-sprite.svg#icon-inst';
-      const iconYoutube = '/public/img/social-links-sprite/social-links-sprite.svg#icon-youtube';
+      const socialLinksSprite = require(
+        '../../img/social-links-sprite/social-links-sprite.svg',
+      );
+      const iconVk = `${socialLinksSprite}#icon-vk`;
+      const iconFB = `${socialLinksSprite}#icon-facebook`;
+      const iconTwitter = `${socialLinksSprite}#icon-twitter`;
+      const iconInst = `${socialLinksSprite}#icon-inst`;
+      const iconYoutube = `${socialLinksSprite}#icon-youtube`;
       return (
         <div
           role="button"

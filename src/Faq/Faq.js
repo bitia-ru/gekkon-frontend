@@ -19,7 +19,6 @@ import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, FAQ_DATA } from '../Constants/Faq';
 import { avail } from '../Utils';
 import { userStateToUser } from '../Utils/Workarounds';
-import faqImage from '../../img/faq-header-img/faq.jpg';
 
 class Faq extends Authorization {
   componentDidMount() {
@@ -126,7 +125,7 @@ class Faq extends Authorization {
           signUp={this.signUp}
           logOut={this.logOut}
           title={TITLE}
-          image={faqImage}
+          image={require('./images/faq.jpg')}
         />
         <InfoPageContent titles={TITLES} data={FAQ_DATA} />
       </>

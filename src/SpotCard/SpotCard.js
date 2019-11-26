@@ -6,11 +6,12 @@ import './SpotCard.css';
 const SpotCard = ({
   spot,
 }) => {
-  const iconSquare = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-square';
-  const iconHeight = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-height';
-  const iconHooks = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-hooks';
-  const iconPlace = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-place';
-  const iconNext = '/public/img/spot-card-sprite/spot-card-sprite.svg#icon-next';
+  const spotCardSprite = require('./images/spot-card-sprite.svg');
+  const iconSquare = `${spotCardSprite}#icon-square`;
+  const iconHeight = `${spotCardSprite}#icon-height`;
+  const iconHooks = `${spotCardSprite}#icon-hooks`;
+  const iconPlace = `${spotCardSprite}#icon-place`;
+  const iconNext = `${spotCardSprite}#icon-next`;
   return (
     <div className="spot-card-container__col-lg-4 spot-card-container__col-md-2">
       <article className={`spot-card ${spot.className}`}>

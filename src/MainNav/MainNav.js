@@ -71,7 +71,7 @@ class MainNav extends Component {
                   >
                     <div className="main-nav__search-icon">
                       <svg aria-hidden="true">
-                        <use xlinkHref="/public/img/main-nav-img/search.svg#search" />
+                        <use xlinkHref={`${require('./images/search.svg')}#search`} />
                       </svg>
                     </div>
                   </button>

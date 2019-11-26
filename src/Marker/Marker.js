@@ -48,7 +48,7 @@ export default class Marker extends Component {
         >
           <img
             draggable={false}
-            src="/public/img/marker-img/hold-mark.png"
+            src={require('./images/hold-mark.png')}
             className="marker__image"
             style={{
               width: `${radius * 2}px`,

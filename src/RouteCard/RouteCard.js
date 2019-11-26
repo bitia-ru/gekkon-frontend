@@ -35,8 +35,9 @@ export default class RouteCard extends Component {
           : ''
       );
     }
-    const alarmIcon = '/public/img/route-card-sprite/card-sprite.svg#icon-alarm';
-    const clockIcon = '/public/img/route-card-sprite/card-sprite.svg#icon-clock';
+    const cardSprite = require('./images/card-sprite.svg');
+    const alarmIcon = `${cardSprite}#icon-alarm`;
+    const clockIcon = `${cardSprite}#icon-clock`;
     const installedUntilValid = (installedUntil && date >= installedUntil);
     return (
       <a className={`route-card${statusClass}`}>

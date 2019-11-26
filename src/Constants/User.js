@@ -14,7 +14,10 @@ export const USER_ITEMS_DATA = [
   { separator: true },
   { id: 1, title: 'Профиль', clickable: true },
   {
-    id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/img/main-nav-img/exit.svg#exit',
+    id: 2,
+    title: 'Выйти',
+    clickable: true,
+    svgSrc: `${require('../../img/main-nav-img/exit.svg')}#exit`,
   },
 ];
 

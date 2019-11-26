@@ -5,8 +5,6 @@ import News from '../News/News';
 import { DEFAULT_SHOWN } from '../Constants/News';
 import './NewsBlock.css';
 
-import backgroundImage from '../../img/section-news/mountain-peak.png';
-
 export default class NewsBlock extends Component {
   constructor(props) {
     super(props);
@@ -22,7 +20,7 @@ export default class NewsBlock extends Component {
     return (
       <section
         className="section-news"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        style={{ backgroundImage: `url(${require('./images/mountain-peak.png')})` }}
       >
         <div className="section-news__container">
           <div className="section-news__inner">

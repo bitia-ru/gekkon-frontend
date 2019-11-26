@@ -19,7 +19,6 @@ import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, ABOUT_DATA } from '../Constants/About';
 import { avail } from '../Utils';
 import { userStateToUser } from '../Utils/Workarounds';
-import aboutImage from '../../img/about-us-header-img/about-us.jpg';
 
 class About extends Authorization {
   componentDidMount() {
@@ -126,7 +125,7 @@ class About extends Authorization {
           signUp={this.signUp}
           logOut={this.logOut}
           title={TITLE}
-          image={aboutImage}
+          image={require('./images/about-us.jpg')}
         />
         <InfoPageContent titles={TITLES} data={ABOUT_DATA} />
       </>

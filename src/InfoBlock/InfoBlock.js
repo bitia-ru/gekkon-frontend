@@ -50,7 +50,7 @@ export default class InfoBlock extends Component {
             >
               <span className="info-block__info-icon">
                 <svg aria-hidden="true">
-                  <use xlinkHref="/public/img/info-block-img/arrow.svg#arrow" />
+                  <use xlinkHref={`${require('./images/arrow.svg')}#arrow`} />
                 </svg>
               </span>
             </button>

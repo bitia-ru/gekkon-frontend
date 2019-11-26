@@ -257,6 +257,7 @@ export default class RoutesEditModal extends Component {
       const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
       const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
       const saveDisabled = (!routeChanged && !markChanged);
+      const iconImage = require('../../img/btn-handler/btn-handler-sprite.svg');
       return (
         <div className="modal-overlay__wrapper">
           <div className="modal modal-overlay__modal">
@@ -340,14 +341,14 @@ export default class RoutesEditModal extends Component {
                                   <ButtonHandler
                                     onClick={() => this.fileInput.click()}
                                     title="Обновить фото"
-                                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-reload"
+                                    xlinkHref={`${iconImage}#icon-btn-reload`}
                                   />
                                   <ButtonHandler
                                     onClick={
                                       () => this.onRouteParamChange(null, 'photo')
                                     }
                                     title="Удалить фото"
-                                    xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-close"
+                                    xlinkHref={`${iconImage}#icon-btn-close`}
                                   />
                                 </React.Fragment>
                               )
@@ -355,7 +356,7 @@ export default class RoutesEditModal extends Component {
                                 <ButtonHandler
                                   onClick={() => this.fileInput.click()}
                                   title="Загрузить фото"
-                                  xlinkHref="/public/img/btn-handler/btn-handler-sprite.svg#icon-btn-download"
+                                  xlinkHref={`${iconImage}#icon-btn-download`}
                                 />
                               )
                           }
