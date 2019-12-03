@@ -44,16 +44,6 @@ class About extends Authorization {
   changeNameFilter = () => {
   };
 
-  openProfileForm = () => {
-    this.props.history.push('/about#profile');
-    this.setState({ profileFormVisible: true });
-  };
-
-  closeProfileForm = () => {
-    this.props.history.push('/about');
-    this.setState({ profileFormVisible: false });
-  };
-
   content = () => {
     const { user, numOfActiveRequests } = this.props;
     const {

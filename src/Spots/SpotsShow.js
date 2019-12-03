@@ -188,27 +188,19 @@ class SpotsShow extends Authorization {
     };
 
     onRouteClick = (id) => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      if (sectorId === 0) {
-        history.push(`/spots/${spotId}/routes/${id}`);
-      } else {
-        history.push(`/spots/${spotId}/sectors/${sectorId}/routes/${id}`);
-      }
+      const { history, match } = this.props;
+      history.push(`${match.url}/routes/${id}`);
     };
 
     closeRoutesModal = () => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
+      const { history, match } = this.props;
       const sectorId = this.getSectorId();
       if (sectorId === 0) {
         this.reloadSpot();
-        history.push(`/spots/${spotId}`);
       } else {
         this.reloadSector(sectorId);
-        history.push(`/spots/${spotId}/sectors/${sectorId}`);
       }
+      history.push(R.replace('/routes', '', match.url));
       this.reloadUserAscents();
       this.reloadRoutes({}, null);
     };
@@ -568,14 +560,13 @@ class SpotsShow extends Authorization {
     };
 
     changeSectorFilter = (id) => {
-      const { history, user } = this.props;
-      const spotId = this.getSpotId();
+      const { history, user, match } = this.props;
       if (id !== 0) {
         this.reloadSector(id);
-        history.push(`/spots/${spotId}/sectors/${id}`);
+        history.push(`${R.replace(/\/sectors\/[0-9]*/, '', match.url)}/sectors/${id}`);
       } else {
         this.reloadSpot();
-        history.push(`/spots/${spotId}`);
+        history.push(R.replace(/\/sectors\/[0-9]*/, '', match.url));
       }
       this.reloadRoutes({ sectorId: id }, null, user);
     };
@@ -738,42 +729,6 @@ class SpotsShow extends Authorization {
           });
       }
       this.setState({ ctrlPressed: false });
-    };
-
-    goToProfile = () => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      if (sectorId === 0) {
-        history.push(`/spots/${spotId}#profile`);
-      } else {
-        history.push(`/spots/${spotId}/sectors/${sectorId}#profile`);
-      }
-      this.setState({ profileFormVisible: true });
-    };
-
-    openProfileForm = () => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      this.setState({ profileFormVisible: true });
-      if (sectorId === 0) {
-        history.push(`/spots/${spotId}#profile`);
-      } else {
-        history.push(`/spots/${spotId}/sectors/${sectorId}#profile`);
-      }
-    };
-
-    closeProfileForm = () => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      this.setState({ profileFormVisible: false });
-      if (sectorId === 0) {
-        history.push(`/spots/${spotId}`);
-      } else {
-        history.push(`/spots/${spotId}/sectors/${sectorId}`);
-      }
     };
 
     removeComment = (routeId, comment) => {
@@ -966,12 +921,11 @@ class SpotsShow extends Authorization {
       const {
         token,
         history,
+        match,
         setRoute: setRouteProp,
         increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
         decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
       } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
       increaseNumOfActiveRequestsProp();
       this.setState({ editRouteIsWaiting: true });
       Axios({
@@ -985,7 +939,7 @@ class SpotsShow extends Authorization {
           decreaseNumOfActiveRequestsProp();
           setRouteProp(response.data.payload);
           history.push(
-            `/spots/${spotId}/sectors/${sectorId}/routes/${response.data.payload.id}`,
+            `${match.url}/${response.data.payload.id}`,
           );
           this.setState({
             editRouteIsWaiting: false,
@@ -1001,12 +955,11 @@ class SpotsShow extends Authorization {
       const {
         token,
         history,
+        match,
         setRoute: setRouteProp,
         increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
         decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
       } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
       increaseNumOfActiveRequestsProp();
       this.setState({ editRouteIsWaiting: true });
       Axios({
@@ -1019,11 +972,7 @@ class SpotsShow extends Authorization {
         .then((response) => {
           decreaseNumOfActiveRequestsProp();
           setRouteProp(response.data.payload);
-          if (sectorId === 0) {
-            history.push(`/spots/${spotId}/routes/${routeId}`);
-          } else {
-            history.push(`/spots/${spotId}/sectors/${sectorId}/routes/${routeId}`);
-          }
+          history.push(`${match.url}/routes/${routeId}`);
           this.setState(
             {
               editRouteIsWaiting: false,
@@ -1037,40 +986,18 @@ class SpotsShow extends Authorization {
     };
 
     openEdit = (routeId) => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      if (sectorId === 0) {
-        history.push(`/spots/${spotId}/routes/${routeId}/edit`);
-      } else {
-        history.push(`/spots/${spotId}/sectors/${sectorId}/routes/${routeId}/edit`);
-      }
+      const { history, match } = this.props;
+      history.push(`${match.url}/${routeId}/edit`);
     };
 
     cancelEdit = (routeId) => {
       const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      if (routeId === null) {
-        if (sectorId === 0) {
-          history.push(`/spots/${spotId}`);
-        } else {
-          history.push(`/spots/${spotId}/sectors/${sectorId}`);
-        }
-      } else {
-        if (sectorId === 0) {
-          history.push(`/spots/${spotId}/routes/${routeId}`);
-        } else {
-          history.push(`/spots/${spotId}/sectors/${sectorId}/routes/${routeId}`);
-        }
-      }
+      history.goBack();
     };
 
     goToNew = () => {
-      const { history } = this.props;
-      const spotId = this.getSpotId();
-      const sectorId = this.getSectorId();
-      history.push(`/spots/${spotId}/sectors/${sectorId}/routes/new`);
+      const { history, match } = this.props;
+      history.push(`${match.url}/routes/new`);
     };
 
     onCategoryChange = (id) => {
@@ -1376,7 +1303,7 @@ class SpotsShow extends Authorization {
                     openEdit={this.openEdit}
                     removeRoute={this.removeRoute}
                     ctrlPressed={ctrlPressed}
-                    goToProfile={this.goToProfile}
+                    goToProfile={this.openProfileForm}
                     removeComment={this.removeComment}
                     saveComment={this.saveComment}
                     onLikeChange={this.onLikeChange}

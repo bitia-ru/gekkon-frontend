@@ -91,18 +91,6 @@ class SpotsIndex extends Authorization {
     changeNameFilter = () => {
     };
 
-    openProfileForm = () => {
-      const { history } = this.props;
-      history.push('/#profile');
-      this.setState({ profileFormVisible: true });
-    };
-
-    closeProfileForm = () => {
-      const { history } = this.props;
-      history.push('/');
-      this.setState({ profileFormVisible: false });
-    };
-
     content = () => {
       const { user, numOfActiveRequests } = this.props;
       const {

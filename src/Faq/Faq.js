@@ -44,16 +44,6 @@ class Faq extends Authorization {
   changeNameFilter = () => {
   };
 
-  openProfileForm = () => {
-    this.props.history.push('/faq#profile');
-    this.setState({ profileFormVisible: true });
-  };
-
-  closeProfileForm = () => {
-    this.props.history.push('/faq');
-    this.setState({ profileFormVisible: false });
-  };
-
   content = () => {
     const { user, numOfActiveRequests } = this.props;
     const {
