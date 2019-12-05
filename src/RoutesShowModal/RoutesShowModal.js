@@ -26,14 +26,12 @@ import { HIDE_DELAY } from '../Constants/TooltipPerson';
 import numToStr from '../Constants/NumToStr';
 import RouteContext from '../contexts/RouteContext';
 import getArrayFromObject from '../../v1/utils/getArrayFromObject';
-import {
-  loadRoute,
-  reloadAscents,
-  reloadComments,
-  reloadLikes,
-} from '../../v1/utils/RouteFinder';
+import { loadRoute } from '../../v1/stores/routes/utils';
+
 import { userStateToUser } from '../Utils/Workarounds';
 import './RoutesShowModal.css';
+import { ApiUrl } from '../Environ';
+import getState from '../../v1/utils/getState';
 
 class RoutesShowModal extends Component {
   constructor(props) {
@@ -56,35 +54,8 @@ class RoutesShowModal extends Component {
   }
 
   componentDidMount() {
-    const { displayError } = this.props;
-    loadRoute(
-      this.getRouteId(),
-      null,
-      (error) => {
-        displayError(error);
-      },
-    );
-    reloadAscents(
-      this.getRouteId(),
-      null,
-      (error) => {
-        displayError(error);
-      },
-    );
-    reloadComments(
-      this.getRouteId(),
-      null,
-      (error) => {
-        displayError(error);
-      },
-    );
-    reloadLikes(
-      this.getRouteId(),
-      null,
-      (error) => {
-        displayError(error);
-      },
-    );
+    const { loadRoute: loadRouteProp } = this.props;
+    loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId()}`);
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -236,7 +207,7 @@ class RoutesShowModal extends Component {
       onClose,
       routes,
       onLikeChange,
-      user: userProp,
+      user,
       ctrlPressed,
       removeRoute,
       openEdit,
@@ -258,7 +229,6 @@ class RoutesShowModal extends Component {
       showTooltip,
     } = this.state;
     const route = routes[this.getRouteId()];
-    const user = userStateToUser(userProp);
     const showLoadPhotoMsg = (
       ((route && !route.photo) || !routeImageLoading) && user && this.canEditRoute(user, route)
     );
@@ -266,7 +236,7 @@ class RoutesShowModal extends Component {
     const likes = avail(route) && avail(route.likes) && getArrayFromObject(route.likes);
     const numOfLikes = (avail(likes) && likes.length);
     const like = (
-      notAvail(user) || notAvail(user.id) || notAvail(likes)
+      notAvail(user) || notAvail(likes)
         ? undefined
         : R.find(R.propEq('user_id', user.id))(likes)
     );
@@ -294,7 +264,7 @@ class RoutesShowModal extends Component {
             />
           </div>
           {
-            (user && avail(user.id)) && <div
+            (user && avail(user)) && <div
               className="modal-block__notice"
               onMouseEnter={() => this.setState({ showTooltip: true })}
               onMouseLeave={() => this.setState({ showTooltip: false })}
@@ -571,7 +541,7 @@ class RoutesShowModal extends Component {
 
   render() {
     const {
-      onClose, numOfActiveRequests, routes,
+      onClose, loading, routes,
     } = this.props;
     const route = routes[this.getRouteId()];
     return (
@@ -585,7 +555,7 @@ class RoutesShowModal extends Component {
           }}
         >
           <StickyBar
-            loading={numOfActiveRequests > 0}
+            loading={loading}
             hideLoaded
           >
             {this.content()}
@@ -608,14 +578,18 @@ RoutesShowModal.propTypes = {
   saveComment: PropTypes.func.isRequired,
   onLikeChange: PropTypes.func.isRequired,
   changeAscentResult: PropTypes.func.isRequired,
-  numOfActiveRequests: PropTypes.number.isRequired,
+  loading: PropTypes.bool.isRequired,
   submitNoticeForm: PropTypes.func.isRequired,
-  displayError: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  routes: state.routes,
-  user: state.user,
+  routes: state.routesStore.routes,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+  loading: getState(state),
 });
 
-export default withRouter(connect(mapStateToProps)(RoutesShowModal));
+const mapDispatchToProps = dispatch => ({
+  loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesShowModal));

@@ -6,26 +6,24 @@ import Cookies from 'js-cookie';
 import InfoPageHeader from '../InfoPageHeader/InfoPageHeader';
 import InfoPageContent from '../InfoPageContent/InfoPageContent';
 import Footer from '../Footer/Footer';
-import {
-  decreaseNumOfActiveRequests,
-  increaseNumOfActiveRequests, removeToken, saveToken,
-  saveUser,
-} from '../actions';
-import Authorization from '../Authorization';
+import BaseComponent from '../BaseComponent';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
 import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, FAQ_DATA } from '../Constants/Faq';
 import { avail } from '../Utils';
-import { userStateToUser } from '../Utils/Workarounds';
+import { signIn } from '../../v1/stores/users/utils';
+import { logOutUser, loadToken } from '../../v1/stores/users/actions';
+import getState from '../../v1/utils/getState';
 
-class Faq extends Authorization {
+class Faq extends BaseComponent {
   componentDidMount() {
     const {
       history,
-      saveToken: saveTokenProp,
-      saveUser: saveUserProp,
+      signIn: signInProp,
+      loadToken: loadTokenProp,
+      logOutUser: logOutUserProp,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
@@ -34,10 +32,10 @@ class Faq extends Authorization {
     });
     if (Cookies.get('user_session_token') !== undefined) {
       const token = Cookies.get('user_session_token');
-      saveTokenProp(token);
-      this.signIn(token);
+      loadTokenProp(token);
+      signInProp(token);
     } else {
-      saveUserProp({ id: null });
+      logOutUserProp();
     }
   }
 
@@ -45,7 +43,7 @@ class Faq extends Authorization {
   };
 
   content = () => {
-    const { user, numOfActiveRequests } = this.props;
+    const { user } = this.props;
     const {
       signUpIsWaiting,
       signUpFormVisible,
@@ -85,12 +83,11 @@ class Faq extends Authorization {
           )
         }
         {
-          (avail(user.id) && profileFormVisible) && (
+          (avail(user) && profileFormVisible) && (
             <Profile
               user={user}
               onFormSubmit={this.submitProfileForm}
               removeVk={this.removeVk}
-              numOfActiveRequests={numOfActiveRequests}
               showToastr={this.showToastr}
               enterWithVk={this.enterWithVk}
               isWaiting={profileIsWaiting}
@@ -109,7 +106,7 @@ class Faq extends Authorization {
         />
         <InfoPageHeader
           changeNameFilter={this.changeNameFilter}
-          user={userStateToUser(user)}
+          user={user}
           openProfile={this.openProfileForm}
           logIn={this.logIn}
           signUp={this.signUp}
@@ -123,7 +120,7 @@ class Faq extends Authorization {
   };
 
   render() {
-    const { user, numOfActiveRequests } = this.props;
+    const { user, loading } = this.props;
     const {
       signUpFormVisible,
       logInFormVisible,
@@ -132,11 +129,11 @@ class Faq extends Authorization {
     const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
     return (
       <div className={showModal ? null : 'page__scroll'}>
-          <StickyBar loading={numOfActiveRequests > 0}>
-            {this.content()}
-          </StickyBar>
+        <StickyBar loading={loading}>
+          {this.content()}
+        </StickyBar>
         <Footer
-          user={userStateToUser(user)}
+          user={user}
           logIn={this.logIn}
           signUp={this.signUp}
           logOut={this.logOut}
@@ -147,17 +144,14 @@ class Faq extends Authorization {
 }
 
 const mapStateToProps = state => ({
-  user: state.user,
-  token: state.token,
-  numOfActiveRequests: state.numOfActiveRequests,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+  loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveUser: user => dispatch(saveUser(user)),
-  saveToken: token => dispatch(saveToken(token)),
-  removeToken: () => dispatch(removeToken()),
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
+  loadToken: token => dispatch(loadToken(token)),
+  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  logOutUser: () => dispatch(logOutUser()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Faq));

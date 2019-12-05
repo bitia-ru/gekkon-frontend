@@ -8,7 +8,7 @@ import RouteDataEditableTable from '../RouteDataEditableTable/RouteDataEditableT
 import RouteEditor from '../RouteEditor/RouteEditor';
 import CloseButton from '../CloseButton/CloseButton';
 import ButtonHandler from '../ButtonHandler/ButtonHandler';
-import { DEFAULT_CATEGORY, CATEGORIES } from '../Constants/Categories';
+import { DEFAULT_CATEGORY } from '../Constants/Categories';
 import StickyBar from '../StickyBar/StickyBar';
 import RoutePhotoCropper from '../RoutePhotoCropper/RoutePhotoCropper';
 import {
@@ -19,14 +19,16 @@ import SchemeModal from '../SchemeModal/SchemeModal';
 import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
 import RouteContext from '../contexts/RouteContext';
 import NewRoute from '../Constants/NewRoute';
-import {
-  loadRoute,
-} from '../../v1/utils/RouteFinder';
 import { avail } from '../Utils';
-import {
-  reloadSector,
-} from '../../v1/utils/SectorFinder';
 import './RoutesEditModal.css';
+import { loadRouteMarkColors } from '../../v1/stores/route_mark_colors/utils';
+import { loadUsers } from '../../v1/stores/users/utils';
+import { loadSector } from '../../v1/stores/sectors/utils';
+import { loadRoute } from '../../v1/stores/routes/utils';
+import getArrayByIds from '../../v1/utils/getArrayByIds';
+import { NUM_OF_DAYS } from '../Constants/Route';
+import { ApiUrl } from '../Environ';
+import getState from '../../v1/utils/getState';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -49,19 +51,24 @@ class RoutesEditModal extends Component {
 
   componentDidMount() {
     const {
-      sectors, match, loadUsers, displayError,
+      sectors,
+      match,
+      loadUsers: loadUsersProp,
+      routeMarkColors,
+      loadRoute: loadRouteProp,
+      loadSector: loadSectorProp,
+      loadRouteMarkColors: loadRouteMarkColorsProp,
     } = this.props;
     const sectorId = match.params.sector_id ? parseInt(match.params.sector_id, 10) : null;
     const routeId = this.getRouteId();
     if (routeId === null && !sectors[sectorId]) {
-      reloadSector(
-        sectorId,
-        null,
+      const params = {};
+      params.numOfDays = NUM_OF_DAYS;
+      loadSectorProp(
+        `${ApiUrl}/v1/sectors/${sectorId}`,
+        params,
         (response) => {
           this.afterSectorIsLoaded(response.data.payload);
-        },
-        (error) => {
-          displayError(error);
         },
       );
     }
@@ -69,8 +76,8 @@ class RoutesEditModal extends Component {
       this.afterSectorIsLoaded(sectors[sectorId]);
     }
     if (routeId) {
-      loadRoute(
-        this.getRouteId(),
+      loadRouteProp(
+        `${ApiUrl}/v1/routes/${this.getRouteId()}`,
         (response) => {
           const route = response.data.payload;
           const routeCopy = R.clone(route);
@@ -83,12 +90,12 @@ class RoutesEditModal extends Component {
           this.setState({ fieldsOld: routeCopy, route: R.clone(routeCopy) });
           this.loadPointers(route);
         },
-        (error) => {
-          displayError(error);
-        },
       );
     }
-    loadUsers();
+    loadUsersProp();
+    if (routeMarkColors.length === 0) {
+      loadRouteMarkColorsProp();
+    }
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -534,7 +541,7 @@ class RoutesEditModal extends Component {
     };
 
     render() {
-      const { onClose, numOfActiveRequests } = this.props;
+      const { onClose, loading } = this.props;
       const {
         showCropper,
         photo,
@@ -561,7 +568,7 @@ class RoutesEditModal extends Component {
                 )
                 : (
                   <StickyBar
-                    loading={numOfActiveRequests > 0}
+                    loading={loading}
                     hideLoaded
                   >
                     {this.content()}
@@ -584,17 +591,24 @@ RoutesEditModal.propTypes = {
   createRoute: PropTypes.func.isRequired,
   updateRoute: PropTypes.func.isRequired,
   isWaiting: PropTypes.bool.isRequired,
-  numOfActiveRequests: PropTypes.number.isRequired,
-  routeMarkColors: PropTypes.array.isRequired,
-  loadUsers: PropTypes.func.isRequired,
-  displayError: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  routeMarkColors: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  sectors: state.sectors,
-  routes: state.routes,
-  user: state.user,
-  users: state.users,
+  sectors: state.sectorsStore.sectors,
+  routes: state.routesStore.routes,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+  users: getArrayByIds(state.usersStore.sortedUserIds, state.usersStore.users),
+  routeMarkColors: state.routeMarkColorsStore.routeMarkColors,
+  loading: getState(state),
 });
 
-export default withRouter(connect(mapStateToProps)(RoutesEditModal));
+const mapDispatchToProps = dispatch => ({
+  loadRouteMarkColors: () => dispatch(loadRouteMarkColors()),
+  loadUsers: () => dispatch(loadUsers()),
+  loadSector: (url, params, afterLoad) => dispatch(loadSector(url, params, afterLoad)),
+  loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesEditModal));

@@ -1,0 +1,264 @@
+import Axios from 'axios';
+import * as R from 'ramda';
+import Cookies from 'js-cookie';
+import bcrypt from 'bcryptjs';
+import { ApiUrl } from '../../../src/Environ';
+import {
+  loadUsersRequest,
+  loadUsersFailed,
+  loadUsersSuccess,
+  loadUserSuccess,
+  loadSortedUserIds,
+  logOutUser,
+  loadTokenSuccess,
+  loadToken,
+  logOutUserSuccess,
+  resetPasswordSuccess,
+  sendResetPasswordMailSuccess,
+} from './actions';
+import { Domain } from '../../../src/Constants/Cookies';
+
+export const loadUsers = () => (
+  (dispatch, getState) => {
+    const state = getState();
+    dispatch(loadUsersRequest());
+
+    Axios.get(`${ApiUrl}/v1/users`, { headers: { TOKEN: state.token } })
+      .then((response) => {
+        const sortedUserIds = R.map(u => u.id, R.sort(
+          (u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes,
+          response.data.payload,
+        ));
+        dispatch(loadUsersSuccess(response.data.payload));
+        dispatch(loadSortedUserIds(sortedUserIds));
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        // dispatch(pushError(error));
+      });
+  }
+);
+
+export const signIn = (token, afterSignIn) => (
+  (dispatch, getState) => {
+    const state = getState();
+    dispatch(loadUsersRequest());
+
+    Axios.get(`${ApiUrl}/v1/users/self`, { headers: { TOKEN: (token || state.token) } })
+      .then((response) => {
+        dispatch(loadUserSuccess(response.data.payload));
+        if (afterSignIn) {
+          afterSignIn(response.data.payload);
+        }
+      }).catch(() => {
+        dispatch(loadUsersFailed());
+        Cookies.remove('user_session_token', { path: '', domain: Domain() });
+        dispatch(logOutUser());
+      });
+  }
+);
+
+export const logIn = (params, password, afterLogIn, afterSignIn, onFormError) => (
+  (dispatch) => {
+    dispatch(loadUsersRequest());
+
+    Axios.get(`${ApiUrl}/v1/user_sessions/new`, { params })
+      .then((response) => {
+        const hash = bcrypt.hashSync(password, response.data);
+        const paramsCopy = R.clone(params);
+        paramsCopy.user_session.user.password_digest = hash;
+        Axios.post(`${ApiUrl}/v1/user_sessions`, paramsCopy)
+          .then((resp) => {
+            dispatch(loadTokenSuccess(resp.data.payload.token));
+            dispatch(signIn(resp.data.payload.token, () => afterSignIn(resp)));
+          }).catch((error) => {
+            dispatch(loadUsersFailed());
+            if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+              onFormError(error.response.data);
+            } else {
+            //  dispatch(pushError(error));
+            }
+            afterLogIn();
+          });
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        const resp = error.response;
+        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+          onFormError({ email: ['Пользователь не найден'] });
+        } else {
+        //  dispatch(pushError(error));
+        }
+        afterLogIn();
+      });
+  }
+);
+
+export const activateEmail = (url, params, afterSuccess, afterFail) => (
+  (dispatch) => {
+    dispatch(loadUsersRequest());
+
+    Axios.get(url, { params })
+      .then((response) => {
+        dispatch(loadUserSuccess(response.data.payload));
+        afterSuccess();
+      }).catch(() => {
+        dispatch(loadUsersFailed());
+        // dispatch(pushError(error));
+        afterFail();
+      });
+  }
+);
+
+export const logOut = afterSuccess => (
+  (dispatch, getState) => {
+    const state = getState();
+    const token = state.usersStore.currentUserToken;
+    dispatch(loadUsersRequest());
+
+    Axios({
+      url: `${ApiUrl}/v1/user_sessions/actions/log_out`,
+      method: 'patch',
+      data: { token },
+      headers: { TOKEN: token },
+    })
+      .then(() => {
+        dispatch(logOutUserSuccess());
+        if (afterSuccess) {
+          afterSuccess();
+        }
+      }).catch(() => {
+        dispatch(loadUsersFailed());
+        // dispatch(pushError(error));
+      });
+  }
+);
+
+export const signUp = (params, afterSuccess, afterFail, onFormError) => (
+  (dispatch) => {
+    dispatch(loadUsersRequest());
+
+    Axios.post(`${ApiUrl}/v1/users`, params)
+      .then((response) => {
+        dispatch(loadUserSuccess(response.data.payload));
+        dispatch(loadToken(response.data.payload.user_session.token));
+        afterSuccess(response);
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+          onFormError(error);
+        } else {
+          // dispatch(pushError(error));
+        }
+        afterFail();
+      });
+  }
+);
+
+export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
+  (dispatch) => {
+    dispatch(loadUsersRequest());
+
+    Axios({ url: `${ApiUrl}/v1/users/reset_password`, method: 'patch', data: params })
+      .then(() => {
+        dispatch(resetPasswordSuccess());
+        afterSuccess();
+        afterAll();
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        const resp = error.response;
+        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+          afterFail();
+        } else {
+          // dispatch(pushError(error));
+        }
+        afterAll();
+      });
+  }
+);
+
+export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
+  (dispatch, getState) => {
+    const state = getState();
+    const token = state.usersStore.currentUserToken;
+    dispatch(loadUsersRequest());
+
+    Axios({
+      url,
+      method: 'patch',
+      data,
+      headers: { TOKEN: token },
+      config: { headers: { 'Content-Type': 'multipart/form-data' } },
+    })
+      .then((response) => {
+        dispatch(loadUserSuccess(response.data.payload));
+        if (afterSuccess) {
+          afterSuccess(response.data.payload);
+        }
+        afterAll();
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+          afterFail(error);
+        } else {
+          // dispatch(pushError(error));
+        }
+        afterAll();
+      });
+  }
+);
+
+export const removeVk = (url, afterAll) => (
+  (dispatch, getState) => {
+    const state = getState();
+    const token = state.usersStore.currentUserToken;
+    dispatch(loadUsersRequest());
+
+    Axios({
+      url,
+      method: 'delete',
+      headers: { TOKEN: token },
+    })
+      .then((response) => {
+        dispatch(loadUserSuccess(response.data.payload));
+        afterAll();
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        // dispatch(pushError(error));
+        afterAll();
+      });
+  }
+);
+
+export const sendResetPasswordMail = (params, afterAll) => (
+  (dispatch) => {
+    dispatch(loadUsersRequest());
+
+    Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, { params })
+      .then((response) => {
+        dispatch(sendResetPasswordMailSuccess(response.data.payload));
+        afterAll(
+          'success',
+          'Восстановление пароля',
+          'На почту было отправлено сообщение для восстановления пароля',
+        );
+      }).catch((error) => {
+        dispatch(loadUsersFailed());
+        // dispatch(pushError(error));
+        const resp = error.response;
+        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+          afterAll('error', 'Ошибка', 'Пользователь не найден');
+        } else if (resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
+          afterAll(
+            'warning',
+            'Восстановление пароля',
+            'Без почты невозможно восстановить пароль. Обратитесь к администратору.',
+          );
+        } else {
+          afterAll(
+            'warning',
+            'Восстановление пароля',
+            'Не удалось отправить на почту сообщение для восстановления пароля',
+          );
+        }
+      });
+  }
+);

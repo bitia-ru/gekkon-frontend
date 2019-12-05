@@ -61,7 +61,7 @@ RouteStatus.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  user: state.user,
+  user: state.usersStore.users[state.usersStore.currentUserId],
 });
 
 export default withRouter(connect(mapStateToProps)(RouteStatus));

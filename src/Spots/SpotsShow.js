@@ -1,8 +1,6 @@
 import React from 'react';
 import { withRouter, Switch, Route } from 'react-router-dom';
 import moment from 'moment/moment';
-import Axios from 'axios';
-import Qs from 'qs';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
 import Cookies from 'js-cookie';
@@ -14,25 +12,7 @@ import {
   setDefaultSelectedPages,
   setSelectedFilter,
   setDefaultSelectedFilters,
-  setRoutes,
-  setRoutesData,
-  setRouteIds,
-  removeRoute,
-  setSectorIds,
-  setSector,
-  setSectors,
-  loadRouteMarkColors,
-  setUsers,
-  saveUser,
-  saveToken,
-  removeToken,
-  increaseNumOfActiveRequests,
-  decreaseNumOfActiveRequests,
-  setRoute,
-  setRouteData,
   loadFromLocalStorageSelectedFilters,
-  removeRoutePropertyById,
-  setRouteProperty,
 } from '../actions';
 import Content from '../Content/Content';
 import Header from '../Header/Header';
@@ -42,7 +22,7 @@ import RoutesEditModal from '../RoutesEditModal/RoutesEditModal';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
-import Authorization from '../Authorization';
+import BaseComponent from '../BaseComponent';
 import StickyBar from '../StickyBar/StickyBar';
 import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
@@ -53,31 +33,36 @@ import {
   DEFAULT_SECTOR_VIEW_MODE_LIST,
 } from '../Constants/ViewModeSwitcher';
 import { avail, notAvail } from '../Utils';
-import { userStateToUser } from '../Utils/Workarounds';
 import { BACKEND_DATE_FORMAT } from '../Constants/Date';
-import numToStr from '../Constants/NumToStr';
+import SpotContext from '../contexts/SpotContext';
 import SectorContext from '../contexts/SectorContext';
 import getArrayFromObject from '../../v1/utils/getArrayFromObject';
+import { NUM_OF_DAYS } from '../Constants/Route';
+import { loadSector } from '../../v1/stores/sectors/utils';
+import { loadSpot } from '../../v1/stores/spots/utils';
+import { signIn } from '../../v1/stores/users/utils';
+import { logOutUser, loadToken } from '../../v1/stores/users/actions';
 import {
-  reloadComments,
-} from '../../v1/utils/RouteFinder';
-import { reloadSector } from '../../v1/utils/SectorFinder';
+  loadRoutes,
+  removeLike,
+  addLike,
+  addAscent,
+  updateAscent,
+  addComment,
+  removeComment,
+  addRoute,
+  updateRoute,
+  removeRoute,
+} from '../../v1/stores/routes/utils';
+import getState from '../../v1/utils/getState';
 
-Axios.interceptors.request.use((config) => {
-  const configCopy = R.clone(config);
-  configCopy.paramsSerializer = params => Qs.stringify(params, { arrayFormat: 'brackets' });
-  return configCopy;
-});
-
-class SpotsShow extends Authorization {
+class SpotsShow extends BaseComponent {
   constructor(props) {
     super(props);
 
     this.state = Object.assign(this.state, {
       name: '',
       numOfPages: 1,
-      spot: {},
-      infoData: undefined,
       ctrlPressed: false,
       editRouteIsWaiting: false,
     });
@@ -86,10 +71,10 @@ class SpotsShow extends Authorization {
   componentDidMount() {
     const {
       history,
-      saveToken: saveTokenProp,
-      saveUser: saveUserProp,
+      signIn: signInProp,
+      loadToken: loadTokenProp,
+      logOutUser: logOutUserProp,
       loadFromLocalStorageSelectedFilters: loadFromLocalStorageSelectedFiltersProp,
-      routeMarkColors,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
@@ -100,30 +85,23 @@ class SpotsShow extends Authorization {
     const sectorId = this.getSectorId();
     if (Cookies.get('user_session_token') !== undefined) {
       const token = Cookies.get('user_session_token');
-      saveTokenProp(token);
-      this.signIn(token, (currentUser) => {
-        this.reloadUserAscents(currentUser.id);
-        this.reloadSectors(sectorId, currentUser);
-        if (sectorId === 0) {
-          this.reloadSpot(currentUser.id);
-        } else {
+      loadTokenProp(token);
+      signInProp(token, (currentUser) => {
+        this.reloadSpot(currentUser.id);
+        if (sectorId !== 0) {
           this.reloadSector(sectorId, currentUser.id);
         }
+        this.reloadRoutes();
       });
     } else {
-      this.reloadUserAscents();
-      this.reloadSectors(sectorId);
-      if (sectorId === 0) {
-        this.reloadSpot();
-      } else {
+      this.reloadSpot();
+      if (sectorId !== 0) {
         this.reloadSector(sectorId);
       }
-      saveUserProp({ id: null });
+      this.reloadRoutes();
+      logOutUserProp();
     }
     loadFromLocalStorageSelectedFiltersProp();
-    if (routeMarkColors.length === 0) {
-      this.loadRouteMarkColors();
-    }
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
   }
@@ -155,38 +133,6 @@ class SpotsShow extends Authorization {
       }
     };
 
-    reloadUserAscents = (userId) => {
-      const {
-        user,
-        setRoutesData: setRoutesDataProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      } = this.props;
-      const id = (userId || (avail(user.id) ? user.id : null));
-      if (!id) {
-        return;
-      }
-      increaseNumOfActiveRequestsProp();
-      Axios.get(`${ApiUrl}/v1/users/${id}/ascents`)
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          setRoutesDataProp(
-            R.map(
-              ascent => (
-                {
-                  routeId: ascent.route_id,
-                  content: { ascents: R.fromPairs([[ascent.id, ascent]]) },
-                }
-              ),
-              response.data.payload,
-            ),
-          );
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
-    };
-
     onRouteClick = (id) => {
       const { history, match } = this.props;
       history.push(`${match.url}/routes/${id}`);
@@ -201,7 +147,6 @@ class SpotsShow extends Authorization {
         this.reloadSector(sectorId);
       }
       history.push(R.replace('/routes', '', match.url));
-      this.reloadUserAscents();
       this.reloadRoutes({}, null);
     };
 
@@ -238,13 +183,13 @@ class SpotsShow extends Authorization {
     reloadSpot = (userId) => {
       const {
         user,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+        loadSpot: loadSpotProp,
       } = this.props;
       const spotId = this.getSpotId();
+      const sectorId = this.getSectorId();
       let currentUserId;
       if (userId === null || userId === undefined) {
-        if (notAvail(user.id)) {
+        if (notAvail(user)) {
           currentUserId = 0;
         } else {
           currentUserId = user.id;
@@ -256,46 +201,17 @@ class SpotsShow extends Authorization {
       if (currentUserId !== 0) {
         params.user_id = currentUserId;
       }
-      increaseNumOfActiveRequestsProp();
-      Axios.get(`${ApiUrl}/v1/spots/${spotId}`, { params })
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          let infoData = [
-            {
-              count: response.data.metadata.num_of_sectors,
-              label: numToStr(response.data.metadata.num_of_sectors, ['Зал', 'Зала', 'Залов']),
-            },
-            {
-              count: response.data.metadata.num_of_routes,
-              label: numToStr(response.data.metadata.num_of_routes, ['Трасса', 'Трассы', 'Трасс']),
-            },
-          ];
-          if (currentUserId !== 0) {
-            infoData = R.append({
-              count: response.data.metadata.num_of_unfulfilled,
-              label: numToStr(
-                response.data.metadata.num_of_unfulfilled,
-                ['Невыполненная трасса', 'Невыполненные трассы', 'Невыполненных трасс'],
-              ),
-            }, infoData);
-          }
-          this.setState({
-            spot: response.data.payload,
-            infoData,
-          });
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
+      loadSpotProp(`${ApiUrl}/v1/spots/${spotId}`, params, sectorId);
     };
 
     reloadSector = (id, userId) => {
       const {
         user,
+        loadSector: loadSectorProp,
       } = this.props;
       let currentUserId;
       if (userId === null || userId === undefined) {
-        if (notAvail(user.id)) {
+        if (notAvail(user)) {
           currentUserId = 0;
         } else {
           currentUserId = user.id;
@@ -304,103 +220,14 @@ class SpotsShow extends Authorization {
         currentUserId = userId;
       }
       const params = {};
-      if (currentUserId !== 0) {
-        reloadSector(
-          id,
-          currentUserId,
-          (response) => {
-            let infoData = [
-              {
-                count: response.data.metadata.num_of_routes,
-                label: numToStr(response.data.metadata.num_of_routes, ['Трасса', 'Трассы', 'Трасс']),
-              },
-              {
-                count: response.data.metadata.num_of_new_routes,
-                label: numToStr(
-                  response.data.metadata.num_of_new_routes,
-                  ['Новая трасса', 'Новые трассы', 'Новых трасс'],
-                ),
-              },
-            ];
-            if (currentUserId !== 0) {
-              infoData = R.append({
-                count: response.data.metadata.num_of_unfulfilled,
-                label: numToStr(
-                  response.data.metadata.num_of_unfulfilled,
-                  ['Невыполненная трасса', 'Невыполненные трассы', 'Невыполненных трасс'],
-                ),
-              }, infoData);
-            }
-            this.setState({ infoData });
-          },
-          (error) => {
-            this.displayError(error);
-          },
-        );
+      if (currentUserId) {
+        params.user_id = currentUserId;
       }
+      params.numOfDays = NUM_OF_DAYS;
+      loadSectorProp(`${ApiUrl}/v1/sectors/${id}`, params);
     };
 
-    reloadSectors = (currentSectorId, user) => {
-      const {
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-        setSectors: setSectorsProp,
-        setSectorIds: setSectorIdsProp,
-        selectedFilters,
-        setDefaultSelectedFilters: setDefaultSelectedFiltersProp,
-        selectedPages,
-        setDefaultSelectedPages: setDefaultSelectedPagesProp,
-      } = this.props;
-      const spotId = this.getSpotId();
-      increaseNumOfActiveRequestsProp();
-      Axios.get(`${ApiUrl}/v1/spots/${spotId}/sectors`)
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          setSectorsProp(response.data.payload);
-          setSectorIdsProp(R.map(sector => sector.id, response.data.payload));
-          if (!selectedFilters || selectedFilters[spotId] === undefined) {
-            setDefaultSelectedFiltersProp(
-              spotId,
-              R.map(sector => sector.id, response.data.payload),
-            );
-          }
-          if (!selectedPages || selectedPages[spotId] === undefined) {
-            setDefaultSelectedPagesProp(
-              spotId,
-              R.map(sector => sector.id, response.data.payload),
-            );
-            const filters = R.merge(
-              { sectorId: currentSectorId },
-              (selectedFilters[spotId] === undefined ? DEFAULT_FILTERS : {}),
-            );
-            this.reloadRoutes(filters, 1, user);
-          } else {
-            this.reloadRoutes({ sectorId: currentSectorId }, null, user);
-          }
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
-    };
-
-    loadRouteMarkColors = () => {
-      const {
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-        loadRouteMarkColors: loadRouteMarkColorsProp,
-      } = this.props;
-      increaseNumOfActiveRequestsProp();
-      Axios.get(`${ApiUrl}/v1/route_mark_colors`)
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          loadRouteMarkColorsProp(response.data.payload);
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
-    };
-
-    reloadRoutes = (filters = {}, page = 1, userCurr, viewModeCurr) => {
+    reloadRoutes = (filters = {}, page = 1, userCurrId, viewModeCurr) => {
       const {
         sectors,
         user,
@@ -408,10 +235,7 @@ class SpotsShow extends Authorization {
         selectedFilters,
         selectedPages,
         token,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-        setRoutes: setRoutesProp,
-        setRouteIds: setRouteIdsProp,
+        loadRoutes: loadRoutesProp,
       } = this.props;
       const { name } = this.state;
       const spotId = this.getSpotId();
@@ -490,7 +314,7 @@ class SpotsShow extends Authorization {
           outdated: currentViewMode === 'scheme' ? true : currentOutdated,
         },
       };
-      if ((userCurr && avail(userCurr.id)) || (user && avail(user.id))) {
+      if ((userCurrId) || (user && avail(user))) {
         params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
       }
       if (currentName !== '') {
@@ -529,33 +353,9 @@ class SpotsShow extends Authorization {
       }
       if (token) params.token = token;
       if (currentSectorId === 0) {
-        increaseNumOfActiveRequestsProp();
-        Axios.get(`${ApiUrl}/v1/spots/${spotId}/routes`, { params })
-          .then((response) => {
-            decreaseNumOfActiveRequestsProp();
-            this.setState(
-              { numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / CARDS_PER_PAGE)) },
-            );
-            setRoutesProp(response.data.payload);
-            setRouteIdsProp(R.map(route => route.id, response.data.payload));
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-          });
+        loadRoutesProp(`${ApiUrl}/v1/spots/${spotId}/routes`, params);
       } else {
-        increaseNumOfActiveRequestsProp();
-        Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params })
-          .then((response) => {
-            decreaseNumOfActiveRequestsProp();
-            this.setState(
-              { numOfPages: Math.max(1, Math.ceil(response.data.metadata.all / CARDS_PER_PAGE)) },
-            );
-            setRoutesProp(response.data.payload);
-            setRouteIdsProp(R.map(route => route.id, response.data.payload));
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-          });
+        loadRoutesProp(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, params);
       }
     };
 
@@ -568,7 +368,11 @@ class SpotsShow extends Authorization {
         this.reloadSpot();
         history.push(R.replace(/\/sectors\/[0-9]*/, '', match.url));
       }
-      this.reloadRoutes({ sectorId: id }, null, user);
+      this.reloadRoutes(
+        { sectorId: id },
+        null,
+        user ? user.id : user,
+      );
     };
 
     changeCategoryFilter = (categoryFrom, categoryTo) => {
@@ -690,7 +494,6 @@ class SpotsShow extends Authorization {
       } else {
         this.reloadSector(sectorId, userId);
       }
-      this.reloadUserAscents(userId);
     };
 
     afterSubmitSignUpForm = (userId) => {
@@ -701,153 +504,59 @@ class SpotsShow extends Authorization {
       } else {
         this.reloadSector(sectorId, userId);
       }
-      this.reloadUserAscents(userId);
     };
 
     removeRoute = (routeId) => {
-      const {
-        token,
-        removeRoute: removeRouteProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      } = this.props;
+      const { removeRoute: removeRouteProp } = this.props;
       if (window.confirm('Удалить трассу?')) {
-        increaseNumOfActiveRequestsProp();
-        Axios({
-          url: `${ApiUrl}/v1/routes/${routeId}`,
-          method: 'delete',
-          headers: { TOKEN: token },
-        })
-          .then(() => {
-            decreaseNumOfActiveRequestsProp();
+        removeRouteProp(
+          `${ApiUrl}/v1/routes/${routeId}`,
+          () => {
             this.reloadRoutes();
-            removeRouteProp(routeId);
             this.closeRoutesModal();
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-          });
+          },
+        );
       }
       this.setState({ ctrlPressed: false });
     };
 
     removeComment = (routeId, comment) => {
-      const {
-        token,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      } = this.props;
+      const { removeComment: removeCommentProp } = this.props;
       if (!window.confirm('Удалить комментарий?')) {
         return;
       }
-      increaseNumOfActiveRequestsProp();
-      Axios({
-        url: `${ApiUrl}/v1/route_comments/${comment.id}`,
-        method: 'delete',
-        headers: { TOKEN: token },
-      })
-        .then(() => {
-          decreaseNumOfActiveRequestsProp();
-          reloadComments(
-            routeId,
-            null,
-            (error) => {
-              this.displayError(error);
-            },
-          );
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
+      removeCommentProp(`${ApiUrl}/v1/route_comments/${comment.id}`);
     };
 
     saveComment = (routeId, params, afterSuccess) => {
-      const {
-        token,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      } = this.props;
-      increaseNumOfActiveRequestsProp();
-      Axios.post(`${ApiUrl}/v1/route_comments`, params, { headers: { TOKEN: token } })
-        .then(() => {
-          decreaseNumOfActiveRequestsProp();
-          reloadComments(
-            routeId,
-            null,
-            (error) => {
-              this.displayError(error);
-            },
-          );
-          if (afterSuccess) {
-            afterSuccess();
-          }
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
+      const { addComment: addCommentProp } = this.props;
+      addCommentProp(params, afterSuccess);
     };
 
     onLikeChange = (routeId, afterChange) => {
       const {
         user,
-        token,
         routes,
-        setRouteProperty: setRoutePropertyProp,
-        removeRoutePropertyById: removeRoutePropertyByIdProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+        removeLike: removeLikeProp,
+        addLike: addLikeProp,
       } = this.props;
-      increaseNumOfActiveRequestsProp();
       const route = routes[routeId];
       const like = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.likes));
       if (like) {
-        Axios({
-          url: `${ApiUrl}/v1/likes/${like.id}`,
-          method: 'delete',
-          headers: { TOKEN: token },
-        })
-          .then(() => {
-            decreaseNumOfActiveRequestsProp();
-            removeRoutePropertyByIdProp(
-              routeId,
-              'likes',
-              like.id,
-            );
-            afterChange();
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-            afterChange();
-          });
+        removeLikeProp(`${ApiUrl}/v1/likes/${like.id}`, afterChange);
       } else {
         const params = { like: { user_id: user.id, route_id: routeId } };
-        Axios.post(`${ApiUrl}/v1/likes`, params, { headers: { TOKEN: token } })
-          .then((response) => {
-            decreaseNumOfActiveRequestsProp();
-            setRoutePropertyProp(
-              routeId,
-              'likes',
-              response.data.payload,
-            );
-            afterChange();
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-            afterChange();
-          });
+        addLikeProp(params, afterChange);
       }
     };
 
     changeAscentResult = (routeId) => {
       const {
         user,
-        token,
         routes,
-        setRouteProperty: setRoutePropertyProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+        addAscent: addAscentProp,
+        updateAscent: updateAscentProp,
       } = this.props;
-      increaseNumOfActiveRequestsProp();
       const route = routes[routeId];
       const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
       if (ascent) {
@@ -860,129 +569,43 @@ class SpotsShow extends Authorization {
           result = 'red_point';
         }
         const params = { ascent: { result } };
-        Axios({
-          url: `${ApiUrl}/v1/ascents/${ascent.id}`,
-          method: 'patch',
-          params,
-          headers: { TOKEN: token },
-        })
-          .then((response) => {
-            decreaseNumOfActiveRequestsProp();
-            setRoutePropertyProp(
-              routeId,
-              'ascents',
-              response.data.payload,
-            );
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-          });
+        updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
       } else {
         const result = 'red_point';
         const params = { ascent: { result, user_id: user.id, route_id: routeId } };
-        Axios.post(`${ApiUrl}/v1/ascents`, params, { headers: { TOKEN: token } })
-          .then((response) => {
-            decreaseNumOfActiveRequestsProp();
-            setRoutePropertyProp(
-              routeId,
-              'ascents',
-              response.data.payload,
-            );
-          }).catch((error) => {
-            decreaseNumOfActiveRequestsProp();
-            this.displayError(error);
-          });
+        addAscentProp(params);
       }
-    };
-
-    loadUsers = () => {
-      const {
-        token,
-        setUsers: setUsersProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      } = this.props;
-      increaseNumOfActiveRequestsProp();
-      Axios.get(`${ApiUrl}/v1/users`, { headers: { TOKEN: token } })
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          const users = R.sort(
-            (u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes,
-            response.data.payload,
-          );
-          setUsersProp(users);
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-        });
     };
 
     createRoute = (params) => {
       const {
-        token,
         history,
         match,
-        setRoute: setRouteProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+        addRoute: addRouteProp,
       } = this.props;
-      increaseNumOfActiveRequestsProp();
       this.setState({ editRouteIsWaiting: true });
-      Axios({
-        url: `${ApiUrl}/v1/routes`,
-        method: 'post',
-        data: params,
-        headers: { TOKEN: token },
-        config: { headers: { 'Content-Type': 'multipart/form-data' } },
-      })
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          setRouteProp(response.data.payload);
-          history.push(
-            `${match.url}/${response.data.payload.id}`,
-          );
-          this.setState({
-            editRouteIsWaiting: false,
-          });
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-          this.setState({ editRouteIsWaiting: false });
-        });
+      addRouteProp(
+        params,
+        response => history.push(
+          `${match.url}/${response.data.payload.id}`,
+        ),
+        () => this.setState({ editRouteIsWaiting: false }),
+      );
     };
 
     updateRoute = (routeId, params) => {
       const {
-        token,
         history,
         match,
-        setRoute: setRouteProp,
-        increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-        decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
+        updateRoute: updateRouteProp,
       } = this.props;
-      increaseNumOfActiveRequestsProp();
       this.setState({ editRouteIsWaiting: true });
-      Axios({
-        url: `${ApiUrl}/v1/routes/${routeId}`,
-        method: 'patch',
-        data: params,
-        headers: { TOKEN: token },
-        config: { headers: { 'Content-Type': 'multipart/form-data' } },
-      })
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          setRouteProp(response.data.payload);
-          history.push(`${match.url}/routes/${routeId}`);
-          this.setState(
-            {
-              editRouteIsWaiting: false,
-            },
-          );
-        }).catch((error) => {
-          decreaseNumOfActiveRequestsProp();
-          this.displayError(error);
-          this.setState({ editRouteIsWaiting: false });
-        });
+      updateRouteProp(
+        `${ApiUrl}/v1/routes/${routeId}`,
+        params,
+        () => history.push(`${match.url}/${routeId}`),
+        () => this.setState({ editRouteIsWaiting: false }),
+      );
     };
 
     openEdit = (routeId) => {
@@ -1041,7 +664,7 @@ class SpotsShow extends Authorization {
         );
         setSelectedFilterProp(spotId, sectorId, 'date', date);
       }
-      this.reloadRoutes({ date }, null, user, viewMode);
+      this.reloadRoutes({ date }, null, user.id, viewMode);
     };
 
     submitNoticeForm = (routeId, msg) => {
@@ -1081,11 +704,10 @@ class SpotsShow extends Authorization {
         selectedFilters,
         selectedViewModes,
         sectors,
+        spots,
         user,
-        numOfActiveRequests,
       } = this.props;
       const {
-        spot,
         ctrlPressed,
         signUpFormVisible,
         signUpIsWaiting,
@@ -1096,11 +718,11 @@ class SpotsShow extends Authorization {
         profileFormVisible,
         profileIsWaiting,
         profileFormErrors,
-        infoData,
         numOfPages,
       } = this.state;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
+      const spot = spots[spotId];
       let viewMode;
       const currSector = R.find(s => s.id === sectorId, sectors);
       if (selectedViewModes && selectedViewModes[spotId] && selectedViewModes[spotId][sectorId]) {
@@ -1158,7 +780,11 @@ class SpotsShow extends Authorization {
       let data;
       const sector = sectors[sectorId];
       if (sectorId === 0) {
-        data = spot;
+        if (spot) {
+          data = spot;
+        } else {
+          data = {};
+        }
       } else if (sector && sector.id === sectorId) {
         data = sector;
       } else {
@@ -1196,12 +822,11 @@ class SpotsShow extends Authorization {
               : ''
           }
           {
-            (avail(user.id) && profileFormVisible) && (
+            (avail(user) && profileFormVisible) && (
               <Profile
                 user={user}
                 onFormSubmit={this.submitProfileForm}
                 removeVk={this.removeVk}
-                numOfActiveRequests={numOfActiveRequests}
                 showToastr={this.showToastr}
                 enterWithVk={this.enterWithVk}
                 isWaiting={profileIsWaiting}
@@ -1220,17 +845,16 @@ class SpotsShow extends Authorization {
           />
           <Header
             data={data}
-            infoData={infoData}
             changeSectorFilter={this.changeSectorFilter}
             changeNameFilter={this.changeNameFilter}
-            user={userStateToUser(user)}
+            user={user}
             openProfile={this.openProfileForm}
             signUp={this.signUp}
             logIn={this.logIn}
             logOut={this.logOut}
           />
           <Content
-            user={userStateToUser(user)}
+            user={user}
             ctrlPressed={ctrlPressed}
             addRoute={this.goToNew}
             page={
@@ -1241,7 +865,7 @@ class SpotsShow extends Authorization {
             numOfPages={numOfPages}
             period={period}
             date={date}
-            filters={avail(user.id) ? filters : defaultFilters}
+            filters={avail(user) ? filters : defaultFilters}
             categoryId={categoryId}
             onRouteClick={this.onRouteClick}
             onCategoryChange={this.onCategoryChange}
@@ -1261,8 +885,8 @@ class SpotsShow extends Authorization {
         match,
         user,
         sectors,
-        numOfActiveRequests,
-        routeMarkColors,
+        spots,
+        loading,
       } = this.props;
       const {
         signUpFormVisible,
@@ -1272,87 +896,74 @@ class SpotsShow extends Authorization {
         editRouteIsWaiting,
       } = this.state;
       const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
+      const spotId = this.getSpotId();
+      const spot = spots[spotId];
       const sectorId = this.getSectorId();
       const sector = sectorId !== 0 ? sectors[sectorId] : undefined;
       return (
-        <SectorContext.Provider value={{ sector }}>
-          <div className={showModal ? null : 'page__scroll'}>
-            <Switch>
-              <Route
-                path={[`${match.path}/:route_id/edit`, `${match.path}/new`]}
-                render={() => (
-                  <RoutesEditModal
-                    displayError={this.displayError}
-                    onClose={this.closeRoutesModal}
-                    cancel={this.cancelEdit}
-                    loadUsers={this.loadUsers}
-                    routeMarkColors={routeMarkColors}
-                    numOfActiveRequests={numOfActiveRequests}
-                    createRoute={this.createRoute}
-                    updateRoute={this.updateRoute}
-                    isWaiting={editRouteIsWaiting}
-                  />
-                )}
+        <SpotContext.Provider value={{ spot }}>
+          <SectorContext.Provider value={{ sector }}>
+            <div className={showModal ? null : 'page__scroll'}>
+              <Switch>
+                <Route
+                  path={[`${match.path}/:route_id/edit`, `${match.path}/new`]}
+                  render={() => (
+                    <RoutesEditModal
+                      onClose={this.closeRoutesModal}
+                      cancel={this.cancelEdit}
+                      createRoute={this.createRoute}
+                      updateRoute={this.updateRoute}
+                      isWaiting={editRouteIsWaiting}
+                    />
+                  )}
+                />
+                <Route
+                  path={`${match.path}/:route_id`}
+                  render={() => (
+                    <RoutesShowModal
+                      onClose={this.closeRoutesModal}
+                      openEdit={this.openEdit}
+                      removeRoute={this.removeRoute}
+                      ctrlPressed={ctrlPressed}
+                      goToProfile={this.openProfileForm}
+                      removeComment={this.removeComment}
+                      saveComment={this.saveComment}
+                      onLikeChange={this.onLikeChange}
+                      changeAscentResult={this.changeAscentResult}
+                      submitNoticeForm={this.submitNoticeForm}
+                    />
+                  )}
+                />
+              </Switch>
+              <StickyBar loading={loading}>
+                {this.content()}
+              </StickyBar>
+              <Footer
+                user={user}
+                logIn={this.logIn}
+                signUp={this.signUp}
+                logOut={this.logOut}
               />
-              <Route
-                path={`${match.path}/:route_id`}
-                render={() => (
-                  <RoutesShowModal
-                    displayError={this.displayError}
-                    onClose={this.closeRoutesModal}
-                    openEdit={this.openEdit}
-                    removeRoute={this.removeRoute}
-                    ctrlPressed={ctrlPressed}
-                    goToProfile={this.openProfileForm}
-                    removeComment={this.removeComment}
-                    saveComment={this.saveComment}
-                    onLikeChange={this.onLikeChange}
-                    numOfActiveRequests={numOfActiveRequests}
-                    changeAscentResult={this.changeAscentResult}
-                    submitNoticeForm={this.submitNoticeForm}
-                  />
-                )}
-              />
-            </Switch>
-            <StickyBar loading={numOfActiveRequests > 0}>
-              {this.content()}
-            </StickyBar>
-            <Footer
-              user={userStateToUser(user)}
-              logIn={this.logIn}
-              signUp={this.signUp}
-              logOut={this.logOut}
-            />
-          </div>
-        </SectorContext.Provider>
+            </div>
+          </SectorContext.Provider>
+        </SpotContext.Provider>
       );
     }
 }
 
 const mapStateToProps = state => ({
-  routes: state.routes,
+  routes: state.routesStore.routes,
   selectedViewModes: state.selectedViewModes,
   selectedPages: state.selectedPages,
   selectedFilters: state.selectedFilters,
-  sectors: state.sectors,
-  user: state.user,
-  token: state.token,
-  numOfActiveRequests: state.numOfActiveRequests,
-  routeMarkColors: state.routeMarkColors,
+  spots: state.spotsStore.spots,
+  sectors: state.sectorsStore.sectors,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+  token: state.usersStore.currentUserToken,
+  loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  setRoutes: routes => dispatch(setRoutes(routes)),
-  setRoutesData: routesData => dispatch(setRoutesData(routesData)),
-  setRouteProperty: (routeId, routePropertyName, routePropertyData) => dispatch(
-    setRouteProperty(routeId, routePropertyName, routePropertyData),
-  ),
-  removeRoutePropertyById: (routeId, routePropertyName, routePropertyId) => dispatch(
-    removeRoutePropertyById(routeId, routePropertyName, routePropertyId),
-  ),
-  setRouteIds: routeIds => dispatch(setRouteIds(routeIds)),
-  setSectorIds: sectorIds => dispatch(setSectorIds(sectorIds)),
-  removeRoute: routeId => dispatch(removeRoute(routeId)),
   setSelectedViewMode: (spotId, sectorId, viewMode) => (
     dispatch(setSelectedViewMode(spotId, sectorId, viewMode))
   ),
@@ -1367,19 +978,25 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setDefaultSelectedFilters(spotId, sectorIds))
   ),
   loadFromLocalStorageSelectedFilters: () => dispatch(loadFromLocalStorageSelectedFilters()),
-  setSectors: sectors => dispatch(setSectors(sectors)),
-  setSector: sector => dispatch(setSector(sector)),
-  loadRouteMarkColors: routeMarkColors => dispatch(loadRouteMarkColors(routeMarkColors)),
-  saveUser: user => dispatch(saveUser(user)),
-  setUsers: users => dispatch(setUsers(users)),
-  saveToken: token => dispatch(saveToken(token)),
-  removeToken: () => dispatch(removeToken()),
-  setRoute: route => dispatch(setRoute(route)),
-  setRouteData: (routeId, routeData) => (
-    dispatch(setRouteData(routeId, routeData))
+  loadToken: token => dispatch(loadToken(token)),
+  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  logOutUser: () => dispatch(logOutUser()),
+  loadSector: (url, params) => dispatch(loadSector(url, params)),
+  loadSpot: (url, params, currentSectorId, afterLoad) => dispatch(
+    loadSpot(url, params, currentSectorId, afterLoad),
   ),
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
+  loadRoutes: (url, params) => dispatch(loadRoutes(url, params)),
+  removeLike: (url, afterAll) => dispatch(removeLike(url, afterAll)),
+  addLike: (params, afterAll) => dispatch(addLike(params, afterAll)),
+  addAscent: params => dispatch(addAscent(params)),
+  updateAscent: (url, params) => dispatch(updateAscent(url, params)),
+  addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),
+  removeComment: url => dispatch(removeComment(url)),
+  addRoute: (params, afterSuccess, afterAll) => dispatch(addRoute(params, afterSuccess, afterAll)),
+  removeRoute: (url, afterSuccess) => dispatch(removeRoute(url, afterSuccess)),
+  updateRoute: (url, params, afterSuccess, afterAll) => dispatch(
+    updateRoute(url, params, afterSuccess, afterAll),
+  ),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsShow));

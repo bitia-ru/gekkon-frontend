@@ -1,38 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Axios from 'axios';
-import Qs from 'qs';
 import Cookies from 'js-cookie';
 import { ToastContainer } from 'react-toastr';
-import * as R from 'ramda';
 import MainPageHeader from '../MainPageHeader/MainPageHeader';
 import MainPageContent from '../MainPageContent/MainPageContent';
 import Footer from '../Footer/Footer';
-import {
-  saveUser,
-  saveToken,
-  removeToken,
-  increaseNumOfActiveRequests,
-  decreaseNumOfActiveRequests,
-} from '../actions';
 import { ApiUrl } from '../Environ';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
 import Profile from '../Profile/Profile';
-import Authorization from '../Authorization';
+import BaseComponent from '../BaseComponent';
 import StickyBar from '../StickyBar/StickyBar';
 import { avail } from '../Utils';
-import { userStateToUser } from '../Utils/Workarounds';
+import { activateEmail, signIn } from '../../v1/stores/users/utils';
+import { logOutUser, loadToken } from '../../v1/stores/users/actions';
+import getState from '../../v1/utils/getState';
 
-Axios.interceptors.request.use((config) => {
-  const configCopy = R.clone(config);
-  configCopy.paramsSerializer = params => Qs.stringify(params, { arrayFormat: 'brackets' });
-  return configCopy;
-});
-
-class SpotsIndex extends Authorization {
+class SpotsIndex extends BaseComponent {
   constructor(props) {
     super(props);
 
@@ -44,10 +30,10 @@ class SpotsIndex extends Authorization {
   componentDidMount() {
     const {
       history,
-      increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-      decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
-      saveUser: saveUserProp,
-      saveToken: saveTokenProp,
+      signIn: signInProp,
+      loadToken: loadTokenProp,
+      logOutUser: logOutUserProp,
+      activateEmail: activateEmailProp,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
@@ -57,17 +43,15 @@ class SpotsIndex extends Authorization {
     const url = new URL(window.location.href);
     let code = url.searchParams.get('activate_mail_code');
     if (code !== null) {
-      increaseNumOfActiveRequestsProp();
       const user_id = url.searchParams.get('user_id');
-      Axios.get(`${ApiUrl}/v1/users/mail_activation/${code}`, { params: { id: user_id } })
-        .then((response) => {
-          decreaseNumOfActiveRequestsProp();
-          saveUserProp(response.data.payload);
-          this.showToastr('success', 'Успешно', 'Активация email');
-        }).catch(() => {
-          decreaseNumOfActiveRequestsProp();
-          this.showToastr('warning', 'Активация email', 'При активации произошла ошибка');
-        });
+      activateEmailProp(
+        `${ApiUrl}/v1/users/mail_activation/${code}`,
+        { id: user_id },
+        () => this.showToastr('success', 'Успешно', 'Активация email'),
+        () => this.showToastr(
+          'warning', 'Активация email', 'При активации произошла ошибка',
+        ),
+      );
     }
     code = url.searchParams.get('reset_password_code');
     if (code !== null) {
@@ -81,10 +65,10 @@ class SpotsIndex extends Authorization {
     }
     if (Cookies.get('user_session_token') !== undefined) {
       const token = Cookies.get('user_session_token');
-      saveTokenProp(token);
-      this.signIn(token);
+      loadTokenProp(token);
+      signInProp(token);
     } else {
-      saveUserProp({ id: null });
+      logOutUserProp();
     }
   }
 
@@ -92,7 +76,7 @@ class SpotsIndex extends Authorization {
     };
 
     content = () => {
-      const { user, numOfActiveRequests } = this.props;
+      const { user } = this.props;
       const {
         signUpFormVisible,
         signUpIsWaiting,
@@ -154,13 +138,12 @@ class SpotsIndex extends Authorization {
               : ''
           }
           {
-            (avail(user.id) && profileFormVisible)
+            (avail(user) && profileFormVisible)
               ? (
                 <Profile
                   user={user}
                   onFormSubmit={this.submitProfileForm}
                   removeVk={this.removeVk}
-                  numOfActiveRequests={numOfActiveRequests}
                   showToastr={this.showToastr}
                   enterWithVk={this.enterWithVk}
                   isWaiting={profileIsWaiting}
@@ -180,7 +163,7 @@ class SpotsIndex extends Authorization {
           />
           <MainPageHeader
             changeNameFilter={this.changeNameFilter}
-            user={userStateToUser(user)}
+            user={user}
             openProfile={this.openProfileForm}
             logIn={this.logIn}
             signUp={this.signUp}
@@ -192,7 +175,7 @@ class SpotsIndex extends Authorization {
     };
 
     render() {
-      const { user, numOfActiveRequests } = this.props;
+      const { user, loading } = this.props;
       const {
         signUpFormVisible,
         logInFormVisible,
@@ -202,11 +185,11 @@ class SpotsIndex extends Authorization {
       return (
         <>
           <div className={showModal ? null : 'page__scroll'}>
-            <StickyBar loading={numOfActiveRequests > 0}>
+            <StickyBar loading={loading}>
               {this.content()}
             </StickyBar>
             <Footer
-              user={userStateToUser(user)}
+              user={user}
               logIn={this.logIn}
               signUp={this.signUp}
               logOut={this.logOut}
@@ -218,17 +201,17 @@ class SpotsIndex extends Authorization {
 }
 
 const mapStateToProps = state => ({
-  user: state.user,
-  token: state.token,
-  numOfActiveRequests: state.numOfActiveRequests,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+  loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveUser: user => dispatch(saveUser(user)),
-  saveToken: token => dispatch(saveToken(token)),
-  removeToken: () => dispatch(removeToken()),
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
+  activateEmail: (url, params, afterSuccess, afterFail) => dispatch(
+    activateEmail(url, params, afterSuccess, afterFail),
+  ),
+  loadToken: token => dispatch(loadToken(token)),
+  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  logOutUser: () => dispatch(logOutUser()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsIndex));

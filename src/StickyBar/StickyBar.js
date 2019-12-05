@@ -24,11 +24,12 @@ const StickyBar = ({
 
 StickyBar.propTypes = {
   hideLoaded: PropTypes.bool,
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
 };
 
 StickyBar.defaultProps = {
   hideLoaded: false,
+  loading: true,
 };
 
 export default StickyBar;

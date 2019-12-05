@@ -3,15 +3,16 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import MainPageHeader from '../MainPageHeader/MainPageHeader';
 import Footer from '../Footer/Footer';
-import { saveUser, changeTab } from '../actions';
-import Authorization from '../Authorization';
+import { changeTab } from '../actions';
+import BaseComponent from '../BaseComponent';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
 import { avail } from '../Utils';
-import { userStateToUser } from '../Utils/Workarounds';
+import { loadToken, logOutUser } from '../../v1/stores/users/actions';
+import { signIn } from '../../v1/stores/users/utils';
 
-class CragsIndex extends Authorization {
+class CragsIndex extends BaseComponent {
   componentDidMount() {
     window.history.back();
   }
@@ -63,7 +64,7 @@ class CragsIndex extends Authorization {
               ) : ''
           }
           {
-            (avail(user.id) && profileFormVisible) && (
+            (avail(user) && profileFormVisible) && (
               <Profile
                 user={user}
                 onFormSubmit={this.submitProfileForm}
@@ -75,14 +76,14 @@ class CragsIndex extends Authorization {
           }
           <MainPageHeader
             changeNameFilter={this.changeNameFilter}
-            user={userStateToUser(user)}
+            user={user}
             openProfile={this.openProfileForm}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}
           />
           <Footer
-            user={userStateToUser(user)}
+            user={user}
             logIn={this.logIn}
             signUp={this.signUp}
             logOut={this.logOut}
@@ -93,12 +94,14 @@ class CragsIndex extends Authorization {
 }
 
 const mapStateToProps = state => ({
-  user: state.user,
+  user: state.usersStore.users[state.usersStore.currentUserId],
   tab: state.tab,
 });
 
 const mapDispatchToProps = dispatch => ({
-  saveUser: user => dispatch(saveUser(user)),
+  loadToken: token => dispatch(loadToken(token)),
+  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  logOutUser: () => dispatch(logOutUser()),
   changeTab: tab => dispatch(changeTab(tab)),
 });
 

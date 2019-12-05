@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import bcrypt from 'bcryptjs';
 import * as R from 'ramda';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import SocialLinkButton from '../SocialLinkButton/SocialLinkButton';
 import Button from '../Button/Button';
 import FormField from '../FormField/FormField';
@@ -11,8 +13,9 @@ import { PASSWORD_MIN_LENGTH } from '../Constants/User';
 import StickyBar from '../StickyBar/StickyBar';
 import { reEmail } from '../Constants/Constraints';
 import './Profile.css';
+import getState from '../../v1/utils/getState';
 
-export default class Profile extends Component {
+class Profile extends Component {
   constructor(props) {
     super(props);
 
@@ -493,11 +496,11 @@ export default class Profile extends Component {
     };
 
     render() {
-      const { numOfActiveRequests } = this.props;
+      const { loading } = this.props;
       return (
         <div className="modal-overlay">
           <StickyBar
-            loading={numOfActiveRequests > 0}
+            loading={loading}
             hideLoaded
           >
             {this.content()}
@@ -517,5 +520,11 @@ Profile.propTypes = {
   isWaiting: PropTypes.bool.isRequired,
   enterWithVk: PropTypes.func.isRequired,
   removeVk: PropTypes.func.isRequired,
-  numOfActiveRequests: PropTypes.number.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
+
+const mapStateToProps = state => ({
+  loading: getState(state),
+});
+
+export default withRouter(connect(mapStateToProps)(Profile));
