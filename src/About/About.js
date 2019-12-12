@@ -14,7 +14,7 @@ import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, ABOUT_DATA } from '../Constants/About';
 import { avail } from '../Utils';
 import { signIn } from '../../v1/stores/users/utils';
-import { logOutUser, loadToken } from '../../v1/stores/users/actions';
+import { logOutUser } from '../../v1/stores/users/actions';
 import getState from '../../v1/utils/getState';
 
 class About extends BaseComponent {
@@ -22,7 +22,6 @@ class About extends BaseComponent {
     const {
       history,
       signIn: signInProp,
-      loadToken: loadTokenProp,
       logOutUser: logOutUserProp,
     } = this.props;
     history.listen((location, action) => {
@@ -31,9 +30,7 @@ class About extends BaseComponent {
       }
     });
     if (Cookies.get('user_session_token') !== undefined) {
-      const token = Cookies.get('user_session_token');
-      loadTokenProp(token);
-      signInProp(token);
+      signInProp();
     } else {
       logOutUserProp();
     }
@@ -149,8 +146,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadToken: token => dispatch(loadToken(token)),
-  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  signIn: (afterSignIn) => dispatch(signIn(afterSignIn)),
   logOutUser: () => dispatch(logOutUser()),
 });
 

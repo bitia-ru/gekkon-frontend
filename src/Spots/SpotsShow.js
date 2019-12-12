@@ -11,8 +11,6 @@ import {
   setSelectedPage,
   setDefaultSelectedPages,
   setSelectedFilter,
-  setDefaultSelectedFilters,
-  loadFromLocalStorageSelectedFilters,
 } from '../actions';
 import Content from '../Content/Content';
 import Header from '../Header/Header';
@@ -28,10 +26,6 @@ import { RESULT_FILTERS } from '../Constants/ResultFilters';
 import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import { CATEGORIES } from '../Constants/Categories';
-import {
-  DEFAULT_SPOT_VIEW_MODE,
-  DEFAULT_SECTOR_VIEW_MODE_LIST,
-} from '../Constants/ViewModeSwitcher';
 import { avail, notAvail } from '../Utils';
 import { BACKEND_DATE_FORMAT } from '../Constants/Date';
 import SpotContext from '../contexts/SpotContext';
@@ -41,7 +35,7 @@ import { NUM_OF_DAYS } from '../Constants/Route';
 import { loadSector } from '../../v1/stores/sectors/utils';
 import { loadSpot } from '../../v1/stores/spots/utils';
 import { signIn } from '../../v1/stores/users/utils';
-import { logOutUser, loadToken } from '../../v1/stores/users/actions';
+import { logOutUser } from '../../v1/stores/users/actions';
 import {
   loadRoutes,
   removeLike,
@@ -55,6 +49,12 @@ import {
   removeRoute,
 } from '../../v1/stores/routes/utils';
 import getState from '../../v1/utils/getState';
+import getViewMode from '../../v1/utils/getViewMode';
+import getFilters from '../../v1/utils/getFilters';
+import getCurrentSector from '../../v1/utils/getCurrentSector';
+import getCurrentSpotOrSectorData from '../../v1/utils/getCurrentSpotOrSectorData';
+import getCategoryId from '../../v1/utils/getCategoryId';
+import getFromFilters from '../../v1/utils/getFromFilters';
 
 class SpotsShow extends BaseComponent {
   constructor(props) {
@@ -72,9 +72,7 @@ class SpotsShow extends BaseComponent {
     const {
       history,
       signIn: signInProp,
-      loadToken: loadTokenProp,
       logOutUser: logOutUserProp,
-      loadFromLocalStorageSelectedFilters: loadFromLocalStorageSelectedFiltersProp,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
@@ -84,9 +82,7 @@ class SpotsShow extends BaseComponent {
 
     const sectorId = this.getSectorId();
     if (Cookies.get('user_session_token') !== undefined) {
-      const token = Cookies.get('user_session_token');
-      loadTokenProp(token);
-      signInProp(token, (currentUser) => {
+      signInProp((currentUser) => {
         this.reloadSpot(currentUser.id);
         if (sectorId !== 0) {
           this.reloadSector(sectorId, currentUser.id);
@@ -101,7 +97,6 @@ class SpotsShow extends BaseComponent {
       this.reloadRoutes();
       logOutUserProp();
     }
-    loadFromLocalStorageSelectedFiltersProp();
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
   }
@@ -229,79 +224,28 @@ class SpotsShow extends BaseComponent {
 
     reloadRoutes = (filters = {}, page = 1, userCurrId, viewModeCurr) => {
       const {
-        sectors,
         user,
-        selectedViewModes,
-        selectedFilters,
         selectedPages,
-        token,
         loadRoutes: loadRoutesProp,
       } = this.props;
       const { name } = this.state;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
       const currentSectorId = parseInt(
-        (
-          (filters.sectorId === null || filters.sectorId === undefined)
-            ? sectorId
-            : filters.sectorId
-        ),
+        getFromFilters(filters, 'sectorId', sectorId),
         10,
       );
-      let viewMode;
-      const viewModes = selectedViewModes;
-      const currSector = currentSectorId && sectors[currentSectorId];
-      if (viewModes && viewModes[spotId] && viewModes[spotId][currentSectorId]) {
-        viewMode = selectedViewModes[spotId][currentSectorId];
-      } else if (currentSectorId === 0) {
-        viewMode = DEFAULT_SPOT_VIEW_MODE;
-      } else if (currSector && currSector.diagram) {
-        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
-      } else {
-        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
-      }
-      const currentViewMode = viewModeCurr || viewMode;
-      const currentCategoryFrom = (
-        (filters.categoryFrom === null || filters.categoryFrom === undefined)
-          ? selectedFilters[spotId][currentSectorId].categoryFrom
-          : filters.categoryFrom
-      );
-      const currentCategoryTo = (
-        (filters.categoryTo === null || filters.categoryTo === undefined)
-          ? selectedFilters[spotId][currentSectorId].categoryTo
-          : filters.categoryTo
-      );
-      const currentName = (
-        (filters.name === null || filters.name === undefined)
-          ? name
-          : filters.name
-      );
-      const currentPeriod = (
-        (filters.period === null || filters.period === undefined)
-          ? selectedFilters[spotId][currentSectorId].period
-          : filters.period
-      );
-      let currentDate = (
-        (filters.date === null || filters.date === undefined)
-          ? selectedFilters[spotId][currentSectorId].date
-          : filters.date
-      );
-      currentDate = currentDate || DEFAULT_FILTERS.date;
-      const currentResult = (
-        (filters.result === null || filters.result === undefined)
-          ? selectedFilters[spotId][currentSectorId].result
-          : filters.result
-      );
-      const currentPersonal = (
-        (filters.personal === null || filters.personal === undefined)
-          ? selectedFilters[spotId][currentSectorId].personal
-          : filters.personal
-      );
-      const currentOutdated = (
-        (filters.outdated === null || filters.outdated === undefined)
-          ? selectedFilters[spotId][currentSectorId].outdated
-          : filters.outdated
-      );
+      const currentViewMode = viewModeCurr || getViewMode(spotId, currentSectorId);
+      const {
+        categoryFrom: currentCategoryFrom,
+        categoryTo: currentCategoryTo,
+        period: currentPeriod,
+        date: currentDate,
+        result: currentResult,
+        personal: currentPersonal,
+        outdated: currentOutdated,
+      } = R.merge(getFilters(spotId, currentSectorId), filters);
+      const currentName = getFromFilters(filters, 'name', name);
       const currentPage = (
         (page === null || page === undefined)
           ? selectedPages[spotId][currentSectorId]
@@ -351,7 +295,6 @@ class SpotsShow extends BaseComponent {
         params.limit = CARDS_PER_PAGE;
         params.offset = (currentPage - 1) * CARDS_PER_PAGE;
       }
-      if (token) params.token = token;
       if (currentSectorId === 0) {
         loadRoutesProp(`${ApiUrl}/v1/spots/${spotId}/routes`, params);
       } else {
@@ -458,12 +401,11 @@ class SpotsShow extends BaseComponent {
 
     onFilterChange = (id) => {
       const {
-        selectedFilters,
         setSelectedFilter: setSelectedFilterProp,
       } = this.props;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
-      const filters = R.clone(selectedFilters[spotId][sectorId].filters);
+      const filters = R.clone(getFilters(spotId, sectorId).filters);
       const index = R.findIndex(e => e.id === id, filters);
       if (filters[index].selected) {
         filters[index].text = R.slice(0, -2, filters[index].text);
@@ -648,7 +590,6 @@ class SpotsShow extends BaseComponent {
     changeViewMode = (viewMode) => {
       const {
         user,
-        selectedFilters,
         setSelectedFilter: setSelectedFilterProp,
         setSelectedViewMode: setSelectedViewModeProp,
       } = this.props;
@@ -657,20 +598,15 @@ class SpotsShow extends BaseComponent {
       let date = '';
       setSelectedViewModeProp(spotId, sectorId, viewMode);
       if (viewMode === 'scheme') {
-        date = (
-          (selectedFilters && selectedFilters[spotId])
-            ? selectedFilters[spotId][sectorId].date
-            : DEFAULT_FILTERS.date
-        );
+        date = getFilters(spotId, sectorId).date;
         setSelectedFilterProp(spotId, sectorId, 'date', date);
       }
-      this.reloadRoutes({ date }, null, user.id, viewMode);
+      this.reloadRoutes({ date }, null, user ? user.id : user, viewMode);
     };
 
     submitNoticeForm = (routeId, msg) => {
       const {
         user,
-        selectedFilters,
       } = this.props;
       const sectorId = this.getSectorId();
       const spotId = this.getSpotId();
@@ -679,11 +615,7 @@ class SpotsShow extends BaseComponent {
         scope.setExtra('route_id', routeId);
         scope.setExtra(
           'filters',
-          (
-            (selectedFilters && selectedFilters[spotId])
-              ? selectedFilters[spotId][sectorId]
-              : undefined
-          ),
+          getFilters(spotId, sectorId),
         );
         scope.setExtra('url', window.location.href);
         if (user.login) {
@@ -701,10 +633,6 @@ class SpotsShow extends BaseComponent {
     content = () => {
       const {
         selectedPages,
-        selectedFilters,
-        selectedViewModes,
-        sectors,
-        spots,
         user,
       } = this.props;
       const {
@@ -722,74 +650,17 @@ class SpotsShow extends BaseComponent {
       } = this.state;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
-      const spot = spots[spotId];
-      let viewMode;
-      const currSector = R.find(s => s.id === sectorId, sectors);
-      if (selectedViewModes && selectedViewModes[spotId] && selectedViewModes[spotId][sectorId]) {
-        viewMode = selectedViewModes[spotId][sectorId];
-      } else if (sectorId === 0) {
-        viewMode = DEFAULT_SPOT_VIEW_MODE;
-      } else if (currSector && currSector.diagram) {
-        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
-      } else {
-        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
-      }
-      const categoryFrom = (
-        (selectedFilters && selectedFilters[spotId])
-          ? selectedFilters[spotId][sectorId].categoryFrom
-          : DEFAULT_FILTERS.categoryFrom
-      );
-      const categoryTo = (
-        (selectedFilters && selectedFilters[spotId])
-          ? selectedFilters[spotId][sectorId].categoryTo
-          : DEFAULT_FILTERS.categoryTo
-      );
-      const period = (
-        (selectedFilters && selectedFilters[spotId])
-          ? selectedFilters[spotId][sectorId].period
-          : DEFAULT_FILTERS.period
-      );
-      let date = (
-        (selectedFilters && selectedFilters[spotId])
-          ? selectedFilters[spotId][sectorId].date
-          : undefined
-      );
-      date = date || DEFAULT_FILTERS.date;
-      const filters = (
-        (selectedFilters && selectedFilters[spotId])
-          ? selectedFilters[spotId][sectorId].filters
-          : DEFAULT_FILTERS.filters
-      );
-      let categoryId = 0;
-      if (categoryFrom === CATEGORIES[0] && categoryTo === '6a+') {
-        categoryId = 1;
-      }
-      if (categoryFrom === '6a' && categoryTo === '6b+') {
-        categoryId = 2;
-      }
-      if (categoryFrom === '6b' && categoryTo === '7a+') {
-        categoryId = 3;
-      }
-      if (categoryFrom === '7a' && categoryTo === CATEGORIES[CATEGORIES.length - 1]) {
-        categoryId = 4;
-      }
+      const {
+        categoryFrom,
+        categoryTo,
+        period,
+        date,
+        filters,
+      } = getFilters(spotId, sectorId);
       const defaultFilters = R.filter(
         e => !R.contains(e.id, R.map(f => f.id, RESULT_FILTERS)),
         filters,
       );
-      let data;
-      const sector = sectors[sectorId];
-      if (sectorId === 0) {
-        if (spot) {
-          data = spot;
-        } else {
-          data = {};
-        }
-      } else if (sector && sector.id === sectorId) {
-        data = sector;
-      } else {
-        data = {};
-      }
       return (
         <>
           {
@@ -844,7 +715,7 @@ class SpotsShow extends BaseComponent {
             className="toast-top-right"
           />
           <Header
-            data={data}
+            data={getCurrentSpotOrSectorData(spotId, sectorId)}
             changeSectorFilter={this.changeSectorFilter}
             changeNameFilter={this.changeNameFilter}
             user={user}
@@ -866,14 +737,14 @@ class SpotsShow extends BaseComponent {
             period={period}
             date={date}
             filters={avail(user) ? filters : defaultFilters}
-            categoryId={categoryId}
+            categoryId={getCategoryId(categoryFrom, categoryTo)}
             onRouteClick={this.onRouteClick}
             onCategoryChange={this.onCategoryChange}
             changePeriodFilter={this.changePeriodFilter}
             changeDateFilter={this.changeDateFilter}
             onFilterChange={this.onFilterChange}
             changePage={this.changePage}
-            viewMode={viewMode}
+            viewMode={getViewMode(spotId, sectorId)}
             changeViewMode={this.changeViewMode}
           />
         </>
@@ -884,7 +755,6 @@ class SpotsShow extends BaseComponent {
       const {
         match,
         user,
-        sectors,
         spots,
         loading,
       } = this.props;
@@ -899,7 +769,7 @@ class SpotsShow extends BaseComponent {
       const spotId = this.getSpotId();
       const spot = spots[spotId];
       const sectorId = this.getSectorId();
-      const sector = sectorId !== 0 ? sectors[sectorId] : undefined;
+      const sector = getCurrentSector(sectorId);
       return (
         <SpotContext.Provider value={{ spot }}>
           <SectorContext.Provider value={{ sector }}>
@@ -953,13 +823,10 @@ class SpotsShow extends BaseComponent {
 
 const mapStateToProps = state => ({
   routes: state.routesStore.routes,
-  selectedViewModes: state.selectedViewModes,
   selectedPages: state.selectedPages,
-  selectedFilters: state.selectedFilters,
   spots: state.spotsStore.spots,
   sectors: state.sectorsStore.sectors,
   user: state.usersStore.users[state.usersStore.currentUserId],
-  token: state.usersStore.currentUserToken,
   loading: getState(state),
 });
 
@@ -974,12 +841,7 @@ const mapDispatchToProps = dispatch => ({
   setSelectedFilter: (spotId, sectorId, filterName, filterValue) => (
     dispatch(setSelectedFilter(spotId, sectorId, filterName, filterValue))
   ),
-  setDefaultSelectedFilters: (spotId, sectorIds) => (
-    dispatch(setDefaultSelectedFilters(spotId, sectorIds))
-  ),
-  loadFromLocalStorageSelectedFilters: () => dispatch(loadFromLocalStorageSelectedFilters()),
-  loadToken: token => dispatch(loadToken(token)),
-  signIn: (token, afterSignIn) => dispatch(signIn(token, afterSignIn)),
+  signIn: afterSignIn => dispatch(signIn(afterSignIn)),
   logOutUser: () => dispatch(logOutUser()),
   loadSector: (url, params) => dispatch(loadSector(url, params)),
   loadSpot: (url, params, currentSectorId, afterLoad) => dispatch(

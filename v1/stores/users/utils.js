@@ -10,20 +10,18 @@ import {
   loadUserSuccess,
   loadSortedUserIds,
   logOutUser,
-  loadTokenSuccess,
-  loadToken,
   logOutUserSuccess,
   resetPasswordSuccess,
   sendResetPasswordMailSuccess,
+  logInSuccess,
 } from './actions';
 import { Domain } from '../../../src/Constants/Cookies';
 
 export const loadUsers = () => (
-  (dispatch, getState) => {
-    const state = getState();
+  (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/users`, { headers: { TOKEN: state.token } })
+    Axios.get(`${ApiUrl}/v1/users`)
       .then((response) => {
         const sortedUserIds = R.map(u => u.id, R.sort(
           (u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes,
@@ -38,12 +36,11 @@ export const loadUsers = () => (
   }
 );
 
-export const signIn = (token, afterSignIn) => (
-  (dispatch, getState) => {
-    const state = getState();
+export const signIn = afterSignIn => (
+  (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/users/self`, { headers: { TOKEN: (token || state.token) } })
+    Axios.get(`${ApiUrl}/v1/users/self`)
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
         if (afterSignIn) {
@@ -68,8 +65,8 @@ export const logIn = (params, password, afterLogIn, afterSignIn, onFormError) =>
         paramsCopy.user_session.user.password_digest = hash;
         Axios.post(`${ApiUrl}/v1/user_sessions`, paramsCopy)
           .then((resp) => {
-            dispatch(loadTokenSuccess(resp.data.payload.token));
-            dispatch(signIn(resp.data.payload.token, () => afterSignIn(resp)));
+            dispatch(logInSuccess());
+            dispatch(signIn(() => afterSignIn(resp)));
           }).catch((error) => {
             dispatch(loadUsersFailed());
             if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
@@ -109,16 +106,12 @@ export const activateEmail = (url, params, afterSuccess, afterFail) => (
 );
 
 export const logOut = afterSuccess => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadUsersRequest());
 
     Axios({
       url: `${ApiUrl}/v1/user_sessions/actions/log_out`,
       method: 'patch',
-      data: { token },
-      headers: { TOKEN: token },
     })
       .then(() => {
         dispatch(logOutUserSuccess());
@@ -139,7 +132,6 @@ export const signUp = (params, afterSuccess, afterFail, onFormError) => (
     Axios.post(`${ApiUrl}/v1/users`, params)
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
-        dispatch(loadToken(response.data.payload.user_session.token));
         afterSuccess(response);
       }).catch((error) => {
         dispatch(loadUsersFailed());
@@ -176,16 +168,13 @@ export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
 );
 
 export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadUsersRequest());
 
     Axios({
       url,
       method: 'patch',
       data,
-      headers: { TOKEN: token },
       config: { headers: { 'Content-Type': 'multipart/form-data' } },
     })
       .then((response) => {
@@ -207,15 +196,12 @@ export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
 );
 
 export const removeVk = (url, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadUsersRequest());
 
     Axios({
       url,
       method: 'delete',
-      headers: { TOKEN: token },
     })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));

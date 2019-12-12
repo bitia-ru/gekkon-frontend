@@ -1,4 +1,6 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { GetUserName } from '../Constants/User';
 import RouteColor from '../RouteColor/RouteColor';
@@ -9,10 +11,10 @@ const RouteRow = ({ onRouteClick, route, user }) => {
   let name = route.author ? GetUserName(route.author) : null;
   name = name || 'Неизвестный накрутчик';
   if (!isCurrentUserRoute && name === 'Неизвестный накрутчик' && route.author_id !== null) {
-    if (user.role === 'admin') {
+    if (user && user.role === 'admin') {
       name = GetUserName(route.author, true);
     }
-    if (user.role === 'creator') {
+    if (user && user.role === 'creator') {
       name = `Пользователь #${route.author.id}`;
     }
   }
@@ -47,4 +49,8 @@ RouteRow.propTypes = {
   route: PropTypes.object.isRequired,
 };
 
-export default RouteRow;
+const mapStateToProps = state => ({
+  user: state.usersStore.users[state.usersStore.currentUserId],
+});
+
+export default withRouter(connect(mapStateToProps)(RouteRow));

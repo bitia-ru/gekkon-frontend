@@ -116,15 +116,12 @@ export const loadRoute = (url, afterLoad) => (
 );
 
 export const removeLike = (url, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
     Axios({
       url,
       method: 'delete',
-      headers: { TOKEN: token },
     })
       .then((response) => {
         dispatch(removeRoutePropertyByIdSuccess(
@@ -142,16 +139,13 @@ export const removeLike = (url, afterAll) => (
 );
 
 export const addRoute = (params, afterSuccess, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
     Axios({
       url: `${ApiUrl}/v1/routes`,
       method: 'post',
       data: params,
-      headers: { TOKEN: token },
       config: { headers: { 'Content-Type': 'multipart/form-data' } },
     })
       .then((response) => {
@@ -167,16 +161,13 @@ export const addRoute = (params, afterSuccess, afterAll) => (
 );
 
 export const updateRoute = (url, params, afterSuccess, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
     Axios({
       url,
       method: 'patch',
       data: params,
-      headers: { TOKEN: token },
       config: { headers: { 'Content-Type': 'multipart/form-data' } },
     })
       .then((response) => {
@@ -192,15 +183,12 @@ export const updateRoute = (url, params, afterSuccess, afterAll) => (
 );
 
 export const removeRoute = (url, afterSuccess) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
     Axios({
       url,
       method: 'delete',
-      headers: { TOKEN: token },
     })
       .then((response) => {
         dispatch(removeRouteSuccess(response.data.payload.id));
@@ -213,12 +201,10 @@ export const removeRoute = (url, afterSuccess) => (
 );
 
 export const addLike = (params, afterAll) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/likes`, params, { headers: { TOKEN: token } })
+    Axios.post(`${ApiUrl}/v1/likes`, params)
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
           response.data.payload.route_id,
@@ -235,12 +221,10 @@ export const addLike = (params, afterAll) => (
 );
 
 export const addAscent = params => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/ascents`, params, { headers: { TOKEN: token } })
+    Axios.post(`${ApiUrl}/v1/ascents`, params)
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
           response.data.payload.route_id,
@@ -255,16 +239,13 @@ export const addAscent = params => (
 );
 
 export const updateAscent = (url, params) => (
-  (dispatch, getState) => {
-    const state = getState();
-    const token = state.usersStore.currentUserToken;
+  (dispatch) => {
     dispatch(loadRoutesRequest());
 
     Axios({
       url,
       method: 'patch',
       params,
-      headers: { TOKEN: token },
     })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
@@ -282,11 +263,10 @@ export const updateAscent = (url, params) => (
 export const addComment = (params, afterSuccess) => (
   (dispatch, getState) => {
     const state = getState();
-    const token = state.usersStore.currentUserToken;
     const { routes } = state.routesStore;
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/route_comments`, params, { headers: { TOKEN: token } })
+    Axios.post(`${ApiUrl}/v1/route_comments`, params)
       .then((response) => {
         const comment = response.data.payload;
         const { comments, numOfComments } = routes[comment.route_id];
@@ -322,14 +302,12 @@ export const addComment = (params, afterSuccess) => (
 export const removeComment = url => (
   (dispatch, getState) => {
     const state = getState();
-    const token = state.usersStore.currentUserToken;
     const { routes } = state.routesStore;
     dispatch(loadRoutesRequest());
 
     Axios({
       url,
       method: 'delete',
-      headers: { TOKEN: token },
     })
       .then((response) => {
         const comment = response.data.payload;
