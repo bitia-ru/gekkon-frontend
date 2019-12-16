@@ -13,27 +13,18 @@ import Profile from '../Profile/Profile';
 import StickyBar from '../StickyBar/StickyBar';
 import { TITLE, TITLES, FAQ_DATA } from '../Constants/Faq';
 import { avail } from '../Utils';
-import { signIn } from '../../v1/stores/users/utils';
-import { logOutUser } from '../../v1/stores/users/actions';
 import getState from '../../v1/utils/getState';
 
 class Faq extends BaseComponent {
   componentDidMount() {
     const {
       history,
-      signIn: signInProp,
-      logOutUser: logOutUserProp,
     } = this.props;
     history.listen((location, action) => {
       if (action === 'POP') {
         this.setState({ profileFormVisible: (location.hash === '#profile') });
       }
     });
-    if (Cookies.get('user_session_token') !== undefined) {
-      signInProp();
-    } else {
-      logOutUserProp();
-    }
   }
 
   changeNameFilter = () => {
@@ -145,9 +136,4 @@ const mapStateToProps = state => ({
   loading: getState(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  signIn: (afterSignIn) => dispatch(signIn(afterSignIn)),
-  logOutUser: () => dispatch(logOutUser()),
-});
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Faq));
+export default withRouter(connect(mapStateToProps)(Faq));

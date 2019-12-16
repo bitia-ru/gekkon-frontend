@@ -9,7 +9,6 @@ import {
   loadUsersSuccess,
   loadUserSuccess,
   loadSortedUserIds,
-  logOutUser,
   logOutUserSuccess,
   resetPasswordSuccess,
   sendResetPasswordMailSuccess,
@@ -49,7 +48,6 @@ export const signIn = afterSignIn => (
       }).catch(() => {
         dispatch(loadUsersFailed());
         Cookies.remove('user_session_token', { path: '', domain: Domain() });
-        dispatch(logOutUser());
       });
   }
 );
