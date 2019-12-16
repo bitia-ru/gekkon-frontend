@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import TabBar from '../TabBar/TabBar';
@@ -8,8 +10,10 @@ import FormField from '../FormField/FormField';
 import CloseButton from '../CloseButton/CloseButton';
 import CheckBox from '../CheckBox/CheckBox';
 import './LogInForm.css';
+import { reEmail } from '../Constants/Constraints';
+import { logIn } from '../../v1/stores/users/utils';
 
-export default class LogInForm extends Component {
+class LogInForm extends Component {
   constructor(props) {
     super(props);
 
@@ -20,6 +24,7 @@ export default class LogInForm extends Component {
       password: '',
       errors: {},
       rememberMe: true,
+      isWaiting: false,
     };
     this.mouseOver = false;
   }
@@ -43,30 +48,22 @@ export default class LogInForm extends Component {
     };
 
     onPhoneChange = (event) => {
-      const { resetErrors } = this.props;
       this.resetErrors();
-      resetErrors();
       this.setState({ phone: event.target.value });
     };
 
     onPasswordEnterChange = (event) => {
-      const { resetErrors } = this.props;
       this.resetErrors();
-      resetErrors();
       this.setState({ passwordEnter: event.target.value });
     };
 
     onEmailChange = (event) => {
-      const { resetErrors } = this.props;
       this.resetErrors();
-      resetErrors();
       this.setState({ email: event.target.value });
     };
 
     onPasswordChange = (event) => {
-      const { resetErrors } = this.props;
       this.resetErrors();
-      resetErrors();
       this.setState({ password: event.target.value });
       this.check('password', event.target.value);
     };
@@ -98,37 +95,53 @@ export default class LogInForm extends Component {
     };
 
     checkAndSubmit = (type, data, passwordNew) => {
-      const { onFormSubmit } = this.props;
       const { password, rememberMe } = this.state;
       const res = !this.check('password', password);
       if (res > 0) {
         return;
       }
-      onFormSubmit(type, data, passwordNew, rememberMe);
+      this.onFormSubmit(type, data, passwordNew, rememberMe);
+    };
+
+    onFormSubmit = (type, data, password, rememberMe) => {
+      if (type !== 'email') {
+        throw `Argument error: value ${type} for argument type is invalid.`;
+      }
+      const { errors } = this.state;
+      const { logIn: logInProp } = this.props;
+      const { location } = window;
+      this.setState({ isWaiting: true });
+      let params;
+      if (R.test(reEmail, data)) {
+        params = { user_session: { user: { email: data } }, rememberMe };
+      } else {
+        params = { user_session: { user: { login: data } }, rememberMe };
+      }
+      logInProp(
+        params,
+        password,
+        () => location.reload(),
+        () => this.setState({ isWaiting: false }),
+        err => this.setState({ errors: R.merge(errors, err) }),
+      );
     };
 
     hasError = (field) => {
-      const { formErrors } = this.props;
       const { errors } = this.state;
-      return (errors[field] || formErrors[field]);
+      return errors[field];
     };
 
     errorText = (field) => {
-      const { formErrors } = this.props;
       const { errors } = this.state;
       return R.join(
         ', ',
-        R.concat(
-          errors[field] ? errors[field] : [],
-          formErrors[field] ? formErrors[field] : [],
-        ),
+        errors[field] ? errors[field] : [],
       );
     };
 
     closeForm = () => {
-      const { resetErrors, closeForm } = this.props;
+      const { closeForm } = this.props;
       this.resetErrors();
-      resetErrors();
       closeForm();
     };
 
@@ -152,8 +165,9 @@ export default class LogInForm extends Component {
     };
 
     firstTabContent = () => {
-      const { isWaiting } = this.props;
-      const { phone, passwordEnter, rememberMe } = this.state;
+      const {
+        isWaiting, phone, passwordEnter, rememberMe,
+      } = this.state;
       return (
         <form action="#" className="form">
           <FormField
@@ -205,8 +219,9 @@ export default class LogInForm extends Component {
     };
 
     secondTabContent = () => {
-      const { isWaiting } = this.props;
-      const { email, password, rememberMe } = this.state;
+      const {
+        isWaiting, email, password, rememberMe,
+      } = this.state;
       return (
         <form action="#" className="form">
           <FormField
@@ -328,15 +343,17 @@ export default class LogInForm extends Component {
 }
 
 LogInForm.propTypes = {
-  isWaiting: PropTypes.bool,
-  onFormSubmit: PropTypes.func.isRequired,
   enterWithVk: PropTypes.func.isRequired,
   closeForm: PropTypes.func.isRequired,
   resetPassword: PropTypes.func.isRequired,
-  formErrors: PropTypes.object.isRequired,
-  resetErrors: PropTypes.func.isRequired,
 };
 
-LogInForm.defaultProps = {
-  isWaiting: null,
-};
+const mapDispatchToProps = dispatch => ({
+  logIn: (
+    params, password, afterLogInSuccess, afterLogInFail, onFormError,
+  ) => dispatch(
+    logIn(params, password, afterLogInSuccess, afterLogInFail, onFormError),
+  ),
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(LogInForm));

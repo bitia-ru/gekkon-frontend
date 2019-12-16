@@ -67,15 +67,9 @@ class SpotsIndex extends BaseComponent {
       const { user } = this.props;
       const {
         signUpFormVisible,
-        signUpIsWaiting,
-        signUpFormErrors,
         resetPasswordFormVisible,
-        resetPasswordIsWaiting,
-        resetPasswordFormErrors,
         email,
         logInFormVisible,
-        logInIsWaiting,
-        logInFormErrors,
         profileFormVisible,
         profileIsWaiting,
         profileFormErrors,
@@ -86,12 +80,8 @@ class SpotsIndex extends BaseComponent {
             signUpFormVisible
               ? (
                 <SignUpForm
-                  onFormSubmit={this.submitSignUpForm}
                   closeForm={this.closeSignUpForm}
                   enterWithVk={this.enterWithVk}
-                  isWaiting={signUpIsWaiting}
-                  formErrors={signUpFormErrors}
-                  resetErrors={this.signUpResetErrors}
                 />
               )
               : ''
@@ -100,12 +90,8 @@ class SpotsIndex extends BaseComponent {
             resetPasswordFormVisible
               ? (
                 <ResetPasswordForm
-                  onFormSubmit={this.submitResetPasswordForm}
                   closeForm={this.closeResetPasswordForm}
-                  isWaiting={resetPasswordIsWaiting}
-                  formErrors={resetPasswordFormErrors}
                   email={email}
-                  resetErrors={this.resetPasswordResetErrors}
                 />
               )
               : ''
@@ -114,13 +100,9 @@ class SpotsIndex extends BaseComponent {
             logInFormVisible
               ? (
                 <LogInForm
-                  onFormSubmit={this.submitLogInForm}
                   closeForm={this.closeLogInForm}
                   enterWithVk={this.enterWithVk}
-                  isWaiting={logInIsWaiting}
                   resetPassword={this.resetPassword}
-                  formErrors={logInFormErrors}
-                  resetErrors={this.logInResetErrors}
                 />
               )
               : ''

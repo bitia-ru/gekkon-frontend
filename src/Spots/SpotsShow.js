@@ -382,26 +382,6 @@ class SpotsShow extends BaseComponent {
       setSelectedFilterProp(spotId, sectorId, 'filters', filters);
     };
 
-    afterSubmitLogInForm = (userId) => {
-      const sectorId = this.getSectorId();
-      this.reloadRoutes();
-      if (sectorId === 0) {
-        this.reloadSpot(userId);
-      } else {
-        this.reloadSector(sectorId, userId);
-      }
-    };
-
-    afterSubmitSignUpForm = (userId) => {
-      const sectorId = this.getSectorId();
-      this.reloadRoutes();
-      if (sectorId === 0) {
-        this.reloadSpot(userId);
-      } else {
-        this.reloadSector(sectorId, userId);
-      }
-    };
-
     removeRoute = (routeId) => {
       const { removeRoute: removeRouteProp } = this.props;
       if (window.confirm('Удалить трассу?')) {
@@ -592,11 +572,7 @@ class SpotsShow extends BaseComponent {
       const {
         ctrlPressed,
         signUpFormVisible,
-        signUpIsWaiting,
-        signUpFormErrors,
         logInFormVisible,
-        logInIsWaiting,
-        logInFormErrors,
         profileFormVisible,
         profileIsWaiting,
         profileFormErrors,
@@ -621,12 +597,8 @@ class SpotsShow extends BaseComponent {
             signUpFormVisible
               ? (
                 <SignUpForm
-                  onFormSubmit={this.submitSignUpForm}
                   closeForm={this.closeSignUpForm}
                   enterWithVk={this.enterWithVk}
-                  isWaiting={signUpIsWaiting}
-                  formErrors={signUpFormErrors}
-                  resetErrors={this.signUpResetErrors}
                 />
               )
               : ''
@@ -635,13 +607,9 @@ class SpotsShow extends BaseComponent {
             logInFormVisible
               ? (
                 <LogInForm
-                  onFormSubmit={this.submitLogInForm}
                   closeForm={this.closeLogInForm}
                   enterWithVk={this.enterWithVk}
-                  isWaiting={logInIsWaiting}
                   resetPassword={this.resetPassword}
-                  formErrors={logInFormErrors}
-                  resetErrors={this.logInResetErrors}
                 />
               )
               : ''

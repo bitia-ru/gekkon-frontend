@@ -32,13 +32,9 @@ class About extends BaseComponent {
   content = () => {
     const { user } = this.props;
     const {
-      signUpIsWaiting,
       signUpFormVisible,
-      logInIsWaiting,
       logInFormVisible,
       profileFormVisible,
-      signUpFormErrors,
-      logInFormErrors,
       profileFormErrors,
       profileIsWaiting,
     } = this.state;
@@ -47,25 +43,17 @@ class About extends BaseComponent {
         {
           signUpFormVisible && (
             <SignUpForm
-              onFormSubmit={this.submitSignUpForm}
               closeForm={this.closeSignUpForm}
               enterWithVk={this.enterWithVk}
-              isWaiting={signUpIsWaiting}
-              formErrors={signUpFormErrors}
-              resetErrors={this.signUpResetErrors}
             />
           )
         }
         {
           logInFormVisible && (
             <LogInForm
-              onFormSubmit={this.submitLogInForm}
               closeForm={this.closeLogInForm}
               enterWithVk={this.enterWithVk}
-              isWaiting={logInIsWaiting}
               resetPassword={this.resetPassword}
-              formErrors={logInFormErrors}
-              resetErrors={this.logInResetErrors}
             />
           )
         }

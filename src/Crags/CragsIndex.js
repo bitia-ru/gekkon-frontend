@@ -30,8 +30,6 @@ class CragsIndex extends BaseComponent {
         signUpFormVisible,
         logInFormVisible,
         profileFormVisible,
-        signUpFormErrors,
-        logInFormErrors,
         profileFormErrors,
       } = this.state;
       const showModal = signUpFormVisible || logInFormVisible || profileFormVisible;
@@ -41,10 +39,7 @@ class CragsIndex extends BaseComponent {
             signUpFormVisible
               ? (
                 <SignUpForm
-                  onFormSubmit={this.submitSignUpForm}
                   closeForm={this.closeSignUpForm}
-                  formErrors={signUpFormErrors}
-                  resetErrors={this.signUpResetErrors}
                 />
               )
               : ''
@@ -53,11 +48,8 @@ class CragsIndex extends BaseComponent {
             logInFormVisible
               ? (
                 <LogInForm
-                  onFormSubmit={this.submitLogInForm}
                   closeForm={this.closeLogInForm}
                   resetPassword={this.resetPassword}
-                  formErrors={logInFormErrors}
-                  resetErrors={this.logInResetErrors}
                 />
               ) : ''
           }
