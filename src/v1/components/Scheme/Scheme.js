@@ -33,6 +33,7 @@ class Scheme extends Component {
       onRouteClick,
       showCards,
       currentRoutes,
+      onStartMoving,
     } = this.props;
     const { shownRouteId, imageIsLoading } = this.state;
     const position = (left, top) => {
@@ -68,15 +69,21 @@ class Scheme extends Component {
                               route.data && route.data.position && <div
                                 className="hall-scheme__track"
                                 style={{
-                                  left: `${route.data.position.left}%`,
-                                  top: `${route.data.position.top}%`,
+                                  left: `${route.data.position.left + (route.data.position.dx || 0)}%`,
+                                  top: `${route.data.position.top + (route.data.position.dy || 0)}%`,
                                 }}
                               >
                                 <SchemePointer
-                                  onClick={() => onRouteClick(route.id)}
+                                  onClick={onRouteClick ? () => onRouteClick(route.id) : null}
                                   onMouseEnter={() => this.showRouteCard(route.id)}
                                   onMouseLeave={this.hideCard}
+                                  onStartMoving={
+                                    R.contains(route.id, currentRoutes)
+                                      ? onStartMoving
+                                      : null
+                                  }
                                   category={route.category}
+                                  transparent={R.contains(route.id, currentRoutes)}
                                   color={
                                     route.holds_color === null ? undefined : route.holds_color.color
                                   }
@@ -123,11 +130,13 @@ Scheme.propTypes = {
   currentRoutes: PropTypes.array.isRequired,
   showCards: PropTypes.bool,
   sectors: PropTypes.object.isRequired,
+  onStartMoving: PropTypes.func,
 };
 
 Scheme.defaultProps = {
   onRouteClick: null,
   showCards: true,
+  onStartMoving: null,
 };
 
 const mapStateToProps = state => ({
