@@ -60,7 +60,6 @@ class SpotsShow extends BaseComponent {
 
     this.state = Object.assign(this.state, {
       name: '',
-      numOfPages: 1,
       ctrlPressed: false,
       editRouteIsWaiting: false,
     });
@@ -576,7 +575,6 @@ class SpotsShow extends BaseComponent {
         profileFormVisible,
         profileIsWaiting,
         profileFormErrors,
-        numOfPages,
       } = this.state;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
@@ -654,7 +652,6 @@ class SpotsShow extends BaseComponent {
                 ? selectedPages[spotId][sectorId]
                 : 1
             }
-            numOfPages={numOfPages}
             period={period}
             date={date}
             filters={avail(user) ? filters : defaultFilters}

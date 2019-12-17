@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import RouteCardView from '../RouteCardView/RouteCardView';
 import FilterBlock from '../FilterBlock/FilterBlock';
 import Pagination from '../Pagination/Pagination';
 import SectorContext from '../contexts/SectorContext';
+import getNumOfPages from '../../v1/utils/getNumOfPages';
 import './Content.css';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
 
-export default class Content extends Component {
+class Content extends Component {
     pagesList = () => {
       const { numOfPages, page } = this.props;
       if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
@@ -126,3 +129,9 @@ Content.propTypes = {
   viewMode: PropTypes.string.isRequired,
   changeViewMode: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => ({
+  numOfPages: getNumOfPages(state),
+});
+
+export default withRouter(connect(mapStateToProps)(Content));
