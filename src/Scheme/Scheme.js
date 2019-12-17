@@ -31,6 +31,8 @@ export default class Scheme extends Component {
       routes,
       ascents,
       showCards,
+      currentRoute,
+      onStartMoving,
     } = this.props;
     const { shownRouteId, imageIsLoading } = this.state;
     const position = (left, top) => {
@@ -55,15 +57,21 @@ export default class Scheme extends Component {
                     route.data && route.data.position && <div
                       className="hall-scheme__track"
                       style={{
-                        left: `${route.data.position.left}%`,
-                        top: `${route.data.position.top}%`,
+                        left: `${route.data.position.left + (route.data.position.dx || 0)}%`,
+                        top: `${route.data.position.top + (route.data.position.dy || 0)}%`,
                       }}
                     >
                       <SchemePointer
-                        onClick={() => onRouteClick(route.id)}
+                        onClick={onRouteClick ? () => onRouteClick(route.id) : null}
                         onMouseEnter={() => this.showRouteCard(route.id)}
                         onMouseLeave={this.hideCard}
+                        onStartMoving={
+                          currentRoute && R.contains(currentRoute.id, [route.id, null])
+                            ? onStartMoving
+                            : null
+                        }
                         category={route.category}
+                        transparent={currentRoute && currentRoute.id !== route.id}
                         color={route.holds_color === null ? undefined : route.holds_color.color}
                       />
                       {
@@ -107,6 +115,8 @@ Scheme.propTypes = {
   routes: PropTypes.array,
   ascents: PropTypes.array,
   showCards: PropTypes.bool,
+  currentRoute: PropTypes.object,
+  onStartMoving: PropTypes.func,
 };
 
 Scheme.defaultProps = {
@@ -114,4 +124,6 @@ Scheme.defaultProps = {
   routes: [],
   ascents: [],
   showCards: true,
+  currentRoute: null,
+  onStartMoving: null,
 };
