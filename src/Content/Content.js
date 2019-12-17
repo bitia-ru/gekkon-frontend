@@ -39,7 +39,6 @@ export default class Content extends Component {
         onCategoryChange,
         changePeriodFilter,
         changeDateFilter,
-        ctrlPressed,
         addRoute,
         onRouteClick,
         changePage,
@@ -84,7 +83,6 @@ export default class Content extends Component {
                     />
                     <RouteCardView
                       viewMode={viewMode}
-                      ctrlPressed={ctrlPressed}
                       addRoute={addRoute}
                       diagram={diagram}
                       user={user}
@@ -123,7 +121,6 @@ Content.propTypes = {
   changePage: PropTypes.func.isRequired,
   changePeriodFilter: PropTypes.func.isRequired,
   changeDateFilter: PropTypes.func.isRequired,
-  ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
   onRouteClick: PropTypes.func.isRequired,
   viewMode: PropTypes.string.isRequired,

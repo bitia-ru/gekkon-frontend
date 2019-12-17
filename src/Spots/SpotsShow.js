@@ -29,6 +29,7 @@ import { avail, notAvail } from '../Utils';
 import { BACKEND_DATE_FORMAT } from '../Constants/Date';
 import SpotContext from '../contexts/SpotContext';
 import SectorContext from '../contexts/SectorContext';
+import CtrlPressedContext from '../contexts/CtrlPressedContext';
 import getArrayFromObject from '../../v1/utils/getArrayFromObject';
 import { NUM_OF_DAYS } from '../Constants/Route';
 import { loadSector } from '../../v1/stores/sectors/utils';
@@ -570,7 +571,6 @@ class SpotsShow extends BaseComponent {
         user,
       } = this.props;
       const {
-        ctrlPressed,
         signUpFormVisible,
         logInFormVisible,
         profileFormVisible,
@@ -648,7 +648,6 @@ class SpotsShow extends BaseComponent {
           />
           <Content
             user={user}
-            ctrlPressed={ctrlPressed}
             addRoute={this.goToNew}
             page={
               (selectedPages && selectedPages[spotId])
@@ -693,52 +692,53 @@ class SpotsShow extends BaseComponent {
       const sectorId = this.getSectorId();
       const sector = getCurrentSector(sectorId);
       return (
-        <SpotContext.Provider value={{ spot }}>
-          <SectorContext.Provider value={{ sector }}>
-            <div className={showModal ? null : 'page__scroll'}>
-              <Switch>
-                <Route
-                  path={[`${match.path}/:route_id/edit`, `${match.path}/new`]}
-                  render={() => (
-                    <RoutesEditModal
-                      onClose={this.closeRoutesModal}
-                      cancel={this.cancelEdit}
-                      createRoute={this.createRoute}
-                      updateRoute={this.updateRoute}
-                      isWaiting={editRouteIsWaiting}
-                    />
-                  )}
+        <CtrlPressedContext.Provider value={{ ctrlPressed }}>
+          <SpotContext.Provider value={{ spot }}>
+            <SectorContext.Provider value={{ sector }}>
+              <div className={showModal ? null : 'page__scroll'}>
+                <Switch>
+                  <Route
+                    path={[`${match.path}/:route_id/edit`, `${match.path}/new`]}
+                    render={() => (
+                      <RoutesEditModal
+                        onClose={this.closeRoutesModal}
+                        cancel={this.cancelEdit}
+                        createRoute={this.createRoute}
+                        updateRoute={this.updateRoute}
+                        isWaiting={editRouteIsWaiting}
+                      />
+                    )}
+                  />
+                  <Route
+                    path={`${match.path}/:route_id`}
+                    render={() => (
+                      <RoutesShowModal
+                        onClose={this.closeRoutesModal}
+                        openEdit={this.openEdit}
+                        removeRoute={this.removeRoute}
+                        goToProfile={this.openProfileForm}
+                        removeComment={this.removeComment}
+                        saveComment={this.saveComment}
+                        onLikeChange={this.onLikeChange}
+                        changeAscentResult={this.changeAscentResult}
+                        submitNoticeForm={this.submitNoticeForm}
+                      />
+                    )}
+                  />
+                </Switch>
+                <StickyBar loading={loading}>
+                  {this.content()}
+                </StickyBar>
+                <Footer
+                  user={user}
+                  logIn={this.logIn}
+                  signUp={this.signUp}
+                  logOut={this.logOut}
                 />
-                <Route
-                  path={`${match.path}/:route_id`}
-                  render={() => (
-                    <RoutesShowModal
-                      onClose={this.closeRoutesModal}
-                      openEdit={this.openEdit}
-                      removeRoute={this.removeRoute}
-                      ctrlPressed={ctrlPressed}
-                      goToProfile={this.openProfileForm}
-                      removeComment={this.removeComment}
-                      saveComment={this.saveComment}
-                      onLikeChange={this.onLikeChange}
-                      changeAscentResult={this.changeAscentResult}
-                      submitNoticeForm={this.submitNoticeForm}
-                    />
-                  )}
-                />
-              </Switch>
-              <StickyBar loading={loading}>
-                {this.content()}
-              </StickyBar>
-              <Footer
-                user={user}
-                logIn={this.logIn}
-                signUp={this.signUp}
-                logOut={this.logOut}
-              />
-            </div>
-          </SectorContext.Provider>
-        </SpotContext.Provider>
+              </div>
+            </SectorContext.Provider>
+          </SpotContext.Provider>
+        </CtrlPressedContext.Provider>
       );
     }
 }

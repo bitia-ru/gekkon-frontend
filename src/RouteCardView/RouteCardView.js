@@ -8,7 +8,6 @@ const RouteCardView = ({
   viewMode,
   addRoute,
   onRouteClick,
-  ctrlPressed,
   user,
   diagram,
 }) => (
@@ -18,7 +17,6 @@ const RouteCardView = ({
         <RouteCardTable
           addRoute={addRoute}
           onRouteClick={onRouteClick}
-          ctrlPressed={ctrlPressed}
           user={user}
         />
       )
@@ -47,7 +45,6 @@ RouteCardView.propTypes = {
   user: PropTypes.object,
   diagram: PropTypes.string,
   viewMode: PropTypes.string.isRequired,
-  ctrlPressed: PropTypes.bool.isRequired,
   addRoute: PropTypes.func.isRequired,
   onRouteClick: PropTypes.func.isRequired,
 };

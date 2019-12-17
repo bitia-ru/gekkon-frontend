@@ -27,8 +27,7 @@ import numToStr from '../Constants/NumToStr';
 import RouteContext from '../contexts/RouteContext';
 import getArrayFromObject from '../../v1/utils/getArrayFromObject';
 import { loadRoute } from '../../v1/stores/routes/utils';
-
-import { userStateToUser } from '../Utils/Workarounds';
+import CtrlPressedContext from '../contexts/CtrlPressedContext';
 import './RoutesShowModal.css';
 import { ApiUrl } from '../Environ';
 import getState from '../../v1/utils/getState';
@@ -208,7 +207,6 @@ class RoutesShowModal extends Component {
       routes,
       onLikeChange,
       user,
-      ctrlPressed,
       removeRoute,
       openEdit,
       changeAscentResult,
@@ -430,27 +428,35 @@ class RoutesShowModal extends Component {
                               <Counter number={numOfFlash} text="flash" />
                             </div>
                           </div>
-                          {
-                            (user && this.canEditRoute(user, route)) && (
-                              ctrlPressed
-                                ? (
-                                  <Button
-                                    size="small"
-                                    style="normal"
-                                    title="Удалить"
-                                    onClick={() => removeRoute(routeId)}
-                                  />
-                                )
-                                : (
-                                  <Button
-                                    size="small"
-                                    style="normal"
-                                    title="Редактировать"
-                                    onClick={() => openEdit(routeId)}
-                                  />
-                                )
-                            )
-                          }
+                          <CtrlPressedContext.Consumer>
+                            {
+                              ({ ctrlPressed }) => (
+                                <>
+                                  {
+                                    (user && this.canEditRoute(user, route)) && (
+                                      ctrlPressed
+                                        ? (
+                                          <Button
+                                            size="small"
+                                            style="normal"
+                                            title="Удалить"
+                                            onClick={() => removeRoute(routeId)}
+                                          />
+                                        )
+                                        : (
+                                          <Button
+                                            size="small"
+                                            style="normal"
+                                            title="Редактировать"
+                                            onClick={() => openEdit(routeId)}
+                                          />
+                                        )
+                                    )
+                                  }
+                                </>
+                              )
+                            }
+                          </CtrlPressedContext.Consumer>
                         </div>
                       </div>
                       <div
@@ -571,7 +577,6 @@ RoutesShowModal.propTypes = {
   routes: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   openEdit: PropTypes.func.isRequired,
-  ctrlPressed: PropTypes.bool.isRequired,
   removeRoute: PropTypes.func.isRequired,
   goToProfile: PropTypes.func.isRequired,
   removeComment: PropTypes.func.isRequired,
