@@ -5,10 +5,10 @@ import './Marker.css';
 export default class Marker extends Component {
     onMouseDown = (event) => {
       const { onStartMoving, removePointer } = this.props;
-      if (event.nativeEvent.which === 1) {
+      if (event.nativeEvent.which === 1 && onStartMoving) {
         onStartMoving(event.pageX, event.pageY);
       }
-      if (event.nativeEvent.which === 3) {
+      if (event.nativeEvent.which === 3 && removePointer) {
         removePointer();
       }
     };
