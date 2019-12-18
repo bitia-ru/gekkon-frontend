@@ -59,7 +59,6 @@ class SpotsShow extends BaseComponent {
     super(props);
 
     this.state = Object.assign(this.state, {
-      name: '',
       ctrlPressed: false,
       editRouteIsWaiting: false,
     });
@@ -182,7 +181,6 @@ class SpotsShow extends BaseComponent {
         selectedPages,
         loadRoutes: loadRoutesProp,
       } = this.props;
-      const { name } = this.state;
       const spotId = this.getSpotId();
       const sectorId = this.getSectorId();
       const currentSectorId = parseInt(
@@ -199,7 +197,6 @@ class SpotsShow extends BaseComponent {
         personal: currentPersonal,
         outdated: currentOutdated,
       } = R.merge(getFilters(spotId, currentSectorId), filters);
-      const currentName = getFromFilters(filters, 'name', name);
       const currentPage = (
         (page === null || page === undefined)
           ? selectedPages[spotId][currentSectorId]
@@ -214,9 +211,6 @@ class SpotsShow extends BaseComponent {
       };
       if ((userCurrId) || (user && avail(user))) {
         params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
-      }
-      if (currentName !== '') {
-        params.filters.name = { like: currentName };
       }
       if (currentPeriod !== 0) {
         const d = new Date();
@@ -336,11 +330,6 @@ class SpotsShow extends BaseComponent {
       const state = {};
       state[name] = value;
       this.reloadRoutes(state);
-    };
-
-    changeNameFilter = (searchString) => {
-      this.setState({ name: searchString });
-      this.reloadRoutes({ name: searchString });
     };
 
     changePage = (page) => {
@@ -637,7 +626,6 @@ class SpotsShow extends BaseComponent {
           <Header
             data={getCurrentSpotOrSectorData(spotId, sectorId)}
             changeSectorFilter={this.changeSectorFilter}
-            changeNameFilter={this.changeNameFilter}
             user={user}
             openProfile={this.openProfileForm}
             signUp={this.signUp}

@@ -30,10 +30,7 @@ class MainNav extends Component {
     };
 
     searchSubmitted = () => {
-      const { changeNameFilter } = this.props;
-      const { searchString } = this.state;
       this.setState({ searchOpened: false, searchStarted: false, searchString: '' });
-      changeNameFilter(searchString);
     };
 
     keyPress = (event) => {
@@ -136,7 +133,6 @@ MainNav.propTypes = {
   changeTab: PropTypes.func,
   user: PropTypes.object,
   tab: PropTypes.number,
-  changeNameFilter: PropTypes.func.isRequired,
   logIn: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
