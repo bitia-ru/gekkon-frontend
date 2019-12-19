@@ -8,7 +8,6 @@ const RouteCardView = ({
   viewMode,
   addRoute,
   onRouteClick,
-  user,
   diagram,
 }) => (
   <React.Fragment>
@@ -17,7 +16,6 @@ const RouteCardView = ({
         <RouteCardTable
           addRoute={addRoute}
           onRouteClick={onRouteClick}
-          user={user}
         />
       )
     }
@@ -26,7 +24,6 @@ const RouteCardView = ({
         <RouteCardList
           addRoute={addRoute}
           onRouteClick={onRouteClick}
-          user={user}
         />
       )
     }
@@ -42,7 +39,6 @@ const RouteCardView = ({
 );
 
 RouteCardView.propTypes = {
-  user: PropTypes.object,
   diagram: PropTypes.string,
   viewMode: PropTypes.string.isRequired,
   addRoute: PropTypes.func.isRequired,

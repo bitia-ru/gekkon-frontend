@@ -26,11 +26,25 @@ import { HIDE_DELAY } from '../../Constants/TooltipPerson';
 import numToStr from '../../Constants/NumToStr';
 import RouteContext from '../../contexts/RouteContext';
 import getArrayFromObject from '../../utils/getArrayFromObject';
-import { loadRoute } from '../../stores/routes/utils';
+import {
+  loadRoute,
+  removeComment,
+  addComment,
+  removeLike,
+  addLike,
+  addAscent,
+  updateAscent,
+  removeRoute,
+} from '../../stores/routes/utils';
 import CtrlPressedContext from '../../contexts/CtrlPressedContext';
 import './RoutesShowModal.css';
 import { ApiUrl } from '../../Environ';
 import getState from '../../utils/getState';
+import getFilters from '../../utils/getFilters';
+import reloadRoutes from '../../utils/reloadRoutes';
+import reloadSector from '../../utils/reloadSector';
+import reloadSpot from '../../utils/reloadSpot';
+import { setSelectedPage } from '../../actions';
 
 class RoutesShowModal extends Component {
   constructor(props) {
@@ -108,7 +122,7 @@ class RoutesShowModal extends Component {
     const {
       routes,
       user,
-      saveComment,
+      addComment: addCommentProp,
     } = this.props;
     const { commentContent } = this.state;
     const route = routes[this.getRouteId()];
@@ -123,10 +137,13 @@ class RoutesShowModal extends Component {
       params.route_comment.route_comment_id = routeCommentId;
     }
     const self = this;
-    saveComment(this.getRouteId(), params, () => {
-      self.removeQuoteComment();
-      self.onCommentContentChange('');
-    });
+    addCommentProp(
+      params,
+      () => {
+        self.removeQuoteComment();
+        self.onCommentContentChange('');
+      },
+    );
   };
 
   pointers = () => {
@@ -185,9 +202,62 @@ class RoutesShowModal extends Component {
     this.setState({ showTooltip: false, showNoticeForm: false });
   };
 
+  removeRoute = () => {
+    const {
+      removeRoute: removeRouteProp,
+      routes,
+      history,
+      match,
+      sectors,
+      setSelectedPage: setSelectedPageProp,
+    } = this.props;
+    const routeId = this.getRouteId();
+    const sectorId = routes[routeId].sector_id;
+    const spotId = sectors[sectorId].spot_id;
+    if (window.confirm('Удалить трассу?')) {
+      removeRouteProp(
+        `${ApiUrl}/v1/routes/${routeId}`,
+        () => {
+          if (R.contains('sectors', match.url)) {
+            reloadSector(sectorId);
+            reloadRoutes(spotId, sectorId);
+            setSelectedPageProp(spotId, sectorId, 1);
+          } else {
+            reloadSpot(spotId);
+            reloadRoutes(spotId, 0);
+            setSelectedPageProp(spotId, 0, 1);
+          }
+          history.push(R.replace(/\/routes\/[0-9]*/, '', match.url));
+        },
+      );
+    }
+  };
+
   submitNoticeForm = (msg) => {
-    const { submitNoticeForm } = this.props;
-    submitNoticeForm(this.getRouteId(), msg);
+    const {
+      user,
+    } = this.props;
+    const routeId = this.getRouteId();
+    const sectorId = this.getSectorId();
+    const spotId = this.getSpotId();
+    Sentry.withScope((scope) => {
+      scope.setExtra('user_id', user.id);
+      scope.setExtra('route_id', routeId);
+      scope.setExtra(
+        'filters',
+        getFilters(spotId, sectorId),
+      );
+      scope.setExtra('url', window.location.href);
+      if (user.login) {
+        scope.setExtra('user_login', user.login);
+      } else if (user.email) {
+        scope.setExtra('user_email', user.email);
+      } else {
+        scope.setExtra('user_phone', user.phone);
+      }
+      Sentry.captureException(msg);
+      //this.showToastr('success', 'Успешно', 'Сообщение успешно отправлено');
+    });
     this.setState({ showTooltip: false, showNoticeForm: false });
   };
 
@@ -201,16 +271,64 @@ class RoutesShowModal extends Component {
     return '';
   };
 
+  removeComment = (routeId, comment) => {
+    const { removeComment: removeCommentProp } = this.props;
+    if (!window.confirm('Удалить комментарий?')) {
+      return;
+    }
+    removeCommentProp(`${ApiUrl}/v1/route_comments/${comment.id}`);
+  };
+
+  onLikeChange = (routeId, afterChange) => {
+    const {
+      user,
+      routes,
+      removeLike: removeLikeProp,
+      addLike: addLikeProp,
+    } = this.props;
+    const route = routes[routeId];
+    const like = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.likes));
+    if (like) {
+      removeLikeProp(`${ApiUrl}/v1/likes/${like.id}`, afterChange);
+    } else {
+      const params = { like: { user_id: user.id, route_id: routeId } };
+      addLikeProp(params, afterChange);
+    }
+  };
+
+  changeAscentResult = (routeId) => {
+    const {
+      user,
+      routes,
+      addAscent: addAscentProp,
+      updateAscent: updateAscentProp,
+    } = this.props;
+    const route = routes[routeId];
+    const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
+    if (ascent) {
+      let result;
+      if (ascent.result === 'red_point') {
+        result = 'flash';
+      } else if (ascent.result === 'flash') {
+        result = 'unsuccessful';
+      } else {
+        result = 'red_point';
+      }
+      const params = { ascent: { result } };
+      updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
+    } else {
+      const result = 'red_point';
+      const params = { ascent: { result, user_id: user.id, route_id: routeId } };
+      addAscentProp(params);
+    }
+  };
+
   content = () => {
     const {
       onClose,
       routes,
-      onLikeChange,
       user,
-      removeRoute,
       openEdit,
-      changeAscentResult,
-      removeComment,
       goToProfile,
     } = this.props;
     const {
@@ -367,7 +485,7 @@ class RoutesShowModal extends Component {
                                 onChange={
                                   !user
                                     ? null
-                                    : afterChange => onLikeChange(
+                                    : afterChange => this.onLikeChange(
                                       routeId, afterChange,
                                     )
                                 }
@@ -440,7 +558,7 @@ class RoutesShowModal extends Component {
                                             size="small"
                                             style="normal"
                                             title="Удалить"
-                                            onClick={() => removeRoute(routeId)}
+                                            onClick={this.removeRoute}
                                           />
                                         )
                                         : (
@@ -472,7 +590,7 @@ class RoutesShowModal extends Component {
                           {
                             user && (
                               <RouteStatus
-                                changeAscentResult={() => changeAscentResult(routeId)}
+                                changeAscentResult={() => this.changeAscentResult(routeId)}
                               />
                             )
                           }
@@ -500,7 +618,7 @@ class RoutesShowModal extends Component {
                           <CommentBlock
                             startAnswer={this.startAnswer}
                             user={user}
-                            removeComment={comment => removeComment(routeId, comment)}
+                            removeComment={comment => this.removeComment(routeId, comment)}
                             allShown={
                               (route.comments || []).length === R.min(
                                 numOfDisplayedComments,
@@ -577,17 +695,12 @@ RoutesShowModal.propTypes = {
   routes: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   openEdit: PropTypes.func.isRequired,
-  removeRoute: PropTypes.func.isRequired,
   goToProfile: PropTypes.func.isRequired,
-  removeComment: PropTypes.func.isRequired,
-  saveComment: PropTypes.func.isRequired,
-  onLikeChange: PropTypes.func.isRequired,
-  changeAscentResult: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  submitNoticeForm: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
+  sectors: state.sectorsStore.sectors,
   routes: state.routesStore.routes,
   user: state.usersStore.users[state.usersStore.currentUserId],
   loading: getState(state),
@@ -595,6 +708,14 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
+  removeComment: url => dispatch(removeComment(url)),
+  addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),
+  removeLike: (url, afterAll) => dispatch(removeLike(url, afterAll)),
+  addLike: (params, afterAll) => dispatch(addLike(params, afterAll)),
+  addAscent: params => dispatch(addAscent(params)),
+  updateAscent: (url, params) => dispatch(updateAscent(url, params)),
+  removeRoute: (url, afterSuccess) => dispatch(removeRoute(url, afterSuccess)),
+  setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesShowModal));

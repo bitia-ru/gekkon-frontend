@@ -9,129 +9,161 @@ import Pagination from '../Pagination/Pagination';
 import SectorContext from '../../contexts/SectorContext';
 import getNumOfPages from '../../utils/getNumOfPages';
 import './Content.css';
+import {
+  setSelectedPage,
+} from '../../actions';
+import reloadRoutes from '../../utils/reloadRoutes';
+import getViewMode from '../../utils/getViewMode';
+import getPage from '../../utils/getPage';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
 
 class Content extends Component {
-    pagesList = () => {
-      const { numOfPages, page } = this.props;
-      if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
-        return R.range(1, numOfPages + 1);
-      }
-      const firstPage = page - Math.floor(NUM_OF_DISPLAYED_PAGES / 2);
-      const lastPage = firstPage + NUM_OF_DISPLAYED_PAGES;
-      if (firstPage >= 1 && lastPage <= numOfPages) {
-        return R.range(firstPage, lastPage);
-      }
-      if (firstPage >= 1) {
-        return R.range(numOfPages - NUM_OF_DISPLAYED_PAGES + 1, numOfPages + 1);
-      }
-      return R.range(1, NUM_OF_DISPLAYED_PAGES + 1);
-    };
+  componentDidMount() {
+    reloadRoutes(this.getSpotId(), this.getSectorId());
+  }
 
-    render() {
-      const {
-        page,
-        numOfPages,
-        user,
-        date,
-        period,
-        onFilterChange,
-        filters,
-        categoryId,
-        onCategoryChange,
-        changePeriodFilter,
-        changeDateFilter,
-        addRoute,
-        onRouteClick,
-        changePage,
-        viewMode,
-        changeViewMode,
-      } = this.props;
-      return (
-        <SectorContext.Consumer>
-          {
-            ({ sector }) => {
-              const diagram = sector && sector.diagram && sector.diagram.url;
-              return (
-                <div className="content">
-                  <div className="content__container">
-                    <FilterBlock
-                      viewMode={viewMode}
-                      viewModeData={
-                        sector
-                          ? {
-                            scheme: {
-                              title: diagram ? undefined : 'Схема зала ещё не загружена',
-                              disabled: diagram === null,
-                            },
-                            table: {},
-                            list: {},
-                          }
-                          : {
-                            table: {},
-                            list: {},
-                          }
-                      }
-                      onViewModeChange={changeViewMode}
-                      period={period}
-                      date={date}
-                      onFilterChange={onFilterChange}
-                      filters={filters}
-                      user={user}
-                      categoryId={categoryId}
-                      onCategoryChange={onCategoryChange}
-                      changePeriodFilter={changePeriodFilter}
-                      changeDateFilter={changeDateFilter}
-                    />
-                    <RouteCardView
-                      viewMode={viewMode}
-                      addRoute={addRoute}
-                      diagram={diagram}
-                      user={user}
-                      onRouteClick={onRouteClick}
-                    />
-                    {
-                      viewMode !== 'scheme' && <Pagination
-                        onPageChange={changePage}
-                        page={page}
-                        pagesList={this.pagesList()}
-                        firstPage={1}
-                        lastPage={numOfPages}
-                      />
-                    }
-                  </div>
-                </div>
-              );
-            }
-          }
-        </SectorContext.Consumer>
-      );
+  componentDidUpdate(prevProps) {
+    if (this.needReload(prevProps)) {
+      reloadRoutes(this.getSpotId(), this.getSectorId());
     }
+  }
+
+  needReload = (prevProps) => {
+    const {
+      selectedFilters,
+      selectedViewModes,
+      selectedPages,
+      match,
+    } = this.props;
+    if (!R.equals(selectedFilters, prevProps.selectedFilters)) {
+      return true;
+    }
+    if (!R.equals(selectedViewModes, prevProps.selectedViewModes)) {
+      return true;
+    }
+    if (!R.equals(selectedPages, prevProps.selectedPages)) {
+      return true;
+    }
+    if (!R.equals(match.url, prevProps.match.url)) {
+      return true;
+    }
+    return false;
+  };
+
+  getSpotId = () => {
+    const { match } = this.props;
+    return parseInt(match.params.id, 10);
+  };
+
+  getSectorId = () => {
+    const { match } = this.props;
+    return match.params.sector_id ? parseInt(match.params.sector_id, 10) : 0;
+  };
+
+  onRouteClick = (id) => {
+    const { history, match } = this.props;
+    history.push(`${match.url}/routes/${id}`);
+  };
+
+  changePage = (page) => {
+    const {
+      setSelectedPage: setSelectedPageProp,
+    } = this.props;
+    const spotId = this.getSpotId();
+    const sectorId = this.getSectorId();
+    setSelectedPageProp(spotId, sectorId, page);
+  };
+
+  pagesList = () => {
+    const { numOfPages, page } = this.props;
+    if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
+      return R.range(1, numOfPages + 1);
+    }
+    const firstPage = page - Math.floor(NUM_OF_DISPLAYED_PAGES / 2);
+    const lastPage = firstPage + NUM_OF_DISPLAYED_PAGES;
+    if (firstPage >= 1 && lastPage <= numOfPages) {
+      return R.range(firstPage, lastPage);
+    }
+    if (firstPage >= 1) {
+      return R.range(numOfPages - NUM_OF_DISPLAYED_PAGES + 1, numOfPages + 1);
+    }
+    return R.range(1, NUM_OF_DISPLAYED_PAGES + 1);
+  };
+
+  addRoute = () => { this.props.history.push(`${this.props.match.url}/routes/new`); };
+
+  render() {
+    const {
+      numOfPages,
+    } = this.props;
+    const page = getPage(this.getSpotId(), this.getSectorId());
+    const viewMode = getViewMode(this.getSpotId(), this.getSectorId());
+    return (
+      <SectorContext.Consumer>
+        {
+          ({ sector }) => {
+            const diagram = sector && sector.diagram && sector.diagram.url;
+            return (
+              <div className="content">
+                <div className="content__container">
+                  <FilterBlock
+                    viewMode={viewMode}
+                    viewModeData={
+                      sector
+                        ? {
+                          scheme: {
+                            title: diagram ? undefined : 'Схема зала ещё не загружена',
+                            disabled: diagram === null,
+                          },
+                          table: {},
+                          list: {},
+                        }
+                        : {
+                          table: {},
+                          list: {},
+                        }
+                    }
+                  />
+                  <RouteCardView
+                    viewMode={viewMode}
+                    addRoute={this.addRoute}
+                    diagram={diagram}
+                    onRouteClick={this.onRouteClick}
+                  />
+                  {
+                    viewMode !== 'scheme' && <Pagination
+                      onPageChange={this.changePage}
+                      page={page}
+                      pagesList={this.pagesList()}
+                      firstPage={1}
+                      lastPage={numOfPages}
+                    />
+                  }
+                </div>
+              </div>
+            );
+          }
+        }
+      </SectorContext.Consumer>
+    );
+  }
 }
 
 Content.propTypes = {
-  user: PropTypes.object,
   diagram: PropTypes.string,
-  date: PropTypes.string,
-  page: PropTypes.number.isRequired,
   numOfPages: PropTypes.number.isRequired,
-  period: PropTypes.number.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
-  filters: PropTypes.array.isRequired,
-  categoryId: PropTypes.number.isRequired,
-  onCategoryChange: PropTypes.func.isRequired,
-  changePage: PropTypes.func.isRequired,
-  changePeriodFilter: PropTypes.func.isRequired,
-  changeDateFilter: PropTypes.func.isRequired,
-  addRoute: PropTypes.func.isRequired,
-  onRouteClick: PropTypes.func.isRequired,
-  viewMode: PropTypes.string.isRequired,
-  changeViewMode: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   numOfPages: getNumOfPages(state),
+  selectedViewModes: state.selectedViewModes,
+  selectedPages: state.selectedPages,
+  selectedFilters: state.selectedFilters,
 });
 
-export default withRouter(connect(mapStateToProps)(Content));
+const mapDispatchToProps = dispatch => ({
+  setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Content));

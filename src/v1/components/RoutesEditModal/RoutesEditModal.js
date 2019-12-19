@@ -24,11 +24,13 @@ import './RoutesEditModal.css';
 import { loadRouteMarkColors } from '../../stores/route_mark_colors/utils';
 import { loadUsers } from '../../stores/users/utils';
 import { loadSector } from '../../stores/sectors/utils';
-import { loadRoute } from '../../stores/routes/utils';
+import { addRoute, loadRoute, updateRoute } from '../../stores/routes/utils';
 import getArrayByIds from '../../utils/getArrayByIds';
 import { NUM_OF_DAYS } from '../../Constants/Route';
 import { ApiUrl } from '../../Environ';
 import getState from '../../utils/getState';
+import reloadSector from '../../utils/reloadSector';
+import reloadRoutes from '../../utils/reloadRoutes';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -45,6 +47,7 @@ class RoutesEditModal extends Component {
       },
       routeImageLoading: true,
       schemeModalVisible: false,
+      isWaiting: false,
     };
     this.mouseOver = false;
   }
@@ -133,11 +136,50 @@ class RoutesEditModal extends Component {
       }
     };
 
+    updateRoute = (params) => {
+      const {
+        history,
+        match,
+        updateRoute: updateRouteProp,
+      } = this.props;
+      const routeId = this.getRouteId();
+      this.setState({ isWaiting: true });
+      updateRouteProp(
+        `${ApiUrl}/v1/routes/${routeId}`,
+        params,
+        () => history.push(R.replace('/edit', '', `${match.url}`)),
+        () => this.setState({ isWaiting: false }),
+      );
+    };
+
+    createRoute = (params) => {
+      const {
+        history,
+        match,
+        sectors,
+        addRoute: addRouteProp,
+      } = this.props;
+      this.setState({ isWaiting: true });
+      addRouteProp(
+        params,
+        (response) => {
+          history.push(
+            R.replace('new', response.data.payload.id, `${match.url}`),
+          );
+          reloadSector(response.data.payload.sector_id);
+          reloadRoutes(
+            sectors[response.data.payload.sector_id].spot_id, response.data.payload.sector_id,
+          );
+        },
+        () => this.setState({ isWaiting: false }),
+      );
+    };
+
     changed = (newValue, oldValue) => JSON.stringify(newValue) !== JSON.stringify(oldValue);
 
     save = () => {
       const {
-        routes, sectors, user, updateRoute, createRoute,
+        routes, sectors, user,
       } = this.props;
       const {
         currentPointers, currentPointersOld, route, photo,
@@ -207,9 +249,9 @@ class RoutesEditModal extends Component {
         formData.append('data[position][top]', route.data.position.top);
       }
       if (routeProp.id !== null) {
-        updateRoute(routeId, formData);
+        this.updateRoute(formData);
       } else {
-        createRoute(formData);
+        this.createRoute(formData);
       }
     };
 
@@ -321,7 +363,6 @@ class RoutesEditModal extends Component {
       const {
         onClose,
         cancel,
-        isWaiting,
         user,
         routeMarkColors,
         users,
@@ -333,12 +374,12 @@ class RoutesEditModal extends Component {
         currentPointersOld,
         routeImageLoading,
         schemeModalVisible,
+        isWaiting,
       } = this.state;
       const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
       const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
       const saveDisabled = (!routeChanged && !markChanged);
       const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg');
-      const routeId = this.getRouteId();
       return (
         <div className="modal-overlay__wrapper">
           <div className="modal modal-overlay__modal">
@@ -449,7 +490,7 @@ class RoutesEditModal extends Component {
                                 size="small"
                                 style="gray"
                                 title="Отмена"
-                                onClick={() => cancel(routeId)}
+                                onClick={cancel}
                               />
                             </div>
                             <div className="modal__track-footer-edit-mode-item">
@@ -588,9 +629,6 @@ RoutesEditModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   cancel: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
-  createRoute: PropTypes.func.isRequired,
-  updateRoute: PropTypes.func.isRequired,
-  isWaiting: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
   routeMarkColors: PropTypes.array,
 };
@@ -609,6 +647,10 @@ const mapDispatchToProps = dispatch => ({
   loadUsers: () => dispatch(loadUsers()),
   loadSector: (url, params, afterLoad) => dispatch(loadSector(url, params, afterLoad)),
   loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
+  updateRoute: (url, params, afterSuccess, afterAll) => dispatch(
+    updateRoute(url, params, afterSuccess, afterAll),
+  ),
+  addRoute: (params, afterSuccess, afterAll) => dispatch(addRoute(params, afterSuccess, afterAll)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesEditModal));
