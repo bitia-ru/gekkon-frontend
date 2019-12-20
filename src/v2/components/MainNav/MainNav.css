@@ -1,0 +1,237 @@
+.main-nav {
+    display: flex;
+    height: 75px;
+    background-color: #ffffff;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav {
+       height: 65px;
+    }
+}
+
+.main-nav__search {
+    display: flex;
+    flex-shrink: 0;
+    width: 66px;
+    height: 75px;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+    box-shadow: none;
+    background-color: #ffffff;
+    cursor: pointer;
+    position: relative;
+    transition: background-color .4s ease-out;
+    outline: none;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__search {
+        width: 65px;
+        height: 65px;
+    }
+}
+
+.main-nav__search::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background-color: #E6E6E6;
+    z-index: 1;
+}
+
+.main-nav__search:hover {
+    background-color: #006CEB;
+}
+
+.main-nav__search:hover svg {
+    fill: #ffffff;
+}
+
+.main-nav__search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.main-nav__search-icon svg {
+    fill: #1F1F1F;
+    width: 24px;
+    height: 23px;
+}
+
+.main-nav__block {
+    height: 75px;
+    position: relative;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__block {
+       height: 65px;
+    }
+}
+
+.main-nav__search-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    content: '';
+    border: none;
+    z-index: 3;
+    font-size: 20px;
+    padding-left: 35px;
+    padding-right: 35px;
+    line-height: 1.3em;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    box-sizing: border-box;
+    display: none;
+    font-family: GilroyRegular;
+    font-size: 18px;
+    z-index: 3;
+    color: #1f1f1f;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__search-input {
+        font-size: 16px;
+    }
+}
+
+.main-nav__search-input::placeholder {
+    color: #828282;
+}
+
+.main-nav__search-input::-webkit-input-placeholder {
+    color: #DDE2EF;
+}
+
+.main-nav__search-input::-moz-placeholder {
+    color: #DDE2EF;
+}
+
+/* Firefox 19+ */
+.main-nav__search-input:-moz-placeholder {
+    color: #DDE2EF;
+}
+
+/* Firefox 18- */
+.main-nav__search-input:-ms-input-placeholder {
+    color: #DDE2EF;
+}
+
+.main-nav__search-input_active {
+    display: block;
+}
+
+.main-nav__nav {
+    margin-left: 20px;
+    margin-right: 75px;
+    height: 100%;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__nav {
+        margin-right: 20px;
+    }
+}
+
+.main-nav__nav-list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.main-nav__nav-list-item {
+    list-style: none;
+}
+
+.main-nav__nav-list-item:not(:first-child) {
+    padding-left: 45px;
+}
+
+.main-nav__nav-list-item:not(:last-child) {
+    padding-right: 45px;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__nav-list-item:not(:first-child) {
+        padding-left: 0;
+    }
+
+    .main-nav__nav-list-item:not(:last-child) {
+        padding-right: 0;
+    }
+}
+
+.main-nav__nav-list-link {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+    height: 100%;
+    color: #606060;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__nav-list-link {
+        font-size: 16px;
+    }
+}
+
+.main-nav__nav-list-link:hover {
+    color: #006CEB;
+}
+
+.main-nav__nav-list-link-disabled {
+    color: #BCBCBC;
+    pointer-events: none;
+}
+
+.main-nav__nav-list-link_active {
+    position: relative;
+    color: #1F1F1F;
+}
+
+.main-nav__nav-list-link_active::before {
+    position: absolute;
+    content: '';
+    width: 58px;
+    height: 3px;
+    background-color: #006CEB;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.main-nav__container-v2 {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 75px;
+    display: flex;
+    margin-left: auto;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 1440px) {
+    .main-nav__container-2 {
+        height: 65px;
+        display: flex;
+        margin-left: auto;
+        box-sizing: border-box;
+    }
+}
+
