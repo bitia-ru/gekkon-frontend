@@ -9,10 +9,13 @@ import Button from '../Button/Button';
 import FormField from '../FormField/FormField';
 import CloseButton from '../CloseButton/CloseButton';
 import { PASSWORD_MIN_LENGTH } from '../../Constants/User';
-import './ResetPasswordForm.css';
 import { SALT_ROUNDS } from '../../Constants/Bcrypt';
 import { reEmail } from '../../Constants/Constraints';
 import { logIn, resetPassword } from '../../stores/users/utils';
+import Modal from '@/v1/layouts/Modal';
+
+import './ResetPasswordForm.css';
+
 
 class ResetPasswordForm extends Component {
   constructor(props) {
@@ -253,44 +256,22 @@ class ResetPasswordForm extends Component {
 
     render() {
       return (
-        <div
-          className="modal-overlay"
-          onClick={() => {
-            if (!this.mouseOver) {
-              this.closeForm();
-            }
-          }}
-        >
-          <div className="modal-overlay__wrapper">
-            <div className="modal-block">
-              <div
-                className="modal-block__padding-wrapper"
-                role="button"
-                tabIndex={0}
-                style={{ outline: 'none' }}
-                onMouseOver={() => {
-                  this.mouseOver = true;
-                }}
-                onMouseLeave={() => {
-                  this.mouseOver = false;
-                }}
-              >
-                <div className="modal-block__close">
-                  <CloseButton onClick={this.closeForm} />
-                </div>
-                <h3 className="modal-block__title">
-                            Установка нового пароля
-                </h3>
-                <TabBar
-                  contentList={[this.firstTabContent(), this.secondTabContent()]}
-                  activeList={[false, true]}
-                  activeTab={2}
-                  titleList={['Телефон', 'Email']}
-                />
-              </div>
-            </div>
+        <Modal maxWidth="580px">
+          <div
+            className="modal-block__padding-wrapper"
+            role="button"
+            tabIndex={0}
+            style={{ outline: 'none' }}
+          >
+            <h3 className="modal-block__title">Установка нового пароля</h3>
+            <TabBar
+              contentList={[this.firstTabContent(), this.secondTabContent()]}
+              activeList={[false, true]}
+              activeTab={2}
+              titleList={['Телефон', 'Email']}
+            />
           </div>
-        </div>
+        </Modal>
       );
     }
 }

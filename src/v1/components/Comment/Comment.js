@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import {userName, userAvatar} from '../../utils/user';
 import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
 import { timeFromNow } from '../../Constants/DateTimeFormatter';
@@ -12,7 +13,7 @@ const Comment = ({
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
-      <AvatarRound user={comment.author} />
+      <AvatarRound url={userAvatar(comment.author)} username={userName(comment.author)} />
       <div className="comment__content">
         <a
           role="link"

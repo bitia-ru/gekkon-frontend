@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import InfoPageHeader from '../InfoPageHeader/InfoPageHeader';
 import InfoPageContent from '../InfoPageContent/InfoPageContent';
 import Footer from '../Footer/Footer';
-import BaseComponent from '../BaseComponent';
 import SignUpForm from '../SignUpForm/SignUpForm';
 import LogInForm from '../LogInForm/LogInForm';
 import Profile from '../Profile/Profile';
@@ -15,7 +14,7 @@ import { TITLE, TITLES, FAQ_DATA } from '../../Constants/Faq';
 import { avail } from '../../utils';
 import getState from '../../utils/getState';
 
-class Faq extends BaseComponent {
+class Faq extends React.PureComponent {
   componentDidMount() {
     const {
       history,
@@ -108,12 +107,7 @@ class Faq extends BaseComponent {
         <StickyBar loading={loading}>
           {this.content()}
         </StickyBar>
-        <Footer
-          user={user}
-          logIn={this.logIn}
-          signUp={this.signUp}
-          logOut={this.logOut}
-        />
+        <Footer />
       </div>
     );
   }

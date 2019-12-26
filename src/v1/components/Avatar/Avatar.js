@@ -1,22 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GetUserName } from '../../Constants/User';
+
 import './Avatar.css';
 
+
 const Avatar = ({
-  user, onClick,
+  url, username, onClick,
 }) => (
   <div
-    className={`avatar${user ? ' avatar_login' : ''}`}
+    className={`avatar${url ? ' avatar_login' : ''}`}
     role="button"
     onClick={onClick}
   >
-    {user && user.avatar && <img src={user.avatar.url} alt={GetUserName(user)} />}
+    {url && <img src={url} alt={GetUserName(username)} />}
   </div>
 );
 
 Avatar.propTypes = {
-  user: PropTypes.object,
   onClick: PropTypes.func.isRequired,
 };
 

@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import MainNav from '../MainNav/MainNav';
 import Logo from '../Logo/Logo';
 import Button from '../Button/Button';
-import { notReady, notExist } from '../../utils';
+import { logIn, signUp } from '../../utils/navigation';
+
 import './MainPageHeader.css';
+
 
 const bgImage = require('./images/main-page-header.jpg');
 
-export default class MainPageHeader extends Component {
+class MainPageHeader extends Component {
   constructor(props) {
     super(props);
 
@@ -25,15 +28,10 @@ export default class MainPageHeader extends Component {
   }
 
   render() {
-    const {
-      changeNameFilter,
-      logIn,
-      signUp,
-      logOut,
-      user,
-      openProfile,
-    } = this.props;
+    const { user } = this.props;
+
     const { bgImageLoaded, posterPhotoLoaded } = this.state;
+
     return (
       <header
         className="main-page-header"
@@ -41,38 +39,27 @@ export default class MainPageHeader extends Component {
       >
         <div className="main-page-header__top">
           <Logo />
-          <MainNav
-            changeNameFilter={changeNameFilter}
-            logIn={logIn}
-            signUp={signUp}
-            logOut={logOut}
-            user={user}
-            openProfile={openProfile}
-          />
+          <MainNav />
         </div>
         <div className="main-page-header__content">
           <div className="main-page-header__text">
-            <h1 className="main-page-header__title">
-              Не можешь вспомнить свою первую 6С?
-            </h1>
-            <p className="main-page-header__descr">
-              Не пытайся запоминать боль, записывай
-            </p>
+            <h1 className="main-page-header__title">Не можешь вспомнить свою первую 6С?</h1>
+            <p className="main-page-header__descr">Не пытайся запоминать боль, записывай</p>
             <div className="main-page-header__button-wrapper">
               {
-                (!notReady(user) && notExist(user)) && (
+                !user && (
                   <>
                     <Button
                       size="big"
                       style="normal"
                       title="Зарегистрироваться"
-                      onClick={signUp}
+                      onClick={() => { signUp(this.props.history); }}
                     />
                     <Button
                       size="big"
                       style="transparent"
                       title="Войти"
-                      onClick={logIn}
+                      onClick={() => { logIn(this.props.history); }}
                     />
                   </>
                 )
@@ -99,11 +86,8 @@ export default class MainPageHeader extends Component {
   }
 }
 
-MainPageHeader.propTypes = {
-  user: PropTypes.object,
-  changeNameFilter: PropTypes.func.isRequired,
-  logIn: PropTypes.func.isRequired,
-  signUp: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
-};
+const mapStateToProps = state => ({
+  user: state.usersStore.users[state.usersStore.currentUserId],
+});
+
+export default withRouter(connect(mapStateToProps)(MainPageHeader));

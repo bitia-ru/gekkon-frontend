@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import * as R from 'ramda';
+import { withRouter } from 'react-router-dom';
 import List from '../List/List';
 import Avatar from '../Avatar/Avatar';
+import { userName, userAvatar } from '../../utils/user';
 import { GetUserName, USER_ITEMS_DATA, GUEST_ITEMS_DATA } from '../../Constants/User';
+import { logOut } from '../../utils/navigation';
+
 import './UserIcon.css';
 
-export default class UserIcon extends Component {
+
+class UserIcon extends Component {
   constructor(props) {
     super(props);
 
@@ -17,21 +23,24 @@ export default class UserIcon extends Component {
 
     onItemSelect = (id) => {
       const {
-        user, openProfile, signUp, logOut, logIn,
+        user,
       } = this.props;
+
       this.setState({ droppedDown: false });
+
       if (id === 1) {
         if (user) {
-          openProfile();
+          this.props.history.push('#profile');
         } else {
-          signUp();
+          this.props.history.push('#signup');
         }
       }
+
       if (id === 2) {
         if (user) {
           logOut();
         } else {
-          logIn();
+          this.props.history.push('#signin');
         }
       }
     };
@@ -53,7 +62,8 @@ export default class UserIcon extends Component {
         >
           <Avatar
             onClick={this.onAvatarClick}
-            user={user}
+            url={userAvatar(user)}
+            username={user && userName(user)}
           />
           {
             droppedDown
@@ -79,8 +89,10 @@ export default class UserIcon extends Component {
 
 UserIcon.propTypes = {
   user: PropTypes.object,
-  logIn: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => ({
+  user: state.usersStore.users[state.usersStore.currentUserId],
+});
+
+export default withRouter(connect(mapStateToProps)(UserIcon));

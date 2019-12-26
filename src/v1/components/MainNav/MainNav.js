@@ -43,16 +43,14 @@ class MainNav extends Component {
       const {
         changeTab: changeTabProp,
         tab,
-        logIn,
-        logOut,
-        signUp,
         user,
-        openProfile,
       } = this.props;
+
       const { searchOpened } = this.state;
       const inputClass = (searchOpened ? ' main-nav__search-input_active' : '');
       const tab1Class = (tab === 1 ? ' main-nav__nav-list-link_active' : '');
       const tab2Class = (tab === 2 ? ' main-nav__nav-list-link_active' : '');
+
       return (
         <div className="main-nav__container">
           <Link to="/crags" id="linkToCrags" />
@@ -116,13 +114,7 @@ class MainNav extends Component {
                 </nav>
               </div>
             </div>
-            <UserIcon
-              logIn={logIn}
-              logOut={logOut}
-              signUp={signUp}
-              user={user}
-              openProfile={openProfile}
-            />
+            <UserIcon />
           </div>
         </div>
       );
@@ -133,10 +125,6 @@ MainNav.propTypes = {
   changeTab: PropTypes.func,
   user: PropTypes.object,
   tab: PropTypes.number,
-  logIn: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
 
 MainNav.defaultProps = {
@@ -146,6 +134,7 @@ MainNav.defaultProps = {
 
 const mapStateToProps = state => ({
   tab: state.tab,
+  user: state.usersStore.users[state.usersStore.currentUserId],
 });
 
 const mapDispatchToProps = dispatch => ({

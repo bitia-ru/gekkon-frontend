@@ -53,7 +53,7 @@ export default class CommentForm extends Component {
               : ''
           }
           <div className="comment-form__inner-wrap">
-            <AvatarRound user={user} />
+            <AvatarRound url={user && user.avatar && user.avatar.url} username={user && user.name} />
             {
               (user && !user.login && !user.name)
                 ? (

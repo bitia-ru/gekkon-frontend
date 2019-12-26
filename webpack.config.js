@@ -18,11 +18,12 @@ module.exports = () => ({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+    extensions: ['.js', '.jsx'],
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

@@ -14,12 +14,13 @@ import StickyBar from '../StickyBar/StickyBar';
 import { reEmail } from '../../Constants/Constraints';
 import './Profile.css';
 import getState from '../../utils/getState';
+import Modal from '@/v1/layouts/Modal';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
 
-    const { user } = this.props;
+    const { user } = props;
     this.state = {
       name: user.name ? user.name : '',
       login: user.login ? user.login : '',
@@ -44,6 +45,7 @@ class Profile extends Component {
       email,
       avatar,
     } = this.state;
+
     this.setState({
       fieldsOld: {
         name,
@@ -54,6 +56,7 @@ class Profile extends Component {
         avatar,
       },
     });
+
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -498,14 +501,14 @@ class Profile extends Component {
     render() {
       const { loading } = this.props;
       return (
-        <div className="modal-overlay">
+        <Modal>
           <StickyBar
             loading={loading}
             hideLoaded
           >
             {this.content()}
           </StickyBar>
-        </div>
+        </Modal>
       );
     }
 }
@@ -525,6 +528,7 @@ Profile.propTypes = {
 
 const mapStateToProps = state => ({
   loading: getState(state),
+  user: state.usersStore.users[state.usersStore.currentUserId],
 });
 
 export default withRouter(connect(mapStateToProps)(Profile));

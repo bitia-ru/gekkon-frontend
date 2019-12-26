@@ -32,11 +32,6 @@ export default class Header extends Component {
 
   render() {
     const {
-      logIn,
-      signUp,
-      openProfile,
-      logOut,
-      user,
       data,
       changeSectorFilter,
     } = this.props;
@@ -46,13 +41,7 @@ export default class Header extends Component {
       <header className="header">
         <div className="header__top">
           <Logo />
-          <MainNav
-            logIn={logIn}
-            signUp={signUp}
-            openProfile={openProfile}
-            logOut={logOut}
-            user={user}
-          />
+          <MainNav />
         </div>
         <ul className="header__items-container">
           <li
@@ -82,8 +71,4 @@ Header.propTypes = {
   user: PropTypes.object,
   data: PropTypes.object.isRequired,
   changeSectorFilter: PropTypes.func.isRequired,
-  logIn: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
