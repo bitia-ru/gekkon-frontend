@@ -18,7 +18,7 @@ export const CROP_DEFAULT = {
   locked: true,
 };
 
-export const SHORT_CLICK_DELAY = 500; // ms
+export const SHORT_CLICK_DELAY = 250; // ms
 
 export const getColorStyle = (routeMarkColor) => {
   if (routeMarkColor && routeMarkColor.photo) return { backgroundImage: `url(${routeMarkColor.photo.url})` };

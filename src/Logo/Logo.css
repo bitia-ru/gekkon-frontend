@@ -30,14 +30,7 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding: 24px;
     box-sizing: border-box;
-}
-
-@media screen and (max-width: 1440px) {
-    .logo__icon {
-        padding: 20px;
-    }
 }
 
 .logo__icon img {

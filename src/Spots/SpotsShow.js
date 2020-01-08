@@ -565,10 +565,13 @@ class SpotsShow extends Authorization {
         viewMode = selectedViewModes[spotId][currentSectorId];
       } else if (currentSectorId === 0) {
         viewMode = DEFAULT_SPOT_VIEW_MODE;
-      } else if (R.find(s => s.id === currentSectorId, sectors).diagram) {
-        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
       } else {
-        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+        const r = R.find(s => s.id === currentSectorId, sectors);
+        if (r && r.diagram) {
+          [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
+        } else {
+          viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+        }
       }
       const currentViewMode = viewModeCurr || viewMode;
       const currentCategoryFrom = (
@@ -1451,10 +1454,13 @@ class SpotsShow extends Authorization {
         viewMode = selectedViewModes[spotId][sectorId];
       } else if (sectorId === 0) {
         viewMode = DEFAULT_SPOT_VIEW_MODE;
-      } else if (R.find(s => s.id === sectorId, sectors).diagram) {
-        [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
       } else {
-        viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+        const r = R.find(s => s.id === sectorId, sectors);
+        if (r && r.diagram) {
+          [viewMode] = DEFAULT_SECTOR_VIEW_MODE_LIST;
+        } else {
+          viewMode = R.last(DEFAULT_SECTOR_VIEW_MODE_LIST);
+        }
       }
       const categoryFrom = (
         (selectedFilters && selectedFilters[spotId])

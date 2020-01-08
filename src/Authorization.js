@@ -123,13 +123,15 @@ export default class Authorization extends React.Component {
     };
 
     displayError = (error) => {
-      if (error.response.status === 404 && error.response.statusText === 'Not Found') {
-        this.showToastr('error', 'Ошибка', error.response.data.message);
-        return;
-      }
-      if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
-        this.showToastr('error', 'Ошибка', error.response.data);
-        return;
+      if (error.response) {
+        if (error.response.status === 404 && error.response.statusText === 'Not Found') {
+          this.showToastr('error', 'Ошибка', error.response.data.message);
+          return;
+        }
+        if (error.response.status === 401 && error.response.statusText === 'Unauthorized') {
+          this.showToastr('error', 'Ошибка', error.response.data);
+          return;
+        }
       }
       this.showToastr('error', 'Ошибка', 'Неожиданная ошибка');
     };
@@ -164,7 +166,7 @@ export default class Authorization extends React.Component {
             }
           }).catch((error) => {
             decreaseNumOfActiveRequests();
-            if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+            if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
               this.setState({ signUpFormErrors: error.response.data });
             } else {
               this.displayError(error);
@@ -206,7 +208,7 @@ export default class Authorization extends React.Component {
                 });
               }).catch((error) => {
                 decreaseNumOfActiveRequests();
-                if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+                if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
                   this.setState({ logInFormErrors: error.response.data });
                 } else {
                   this.displayError(error);
@@ -216,7 +218,7 @@ export default class Authorization extends React.Component {
           }).catch((error) => {
             decreaseNumOfActiveRequests();
             const resp = error.response;
-            if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+            if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
               this.setState({ logInFormErrors: { email: ['Пользователь не найден'] } });
             } else {
               this.displayError(error);
@@ -258,7 +260,7 @@ export default class Authorization extends React.Component {
           }).catch((error) => {
             decreaseNumOfActiveRequests();
             const resp = error.response;
-            if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+            if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
               this.showToastr(
                 'error',
                 'Ошибка',
@@ -304,7 +306,7 @@ export default class Authorization extends React.Component {
           }
         }).catch((error) => {
           decreaseNumOfActiveRequests();
-          if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+          if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
             this.setState({ profileFormErrors: error.response.data });
           } else {
             this.displayError(error);
@@ -397,9 +399,9 @@ export default class Authorization extends React.Component {
           }).catch((error) => {
             decreaseNumOfActiveRequests();
             const resp = error.response;
-            if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+            if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
               this.showToastr('error', 'Ошибка', 'Пользователь не найден');
-            } else if (resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
+            } else if (resp && resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
               this.showToastr(
                 'warning',
                 'Восстановление пароля',

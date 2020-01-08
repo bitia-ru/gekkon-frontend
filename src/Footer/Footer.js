@@ -87,9 +87,6 @@ const Footer = ({
             <li className="footer__list-item">
               <Link to="/about" className="footer__list-link">О нас</Link>
             </li>
-            <li className="footer__list-item">
-              <Link to="/howtohelp" className="footer__list-link">Как нам помочь</Link>
-            </li>
           </ul>
         </div>
         <div className="footer__item">

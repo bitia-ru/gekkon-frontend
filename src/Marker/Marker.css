@@ -1,5 +1,6 @@
 .marker {
     position: absolute;
+    line-height: 0;
 }
 
 .marker__image {

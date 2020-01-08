@@ -189,7 +189,6 @@ export default class RoutesShowModal extends Component {
       redpoints,
       numOfFlash,
       flashes,
-      numOfFlash,
       ctrlPressed,
       removeRoute,
       openEdit,

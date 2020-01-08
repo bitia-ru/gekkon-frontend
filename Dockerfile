@@ -1,11 +1,19 @@
-FROM node:11-alpine AS builder
+FROM node:11-alpine AS npm_installer
 
 RUN npm config set unsafe-perm true
 
-COPY . /app
 WORKDIR /app
 
+COPY package.json package-lock.json /app/
+
 RUN npm i --production
+RUN npm i postcss-loader autoprefixer favicons-webpack-plugin@1.0.2
+
+FROM npm_installer AS builder
+
+COPY --from=npm_installer /app/node_modules /app/node_modules
+
+COPY . /app
 
 ARG apiUrl
 ARG clientId

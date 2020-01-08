@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Logo.css';
 
-import logoImage from '../../img/logo-img/logo.svg';
+import logoImage from '../../img/logo-img/logo-75x75.png';
 
 const Logo = () => (
   <div className="logo__container">
