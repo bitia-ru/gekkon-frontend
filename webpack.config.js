@@ -11,10 +11,19 @@ module.exports = () => ({
     filename: 'index-[hash].js',
     publicPath: '/',
   },
+  devServer: {
+    historyApiFallback: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+    extensions: ['.js', '.jsx'],
+  },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

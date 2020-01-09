@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import * as R from 'ramda';
 import * as acts from './Constants/Actions';
 import { DEFAULT_FILTERS } from './Constants/DefaultFilters';
+import { default as usersReducerV2 } from '@/v2/redux/users/reducer';
 
 const routesReducer = (state = {}, action) => {
   switch (action.type) {
@@ -183,4 +184,6 @@ export default combineReducers({
   selectedFilters: selectedFiltersReducer,
   routeMarkColors: routeMarkColorsReducer,
   selectedViewModes: selectedViewModesReducer,
+
+  usersStoreV2: usersReducerV2,
 });
