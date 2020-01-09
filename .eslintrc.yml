@@ -11,6 +11,8 @@ parserOptions:
   ecmaVersion: 2018
   sourceType: module
 parser: babel-eslint
+settings:
+  import/resolver: webpack
 plugins:
   - react
 rules:
@@ -46,3 +48,4 @@ rules:
   "react/no-unused-state": "off"
   "jsx-a11y/label-has-for": "off"
   "react/require-default-props": "off"
+  "global-require": "off"

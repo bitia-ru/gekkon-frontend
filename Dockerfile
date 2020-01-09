@@ -7,7 +7,6 @@ WORKDIR /app
 COPY package.json package-lock.json /app/
 
 RUN npm i --production
-RUN npm i postcss-loader autoprefixer favicons-webpack-plugin@1.0.2
 
 FROM npm_installer AS builder
 

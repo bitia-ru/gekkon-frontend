@@ -55,7 +55,7 @@ class SchemeModal extends Component {
       [null],
     ];
     increaseNumOfActiveRequestsProp();
-    Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params })
+    Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params, withCredentials: true })
       .then((response) => {
         decreaseNumOfActiveRequestsProp();
         this.setState(

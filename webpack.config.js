@@ -40,7 +40,7 @@ module.exports = () => ({
       template: './index.html',
     }),
     new webpack.EnvironmentPlugin({
-      API_URL: '',
+      API_URL: '/api',
       SENTRY_DSN: '',
       CLIENT_ID: '',
     }),

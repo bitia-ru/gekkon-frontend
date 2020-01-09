@@ -67,7 +67,7 @@ export default class Authorization extends React.Component {
         saveUser,
       } = this.props;
       increaseNumOfActiveRequests();
-      Axios.get(`${ApiUrl}/v1/users/self`, { headers: { TOKEN: (tokenNew || token) } })
+      Axios.get(`${ApiUrl}/v1/users/self`, { headers: { TOKEN: (tokenNew || token) }, withCredentials: true })
         .then((response) => {
           decreaseNumOfActiveRequests();
           saveUser(response.data.payload);
@@ -149,7 +149,7 @@ export default class Authorization extends React.Component {
         const hash = bcrypt.hashSync(password, salt);
         const params = { user: { password_digest: hash, email: data } };
         increaseNumOfActiveRequests();
-        Axios.post(`${ApiUrl}/v1/users`, params)
+        Axios.post(`${ApiUrl}/v1/users`, params, { withCredentials: true })
           .then((response) => {
             decreaseNumOfActiveRequests();
             this.closeSignUpForm();
@@ -191,11 +191,11 @@ export default class Authorization extends React.Component {
           params = { user_session: { user: { login: data } }, rememberMe };
         }
         increaseNumOfActiveRequests();
-        Axios.get(`${ApiUrl}/v1/user_sessions/new`, { params })
+        Axios.get(`${ApiUrl}/v1/user_sessions/new`, { params, withCredentials: true })
           .then((response) => {
             const hash = bcrypt.hashSync(password, response.data);
             params.user_session.user.password_digest = hash;
-            Axios.post(`${ApiUrl}/v1/user_sessions`, params)
+            Axios.post(`${ApiUrl}/v1/user_sessions`, params, { withCredentials: true })
               .then((resp) => {
                 decreaseNumOfActiveRequests();
                 saveToken(resp.data.payload.token);
@@ -388,7 +388,7 @@ export default class Authorization extends React.Component {
           params = { user: { login: data } };
         }
         increaseNumOfActiveRequests();
-        Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, { params })
+        Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, { params, withCredentials: true })
           .then(() => {
             decreaseNumOfActiveRequests();
             this.showToastr(
