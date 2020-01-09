@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import SpotPoster from './components/SpotPoster/SpotPoster';
-import { StyleSheet, css } from './aphrodite';
-import MainScreen from './layouts/MainScreen/MainScreen';
-import { loadSpecificUser } from './redux/users/actions';
+import UserPoster from '../components/UserPoster/UserPoster';
+import { StyleSheet, css } from '../aphrodite';
+import MainScreen from '../layouts/MainScreen/MainScreen';
+import { loadSpecificUser } from '../redux/users/actions';
 
 
 const obtainUser = (userId, users, loadSpecificUser) => {
@@ -24,10 +24,10 @@ const obtainUser = (userId, users, loadSpecificUser) => {
   };
 };
 
-const Users = ({ match, users, loadSpecificUser }) => (
+const UserShow = ({ match, users, loadSpecificUser }) => (
   <MainScreen
     header={
-      <SpotPoster
+      <UserPoster
         user={obtainUser(match.params.user_id, users, loadSpecificUser)}
       />
     }
@@ -37,13 +37,6 @@ const Users = ({ match, users, loadSpecificUser }) => (
 );
 
 const style = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexFlow: 'column',
-    minHeight: '100vh',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-  },
   content: {
     flex: 1,
   },
@@ -57,4 +50,4 @@ const mapDispatchToProps = dispatch => ({
   loadSpecificUser: userId => dispatch(loadSpecificUser(userId)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserShow));

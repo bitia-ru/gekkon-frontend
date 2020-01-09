@@ -1,8 +1,11 @@
 import React from 'react';
 import Footer from '@/Footer/Footer';
-import { css, StyleSheet } from '@/v2/aphrodite';
-import Logo from '@/v2/components/Logo/Logo';
-import MainNav from '@/v2/components/MainNav/MainNav';
+import { css, StyleSheet } from '../../aphrodite';
+import Logo from '../../components/Logo/Logo';
+import MainNav from '../../components/MainNav/MainNav';
+import TextHeader from './TextHeader';
+
+import './scroll_workaround.css';
 
 
 class MainScreen extends React.PureComponent {
@@ -28,7 +31,12 @@ class MainScreen extends React.PureComponent {
           logOut={() => {}}
           user={null}
         />
-        {header && header}
+        {
+          header && (
+            typeof header === 'string' || typeof header === 'number'
+              ? <TextHeader title={header} /> : header
+          )
+        }
         {children && children}
         <Footer
           user={null}

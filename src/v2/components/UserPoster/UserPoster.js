@@ -5,7 +5,7 @@ import './Header.css';
 import between from '@/v2/utils/between';
 
 
-class SpotPoster extends Component {
+class UserPoster extends Component {
   constructor(props) {
     super(props);
 
@@ -138,12 +138,15 @@ class SpotPoster extends Component {
                   <div>{ this.userRoleToText(user.role) }</div>
                 </div>
                 <div>
-                  <div>Достижения:</div>
-                  <div>- / -</div>
+                  <div>Карма:</div>
+                  <div>{ (user && user.data && user.data['karma'] !== undefined) ? user.data['karma'] : '-' }</div>
                 </div>
                 <div>
-                  <div>Карма:</div>
-                  <div>-</div>
+                  <div>Достижения (б/т):</div>
+                  <div>
+                    { '-'}
+                  /
+                    {'-'}</div>
                 </div>
               </div>
             </div>
@@ -154,7 +157,7 @@ class SpotPoster extends Component {
   }
 }
 
-SpotPoster.propTypes = {
+UserPoster.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
@@ -197,7 +200,8 @@ const styles = StyleSheet.create({
     },
   },
   logo: {
-    height: 'calc(100% - 10px)',
+    height: '130px',
+    width: '130px',
     boxSizing: 'border-box',
     borderRadius: '70px',
     backgroundColor: '#f3f3f3',
@@ -205,6 +209,8 @@ const styles = StyleSheet.create({
 
     '@media screen and (max-width: 1440px)': {
       borderRadius: '65px',
+      height: '120px',
+      width: '120px',
     },
   },
   infoBlock: {
@@ -267,4 +273,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SpotPoster;
+export default UserPoster;
