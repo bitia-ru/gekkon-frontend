@@ -21,7 +21,7 @@ const obtainUsers = (users, loadUsers, sortBy) => {
     id: R.prop('id'),
     registration_date: R.prop('created_at'),
     karma: R.pipe(R.path(['data', 'karma']), R.divide(1)),
-    score: R.prop('score'),
+    score: R.pipe(R.path(['statistics', 'score']), R.divide(1)),
   };
 
   return R.sortBy(sortByInternal[sortBy])(
@@ -63,10 +63,11 @@ class Users extends React.PureComponent {
             <thead>
               <tr>
                 <th>№</th>
-                <th>ID</th>
                 <th>Аватар</th>
                 <th style={{ textAlign: 'left' }}>Имя</th>
+                <th>Очки</th>
                 <th>Карма</th>
+                <th>ID</th>
               </tr>
             </thead>
             <tbody>
@@ -75,10 +76,11 @@ class Users extends React.PureComponent {
                 (user, index) => {
                   return <tr className={css(style.userRow)} onClick={() => { this.props.history.push(this.props.match.url + `/${user.id}`); }}>
                     <td style={{ fontWeight: 'bold' }}>{index}</td>
-                    <td>#{user.id}</td>
                     <td style={{ minWidth: '75px' }}><img height={55} src={user.avatar ? user.avatar.url : ''} /></td>
                     <td style={{ textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' }}>{userBaseName(user)}</td>
+                    <td>{Math.round(user.statistics.score)}</td>
                     <td>{user.data['karma']}</td>
+                    <td>#{user.id}</td>
                   </tr>;
                 },
               )

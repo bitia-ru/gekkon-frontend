@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, css } from '@/v2/aphrodite';
+import * as R from 'ramda';
+import { StyleSheet, css } from '../../aphrodite';
+import between from '../../utils/between';
 import './Header.css';
-import between from '@/v2/utils/between';
 
 
 class UserPoster extends Component {
@@ -138,15 +139,20 @@ class UserPoster extends Component {
                   <div>{ this.userRoleToText(user.role) }</div>
                 </div>
                 <div>
+                  <div>Очки:</div>
+                  <div>{ user && user.statistics ? Math.round(user.statistics.score) : '-' }</div>
+                </div>
+                <div>
                   <div>Карма:</div>
                   <div>{ (user && user.data && user.data['karma'] !== undefined) ? user.data['karma'] : '-' }</div>
                 </div>
                 <div>
                   <div>Достижения (б/т):</div>
                   <div>
-                    { '-'}
-                  /
-                    {'-'}</div>
+                    { R.path(['statistics', 'max_category_boulder'], user) ? R.path(['statistics', 'max_category_boulder'], user).splitted : '-' }
+                    /
+                    { R.path(['statistics', 'max_category_sport'], user) ? R.path(['statistics', 'max_category_sport'], user).splitted : '-' }
+                  </div>
                 </div>
               </div>
             </div>
