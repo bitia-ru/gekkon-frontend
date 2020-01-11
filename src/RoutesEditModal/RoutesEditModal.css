@@ -42,25 +42,22 @@
     background-color: #ffffff;
     display: flex;
     position: relative;
-    height: 80vh;
-    min-height: 1040px;
+    min-height: 800px;
     min-width: 960px;
+    max-height: 1050px;
+    height: 95vh;
 }
 
 @media screen and (max-width: 1600px) {
     .modal {
-        height: 95vh;
         min-height: 700px;
     }
 }
 
 @media screen and (max-width: 1440px) {
-    .modal {
-        height: 95vh;
-        min-height: 600px;
-        margin-top: 2.5vh;
-        margin-bottom: 2.5vh;
-    }
+  .modal {
+    min-height: 600px;
+  }
 }
 
 .modal__track-block {
