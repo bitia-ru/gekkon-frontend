@@ -173,6 +173,14 @@
     z-index: 1;
 }
 
+.modal__route-photo-placeholder {
+    width: 118px;
+    height: 118px;
+    position: relative;
+    background-image: url(./photo-placeholder.svg);
+    background-size: contain;
+}
+
 .modal__track-descr-picture {
     width: 118px;
     height: 118px;

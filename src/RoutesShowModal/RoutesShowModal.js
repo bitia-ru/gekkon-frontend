@@ -280,8 +280,7 @@ export default class RoutesShowModal extends Component {
                       {
                         showLoadPhotoMsg && (
                           <div className="modal__track-descr">
-                            <div className="modal__track-descr-picture" />
-                            <div className="modal__track-descr-text">Загрузите фото трассы</div>
+                            <div className="modal__route-photo-placeholder" />
                           </div>
                         )
                       }
