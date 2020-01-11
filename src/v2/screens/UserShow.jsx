@@ -7,34 +7,55 @@ import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadSpecificUser } from '../redux/users/actions';
 
 
-const obtainUser = (userId, users, loadSpecificUser) => {
-  if (!users[userId]) {
-    loadSpecificUser(userId);
+class UserShow extends React.PureComponent {
+  obtainUser = (userId, users, loadSpecificUser) => {
+    if (!users[userId]) {
+      loadSpecificUser(userId);
+
+      return {
+        base_name: `User #${userId}`,
+      };
+    }
+
+    const user = users[userId];
 
     return {
-      base_name: `User #${userId}`,
+      ...user,
+      base_name: user.name ? user.name : (user.login ? user.login : `User #${user.id}`),
     };
-  }
-
-  const user = users[userId];
-
-  return {
-    ...user,
-    base_name: user.name ? user.name : (user.login ? user.login : `User #${user.id}`),
   };
-};
 
-const UserShow = ({ match, users, loadSpecificUser }) => (
-  <MainScreen
-    header={
-      <UserPoster
-        user={obtainUser(match.params.user_id, users, loadSpecificUser)}
-      />
-    }
-  >
-    <div className={css(style.content)} />
-  </MainScreen>
-);
+  obtainUserAscents = (userId) => {
+    return [
+      {
+        date: new Date(),
+        route_id: 1546,
+        result: 'flash',
+      },
+      {
+        date: new Date(),
+        route_id: 1547,
+        result: 'redpoint',
+      },
+    ];
+  };
+
+  render() {
+    const { match, users, loadSpecificUser } = this.props;
+
+    return (
+      <MainScreen
+        header={
+          <UserPoster
+            user={this.obtainUser(match.params.user_id, users, loadSpecificUser)}
+          />
+        }
+      >
+        <div className={css(style.content)} />
+      </MainScreen>
+    );
+  }
+}
 
 const style = StyleSheet.create({
   content: {

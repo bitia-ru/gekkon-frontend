@@ -1,58 +1,89 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import * as R from 'ramda';
 import { StyleSheet, css } from '../aphrodite';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadUsers } from '../redux/users/actions';
-import ContentWithLeftPanel from '@/v2/layouts/ContentWithLeftPanel';
-import LeftPanelList from '@/v2/layouts/LeftPanelList';
+import ContentWithLeftPanel from '../layouts/ContentWithLeftPanel';
+import LeftPanelList from '../layouts/LeftPanelList';
+import { userBaseName } from '../utils/users';
 
 
-const obtainUsers = (users, loadUsers) => {
+const obtainUsers = (users, loadUsers, sortBy) => {
   if (Object.keys(users).length === 0) {
     loadUsers();
 
-    return {};
+    return [];
   }
 
-  return users;
+  const sortByInternal = {
+    id: R.prop('id'),
+    registration_date: R.prop('created_at'),
+    karma: R.pipe(R.path(['data', 'karma']), R.divide(1)),
+    score: R.prop('score'),
+  };
+
+  return R.sortBy(sortByInternal[sortBy])(
+    R.reduce((list, userId) => [...list, users[userId]], [])(R.keys(users)),
+  );
 };
 
 class Users extends React.PureComponent {
   sortOptions = {
-    by_id: 'По ID',
-    by_registration_date: 'По дате регистрации',
-    by_karma: 'По карме',
-    by_score: 'По очкам',
+    score: 'По очкам',
+    karma: 'По карме',
+    registration_date: 'По дате регистрации',
+    id: 'По ID',
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentSortOption: Object.keys(this.sortOptions)[0],
+    };
+  }
+
+
   onSortChanged = (selectedSort) => {
-    console.log(selectedSort);
+    this.setState({ currentSortOption: selectedSort });
   };
 
   render() {
     return (
       <MainScreen header="Пользователи">
         <ContentWithLeftPanel
+          panelTitle="Сортировки"
           panel={
             <LeftPanelList options={this.sortOptions} onOptionSelected={this.onSortChanged} />
           }
         >
-          <table>
-          {
-            Object.keys(obtainUsers(this.props.users, this.props.loadUsers)).map(
-              (id, index) => {
-                const user = this.props.users[id];
-                return <tr className={css(style.userRow)} onClick={() => { this.props.history.push(this.props.match.url + `/${user.id}`); }}>
-                  <td>{index}</td>
-                  <td>#{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.login}</td>
-                  <td>{user.data['karma']}</td>
-                </tr>;
-              },
-            )
-          }
+          <table className={css(style.userTable)}>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>ID</th>
+                <th>Аватар</th>
+                <th style={{ textAlign: 'left' }}>Имя</th>
+                <th>Карма</th>
+              </tr>
+            </thead>
+            <tbody>
+            {
+              obtainUsers(this.props.users, this.props.loadUsers, this.state.currentSortOption).map(
+                (user, index) => {
+                  return <tr className={css(style.userRow)} onClick={() => { this.props.history.push(this.props.match.url + `/${user.id}`); }}>
+                    <td style={{ fontWeight: 'bold' }}>{index}</td>
+                    <td>#{user.id}</td>
+                    <td style={{ minWidth: '75px' }}><img height={55} src={user.avatar ? user.avatar.url : ''} /></td>
+                    <td style={{ textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' }}>{userBaseName(user)}</td>
+                    <td>{user.data['karma']}</td>
+                  </tr>;
+                },
+              )
+            }
+            </tbody>
           </table>
         </ContentWithLeftPanel>
       </MainScreen>
@@ -61,10 +92,46 @@ class Users extends React.PureComponent {
 }
 
 const style = StyleSheet.create({
+  userTable: {
+    width: '100%',
+    borderCollapse: 'separate',
+    borderSpacing: '0 15px',
+
+    '> th': {
+      fontWeight: 'bold',
+      fontFamily: 'GilroyBold',
+      padding: '0px 10px',
+
+      ':first-child': {
+        paddingLeft: '20px',
+      },
+      ':last-child': {
+        paddingRight: '20px',
+      },
+    },
+  },
   userRow: {
+    height: '75px',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.08)',
+    marginBottom: '20px',
+    backgroundColor: 'white',
+
     ':hover': {
+      boxShadow: '0px 8px 8px rgba(0, 0, 0, 0.12)',
       cursor: 'pointer',
       fontWeight: 600,
+    },
+
+    '> td': {
+      padding: '10px',
+      textAlign: 'center',
+
+      ':first-child': {
+        paddingLeft: '20px',
+      },
+      ':last-child': {
+        paddingRight: '20px',
+      },
     },
   },
 });
