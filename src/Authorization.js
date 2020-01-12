@@ -74,11 +74,14 @@ export default class Authorization extends React.Component {
           if (afterSignIn) {
             afterSignIn(response.data.payload);
           }
-        }).catch(() => {
+        }).catch((error) => {
           decreaseNumOfActiveRequests();
-          Cookies.remove('user_session_token', { path: '', domain: Domain() });
-          removeToken();
-          saveUser({ id: null });
+
+          if (R.path(['response', 'status'])(error) === 401) {
+            Cookies.remove('user_session_token', { path: '', domain: Domain() });
+            removeToken();
+            saveUser({ id: null });
+          }
         });
     };
 

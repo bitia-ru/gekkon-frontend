@@ -12,12 +12,48 @@ Axios.interceptors.request.use((config) => {
 
 const Api = {
   get(url, options) {
-    Axios.get(
+    return Axios.get(
       `${ApiUrl}${url}`,
       {
+        params: R.propOr({}, 'params', options),
         withCredentials: true,
       },
     ).then((response) => {
+      if (!options.success) {
+        return;
+      }
+
+      if (response.data.payload) {
+        options.success(response.data.payload);
+      } else {
+        options.success(response.data);
+      }
+    }).catch((error) => {
+      if (!options.failed) {
+        return;
+      }
+
+      options.failed(error);
+    });
+  },
+  post(url, options) {
+    const method = R.propOr('post', 'method')(options);
+
+    if (![
+      'post',
+      'patch',
+      'update',
+      'delete',
+    ].includes(method)) {
+      throw `ArgumentError: method argument has invalid value ${method}.`;
+    }
+
+    Axios({
+      ...options,
+      url: `${ApiUrl}${url}`,
+      method,
+      withCredentials: true,
+    }).then((response) => {
       if (!options.success) {
         return;
       }
@@ -30,6 +66,9 @@ const Api = {
 
       options.failed(error);
     });
+  },
+  patch(url, options) {
+    return this.post(url, { ...options, method: 'patch' });
   },
 };
 

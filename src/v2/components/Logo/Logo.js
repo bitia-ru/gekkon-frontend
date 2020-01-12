@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
 
     '> img': {
-      width: '80%',
-      height: '80%',
+      width: '100%',
+      height: '100%',
     },
   },
 });

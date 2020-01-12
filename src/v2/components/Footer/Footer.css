@@ -1,0 +1,119 @@
+.footer {
+    width: 100%;
+    padding-top: 62px;
+    padding-bottom: 62px;
+    background-color: #1A1A1A;
+    color: #FCFCFC;
+    position: relative;
+}
+
+.footer__container {
+    display: flex;
+    max-width: 1275px;
+    padding-left: 30px;
+    padding-right: 30px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+.footer__block-group {
+    display: flex;
+    flex-basis: 72%;
+    max-width: 72%;
+    justify-content: space-between;
+}
+
+.footer__social {
+    flex-basis: 20%;
+    max-width: 20%;
+}
+
+.footer__header {
+    font-size: 18px;
+    font-weight: normal;
+    color: #FCFCFC;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.footer__item {
+    max-width: 25%;
+    flex-basis: 25%;
+    padding-right: 20px;
+}
+
+.footer__list {
+    padding-left: 0;
+    margin: 0;
+    margin-top: -6px;
+}
+
+.footer__list-item {
+    list-style: none;
+}
+
+.footer__list-link {
+    color: #878787;
+    text-decoration: none;
+    line-height: 1.3em;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    display: block;
+    transition: color .4s ease-out;
+    cursor: pointer;
+}
+
+.footer__list-link-disabled {
+    pointer-events: none;
+    color: #444444;
+}
+
+.footer__list-link:hover {
+    color: #FCFCFC;
+}
+
+.footer__progress-bar {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% - 3px);
+    height: 3px;
+    width: 100%;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.footer__progress-bar_fixed {
+    position: fixed;
+    bottom: 0;
+}
+
+.footer__progress-bar-indicator {
+    background-color: #006CEB;
+    height: 100%;
+    width: 100%;
+}
+
+.social-links {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.social-links li {
+    list-style-type: none;
+    margin-right: 8px;
+    margin-left: 8px;
+}
+
+.social-links li:first-child {
+    margin-left: 0;
+}
+
+.social-links li:last-child {
+    margin-right: 0;
+}

@@ -75,7 +75,7 @@ class Users extends React.PureComponent {
               obtainUsers(this.props.users, this.props.loadUsers, this.state.currentSortOption).map(
                 (user, index) => {
                   return <tr className={css(style.userRow)} onClick={() => { this.props.history.push(this.props.match.url + `/${user.id}`); }}>
-                    <td style={{ fontWeight: 'bold' }}>{index+1}</td>
+                    <td style={{ fontWeight: 'bold' }}>{index + 1}</td>
                     <td style={{ minWidth: '75px' }}><img height={55} src={user.avatar ? user.avatar.url : ''} /></td>
                     <td style={{ textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' }}>{userBaseName(user)}</td>
                     <td>{Math.round(user.statistics.score)}</td>

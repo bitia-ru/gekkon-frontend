@@ -26,18 +26,6 @@ class UserShow extends React.PureComponent {
   };
 
   obtainUserAscents = (userId) => {
-    return [
-      {
-        date: new Date(),
-        route_id: 1546,
-        result: 'flash',
-      },
-      {
-        date: new Date(),
-        route_id: 1547,
-        result: 'redpoint',
-      },
-    ];
   };
 
   render() {

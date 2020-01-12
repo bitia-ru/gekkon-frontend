@@ -9,6 +9,7 @@ const usersReducer = (
   action,
 ) => {
   switch (action.type) {
+  case acts.LOAD_USERS:
   case acts.LOAD_USERS_SUCCESS:
     if (action.user) {
       return {

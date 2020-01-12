@@ -1,50 +1,79 @@
 import React from 'react';
-import Footer from '@/Footer/Footer';
+import { withRouter } from 'react-router-dom';
+import Footer from '../../components/Footer/Footer';
 import { css, StyleSheet } from '../../aphrodite';
 import Logo from '../../components/Logo/Logo';
 import MainNav from '../../components/MainNav/MainNav';
+import withModals, { ModalContainerContext } from '../../modules/modalable';
+import Profile from '../../forms/Profile/Profile';
+import LogInForm from '../../forms/LogInForm/LogInForm';
+import SignUpForm from '../../forms/SignUpForm/SignUpForm';
+import ResetPasswordForm from '../../forms/ResetPasswordForm/ResetPasswordForm';
 import TextHeader from './TextHeader';
 
 import './scroll_workaround.css';
 
 
 class MainScreen extends React.PureComponent {
+  modals() {
+    return {
+      profile: {
+        hashRoute: true,
+        body: <Profile />,
+      },
+      signin: {
+        hashRoute: true,
+        body: <LogInForm />,
+      },
+      signup: {
+        hashRoute: true,
+        body: <SignUpForm />,
+      },
+      reset_password: {
+        hashRoute: true,
+        body: <ResetPasswordForm />,
+      },
+    };
+  }
+
   render() {
     const { children, header } = this.props;
 
-    const showModal = false;
-
     return (
-      <div
-        className={
-          css(
-            style.container,
-            !showModal && style.scrollable,
-          )
-        }
-      >
-        <Logo />
-        <MainNav
-          logIn={() => {}}
-          signUp={() => {}}
-          openProfile={() => {}}
-          logOut={() => {}}
-          user={null}
-        />
+      <ModalContainerContext.Consumer>
         {
-          header && (
-            typeof header === 'string' || typeof header === 'number'
-              ? <TextHeader title={header} /> : header
+          isModalShown => (
+            <div
+              className={
+                css(
+                  style.container,
+                  isModalShown ? style.unscrollable : style.scrollable,
+                )
+              }
+            >
+              <Logo />
+              <MainNav
+                logIn={() => {}}
+                signUp={() => {}}
+                openProfile={() => {}}
+                user={null}
+              />
+              {
+                header && (
+                  typeof header === 'string' || typeof header === 'number'
+                    ? <TextHeader title={header} /> : header
+                )
+              }
+              {children && children}
+              <Footer
+                logIn={() => {}}
+                signUp={() => {}}
+                logOut={() => {}}
+              />
+            </div>
           )
         }
-        {children && children}
-        <Footer
-          user={null}
-          logIn={() => {}}
-          signUp={() => {}}
-          logOut={() => {}}
-        />
-      </div>
+      </ModalContainerContext.Consumer>
     );
   }
 }
@@ -54,11 +83,14 @@ const style = StyleSheet.create({
     display: 'flex',
     flexFlow: 'column',
     minHeight: '100vh',
+    overflowX: 'hidden',
   },
   scrollable: {
     overflowY: 'auto',
-    overflowX: 'hidden',
+  },
+  unscrollable: {
+    overflowY: 'hidden',
   },
 });
 
-export default MainScreen;
+export default withRouter(withModals(MainScreen));

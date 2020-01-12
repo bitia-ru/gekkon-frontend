@@ -6,6 +6,7 @@ import Avatar from '../Avatar/Avatar';
 import { GetUserName, USER_ITEMS_DATA, GUEST_ITEMS_DATA } from '../Constants/User';
 import './UserIcon.css';
 
+
 export default class UserIcon extends Component {
   constructor(props) {
     super(props);
