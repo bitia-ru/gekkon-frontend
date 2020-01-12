@@ -4,11 +4,13 @@ import { Switch, Route } from 'react-router-dom';
 import BootingScreen from './screens/BootingScreen';
 import Users from './screens/Users';
 import UserShow from './screens/UserShow';
+import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 
-const V2 = ({ userSession }) => (
+
+const V2 = ({ currentUser }) => (
   <>
     {
-      userSession.user_id !== undefined ? (
+      currentUser !== undefined ? (
         <Switch>
           <Route path="/v2/users/:user_id" component={UserShow} />
           <Route path="/v2/users" component={Users} />
@@ -21,7 +23,7 @@ const V2 = ({ userSession }) => (
 );
 
 const mapStateToProps = state => ({
-  userSession: state.userSessionV2,
+  currentUser: currentUserObtainer(state),
 });
 
 export default connect(mapStateToProps)(V2);

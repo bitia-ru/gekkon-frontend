@@ -36,7 +36,7 @@ const Api = {
       options.failed(error);
     });
   },
-  post(url, options) {
+  post(url, data, options) {
     const method = R.propOr('post', 'method')(options);
 
     if (![
@@ -48,10 +48,26 @@ const Api = {
       throw `ArgumentError: method argument has invalid value ${method}.`;
     }
 
+    let config = R.propOr({}, 'config')(options);
+
+    if (options.type === 'form-multipart') {
+      const headers = R.propOr({}, 'headers')(config);
+
+      config = {
+        ...config,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          ...headers,
+        },
+      };
+    }
+
     Axios({
       ...options,
+      ...(data ? { data } : {}),
       url: `${ApiUrl}${url}`,
       method,
+      config,
       withCredentials: true,
     }).then((response) => {
       if (!options.success) {
@@ -67,8 +83,8 @@ const Api = {
       options.failed(error);
     });
   },
-  patch(url, options) {
-    return this.post(url, { ...options, method: 'patch' });
+  patch(url, data, options) {
+    return this.post(url, data, { ...options, method: 'patch' });
   },
 };
 

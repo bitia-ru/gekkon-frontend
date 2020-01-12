@@ -17,6 +17,7 @@ export const createUserSession = (
       success(payload) {
         Api.post(
           '/v1/user_sessions',
+          null,
           {
             params: {
               user_session: {
@@ -59,6 +60,7 @@ export const createUserSession = (
 export const closeUserSession = () => {
   Api.patch(
     '/v1/user_sessions/actions/log_out',
+    null,
     {
       success() {
         window.location.reload();

@@ -73,6 +73,9 @@ class Footer extends React.PureComponent {
                     </>
                   )
                 }
+                <li className="footer__list-item">
+                  <Link to="/v2/users" className="footer__list-link">Пользователи</Link>
+                </li>
               </ul>
             </div>
             <div className="footer__item">

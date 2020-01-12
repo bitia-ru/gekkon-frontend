@@ -1,6 +1,7 @@
 import Api from '../../utils/Api';
 
 export const acts = {
+  UPDATE_USERS: 'UPDATE_USERS',
   LOAD_USERS_REQUEST: 'LOAD_USERS_REQUEST',
   LOAD_SPECIFIC_USER_REQUEST: 'LOAD_SPECIFIC_USER_REQUEST',
   LOAD_USERS_FAILED: 'LOAD_USER_FAILED',
@@ -33,6 +34,13 @@ export const loadSpecificUser = userId => (
         },
       },
     );
+  }
+);
+
+export const updateUsers = users => (
+  {
+    type: acts.UPDATE_USERS,
+    users,
   }
 );
 

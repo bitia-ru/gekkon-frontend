@@ -4,19 +4,13 @@ import { withRouter } from 'react-router-dom';
 import * as R from 'ramda';
 import { StyleSheet, css } from '../aphrodite';
 import MainScreen from '../layouts/MainScreen/MainScreen';
-import { loadUsers } from '../redux/users/actions';
+import { loadUsers as loadUsersAction } from '../redux/users/actions';
 import ContentWithLeftPanel from '../layouts/ContentWithLeftPanel';
 import LeftPanelList from '../layouts/LeftPanelList';
 import { userBaseName } from '../utils/users';
 
 
-const obtainUsers = (users, loadUsers, sortBy) => {
-  if (Object.keys(users).length === 0) {
-    loadUsers();
-
-    return [];
-  }
-
+const obtainUsers = (users, sortBy) => {
   const sortByInternal = {
     id: R.prop('id'),
     registration_date: R.prop('created_at'),
@@ -45,6 +39,9 @@ class Users extends React.PureComponent {
     };
   }
 
+  componentDidMount() {
+    this.props.loadUsers();
+  }
 
   onSortChanged = (selectedSort) => {
     this.setState({ currentSortOption: selectedSort });
@@ -71,20 +68,36 @@ class Users extends React.PureComponent {
               </tr>
             </thead>
             <tbody>
-            {
-              obtainUsers(this.props.users, this.props.loadUsers, this.state.currentSortOption).map(
-                (user, index) => {
-                  return <tr className={css(style.userRow)} onClick={() => { this.props.history.push(this.props.match.url + `/${user.id}`); }}>
-                    <td style={{ fontWeight: 'bold' }}>{index + 1}</td>
-                    <td style={{ minWidth: '75px' }}><img height={55} src={user.avatar ? user.avatar.url : ''} /></td>
-                    <td style={{ textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' }}>{userBaseName(user)}</td>
-                    <td>{Math.round(user.statistics.score)}</td>
-                    <td>{user.data['karma']}</td>
-                    <td>#{user.id}</td>
-                  </tr>;
-                },
-              )
-            }
+              {
+                obtainUsers(
+                  this.props.users,
+                  this.state.currentSortOption,
+                ).map(
+                  (user, index) => (
+                    <tr
+                      className={css(style.userRow)}
+                      onClick={
+                        () => { this.props.history.push(this.props.match.url + `/${user.id}`); }
+                      }
+                    >
+                      <td style={{ fontWeight: 'bold' }}>{index + 1}</td>
+                      <td style={{ minWidth: '75px' }}>
+                        <img height={55} src={user.avatar ? user.avatar.url : ''} />
+                      </td>
+                      <td
+                        style={
+                          { textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' }
+                        }
+                      >
+                        {userBaseName(user)}
+                      </td>
+                      <td>{Math.round(user.statistics.score)}</td>
+                      <td>{Math.round(user.data.karma * 100) / 100.0}</td>
+                      <td>{`#${user.id}`}</td>
+                    </tr>
+                  ),
+                )
+              }
             </tbody>
           </table>
         </ContentWithLeftPanel>
@@ -143,7 +156,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadUsers: () => dispatch(loadUsers()),
+  loadUsers: () => dispatch(loadUsersAction()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));

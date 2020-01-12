@@ -4,22 +4,29 @@ import bcrypt from 'bcryptjs';
 import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Api from '../../utils/Api';
 import SocialLinkButton from '@/SocialLinkButton/SocialLinkButton';
 import Button from '@/Button/Button';
 import FormField from '@/FormField/FormField';
-import CloseButton from '@/CloseButton/CloseButton';
 import { SALT_ROUNDS } from '@/Constants/Bcrypt';
 import { PASSWORD_MIN_LENGTH } from '@/Constants/User';
 import { reEmail } from '@/Constants/Constraints';
 import './Profile.css';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
+import { updateUsers as updateUsersAction } from '../../redux/users/actions';
+import {
+  decreaseNumOfActiveRequests,
+  increaseNumOfActiveRequests,
+} from '@/actions';
+
 
 class Profile extends Component {
   constructor(props) {
     super(props);
 
     const { user } = props;
+
     this.state = {
       name: user.name ? user.name : '',
       login: user.login ? user.login : '',
@@ -32,7 +39,6 @@ class Profile extends Component {
       errors: {},
       fieldsOld: {},
     };
-    this.mouseOver = false;
   }
 
   componentDidMount() {
@@ -55,19 +61,7 @@ class Profile extends Component {
         avatar,
       },
     });
-
-    window.addEventListener('keydown', this.onKeyDown);
   }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  onKeyDown = (event) => {
-    if (event.key === 'Escape') {
-      this.closeForm();
-    }
-  };
 
   saveStartFieldsValues = (user) => {
     this.setState({
@@ -115,41 +109,78 @@ class Profile extends Component {
     this.setState({ errors: {} });
   };
 
+  onSubmit = (data, afterSuccess) => {
+    const {
+      user,
+      increaseNumOfActiveRequests,
+      decreaseNumOfActiveRequests,
+    } = this.props;
+
+    this.setState({ profileIsWaiting: true });
+    const dataCopy = R.clone(data);
+
+    if (dataCopy.password) {
+      const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+      dataCopy.password_digest = bcrypt.hashSync(dataCopy.password, salt);
+      delete dataCopy.password;
+    }
+
+    increaseNumOfActiveRequests();
+
+    const self = this;
+
+    Api.patch(
+      `/v1/users/${user.id}`,
+      dataCopy,
+      {
+        type: 'form-multipart',
+        success(updatedUser) {
+          decreaseNumOfActiveRequests();
+          self.props.updateUsers({ [updatedUser.id]: updatedUser });
+          self.setState({ profileIsWaiting: false });
+          if (afterSuccess) {
+            afterSuccess(updatedUser);
+          }
+        },
+        failed(error) {
+          decreaseNumOfActiveRequests();
+          if (R.path(['response', 'status'])(error) === 400) {
+            self.setState({ errors: error.response.data });
+          } else {
+            // this.displayError(error);
+            console.log(error);
+          }
+          self.setState({ profileIsWaiting: false });
+        },
+      },
+    );
+  };
+
   onPhoneChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ phone: event.target.value });
     this.check('phone', event.target.value);
   };
 
   onNameChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ name: event.target.value });
   };
 
   onEmailChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ email: event.target.value });
     this.check('email', event.target.value);
   };
 
   onLoginChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ login: event.target.value });
     this.check('login', event.target.value);
   };
 
   onPasswordChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ password: event.target.value });
     this.check('password', event.target.value);
   };
@@ -195,9 +226,9 @@ class Profile extends Component {
         return false;
       }
       return true;
-    case 'login':
-      const re_login = /^[\.a-zA-Z0-9_-]+$/;
-      if (value !== '' && !R.test(re_login, value)) {
+    case 'login': {
+      const reLogin = /^[\.a-zA-Z0-9_-]+$/;
+      if (value !== '' && !R.test(reLogin, value)) {
         this.setState({ errors: R.merge(errors, { login: ['Неверный формат login'] }) });
         return false;
       }
@@ -206,6 +237,7 @@ class Profile extends Component {
         return false;
       }
       return true;
+    }
     case 'phone':
       if (value !== '' && value.length < 11) {
         this.setState({ errors: R.merge(errors, { phone: ['Неверный формат номера'] }) });
@@ -237,7 +269,7 @@ class Profile extends Component {
   };
 
   checkAndSubmit = () => {
-    const { user, onFormSubmit } = this.props;
+    const { user } = this.props;
     const {
       email, login, phone, password, repeatPassword, avatar, avatarFile, name,
     } = this.state;
@@ -269,7 +301,7 @@ class Profile extends Component {
     if (phone !== (user.phone ? user.phone : '')) {
       formData.append('user[phone]', phone);
     }
-    onFormSubmit(formData, u => this.saveStartFieldsValues(u));
+    this.onSubmit(formData, updatedUser => this.saveStartFieldsValues(updatedUser));
   };
 
   hasError = (field) => {
@@ -290,13 +322,6 @@ class Profile extends Component {
     );
   };
 
-  closeForm = () => {
-    const { resetErrors, closeForm } = this.props;
-    this.resetErrors();
-    resetErrors();
-    closeForm();
-  };
-
   removeVk = () => {
     const { user, showToastr, removeVk } = this.props;
     if ((!user.email && !user.login && !user.phone) || (!user.password_digest)) {
@@ -311,35 +336,29 @@ class Profile extends Component {
     removeVk();
   };
 
-  content = () => {
+  render() {
     const {
       user, enterWithVk, isWaiting,
     } = this.props;
+
     const {
       avatar, name, login, password, repeatPassword, email, phone,
     } = this.state;
+
     const socialLinksSprite = require(
       '../../../../img/social-links-sprite/social-links-sprite.svg',
     );
+
     const iconVk = `${socialLinksSprite}#icon-vk`;
     const iconFB = `${socialLinksSprite}#icon-facebook`;
     const iconTwitter = `${socialLinksSprite}#icon-twitter`;
     const iconInst = `${socialLinksSprite}#icon-inst`;
     const iconYoutube = `${socialLinksSprite}#icon-youtube`;
+
     return (
-      <div
-        style={{ height: '100vh' }}
-        onClick={() => {
-          if (!this.mouseOver) {
-            this.closeForm();
-          }
-        }}
-      >
-        <div className="modal-overlay__wrapper">
-          <div className="modal-block modal-block__profile">
-            <div className="modal__close">
-              <CloseButton onClick={this.closeForm} />
-            </div>
+      <Modal maxWidth="360px">
+        {
+          user && (
             <form
               action="#"
               method="post"
@@ -348,12 +367,6 @@ class Profile extends Component {
               role="button"
               tabIndex={0}
               style={{ outline: 'none' }}
-              onMouseOver={() => {
-                this.mouseOver = true;
-              }}
-              onMouseLeave={() => {
-                this.mouseOver = false;
-              }}
             >
               <div className="modal-block__avatar-block">
                 <div className="modal-block__avatar modal-block__avatar_login">
@@ -451,7 +464,7 @@ class Profile extends Component {
                 />
                 <div className="modal-block__allow">
                   <div className="modal-block__allow-title">
-                                  Разрешить вход через:
+                    Разрешить вход через:
                   </div>
                   <div className="modal-block__social">
                     <ul className="social-links">
@@ -469,12 +482,12 @@ class Profile extends Component {
                         />
                       </li>
                       { false
-                          && <>
-                            <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
-                            <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
-                            <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
-                            <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
-                          </>
+                      && <>
+                        <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
+                        <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
+                        <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
+                        <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
+                      </>
                       }
                     </ul>
                   </div>
@@ -491,35 +504,26 @@ class Profile extends Component {
                 />
               </div>
             </form>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  render() {
-    return (
-      <Modal>
-        {this.content()}
+          )
+        }
       </Modal>
     );
   }
 }
 
 Profile.propTypes = {
-  showToastr: PropTypes.func.isRequired,
-  onFormSubmit: PropTypes.func.isRequired,
-  closeForm: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
-  formErrors: PropTypes.object.isRequired,
-  resetErrors: PropTypes.func.isRequired,
-  isWaiting: PropTypes.bool.isRequired,
-  enterWithVk: PropTypes.func.isRequired,
-  removeVk: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   user: currentUser(state),
+  formErrors: {},
 });
 
-export default withRouter(connect(mapStateToProps)(Profile));
+const mapDispatchToProps = dispatch => ({
+  updateUsers: users => dispatch(updateUsersAction(users)),
+  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
+  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Profile));

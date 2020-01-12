@@ -32,20 +32,6 @@ class SignUpForm extends Component {
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  onKeyDown = (event) => {
-    if (event.key === 'Escape') {
-      this.closeForm();
-    }
-  };
-
   resetErrors = () => {
     this.setState({ errors: {} });
   };

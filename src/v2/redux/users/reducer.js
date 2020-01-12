@@ -1,5 +1,5 @@
-import { acts } from './actions';
 import * as R from 'ramda';
+import { acts } from './actions';
 
 
 const usersReducer = (
@@ -9,6 +9,13 @@ const usersReducer = (
   action,
 ) => {
   switch (action.type) {
+  case acts.UPDATE_USERS:
+    return {
+      store: {
+        ...state.store,
+        ...action.users,
+      },
+    };
   case acts.LOAD_USERS:
   case acts.LOAD_USERS_SUCCESS:
     if (action.user) {

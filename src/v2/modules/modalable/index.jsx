@@ -16,8 +16,6 @@ const withModals = (BaseComponent) => {
 
       if (this.props.history) {
         const processLocation = (location) => {
-          console.log('NEW LOCATION', location);
-
           const hash = location.hash.slice(1);
 
           if (hash && super.modals()[hash]) {
@@ -116,12 +114,12 @@ const withModals = (BaseComponent) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onClick={() => this.closeModal(name)}
+          onClick={() => this.closeModal()}
           onWheel={(e) => { e.preventDefault(); }}
         >
           <ModalContext.Provider
             value={{
-              closeModal: () => { this.closeModal(name); },
+              closeModal: () => { this.closeModal(); },
             }}
           >
             {wrappedBody}
@@ -138,9 +136,15 @@ const withModals = (BaseComponent) => {
         return null;
       }
 
+      const modalDesc = modalDescriptions[this.currentModal()];
+
       return this.modalWrapper(
         this.currentModal(),
-        modalDescriptions[this.currentModal()].body,
+        modalDesc.condition === undefined || modalDesc.condition() === true
+          ? modalDesc.body
+          : (
+            () => {}
+          ),
         modalStates[this.currentModal()]?.args,
       );
 
@@ -152,7 +156,7 @@ const withModals = (BaseComponent) => {
         <>
           <ModalContainerContext.Provider
             value={{
-              closeModal: () => { this.closeModal(name); },
+              closeModal: () => { this.closeModal(); },
               isModalShown: this.isModalShown(),
             }}
           >

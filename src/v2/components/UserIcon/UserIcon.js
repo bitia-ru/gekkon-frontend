@@ -22,17 +22,15 @@ class UserIcon extends React.PureComponent {
   }
 
   onItemSelect = (id) => {
-    const {
-      user, openProfile, signUp
-    } = this.props;
+    const { user } = this.props;
 
     this.setState({ droppedDown: false });
 
     if (id === 1) {
       if (user) {
-        openProfile();
+        this.props.history.push('#profile');
       } else {
-        signUp();
+        this.props.history.push('#signup');
       }
     }
 
@@ -93,8 +91,6 @@ class UserIcon extends React.PureComponent {
 
 UserIcon.propTypes = {
   user: PropTypes.object,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
