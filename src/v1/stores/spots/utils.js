@@ -18,7 +18,7 @@ export const loadSpot = (url, params) => (
     } = state;
     dispatch(loadSpotsRequest());
 
-    Axios.get(url, { params })
+    Axios.get(url, { params, withCredentials: true })
       .then((response) => {
         const spot = response.data.payload;
         let infoData = [

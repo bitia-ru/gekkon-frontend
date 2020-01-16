@@ -20,7 +20,7 @@ export const loadUsers = () => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/users`)
+    Axios.get(`${ApiUrl}/v1/users`, { withCredentials: true })
       .then((response) => {
         const sortedUserIds = R.map(u => u.id, R.sort(
           (u1, u2) => u2.statistics.numOfCreatedRoutes - u1.statistics.numOfCreatedRoutes,
@@ -39,7 +39,7 @@ export const signIn = afterSignIn => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/users/self`)
+    Axios.get(`${ApiUrl}/v1/users/self`, { withCredentials: true })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
         if (afterSignIn) {
@@ -56,7 +56,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/user_sessions/new`, { params })
+    Axios.get(`${ApiUrl}/v1/user_sessions/new`, { params, withCredentials: true })
       .then((response) => {
         const hash = bcrypt.hashSync(password, response.data);
         const paramsCopy = R.clone(params);
@@ -91,7 +91,7 @@ export const activateEmail = (url, params, afterSuccess, afterFail) => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(url, { params })
+    Axios.get(url, { params, withCredentials: true })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
         afterSuccess();
@@ -110,6 +110,7 @@ export const logOut = afterSuccess => (
     Axios({
       url: `${ApiUrl}/v1/user_sessions/actions/log_out`,
       method: 'patch',
+      config: { withCredentials: true },
     })
       .then(() => {
         dispatch(logOutUserSuccess());
@@ -127,7 +128,12 @@ export const signUp = (params, afterSuccess, afterFail, onFormError) => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.post(`${ApiUrl}/v1/users`, params)
+    Axios({
+      url: `${ApiUrl}/v1/users`,
+      method: 'post',
+      data: params,
+      config: { withCredentials: true },
+    })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
         afterSuccess(response);
@@ -147,7 +153,12 @@ export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios({ url: `${ApiUrl}/v1/users/reset_password`, method: 'patch', data: params })
+    Axios({
+      url: `${ApiUrl}/v1/users/reset_password`,
+      method: 'patch',
+      data: params,
+      config: { withCredentials: true },
+    })
       .then(() => {
         dispatch(resetPasswordSuccess());
         afterSuccess();
@@ -173,7 +184,7 @@ export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
       url,
       method: 'patch',
       data,
-      config: { headers: { 'Content-Type': 'multipart/form-data' } },
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
@@ -200,6 +211,7 @@ export const removeVk = (url, afterAll) => (
     Axios({
       url,
       method: 'delete',
+      config: { withCredentials: true },
     })
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
@@ -216,7 +228,10 @@ export const sendResetPasswordMail = (params, afterAll) => (
   (dispatch) => {
     dispatch(loadUsersRequest());
 
-    Axios.get(`${ApiUrl}/v1/users/send_reset_password_mail`, { params })
+    Axios.get(
+      `${ApiUrl}/v1/users/send_reset_password_mail`,
+      { params, withCredentials: true },
+    )
       .then((response) => {
         dispatch(sendResetPasswordMailSuccess(response.data.payload));
         afterAll(

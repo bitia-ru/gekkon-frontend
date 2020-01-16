@@ -82,7 +82,7 @@ export const loadRoutes = (url, params) => (
 
     const paramsCopy = R.clone(params);
     paramsCopy.with = ['ascents'];
-    Axios.get(url, { params: paramsCopy })
+    Axios.get(url, { params: paramsCopy, withCredentials: true })
       .then((response) => {
         const routeIds = R.map(route => route.id, response.data.payload);
         const numOfPages = Math.max(
@@ -102,7 +102,7 @@ export const loadRoute = (url, afterLoad) => (
     dispatch(loadRoutesRequest());
 
     const params = { with: ['comments', 'likes', 'ascents'] };
-    Axios.get(url, { params })
+    Axios.get(url, { params, withCredentials: true })
       .then((response) => {
         dispatch(loadRouteSuccess(prepareRoute(response.data.payload)));
         if (afterLoad) {
@@ -122,6 +122,7 @@ export const removeLike = (url, afterAll) => (
     Axios({
       url,
       method: 'delete',
+      config: { withCredentials: true },
     })
       .then((response) => {
         dispatch(removeRoutePropertyByIdSuccess(
@@ -146,7 +147,7 @@ export const addRoute = (params, afterSuccess, afterAll) => (
       url: `${ApiUrl}/v1/routes`,
       method: 'post',
       data: params,
-      config: { headers: { 'Content-Type': 'multipart/form-data' } },
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then((response) => {
         dispatch(loadRouteSuccess(response.data.payload));
@@ -168,7 +169,7 @@ export const updateRoute = (url, params, afterSuccess, afterAll) => (
       url,
       method: 'patch',
       data: params,
-      config: { headers: { 'Content-Type': 'multipart/form-data' } },
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then((response) => {
         dispatch(loadRouteSuccess(response.data.payload));
@@ -189,6 +190,7 @@ export const removeRoute = (url, afterSuccess) => (
     Axios({
       url,
       method: 'delete',
+      config: { withCredentials: true },
     })
       .then((response) => {
         dispatch(removeRouteSuccess(response.data.payload.id));
@@ -204,7 +206,12 @@ export const addLike = (params, afterAll) => (
   (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/likes`, params)
+    Axios({
+      url: `${ApiUrl}/v1/likes`,
+      method: 'post',
+      data: params,
+      config: { withCredentials: true },
+    })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
           response.data.payload.route_id,
@@ -224,7 +231,12 @@ export const addAscent = params => (
   (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/ascents`, params)
+    Axios({
+      url: `${ApiUrl}/v1/ascents`,
+      method: 'post',
+      data: params,
+      config: { withCredentials: true },
+    })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
           response.data.payload.route_id,
@@ -245,7 +257,8 @@ export const updateAscent = (url, params) => (
     Axios({
       url,
       method: 'patch',
-      params,
+      data: params,
+      config: { withCredentials: true },
     })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
@@ -266,7 +279,12 @@ export const addComment = (params, afterSuccess) => (
     const { routes } = state.routesStore;
     dispatch(loadRoutesRequest());
 
-    Axios.post(`${ApiUrl}/v1/route_comments`, params)
+    Axios({
+      url: `${ApiUrl}/v1/route_comments`,
+      method: 'post',
+      data: params,
+      config: { withCredentials: true },
+    })
       .then((response) => {
         const comment = response.data.payload;
         const { comments, numOfComments } = routes[comment.route_id];
@@ -308,6 +326,7 @@ export const removeComment = url => (
     Axios({
       url,
       method: 'delete',
+      config: { withCredentials: true },
     })
       .then((response) => {
         const comment = response.data.payload;

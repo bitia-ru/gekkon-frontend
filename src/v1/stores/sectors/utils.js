@@ -11,13 +11,16 @@ export const loadSector = (url, params, afterLoad) => (
   (dispatch) => {
     dispatch(loadSectorsRequest());
 
-    Axios.get(url, { params })
+    Axios.get(url, { params, withCredentials: true })
       .then((response) => {
         const sector = response.data.payload;
         let infoData = [
           {
             count: response.data.metadata.num_of_routes,
-            label: numToStr(response.data.metadata.num_of_routes, ['Трасса', 'Трассы', 'Трасс']),
+            label: numToStr(
+              response.data.metadata.num_of_routes,
+              ['Трасса', 'Трассы', 'Трасс'],
+            ),
           },
           {
             count: response.data.metadata.num_of_new_routes,

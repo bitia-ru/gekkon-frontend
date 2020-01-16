@@ -10,7 +10,7 @@ export const loadRouteMarkColors = () => (
   (dispatch) => {
     dispatch(loadRouteMarkColorsRequest());
 
-    Axios.get(`${ApiUrl}/v1/route_mark_colors`)
+    Axios.get(`${ApiUrl}/v1/route_mark_colors`, { withCredentials: true })
       .then((response) => {
         dispatch(loadRouteMarkColorsSuccess(response.data.payload));
       }).catch((error) => {
