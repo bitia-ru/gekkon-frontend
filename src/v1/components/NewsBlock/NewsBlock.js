@@ -4,8 +4,11 @@ import * as R from 'ramda';
 import News from '../News/News';
 import { DEFAULT_SHOWN } from '../../Constants/News';
 import './NewsBlock.css';
+import { loadNews } from '@/v1/stores/news/utils';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-export default class NewsBlock extends Component {
+class NewsBlock extends Component {
   constructor(props) {
     super(props);
 
@@ -14,8 +17,13 @@ export default class NewsBlock extends Component {
     };
   }
 
+  componentDidMount() {
+    const { loadNews: loadNewsProp } = this.props;
+    loadNewsProp();
+  }
+
   render() {
-    const { data } = this.props;
+    const { news: newsProp } = this.props;
     const { showAll } = this.state;
     return (
       <section
@@ -35,7 +43,7 @@ export default class NewsBlock extends Component {
                 {
                   R.map(
                     news => <News key={news.id} data={news} />,
-                    showAll ? data : R.slice(0, DEFAULT_SHOWN, data),
+                    showAll ? newsProp : R.slice(0, DEFAULT_SHOWN, newsProp),
                   )
                 }
                 {
@@ -58,5 +66,15 @@ export default class NewsBlock extends Component {
 }
 
 NewsBlock.propTypes = {
-  data: PropTypes.array.isRequired,
+  news: PropTypes.array,
 };
+
+const mapStateToProps = state => ({
+  news: state.newsStore.news,
+});
+
+const mapDispatchToProps = dispatch => ({
+  loadNews: () => dispatch(loadNews()),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewsBlock));

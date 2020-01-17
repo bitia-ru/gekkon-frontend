@@ -5,11 +5,10 @@ import NewsBlock from '../NewsBlock/NewsBlock';
 import './MainPageContent.css';
 
 import { SpotsData } from '../../Constants/Spots';
-import NEWS from '../../Constants/NewsDemoData';
 
 const MainPageContent = () => (
   <>
-    <NewsBlock data={NEWS} />
+    <NewsBlock />
     <div className="main-page-content">
       <div className="main-page-content__wrapper">
         <h2 className="main-page-content__title">
