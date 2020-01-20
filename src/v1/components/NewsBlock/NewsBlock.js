@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import News from '../News/News';
-import { DEFAULT_SHOWN } from '../../Constants/News';
+import { DEFAULT_DAYS_SHOWN, DAYS_STEP } from '../../Constants/News';
 import './NewsBlock.css';
 import { loadNews } from '@/v1/stores/news/utils';
 import { withRouter } from 'react-router-dom';
@@ -12,19 +12,65 @@ class NewsBlock extends Component {
   constructor(props) {
     super(props);
 
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    const dateTo = new Date(date);
+    const dateFrom = new Date(dateTo);
+    dateFrom.setDate(dateTo.getDate() - DEFAULT_DAYS_SHOWN);
     this.state = {
-      showAll: false,
+      dateFrom: dateFrom,
+      dateTo: dateTo,
     };
   }
 
   componentDidMount() {
-    const { loadNews: loadNewsProp } = this.props;
-    loadNewsProp();
+    const { dateFrom, dateTo } = this.state;
+    console.log(dateTo);
+    this.loadNews(dateFrom, dateTo);
   }
 
-  render() {
+  loadMoreNews = () => {
+    const { dateFrom } = this.state;
+    const dateFromNew = new Date(dateFrom);
+    dateFromNew.setDate(dateFrom.getDate() - DAYS_STEP);
+    const dateToNew = new Date(dateFrom);
+    dateToNew.setDate(dateFrom.getDate() - 1);
+    this.setState({ dateFrom: dateFromNew });
+    this.loadNews(dateFromNew, dateToNew);
+  };
+
+  loadNews = (dateFrom, dateTo) => {
+    const { loadNews: loadNewsProp } = this.props;
+    const params = { group_by: 'day', filters: { date: [[dateFrom], [dateTo]] } };
+    loadNewsProp(params);
+  };
+
+  filteredNews = (dateFrom, dateTo) => {
     const { news: newsProp } = this.props;
-    const { showAll } = this.state;
+    const filteredNews = R.pick(
+      R.filter(
+        (dateStr) => {
+          const [day, month, year] = dateStr.split('.');
+          const date = new Date(year, month - 1, day, 12);
+          return date >= dateFrom && date <= dateTo;
+        },
+        R.keys(newsProp),
+      ),
+      newsProp,
+    );
+    return R.flatten(R.values(filteredNews));
+  };
+
+  showMoreNewsButton = () => {
+    const { dateFrom } = this.state;
+    const dateTo = new Date(dateFrom);
+    dateTo.setDate(dateFrom.getDate() + DAYS_STEP - 1);
+    return this.filteredNews(dateFrom, dateTo).length > 0;
+  };
+
+  render() {
+    const mapIndexed = R.addIndex(R.map);
+    const { dateFrom, dateTo } = this.state;
     return (
       <section
         className="section-news"
@@ -41,18 +87,18 @@ class NewsBlock extends Component {
             <div className="section-news__col-md-6 section-news__col-sm-12">
               <div className="section-news__bar">
                 {
-                  R.map(
-                    news => <News key={news.id} data={news} />,
-                    showAll ? newsProp : R.slice(0, DEFAULT_SHOWN, newsProp),
+                  mapIndexed(
+                    (news, index) => <News key={index} data={news} />,
+                    this.filteredNews(dateFrom, dateTo),
                   )
                 }
                 {
-                  !showAll && <button
+                  this.showMoreNewsButton() && <button
                     type="button"
-                    onClick={() => this.setState({ showAll: true })}
+                    onClick={this.loadMoreNews}
                     className="btn btn_full-length"
                   >
-                    Все новости
+                    Еще новости
                   </button>
                 }
               </div>
@@ -66,7 +112,7 @@ class NewsBlock extends Component {
 }
 
 NewsBlock.propTypes = {
-  news: PropTypes.array,
+  news: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -74,7 +120,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadNews: () => dispatch(loadNews()),
+  loadNews: params => dispatch(loadNews(params)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewsBlock));

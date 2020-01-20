@@ -15,7 +15,7 @@ const newsStoreReducer = (
     stateCopy.numOfActiveRequests -= 1;
     return stateCopy;
   case acts.LOAD_NEWS_SUCCESS:
-    stateCopy.news = action.news;
+    stateCopy.news = R.mergeDeepRight(stateCopy.news, action.news);
     stateCopy.numOfActiveRequests -= 1;
     return stateCopy;
   default:

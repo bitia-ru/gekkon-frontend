@@ -6,11 +6,11 @@ import {
   loadNewsSuccess,
 } from './actions';
 
-export const loadNews = () => (
+export const loadNews = params => (
   (dispatch) => {
     dispatch(loadNewsRequest());
 
-    Axios.get(`${ApiUrl}/v1/news`, { withCredentials: true })
+    Axios.get(`${ApiUrl}/v1/news`, { params, withCredentials: true })
       .then((response) => {
         dispatch(loadNewsSuccess(response.data));
       }).catch((error) => {
