@@ -7,41 +7,44 @@ import './NewsBlock.css';
 import { loadNews } from '@/v1/stores/news/utils';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import dayjs from 'dayjs';
 
 class NewsBlock extends Component {
   constructor(props) {
     super(props);
 
-    const date = new Date();
-    date.setHours(12, 0, 0, 0);
-    const dateTo = new Date(date);
-    const dateFrom = new Date(dateTo);
-    dateFrom.setDate(dateTo.getDate() - DEFAULT_DAYS_SHOWN);
+    const dateTo = dayjs();
+    const dateFrom = R.clone(dateTo).add(1 - DEFAULT_DAYS_SHOWN, 'day');
     this.state = {
-      dateFrom: dateFrom,
-      dateTo: dateTo,
+      dateFrom,
+      dateTo,
     };
   }
 
   componentDidMount() {
     const { dateFrom, dateTo } = this.state;
-    console.log(dateTo);
     this.loadNews(dateFrom, dateTo);
   }
 
   loadMoreNews = () => {
     const { dateFrom } = this.state;
-    const dateFromNew = new Date(dateFrom);
-    dateFromNew.setDate(dateFrom.getDate() - DAYS_STEP);
-    const dateToNew = new Date(dateFrom);
-    dateToNew.setDate(dateFrom.getDate() - 1);
+    const dateFromNew = R.clone(dateFrom).add(-DAYS_STEP, 'day');
+    const dateToNew = R.clone(dateFrom).add(-1, 'day');
     this.setState({ dateFrom: dateFromNew });
     this.loadNews(dateFromNew, dateToNew);
   };
 
   loadNews = (dateFrom, dateTo) => {
     const { loadNews: loadNewsProp } = this.props;
-    const params = { group_by: 'day', filters: { date: [[dateFrom], [dateTo]] } };
+    const params = {
+      group_by: 'day',
+      filters: {
+        date: [
+          [dateFrom.startOf('day').format()],
+          [dateTo.endOf('day').format()],
+        ],
+      },
+    };
     loadNewsProp(params);
   };
 
@@ -51,8 +54,8 @@ class NewsBlock extends Component {
       R.filter(
         (dateStr) => {
           const [day, month, year] = dateStr.split('.');
-          const date = new Date(year, month - 1, day, 12);
-          return date >= dateFrom && date <= dateTo;
+          const date = dayjs(`${year}-${month}-${day}`);
+          return dateFrom.isBefore(date) && date.isBefore(dateTo);
         },
         R.keys(newsProp),
       ),
@@ -63,50 +66,54 @@ class NewsBlock extends Component {
 
   showMoreNewsButton = () => {
     const { dateFrom } = this.state;
-    const dateTo = new Date(dateFrom);
-    dateTo.setDate(dateFrom.getDate() + DAYS_STEP - 1);
+    const dateTo = R.clone(dateFrom).add(DAYS_STEP - 1, 'day');
     return this.filteredNews(dateFrom, dateTo).length > 0;
   };
 
   render() {
     const mapIndexed = R.addIndex(R.map);
     const { dateFrom, dateTo } = this.state;
+    const filteredNews = this.filteredNews(dateFrom, dateTo);
     return (
-      <section
-        className="section-news"
-        style={{ backgroundImage: `url(${require('./images/mountain-peak.png')})` }}
-      >
-        <div className="section-news__container">
-          <div className="section-news__inner">
-            <div className="section-news__col-md-6 section-news__col-sm-12">
-              <h2 className="section-news__title">Лента новостей</h2>
-              <p className="section-news__title-descr">
-                Будьте в курсе последних событий с наших скалолазных площадок
-              </p>
-            </div>
-            <div className="section-news__col-md-6 section-news__col-sm-12">
-              <div className="section-news__bar">
-                {
-                  mapIndexed(
-                    (news, index) => <News key={index} data={news} />,
-                    this.filteredNews(dateFrom, dateTo),
-                  )
-                }
-                {
-                  this.showMoreNewsButton() && <button
-                    type="button"
-                    onClick={this.loadMoreNews}
-                    className="btn btn_full-length"
-                  >
-                    Еще новости
-                  </button>
-                }
-              </div>
+      <>
+        {
+          filteredNews.length > 0 && <section
+            className="section-news"
+            style={{ backgroundImage: `url(${require('./images/mountain-peak.png')})` }}
+          >
+            <div className="section-news__container">
+              <div className="section-news__inner">
+                <div className="section-news__col-md-6 section-news__col-sm-12">
+                  <h2 className="section-news__title">Лента новостей</h2>
+                  <p className="section-news__title-descr">
+                    Будьте в курсе последних событий с наших скалолазных площадок
+                  </p>
+                </div>
+                <div className="section-news__col-md-6 section-news__col-sm-12">
+                  <div className="section-news__bar">
+                    {
+                      mapIndexed(
+                        (news, index) => <News key={index} data={news}/>,
+                        this.filteredNews(dateFrom, dateTo),
+                      )
+                    }
+                    {
+                      this.showMoreNewsButton() && <button
+                        type="button"
+                        onClick={this.loadMoreNews}
+                        className="btn btn_full-length"
+                      >
+                        Еще новости
+                      </button>
+                    }
+                  </div>
 
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        }
+      </>
     );
   }
 }
