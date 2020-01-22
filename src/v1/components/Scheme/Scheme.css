@@ -12,6 +12,41 @@
     z-index: 9;
 }
 
+.track-point {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9px;
+    font-family: Gilroy, sans-serif;
+    border: none;
+    padding: 0;
+    outline: none;
+    cursor: pointer;
+    transition: box-shadow .4s ease-out;
+    background-color: #84888B;
+}
+
+.track-point:hover {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08), inset 0px 0px 0px 50px rgba(255, 255, 255, 0.4);
+}
+
+.track-point:hover + .track-point__tooltip {
+    display: block;
+}
+
+.track-point_7b {
+    background-color: #E32727;
+    color: #ffffff;
+}
+
+.track-point_7a {
+    background-color: #1650D5;
+    color: #ffffff;
+}
+
 .track-point__tooltip {
     position: absolute;
     content: '';

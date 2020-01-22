@@ -2,7 +2,7 @@ import MobileDetect from 'mobile-detect';
 import * as R from 'ramda';
 
 export const isNeeded = (exifAngle) => {
-  if (exifAngle === null) { return false; }
+  if (!exifAngle) { return false; }
   const md = new MobileDetect(window.navigator.userAgent);
   if (md.os() !== 'iOS') {
     return true;

@@ -1,6 +1,5 @@
 import Axios from 'axios';
 import * as R from 'ramda';
-import Cookies from 'js-cookie';
 import bcrypt from 'bcryptjs';
 import { ApiUrl } from '../../Environ';
 import {
@@ -14,7 +13,6 @@ import {
   sendResetPasswordMailSuccess,
   logInSuccess,
 } from './actions';
-import { Domain } from '../../Constants/Cookies';
 
 export const loadUsers = () => (
   (dispatch) => {
@@ -41,13 +39,14 @@ export const signIn = afterSignIn => (
 
     Axios.get(`${ApiUrl}/v1/users/self`, { withCredentials: true })
       .then((response) => {
+        console.log(response.data.payload);
         dispatch(loadUserSuccess(response.data.payload));
         if (afterSignIn) {
           afterSignIn(response.data.payload);
         }
       }).catch(() => {
         dispatch(loadUsersFailed());
-        Cookies.remove('user_session_token', { path: '', domain: Domain() });
+        dispatch(logOutUserSuccess());
       });
   }
 );
@@ -67,7 +66,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
             afterLogInSuccess();
           }).catch((error) => {
             dispatch(loadUsersFailed());
-            if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+            if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
               onFormError(error.response.data);
             } else {
             //  dispatch(pushError(error));
@@ -77,7 +76,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
       }).catch((error) => {
         dispatch(loadUsersFailed());
         const resp = error.response;
-        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
           onFormError({ email: ['Пользователь не найден'] });
         } else {
         //  dispatch(pushError(error));
@@ -139,7 +138,7 @@ export const signUp = (params, afterSuccess, afterFail, onFormError) => (
         afterSuccess(response);
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+        if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
           onFormError(error);
         } else {
           // dispatch(pushError(error));
@@ -166,7 +165,7 @@ export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
       }).catch((error) => {
         dispatch(loadUsersFailed());
         const resp = error.response;
-        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
           afterFail();
         } else {
           // dispatch(pushError(error));
@@ -194,7 +193,7 @@ export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response.status === 400 && error.response.statusText === 'Bad Request') {
+        if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
           afterFail(error);
         } else {
           // dispatch(pushError(error));
@@ -243,9 +242,9 @@ export const sendResetPasswordMail = (params, afterAll) => (
         dispatch(loadUsersFailed());
         // dispatch(pushError(error));
         const resp = error.response;
-        if (resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
           afterAll('error', 'Ошибка', 'Пользователь не найден');
-        } else if (resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
+        } else if (resp && resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
           afterAll(
             'warning',
             'Восстановление пароля',
