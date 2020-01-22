@@ -25,16 +25,12 @@ export const SpotsData = [
     className: 'spot-card_limestone',
   },
   {
-    id: 3,
-    name: 'Атмосфера',
-    info1: 'Каждую неделю новые трассы',
-    info2: 'Высота стен до 9 метров',
-    info3: 'Более 1500 зацепов',
-    address: 'Москва, Электролитный пр.7, стр.2, СК КАНТ',
-    description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n'
-      + '                                зала совместно с регулярной перекруткой и обновлением трасс',
-    imgSrc: require('../../../img/spot-card-img/atmosphere.jpg'),
-    className: 'spot-card_atmosphere',
+    id: 10,
+    name: 'BigWall ВДНХ',
+    address: 'Москва, ВДНХ, павильон плодоовощеводства',
+    description: 'Просторный светлый скалодром в ландшафтном парке ВДНХ.',
+    imgSrc: require('../../../img/spot-card-img/bigwall.jpg'),
+    className: 'spot-card_bigwall',
   },
   {
     id: 4,
