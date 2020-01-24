@@ -13,7 +13,7 @@ import './index.css';
 import './fonts.css';
 /* eslint-enable import/first */
 
-const EVENTS_TO_MODIFY = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'wheel'];
+const EVENTS_TO_MODIFY = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'wheel', 'dragend', 'click'];
 
 const originalAddEventListener = document.addEventListener.bind();
 document.addEventListener = (type, listener, options, wantsUntrusted) => {

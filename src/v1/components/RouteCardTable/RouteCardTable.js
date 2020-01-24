@@ -19,7 +19,7 @@ const RouteCardTable = ({
   <SectorContext.Consumer>
     {
       ({ sector }) => (
-        <div className="content__inner">
+        <div className="content__inner" onClick={(e) => { e.stopPropagation(); }}>
           <CtrlPressedContext.Consumer>
             {
               ({ ctrlPressed }) => (
