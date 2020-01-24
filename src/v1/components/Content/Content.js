@@ -3,6 +3,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+import Dropzone from 'react-dropzone';
+import Axios from 'axios';
 import RouteCardView from '../RouteCardView/RouteCardView';
 import FilterBlock from '../FilterBlock/FilterBlock';
 import Pagination from '../Pagination/Pagination';
@@ -15,6 +17,8 @@ import {
 import reloadRoutes from '../../utils/reloadRoutes';
 import getViewMode from '../../utils/getViewMode';
 import getPage from '../../utils/getPage';
+import { ApiUrl } from '@/v1/Environ';
+import { loadRoutesFailed, loadRouteSuccess } from '@/v1/stores/routes/actions';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
 
@@ -93,6 +97,26 @@ class Content extends Component {
 
   addRoute = () => { this.props.history.push(`${this.props.match.url}/routes/new`); };
 
+  onDropFiles = (acceptedFiles) => {
+    const data = new FormData();
+    data.append('route_photo[photo]', acceptedFiles[0]);
+    data.append('route_photo[sector_id]', this.getSectorId());
+
+    Axios({
+      url: `${ApiUrl}/v1/route_photos`,
+      method: 'post',
+      data,
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
+    })
+      .then(() => {
+        if (acceptedFiles.length > 1) {
+          this.onDropFiles(R.slice(1, Infinity, acceptedFiles));
+        }
+      }).catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
     const {
       numOfPages,
@@ -106,41 +130,46 @@ class Content extends Component {
             const diagram = sector && sector.diagram && sector.diagram.url;
             return (
               <div className="content">
-                <div className="content__container">
-                  <FilterBlock
-                    viewMode={viewMode}
-                    viewModeData={
-                      sector
-                        ? {
-                          scheme: {
-                            title: diagram ? undefined : 'Схема зала ещё не загружена',
-                            disabled: diagram === null,
-                          },
-                          table: {},
-                          list: {},
+                <Dropzone onDrop={this.onDropFiles}>
+                  {({ getRootProps, getInputProps }) => (
+                    <div className="content__container" {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <FilterBlock
+                        viewMode={viewMode}
+                        viewModeData={
+                          sector
+                            ? {
+                              scheme: {
+                                title: diagram ? undefined : 'Схема зала ещё не загружена',
+                                disabled: diagram === null,
+                              },
+                              table: {},
+                              list: {},
+                            }
+                            : {
+                              table: {},
+                              list: {},
+                            }
                         }
-                        : {
-                          table: {},
-                          list: {},
-                        }
-                    }
-                  />
-                  <RouteCardView
-                    viewMode={viewMode}
-                    addRoute={this.addRoute}
-                    diagram={diagram}
-                    onRouteClick={this.onRouteClick}
-                  />
-                  {
-                    viewMode !== 'scheme' && <Pagination
-                      onPageChange={this.changePage}
-                      page={page}
-                      pagesList={this.pagesList()}
-                      firstPage={1}
-                      lastPage={numOfPages}
-                    />
-                  }
-                </div>
+                      />
+                      <RouteCardView
+                        viewMode={viewMode}
+                        addRoute={this.addRoute}
+                        diagram={diagram}
+                        onRouteClick={this.onRouteClick}
+                      />
+                      {
+                        viewMode !== 'scheme' && <Pagination
+                          onPageChange={this.changePage}
+                          page={page}
+                          pagesList={this.pagesList()}
+                          firstPage={1}
+                          lastPage={numOfPages}
+                        />
+                      }
+                    </div>
+                  )}
+                </Dropzone>
               </div>
             );
           }
