@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import SocialLinkButton from '../SocialLinkButton/SocialLinkButton';
 import {
+  INSTA_LINK,
   VK_LINK,
   FACEBOOK_LINK,
   TWITTER_LINK,
@@ -106,6 +107,12 @@ const Footer = ({
         <div className="footer__social">
           <h3 className="footer__header">Соцсети</h3>
           <ul className="social-links">
+            <li>
+              <SocialLinkButton
+                href={INSTA_LINK}
+                xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+              />
+            </li>
             <li>
               <SocialLinkButton
                 href={VK_LINK}

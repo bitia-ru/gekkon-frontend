@@ -5,6 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { currentUser } from '../../redux/user_session/utils';
 import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
 import {
+  INSTA_LINK,
   VK_LINK,
   FACEBOOK_LINK,
   TWITTER_LINK,
@@ -111,6 +112,12 @@ class Footer extends React.PureComponent {
           <div className="footer__social">
             <h3 className="footer__header">Соцсети</h3>
             <ul className="social-links">
+              <li>
+                <SocialLinkButton
+                  href={INSTA_LINK}
+                  xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                />
+              </li>
               <li>
                 <SocialLinkButton
                   href={VK_LINK}
