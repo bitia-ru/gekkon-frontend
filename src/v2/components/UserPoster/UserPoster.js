@@ -26,7 +26,7 @@ class UserPoster extends Component {
   }
 
   onWindowScroll = () => {
-    this.setState({ scrollPosition: document.querySelector('.page__scroll').scrollTop });
+    this.setState({ scrollPosition: document.querySelector('.page').scrollTop });
   };
 
   componentDidUpdate(newProps) {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: '100%',
     fontFamily: 'GilroyRegular',
-    position: 'fixed',
+    position: 'absolute',
     top: 0,
     backgroundPosition: 'center',
     backgroundSize: 'cover',
