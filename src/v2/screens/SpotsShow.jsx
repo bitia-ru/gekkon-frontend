@@ -3,26 +3,26 @@ import { withRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
 import { ToastContainer } from 'react-toastr';
-import Content from '../Content/Content';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import RoutesShowModal from '../RoutesShowModal/RoutesShowModal';
-import RoutesEditModal from '../RoutesEditModal/RoutesEditModal';
-import SignUpForm from '../SignUpForm/SignUpForm';
-import LogInForm from '../LogInForm/LogInForm';
-import Profile from '../Profile/Profile';
-import BaseComponent from '../BaseComponent';
-import StickyBar from '../StickyBar/StickyBar';
-import { avail } from '../../utils';
-import SpotContext from '../../contexts/SpotContext';
-import SectorContext from '../../contexts/SectorContext';
-import reloadSector from '../../utils/reloadSector';
-import reloadSpot from '../../utils/reloadSpot';
-import getState from '../../utils/getState';
-import getCurrentSector from '../../utils/getCurrentSector';
-import getCurrentSpotOrSectorData from '../../utils/getCurrentSpotOrSectorData';
-import CtrlPressedCatcher from '../CtrlPressedCatcher/CtrlPressedCatcher';
-import { currentUser as currentUserObtainer } from '@/v2/redux/user_session/utils';
+import Content from '@/v1/components/Content/Content';
+import Header from '@/v1/components/Header/Header';
+import Footer from '@/v1/components/Footer/Footer';
+import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
+import RoutesEditModal from '@/v1/components/RoutesEditModal/RoutesEditModal';
+import SignUpForm from '@/v1/components/SignUpForm/SignUpForm';
+import LogInForm from '@/v1/components/LogInForm/LogInForm';
+import Profile from '@/v1/components/Profile/Profile';
+import BaseComponent from '@/v1/components/BaseComponent';
+import StickyBar from '@/v1/components/StickyBar/StickyBar';
+import { avail } from '@/v1/utils';
+import SpotContext from '@/v1/contexts/SpotContext';
+import SectorContext from '@/v1/contexts/SectorContext';
+import reloadSector from '@/v1/utils/reloadSector';
+import reloadSpot from '@/v1/utils/reloadSpot';
+import getState from '@/v1/utils/getState';
+import getCurrentSector from '@/v1/utils/getCurrentSector';
+import getCurrentSpotOrSectorData from '@/v1/utils/getCurrentSpotOrSectorData';
+import CtrlPressedCatcher from '@/v1/components/CtrlPressedCatcher/CtrlPressedCatcher';
+
 
 class SpotsShow extends BaseComponent {
   componentDidMount() {
@@ -174,7 +174,7 @@ class SpotsShow extends BaseComponent {
                     )}
                   />
                   <Route
-                    path={`${match.path}/:route_id`}
+                    path={`${match.path}/routes/:route_id`}
                     render={() => (
                       <RoutesShowModal
                         onClose={this.closeRoutesModal}
