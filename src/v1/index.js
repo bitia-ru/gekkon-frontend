@@ -55,10 +55,12 @@ document.removeEventListener = (type, listener, options) => {
 };
 
 ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Main />
-    </BrowserRouter>
-  </Provider>,
+  (
+    <Provider store={store}>
+      <BrowserRouter>
+        <Main />
+      </BrowserRouter>
+    </Provider>
+  ),
   document.getElementById('app'),
 );
