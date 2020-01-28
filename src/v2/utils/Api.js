@@ -12,6 +12,8 @@ Axios.interceptors.request.use((config) => {
 
 const Api = {
   get(url, options) {
+    window.loadingIndicator && window.loadingIndicator.startLoading();
+
     return Axios.get(
       `${ApiUrl}${url}`,
       {
@@ -19,6 +21,8 @@ const Api = {
         withCredentials: true,
       },
     ).then((response) => {
+      window.loadingIndicator && window.loadingIndicator.stopLoading();
+
       if (!options.success) {
         return;
       }
@@ -29,6 +33,8 @@ const Api = {
         options.success(response.data);
       }
     }).catch((error) => {
+      window.loadingIndicator && window.loadingIndicator.stopLoading();
+
       if (!options.failed) {
         return;
       }
@@ -62,6 +68,8 @@ const Api = {
       };
     }
 
+    window.loadingIndicator && window.loadingIndicator.startLoading();
+
     Axios({
       ...options,
       ...(data ? { data } : {}),
@@ -70,12 +78,16 @@ const Api = {
       config,
       withCredentials: true,
     }).then((response) => {
+      window.loadingIndicator && window.loadingIndicator.stopLoading();
+
       if (!options.success) {
         return;
       }
 
       options.success(response.data.payload);
     }).catch((error) => {
+      window.loadingIndicator && window.loadingIndicator.stopLoading();
+
       if (!options.failed) {
         return;
       }

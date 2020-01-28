@@ -12,6 +12,7 @@ import ResetPasswordForm from '../../forms/ResetPasswordForm/ResetPasswordForm';
 import TextHeader from './TextHeader';
 
 import './scroll_workaround.css';
+import LoadingIndicator from '@/v2/components/LoadingIndicator/LoadingIndicator';
 
 
 class MainScreen extends React.PureComponent {
@@ -42,7 +43,7 @@ class MainScreen extends React.PureComponent {
     return (
       <ModalContainerContext.Consumer>
         {
-          isModalShown => (
+          ({ isModalShown }) => (
             <div
               className={
                 css(
@@ -51,25 +52,31 @@ class MainScreen extends React.PureComponent {
                 )
               }
             >
-              <Logo />
-              <MainNav
-                logIn={() => {}}
-                signUp={() => {}}
-                openProfile={() => {}}
-                user={null}
-              />
-              {
-                header && (
-                  typeof header === 'string' || typeof header === 'number'
-                    ? <TextHeader title={header} /> : header
-                )
-              }
-              {children && children}
-              <Footer
-                logIn={() => {}}
-                signUp={() => {}}
-                logOut={() => {}}
-              />
+              <div style={{ flex: 1 }}>
+                <LoadingIndicator>
+                  <Logo />
+                  <MainNav
+                    logIn={() => {}}
+                    signUp={() => {}}
+                    openProfile={() => {}}
+                    user={null}
+                  />
+                  {
+                    header && (
+                      typeof header === 'string' || typeof header === 'number'
+                        ? <TextHeader title={header} /> : header
+                    )
+                  }
+                  {children && children}
+                </LoadingIndicator>
+              </div>
+              <div style={{ flex: 0 }}>
+                <Footer
+                  logIn={() => {}}
+                  signUp={() => {}}
+                  logOut={() => {}}
+                />
+              </div>
             </div>
           )
         }
@@ -82,7 +89,7 @@ const style = StyleSheet.create({
   container: {
     display: 'flex',
     flexFlow: 'column',
-    minHeight: '100vh',
+    height: '100vh',
     overflowX: 'hidden',
   },
   scrollable: {
