@@ -66,6 +66,7 @@ class RoutesShowModal extends Component {
       showLikesTooltip: false,
       showRedpointsTooltip: false,
       showFlashesTooltip: false,
+      photoExpanded: false,
     };
     this.mouseOver = false;
   }
@@ -428,12 +429,21 @@ class RoutesShowModal extends Component {
                         className="modal__track-block"
                         role="button"
                         tabIndex={0}
-                        style={{ outline: 'none' }}
                         onMouseOver={() => {
                           this.mouseOver = true;
                         }}
                         onMouseLeave={() => {
                           this.mouseOver = false;
+                        }}
+                        style={{
+                          outline: 'none',
+                          transition: 'all 0.5s ease-out',
+                          ...(
+                            this.state.photoExpanded ? {
+                              flexBasis: 'unset',
+                              maxWidth: 'unset',
+                            } : {}
+                          ),
                         }}
                       >
                         <div className="modal__track">
@@ -452,7 +462,7 @@ class RoutesShowModal extends Component {
                             route && route.photo
                               ? (
                                 <RouteEditor
-                                  routePhoto={route.photo.url}
+                                  routePhoto={this.state.photoExpanded ? route.photo.url_expanded : route.photo.url}
                                   pointers={this.pointers()}
                                   editable={false}
                                   routeImageLoading={routeImageLoading}
@@ -590,6 +600,25 @@ class RoutesShowModal extends Component {
                         </div>
                       </div>
                       <div
+                        style={{
+                          flex: '0 0 15px',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                        }}
+                        onClick={(event) => {
+                          this.setState({
+                            photoExpanded: !this.state.photoExpanded,
+                          });
+                          event.stopPropagation();
+                        }}
+                      >
+                        <div>
+                          { this.state.photoExpanded ? '≤' : '≥' }
+                        </div>
+                      </div>
+                      <div
                         className="modal__track-info"
                         onMouseOver={() => {
                           this.mouseOver = true;
@@ -597,17 +626,24 @@ class RoutesShowModal extends Component {
                         onMouseLeave={() => {
                           this.mouseOver = false;
                         }}
+                        style={{
+                          transition: 'all 0.5s ease-out',
+                          ...(
+                            this.state.photoExpanded ? {
+                              minWidth: 'unset',
+                              overflowX: 'hidden',
+                              flex: 0,
+                              flexBasis: '0px',
+                            } : {}
+                          ),
+                        }}
                       >
                         <div className="modal__track-status">
-                          {
-                            user && (
-                              <RouteStatus
-                                changeAscentResult={() => this.changeAscentResult(routeId)}
-                              />
-                            )
-                          }
+                          {user && (<RouteStatus
+                              changeAscentResult={() => this.changeAscentResult(routeId)}
+                            />)}
                         </div>
-                        <div className="modal__track-header">
+                        <div className="modal__track-header_v2">
                           <h1 className="modal__title">
                             {this.getRouteNumber(route)}
                             <span className="modal__title-place-wrapper">
@@ -616,9 +652,9 @@ class RoutesShowModal extends Component {
                               </span>
                             </span>
                           </h1>
-                          <RouteDataTable route={route} user={user} />
+                          <RouteDataTable route={route} user={user}/>
                         </div>
-                        <div className="modal__item modal__descr-item">
+                        <div className="modal__item_v2 modal__descr-item">
                           <CollapsableBlock
                             title="Описание"
                             isCollapsed={descriptionCollapsed}
@@ -626,33 +662,24 @@ class RoutesShowModal extends Component {
                             text={route.description ? route.description : ''}
                           />
                         </div>
-                        <div className="modal__item">
+                        <div className="modal__item_v2">
                           <CommentBlock
                             startAnswer={this.startAnswer}
                             user={user}
                             removeComment={comment => this.removeComment(routeId, comment)}
-                            allShown={
-                              (route.comments || []).length === R.min(
-                                numOfDisplayedComments,
-                                (route.comments || []).length,
-                              )
-                            }
+                            allShown={(route.comments || []).length === R.min(numOfDisplayedComments,
+                              (route.comments || []).length,)}
                             showPrevious={() => this.showPreviousComments(route.comments || [])}
                             onCollapseChange={this.onDescriptionCollapseChange}
-                            comments={
-                              R.slice(
-                                (route.comments || []).length - R.min(
-                                  numOfDisplayedComments,
-                                  (route.comments || []).length,
-                                ),
-                                (route.comments || []).length,
-                                route.comments || [],
-                              )
-                            }
+                            comments={R.slice((route.comments || []).length - R.min(
+                              numOfDisplayedComments,
+                              (route.comments || []).length,),
+                              (route.comments || []).length,
+                              route.comments || [],)}
                             objectListTitle="route_comments"
                           />
                         </div>
-                        <div className="modal__enter-comment">
+                        <div className="modal__enter-comment_v2">
                           <CommentForm
                             quoteComment={quoteComment}
                             setTextareaRef={this.setTextareaRef}

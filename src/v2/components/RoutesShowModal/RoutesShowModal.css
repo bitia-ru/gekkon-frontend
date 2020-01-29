@@ -71,7 +71,7 @@
 
 .modal__track-info {
     padding-top: 45px;
-    width: 55%;
+    padding-left: 45px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -83,11 +83,11 @@
     .modal__track-info {
         min-width: 410px;
         padding-top: 24px;
+        padding-left: 32px;
     }
 }
 
-.modal__track-header {
-    padding-left: 45px;
+.modal__track-header_v2 {
     padding-right: 45px;
     padding-bottom: 15px;
     width: 100%;
@@ -95,14 +95,13 @@
 }
 
 @media screen and (max-width: 1440px) {
-    .modal__track-header {
+    .modal__track-header_v2 {
         padding-bottom: 6px;
     }
 }
 
 @media screen and (max-width: 1440px) {
-    .modal__track-header {
-        padding-left: 32px;
+    .modal__track-header_v2 {
         padding-right: 32px;
     }
 }
@@ -227,8 +226,7 @@
     padding-right: 15px;
 }
 
-.modal__item {
-    padding-left: 45px;
+.modal__item_v2 {
     padding-right: 45px;
     padding-top: 15px;
     display: flex;
@@ -237,8 +235,7 @@
 }
 
 @media screen and (max-width: 1440px) {
-    .modal__item {
-        padding-left: 32px;
+    .modal__item_v2 {
         padding-right: 32px;
         padding-top: 6px;
         padding-bottom: 6px;
@@ -258,8 +255,8 @@
     flex-grow: 1;
 }
 
-.modal__enter-comment {
-    padding: 12px 45px;
+.modal__enter-comment_v2 {
+    padding: 12px 45px 12px 0px;
     box-sizing: border-box;
     width: 100%;
     position: relative;
@@ -268,15 +265,14 @@
 }
 
 @media screen and (max-width: 1440px) {
-    .modal__enter-comment {
-        padding: 3px 32px;
+    .modal__enter-comment_v2 {
+        padding: 3px 32px 3px 0px;
     }
 }
 
-.modal__enter-comment::before {
+.modal__enter-comment_v2::before {
     position: absolute;
     content: '';
-    left: 45px;
     right: 45px;
     height: 1px;
     top: -1px;
