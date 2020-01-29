@@ -132,7 +132,7 @@ class Content extends Component {
               <div className="content">
                 <Dropzone onDrop={this.onDropFiles}>
                   {({ getRootProps, getInputProps }) => (
-                    <div className="content__container" {...getRootProps()}>
+                    <div className="content__container" {...getRootProps()} onClick={(event) => event.stopPropagation()}>
                       <input {...getInputProps()} />
                       <FilterBlock
                         viewMode={viewMode}
