@@ -8,12 +8,12 @@ import * as R from 'ramda';
 import Scheme from '../Scheme/Scheme';
 import BackButton from '../BackButton/BackButton';
 import './SchemeModal.css';
-import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
-import { BACKEND_DATE_FORMAT } from '../Constants/Date';
-import { ApiUrl } from '../Environ';
+import { DEFAULT_FILTERS } from '../../Constants/DefaultFilters';
+import { BACKEND_DATE_FORMAT } from '../../Constants/Date';
+import { ApiUrl } from '../../Environ';
 import {
   decreaseNumOfActiveRequests, increaseNumOfActiveRequests,
-} from '../actions';
+} from '../../actions';
 
 class SchemeModal extends Component {
   constructor(props) {

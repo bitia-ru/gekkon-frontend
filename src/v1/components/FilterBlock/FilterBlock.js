@@ -8,13 +8,13 @@ import { PERIOD_FILTERS } from '../../Constants/PeriodFilters';
 import { CATEGORIES, CATEGORIES_ITEMS } from '../../Constants/Categories';
 import { dateToTextFormatter } from '../../Constants/Date';
 import './FilterBlock.css';
-import { DEFAULT_FILTERS } from '../../Constants/DefaultFilters';
 import getFilters from '../../utils/getFilters';
 import { RESULT_FILTERS } from '../../Constants/ResultFilters';
 import { setSelectedFilter, setSelectedPage, setSelectedViewMode } from '../../actions';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { avail } from '../../utils';
+import Button from '@/v2/components/Button/Button';
 import getCategoryId from '../../utils/getCategoryId';
 
 class FilterBlock extends Component {
@@ -160,6 +160,8 @@ class FilterBlock extends Component {
       viewModeData,
       user,
       viewMode,
+      history,
+      match,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
@@ -241,6 +243,18 @@ class FilterBlock extends Component {
               textFieldName="text"
               items={currentFilters}
             />
+          </div>
+        </div>
+        <div className="content__filter-item">
+          <div>
+            <span className="filter-block__title">&nbsp;</span>
+            <Button
+              tabIndex={4}
+              style="gray"
+              onClick={() => { history.push(`${match.url}/new`); }}
+            >
+              +
+            </Button>
           </div>
         </div>
         <ViewModeSwitcher

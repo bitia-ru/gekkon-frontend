@@ -20,6 +20,10 @@ class Footer extends React.PureComponent {
   render() {
     const { user, history } = this.props;
 
+    const socialLinksSprite = require(
+      '../../../../img/social-links-sprite/social-links-sprite.svg',
+    );
+
     return (
       <footer className="footer">
         <div className="footer__container">
@@ -115,25 +119,25 @@ class Footer extends React.PureComponent {
               <li>
                 <SocialLinkButton
                   href={INSTA_LINK}
-                  xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                  xlinkHref={`${socialLinksSprite}#icon-inst`}
                 />
               </li>
               <li>
                 <SocialLinkButton
                   href={VK_LINK}
-                  xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-vk"
+                  xlinkHref={`${socialLinksSprite}#icon-vk`}
                 />
               </li>
               <li>
                 <SocialLinkButton
                   href={FACEBOOK_LINK}
-                  xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-facebook"
+                  xlinkHref={`${socialLinksSprite}#icon-facebook`}
                 />
               </li>
               <li>
                 <SocialLinkButton
                   href={TWITTER_LINK}
-                  xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-twitter"
+                  xlinkHref={`${socialLinksSprite}#icon-twitter`}
                 />
               </li>
             </ul>

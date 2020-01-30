@@ -110,7 +110,7 @@ const Footer = ({
             <li>
               <SocialLinkButton
                 href={INSTA_LINK}
-                xlinkHref="/public/img/social-links-sprite/social-links-sprite.svg#icon-inst"
+                xlinkHref={`${socialLinksSprite}#icon-inst`}
               />
             </li>
             <li>
