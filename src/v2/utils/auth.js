@@ -17,17 +17,16 @@ export const createUserSession = (
       success(payload) {
         Api.post(
           '/v1/user_sessions',
-          null,
           {
-            params: {
-              user_session: {
-                user: {
-                  ...loginCredential,
-                  password_digest: bcrypt.hashSync(password, payload),
-                },
+            user_session: {
+              user: {
+                ...loginCredential,
+                password_digest: bcrypt.hashSync(password, payload),
               },
-              rememberMe: longDuration,
             },
+            rememberMe: longDuration,
+          },
+          {
             success() {
               afterLogInSuccess && afterLogInSuccess();
             },

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Axios from 'axios';
@@ -11,9 +10,6 @@ import './SchemeModal.css';
 import { DEFAULT_FILTERS } from '../../Constants/DefaultFilters';
 import { BACKEND_DATE_FORMAT } from '../../Constants/Date';
 import { ApiUrl } from '../../Environ';
-import {
-  decreaseNumOfActiveRequests, increaseNumOfActiveRequests,
-} from '../../actions';
 
 class SchemeModal extends Component {
   constructor(props) {
@@ -34,8 +30,6 @@ class SchemeModal extends Component {
   loadRoutes = () => {
     const {
       currentRoute,
-      increaseNumOfActiveRequests: increaseNumOfActiveRequestsProp,
-      decreaseNumOfActiveRequests: decreaseNumOfActiveRequestsProp,
     } = this.props;
     const currentSectorId = currentRoute.sector_id;
     const currentCategoryFrom = DEFAULT_FILTERS.categoryFrom;
@@ -54,15 +48,12 @@ class SchemeModal extends Component {
       [moment(currentDate).add(1, 'days').format(BACKEND_DATE_FORMAT)],
       [null],
     ];
-    increaseNumOfActiveRequestsProp();
     Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params })
       .then((response) => {
-        decreaseNumOfActiveRequestsProp();
         this.setState(
           { routes: R.reject(R.propEq('id', currentRoute.id), response.data.payload) },
         );
       }).catch((error) => {
-        decreaseNumOfActiveRequestsProp();
         this.displayError(error);
       });
   };
@@ -155,10 +146,10 @@ class SchemeModal extends Component {
           onMouseMove={editable ? this.onMouseMove : null}
         >
           <Scheme
-            currentRoutes={[currentRoute]}
+            currentRoutes={[currentRoute.id]}
+            routes={[currentRoute, ...routes]}
             showCards={false}
             onStartMoving={this.onStartMoving}
-            routes={R.prepend(currentRoute, routes)}
           />
         </div>
       </>
@@ -173,9 +164,4 @@ SchemeModal.propTypes = {
   save: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
-});
-
-export default withRouter(connect(null, mapDispatchToProps)(SchemeModal));
+export default withRouter(SchemeModal);

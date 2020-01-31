@@ -16,7 +16,8 @@ const RouteCardScheme = ({
     <Scheme
       diagram={diagram}
       onRouteClick={onRouteClick}
-      currentRoutes={getArrayByIds(routeIds, routes)}
+      currentRoutes={routeIds}
+      routes={getArrayByIds(routeIds, routes)}
     />
   </div>
 );

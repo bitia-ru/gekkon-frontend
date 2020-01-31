@@ -33,6 +33,7 @@ class Scheme extends Component {
       onRouteClick,
       showCards,
       currentRoutes,
+      routes,
       onStartMoving,
     } = this.props;
     const { shownRouteId, imageIsLoading } = this.state;
@@ -46,8 +47,8 @@ class Scheme extends Component {
         {
           ({ sector }) => {
             const currentSector = (
-              currentRoutes.length > 0
-                ? sectors[currentRoutes[0].sector_id]
+              routes.length > 0
+                ? sectors[routes[0].sector_id]
                 : sector
             );
             const diagram = currentSector && currentSector.diagram && currentSector.diagram.url;
@@ -78,12 +79,12 @@ class Scheme extends Component {
                                   onMouseEnter={() => this.showRouteCard(route.id)}
                                   onMouseLeave={this.hideCard}
                                   onStartMoving={
-                                    R.contains(route.id, currentRoutes)
+                                    route.id === undefined || R.contains(route.id, currentRoutes)
                                       ? onStartMoving
                                       : null
                                   }
                                   category={route.category}
-                                  transparent={R.contains(route.id, currentRoutes)}
+                                  transparent={!R.contains(route.id, currentRoutes)}
                                   color={
                                     route.holds_color === null ? undefined : route.holds_color.color
                                   }
@@ -111,7 +112,7 @@ class Scheme extends Component {
                               </div>
                             }
                           </React.Fragment>),
-                        currentRoutes,
+                        routes,
                       )
                     }
                   </>
