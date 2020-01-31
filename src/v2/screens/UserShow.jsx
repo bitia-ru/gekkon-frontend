@@ -117,10 +117,10 @@ class UserShow extends React.PureComponent {
             const currentDateAscents = R.propOr({}, self.state.currentDay, ascentsByDates);
 
             self.setState({
-              currentDayScores: R.sum(R.map(
-                a => Math.pow(1.5, a.category.linear - 30 + a.result === 'flash' ? 0.7 : 0),
+              currentDayScores: Math.round(R.sum(R.map(
+                a => Math.pow(1.5, a.category.linear - 30 + (a.result === 'flash' ? 0.7 : 0)),
                 R.filter(a => a.accomplished_at === self.state.currentDay)(ascents),
-              )),
+              ))/1000.0),
             });
 
             self.setState({
