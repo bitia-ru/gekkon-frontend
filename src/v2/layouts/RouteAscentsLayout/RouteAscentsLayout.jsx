@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 import { StyleSheet, css } from '../../aphrodite';
 import CategoryPicker from '@/v2/components/CategoryPicker/CategoryPicker';
 import TryptichButtons from '@/v2/components/TriptychButtons/TriptychButtons';
@@ -10,41 +11,63 @@ const RouteAscentsLayout = ({
   categoryOpinion,
   onCategoryOpinionChanged,
   details,
+  withFlash,
+  onAddButtonClicked: onAddAscent,
+  onRemoveAscent,
+  ascents,
 }) => (
   <div className={css(style.container)}>
     <div className={css(style.titleRow)}>{title}</div>
     <div className={css(style.tryptichRow)}>
       <TryptichButtons
-        buttons={[
-          {
-            icon: require('./assets/red_point-black.svg'),
-            name: 'Red point',
-            onClick() {
-              console.log('red point');
+        buttons={
+          withFlash ? [
+            {
+              icon: require('./assets/red_point-black.svg'),
+              name: 'Red point',
+              onClick() {
+                onAddAscent && onAddAscent('red_point');
+              },
             },
-          },
-          {
-            default: true,
-            icon: require('./assets/flash-white.svg'),
-            name: 'Flash',
-            onClick() {
-              console.log('flash');
+            {
+              default: true,
+              icon: require('./assets/flash-white.svg'),
+              name: 'Flash',
+              onClick() {
+                onAddAscent && onAddAscent('flash');
+              },
             },
-          },
-          {
-            icon: require('./assets/attempt-black.svg'),
-            name: 'Попытка',
-            onClick() {
-              console.log('attempt');
+            {
+              icon: require('./assets/attempt-black.svg'),
+              name: 'Попытка',
+              onClick() {
+                onAddAscent && onAddAscent('attempt');
+              },
             },
-          },
-        ]}
+          ] : [
+            {
+              default: true,
+              icon: require('./assets/success.svg'),
+              name: 'Пролез',
+              onClick() {
+                onAddAscent && onAddAscent('success');
+              },
+            },
+            {
+              icon: require('./assets/attempt-black.svg'),
+              name: 'Попытка',
+              onClick() {
+                onAddAscent && onAddAscent('attempt');
+              },
+            },
+          ]
+        }
       />
     </div>
     {
-      details && details.show && (
+      ascents && ascents.length > 0 && details && details.show && (
         <div
-          className={css(style.expander, details && details.expanded && style.expanderActivated)}
+          className={css( style.expander, details && details.expanded && style.expanderActivated)}
           onClick={
             () => {
               if (details && typeof details.onExpand === 'function') {
@@ -58,7 +81,7 @@ const RouteAscentsLayout = ({
       )
     }
     {
-      details && details.expanded && (
+      details && details.expanded && ascents && ascents.length > 0 && (
         <table className={css(style.table)}>
           <thead>
             <tr>
@@ -69,18 +92,40 @@ const RouteAscentsLayout = ({
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style={{width: "10%"}}>1</td>
-              <td style={{width: "25%", textAlign: 'center'}}><img src={require('./assets/fail.svg')} /></td>
-              <td style={{width: "45%"}}>26.01.2020</td>
-              <td style={{width: "20%", textAlign: 'right'}}><img src={require('./assets/remove.svg')} /></td>
-            </tr>
-            <tr>
-              <td style={{width: "10%"}}>2</td>
-              <td style={{width: "25%", textAlign: 'center'}}><img src={require('./assets/success.svg')} /></td>
-              <td style={{width: "45%"}}>26.01.2020</td>
-              <td style={{width: "20%", textAlign: 'right'}}><img src={require('./assets/remove.svg')} /></td>
-            </tr>
+            {
+              ascents && R.addIndex(R.map)(
+                (ascent, i) => (
+                  <tr key={ascent.id || i}>
+                    <td style={{width: "10%"}}>{i + 1}</td>
+                    <td style={{width: "25%", textAlign: 'center'}}>
+                      <img
+                        src={
+                          ascent.success ? (
+                            require('./assets/success_indicator.svg')
+                          ) : (
+                            require('./assets/fail_indicator.svg')
+                          )
+                        }
+                      />
+                    </td>
+                    <td style={{width: "45%"}}>{ascent.accomplished_at}</td>
+                    <td
+                      style={{width: "20%", textAlign: 'right' }}
+                    >
+                      <img
+                        style={{ cursor: 'pointer' }}
+                        onClick={
+                          () => {
+                            onRemoveAscent && onRemoveAscent(ascent.id);
+                          }
+                        }
+                        src={require('./assets/remove.svg')}
+                      />
+                    </td>
+                  </tr>
+                ),
+              )(ascents)
+            }
           </tbody>
         </table>
       )
