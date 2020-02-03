@@ -28,7 +28,7 @@ const Api = {
       }
 
       if (response.data.payload) {
-        options.success(response.data.payload);
+        options.success(response.data.payload, response.data.metadata);
       } else {
         options.success(response.data);
       }

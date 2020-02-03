@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 const isReactClassComponent = c => typeof c === 'function' && !!c.prototype.isReactComponent;
 
@@ -17,6 +18,17 @@ const withModals = (BaseComponent) => {
       if (this.props.history) {
         const processLocation = (location) => {
           const hash = location.hash.slice(1);
+
+          if (hash === '') {
+            R.forEachObjIndexed(
+              (v, k) => {
+                if (v.hashRoute) {
+                  this.closeModal(k);
+                }
+              },
+              super.modals(),
+            );
+          }
 
           if (hash && super.modals()[hash]) {
             // check hashRoute

@@ -273,6 +273,28 @@ export const updateAscent = (url, params) => (
   }
 );
 
+export const removeAscent = url => (
+  (dispatch) => {
+    dispatch(loadRoutesRequest());
+
+    Axios({
+      url,
+      method: 'delete',
+      config: { withCredentials: true },
+    })
+      .then((response) => {
+        dispatch(removeRoutePropertyByIdSuccess(
+          response.data.payload.route_id,
+          'ascents',
+          response.data.payload.id,
+        ));
+      }).catch((error) => {
+        dispatch(loadRoutesFailed());
+        // dispatch(pushError(error));
+      });
+  }
+);
+
 export const addComment = (params, afterSuccess) => (
   (dispatch, getState) => {
     const state = getState();

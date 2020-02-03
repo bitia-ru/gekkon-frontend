@@ -32,13 +32,10 @@ import {
   addComment,
   removeLike,
   addLike,
-  addAscent,
-  updateAscent,
   removeRoute,
-} from '@/v1/stores/routes/utils';
+} from '@/v2/redux/routes/actions';
 import CtrlPressedContext from '@/v1/contexts/CtrlPressedContext';
 import './RoutesShowModal.css';
-import { ApiUrl } from '@/v1/Environ';
 import getState from '@/v1/utils/getState';
 import getFilters from '@/v1/utils/getFilters';
 import reloadRoutes from '@/v1/utils/reloadRoutes';
@@ -72,7 +69,7 @@ class RoutesShowModal extends Component {
 
   componentDidMount() {
     const { loadRoute: loadRouteProp } = this.props;
-    loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId()}`);
+    loadRouteProp(this.getRouteId());
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -229,7 +226,7 @@ class RoutesShowModal extends Component {
     const spotId = sectors[sectorId].spot_id;
     if (window.confirm('Удалить трассу?')) {
       removeRouteProp(
-        `${ApiUrl}/v1/routes/${routeId}`,
+        routeId,
         () => {
           if (R.contains('sectors', match.url)) {
             reloadSector(sectorId);
@@ -289,7 +286,7 @@ class RoutesShowModal extends Component {
     if (!window.confirm('Удалить комментарий?')) {
       return;
     }
-    removeCommentProp(`${ApiUrl}/v1/route_comments/${comment.id}`);
+    removeCommentProp(comment.id);
   };
 
   onLikeChange = (routeId, afterChange) => {
@@ -302,7 +299,7 @@ class RoutesShowModal extends Component {
     const route = routes[routeId];
     const like = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.likes));
     if (like) {
-      removeLikeProp(`${ApiUrl}/v1/likes/${like.id}`, afterChange);
+      removeLikeProp(like.id, afterChange);
     } else {
       const params = { like: { user_id: user.id, route_id: routeId } };
       addLikeProp(params, afterChange);
@@ -310,33 +307,6 @@ class RoutesShowModal extends Component {
   };
 
   changeAscentResultV2 = () => this.props.history.push('#ascents');
-
-  changeAscentResult = (routeId) => {
-    const {
-      user,
-      routes,
-      addAscent: addAscentProp,
-      updateAscent: updateAscentProp,
-    } = this.props;
-    const route = routes[routeId];
-    const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
-    if (ascent) {
-      let result;
-      if (ascent.result === 'red_point') {
-        result = 'flash';
-      } else if (ascent.result === 'flash') {
-        result = 'unsuccessful';
-      } else {
-        result = 'red_point';
-      }
-      const params = { ascent: { result } };
-      updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
-    } else {
-      const result = 'red_point';
-      const params = { ascent: { result, user_id: user.id, route_id: routeId } };
-      addAscentProp(params);
-    }
-  };
 
   content = () => {
     const {
@@ -716,20 +686,18 @@ RoutesShowModal.propTypes = {
 
 const mapStateToProps = state => ({
   sectors: state.sectorsStore.sectors,
-  routes: state.routesStore.routes,
+  routes: state.routesStoreV2.routes,
   user: currentUserObtainer(state),
   loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
-  removeComment: url => dispatch(removeComment(url)),
+  loadRoute: (id, afterLoad) => dispatch(loadRoute(id, afterLoad)),
+  removeComment: id => dispatch(removeComment(id)),
   addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),
-  removeLike: (url, afterAll) => dispatch(removeLike(url, afterAll)),
+  removeLike: (id, afterAll) => dispatch(removeLike(id, afterAll)),
   addLike: (params, afterAll) => dispatch(addLike(params, afterAll)),
-  addAscent: params => dispatch(addAscent(params)),
-  updateAscent: (url, params) => dispatch(updateAscent(url, params)),
-  removeRoute: (url, afterSuccess) => dispatch(removeRoute(url, afterSuccess)),
+  removeRoute: (id, afterSuccess) => dispatch(removeRoute(id, afterSuccess)),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
 });
 
