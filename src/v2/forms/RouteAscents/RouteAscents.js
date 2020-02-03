@@ -10,7 +10,7 @@ import {
   decreaseNumOfActiveRequests,
   increaseNumOfActiveRequests,
 } from '@/v1/actions';
-import RouteAscentsLayout from '../../layouts/RouteAscentsLayout';
+import RouteAscentsLayout from '../../layouts/RouteAscentsLayout/RouteAscentsLayout';
 
 
 class RouteAscents extends Component {
@@ -18,6 +18,7 @@ class RouteAscents extends Component {
     super(props);
 
     this.state = {
+      detailsExpanded: true,
     };
   }
 
@@ -26,7 +27,14 @@ class RouteAscents extends Component {
       <Modal maxWidth="400px">
         <RouteAscentsLayout
           title="Добавление пролаза"
-          blameCategory
+          blameCategory={false}
+          details={{
+            show: true,
+            expanded: this.state.detailsExpanded,
+            onExpand: () => {
+              this.setState({ detailsExpanded: !this.state.detailsExpanded });
+            },
+          }}
         />
       </Modal>
     );

@@ -309,6 +309,8 @@ class RoutesShowModal extends Component {
     }
   };
 
+  changeAscentResultV2 = () => this.props.history.push('#ascents');
+
   changeAscentResult = (routeId) => {
     const {
       user,
@@ -601,9 +603,7 @@ class RoutesShowModal extends Component {
                         <div className="modal__track-status">
                           {
                             user && (
-                              <RouteStatus
-                                changeAscentResult={() => this.changeAscentResult(routeId)}
-                              />
+                              <RouteStatus changeAscentResult={this.changeAscentResultV2} />
                             )
                           }
                         </div>
