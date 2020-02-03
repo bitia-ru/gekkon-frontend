@@ -28,6 +28,10 @@ class RouteAscents extends Component {
         <RouteAscentsLayout
           title="Добавление пролаза"
           blameCategory={false}
+          ascents={[
+            { success: false, id: 1000, accomplished_at: '21.01.2020' },
+            { success: true, id: 1001, accomplished_at: '22.01.2020' },
+          ]}
           details={{
             show: true,
             expanded: this.state.detailsExpanded,
@@ -35,6 +39,8 @@ class RouteAscents extends Component {
               this.setState({ detailsExpanded: !this.state.detailsExpanded });
             },
           }}
+          onAddButtonClicked={buttonId => console.log(buttonId)}
+          onRemoveAscent={ascentId => console.log(ascentId)}
         />
       </Modal>
     );
