@@ -13,7 +13,7 @@ export const SEARCH_DELAY = 3000;
 export const USER_ITEMS_DATA = [
   { separator: true },
   { id: 1, title: 'Профиль', clickable: true },
-  { id: 3, title: 'Режим накрутчика', clickable: true },
+  //{ id: 3, title: 'Режим накрутчика', clickable: true },
   {
     id: 2, title: 'Выйти', clickable: true, svgSrc: '/public/img/main-nav-img/exit.svg#exit',
   },
