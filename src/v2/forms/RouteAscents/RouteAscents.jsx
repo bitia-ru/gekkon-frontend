@@ -28,8 +28,8 @@ class RouteAscents extends Component {
           title="Добавление пролаза"
           blameCategory={false}
           ascents={[
-            { success: false, id: 1000, accomplished_at: '21.01.2020' },
-            { success: true, id: 1001, accomplished_at: '22.01.2020' },
+            { success: false, id: 1000, accomplished_at: '2020-01-21' },
+            { success: true, id: 1001, accomplished_at: '2020-01-22' },
           ]}
           details={{
             show: true,

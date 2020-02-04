@@ -104,7 +104,8 @@ export default class DatePicker extends Component {
     return true;
   };
 
-  selectDate = (week, day) => {
+  selectDate = (e, week, day) => {
+    e.stopPropagation();
     const { displayedDate } = this.state;
     const { onSelect, hide } = this.props;
     const d = R.clone(displayedDate);
@@ -173,7 +174,7 @@ export default class DatePicker extends Component {
                               key={day}
                               type="button"
                               style={{ outline: 'none' }}
-                              onClick={() => this.selectDate(week, day)}
+                              onClick={e => this.selectDate(e, week, day)}
                               className={this.getDayClasses(week, day)}
                             >
                               {this.getDay(week, day)}

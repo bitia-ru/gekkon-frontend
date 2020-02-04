@@ -43,15 +43,20 @@ const RouteAscentsTableLayout = ({
                     />
                   </td>
                   <td
-                    style={{ width: '45%', position: 'relative' }}
+                    style={{ width: '45%', position: 'relative', cursor: 'pointer' }}
                     onClick={() => { onDateClicked && onDateClicked(ascent.id); }}
                   >
                     {ascent.accomplished_at}
                     {
                       dateChangingAscentId === ascent.id && (
                         <Calendar
-                          date={moment(ascent.accomplished_at)}
-                          onSelect={(newDate) => { onDateSelected && onDateSelected(newDate); }}
+                          date={moment(ascent.accomplished_at, 'YYYY-MM-DD')}
+                          hide={() => { onDateClicked && onDateClicked(null); }}
+                          onSelect={
+                            (newDate) => {
+                              onDateSelected && onDateSelected(ascent.id, newDate.format());
+                            }
+                          }
                         />
                       )
                     }
