@@ -85,12 +85,12 @@ const RouteAscentsLayout = ({
       details && details.expanded && ascents && ascents.length > 0 && (
         <RouteAscentsTable
           ascents={ascents}
-          onDateChanged={
+          onAscentDateChanged={
             (ascentId, newDate) => {
               onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
             }
           }
-          onRemove={
+          onRemoveAscent={
             (ascentId) => {
               onRemoveAscent && onRemoveAscent(ascentId);
             }
