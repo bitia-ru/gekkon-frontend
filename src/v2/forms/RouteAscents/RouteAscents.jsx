@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import './RouteAscents.css';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import { updateUsers as updateUsersAction } from '../../redux/users/actions';
@@ -10,7 +9,7 @@ import {
   decreaseNumOfActiveRequests,
   increaseNumOfActiveRequests,
 } from '@/v1/actions';
-import RouteAscentsLayout from '../../layouts/RouteAscentsLayout/RouteAscentsLayout';
+import RouteAscentsLayout from './RouteAscentsLayout';
 
 
 class RouteAscents extends Component {
