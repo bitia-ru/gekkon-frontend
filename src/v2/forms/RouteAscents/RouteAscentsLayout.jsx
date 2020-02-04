@@ -1,8 +1,8 @@
 import React from 'react';
-import * as R from 'ramda';
 import { StyleSheet, css } from '../../aphrodite';
 import CategoryPicker from '@/v2/components/CategoryPicker/CategoryPicker';
 import TryptichButtons from '@/v2/components/TriptychButtons/TriptychButtons';
+import RouteAscentsTable from './RouteAscentsTable/RouteAscentsTable';
 
 
 const RouteAscentsLayout = ({
@@ -14,6 +14,7 @@ const RouteAscentsLayout = ({
   withFlash,
   onAddButtonClicked: onAddAscent,
   onRemoveAscent,
+  onAscentDateChanged,
   ascents,
 }) => (
   <div className={css(style.container)}>
@@ -48,14 +49,14 @@ const RouteAscentsLayout = ({
             {
               default: true,
               icon: require('./assets/success.svg'),
-              name: 'Пролез',
+              name: '+1 пролaз',
               onClick() {
                 onAddAscent && onAddAscent('success');
               },
             },
             {
               icon: require('./assets/attempt-black.svg'),
-              name: 'Попытка',
+              name: '+1 попытка',
               onClick() {
                 onAddAscent && onAddAscent('attempt');
               },
@@ -82,52 +83,19 @@ const RouteAscentsLayout = ({
     }
     {
       details && details.expanded && ascents && ascents.length > 0 && (
-        <table className={css(style.table)}>
-          <thead>
-            <tr>
-              <th style={{width: "10%", textAlign: 'left'}}>№</th>
-              <th style={{width: "25%"}}>Статус</th>
-              <th style={{width: "45%", textAlign: 'left'}}>Дата</th>
-              <th style={{width: "20%"}} />
-            </tr>
-          </thead>
-          <tbody>
-            {
-              ascents && R.addIndex(R.map)(
-                (ascent, i) => (
-                  <tr key={ascent.id || i}>
-                    <td style={{width: "10%"}}>{i + 1}</td>
-                    <td style={{width: "25%", textAlign: 'center'}}>
-                      <img
-                        src={
-                          ascent.success ? (
-                            require('./assets/success_indicator.svg')
-                          ) : (
-                            require('./assets/fail_indicator.svg')
-                          )
-                        }
-                      />
-                    </td>
-                    <td style={{width: "45%"}}>{ascent.accomplished_at}</td>
-                    <td
-                      style={{width: "20%", textAlign: 'right' }}
-                    >
-                      <img
-                        style={{ cursor: 'pointer' }}
-                        onClick={
-                          () => {
-                            onRemoveAscent && onRemoveAscent(ascent.id);
-                          }
-                        }
-                        src={require('./assets/remove.svg')}
-                      />
-                    </td>
-                  </tr>
-                ),
-              )(ascents)
+        <RouteAscentsTable
+          ascents={ascents}
+          onDateChanged={
+            (ascentId, newDate) => {
+              onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
             }
-          </tbody>
-        </table>
+          }
+          onRemove={
+            (ascentId) => {
+              onRemoveAscent && onRemoveAscent(ascentId);
+            }
+          }
+        />
       )
     }
     <div className={css(style.categoryBlameRow)}>
@@ -198,8 +166,56 @@ const style = StyleSheet.create({
       transform: 'rotate(0deg)',
     },
   },
+  detailsContainer: {
+    width: '100%',
+    maxHeight: '400px',
+    overflowY: 'scroll',
+    marginBottom: '16px',
+  },
   table: {
     width: '100%',
+    borderSpacing: 0,
+
+    '> tbody': {
+      '> tr': {
+        height: '40px',
+        lineHeight: '40px',
+
+        '> td': {
+          '> img': {
+            verticalAlign: 'middle',
+          },
+        },
+        '> td:first-child': {
+          paddingLeft: '10px',
+        },
+        '> td:last-child': {
+          paddingRight: '10px',
+        },
+      },
+
+      '> tr:nth-child(even)': {
+        backgroundColor: '#EDEDED',
+      },
+    },
+  },
+  tableHeader: {
+    width: '100%',
+    borderSpacing: 0,
+
+    '> thead': {
+      '> tr': {
+        height: '40px',
+        lineHeight: '40px',
+
+        '> th:first-child': {
+          paddingLeft: '10px',
+        },
+        '> th:last-child': {
+          paddingRight: '10px',
+        },
+      },
+    },
   },
 });
 

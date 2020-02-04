@@ -115,7 +115,7 @@ const withModals = (BaseComponent) => {
             justifyContent: 'center',
           }}
           onClick={() => this.closeModal()}
-          onWheel={(e) => { e.preventDefault(); }}
+          onScroll={(e) => { e.preventDefault(); }}
         >
           <ModalContext.Provider
             value={{
