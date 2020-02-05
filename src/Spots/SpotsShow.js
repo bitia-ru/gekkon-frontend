@@ -339,7 +339,9 @@ class SpotsShow extends Authorization {
     };
 
     afterLogOut = () => {
-      const { personal, outdated, sectorId } = this.state;
+      const {
+        personal, outdated, sectorId,
+      } = this.state;
       this.setState({ ascents: [] });
       this.reloadRoutes();
       if (sectorId === 0) {
@@ -615,6 +617,11 @@ class SpotsShow extends Authorization {
           ? selectedFilters[spotId][currentSectorId].outdated
           : filters.outdated
       );
+      const currentLiked = (
+        (filters.liked === null || filters.liked === undefined)
+          ? selectedFilters[spotId][currentSectorId].liked
+          : filters.liked
+      );
       const currentPage = (
         (page === null || page === undefined)
           ? selectedPages[spotId][currentSectorId]
@@ -629,6 +636,9 @@ class SpotsShow extends Authorization {
       };
       if ((userCurr && avail(userCurr.id)) || avail(user.id)) {
         params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
+        if (currentLiked) {
+          params.filters.liked_by = 'self';
+        }
       }
       if (currentName !== '') {
         params.filters.name = { like: currentName };
@@ -815,7 +825,7 @@ class SpotsShow extends Authorization {
         filters[index].text = `${filters[index].text} ✓`;
       }
       filters[index].selected = !filters[index].selected;
-      if (R.contains(id, ['personal', 'outdated'])) {
+      if (R.contains(id, ['personal', 'outdated', 'liked'])) {
         this.changeFilter(id, filters[index].selected);
       }
       if (R.contains(id, R.map(e => e.id, RESULT_FILTERS))) {
@@ -1502,7 +1512,7 @@ class SpotsShow extends Authorization {
         categoryId = 4;
       }
       const defaultFilters = R.filter(
-        e => !R.contains(e.id, R.map(f => f.id, RESULT_FILTERS)),
+        e => !R.contains(e.id, R.append('liked', R.map(f => f.id, RESULT_FILTERS))),
         filters,
       );
       let currentSector;
