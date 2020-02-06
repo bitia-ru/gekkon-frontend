@@ -236,11 +236,11 @@
 }
 
 .spot-card_bigwall {
-    background-color: #DD445F;
+    background-color: #dd955e;
 }
 
-.spot-card_tokyo {
-    background-color: #09BDA7;
+.spot-card_atmo {
+    background-color: #bd3810;
 }
 
 @keyframes arrow-move {
