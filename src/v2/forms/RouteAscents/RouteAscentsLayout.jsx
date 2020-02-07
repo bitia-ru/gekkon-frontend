@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, css } from '../../aphrodite';
-import CategoryPicker from '@/v2/components/CategoryPicker/CategoryPicker';
-import TryptichButtons from '@/v2/components/TriptychButtons/TriptychButtons';
+import CategoryPicker from '../../components/CategoryPicker/CategoryPicker';
 import RouteAscentsTable from './RouteAscentsTable/RouteAscentsTable';
+import AscentTriptych from '../../components/ascents/AscentTriptych';
+import FormExpandableArea from '../../components/forms/FormExpandableArea';
 
 
 const RouteAscentsLayout = ({
@@ -11,8 +12,8 @@ const RouteAscentsLayout = ({
   categoryOpinion,
   onCategoryOpinionChanged,
   details,
-  withFlash,
-  onAddButtonClicked: onAddAscent,
+  initialWithFlash,
+  onAddAscents,
   onRemoveAscent,
   onAscentDateChanged,
   ascents,
@@ -20,99 +21,51 @@ const RouteAscentsLayout = ({
   <div className={css(style.container)}>
     <div className={css(style.titleRow)}>{title}</div>
     <div className={css(style.tryptichRow)}>
-      <TryptichButtons
-        buttons={
-          withFlash ? [
-            {
-              icon: require('./assets/red_point-black.svg'),
-              name: 'Red point',
-              onClick() {
-                onAddAscent && onAddAscent('red_point');
-              },
-            },
-            {
-              default: true,
-              icon: require('./assets/flash-white.svg'),
-              name: 'Flash',
-              onClick() {
-                onAddAscent && onAddAscent('flash');
-              },
-            },
-            {
-              icon: require('./assets/attempt-black.svg'),
-              name: 'Попытка',
-              onClick() {
-                onAddAscent && onAddAscent('attempt');
-              },
-            },
-          ] : [
-            {
-              default: true,
-              icon: require('./assets/success.svg'),
-              name: '+1 пролaз',
-              onClick() {
-                onAddAscent && onAddAscent('success');
-              },
-            },
-            {
-              icon: require('./assets/attempt-black.svg'),
-              name: '+1 попытка',
-              onClick() {
-                onAddAscent && onAddAscent('attempt');
-              },
-            },
-          ]
+      <AscentTriptych
+        initialWithFlash={initialWithFlash}
+        onAddAscents={
+          (ascents, afterAscentsAdded) => onAddAscents && onAddAscents(ascents, afterAscentsAdded)
         }
       />
     </div>
     {
-      ascents && ascents.length > 0 && details && details.show && (
-        <div
-          className={css( style.expander, details && details.expanded && style.expanderActivated)}
-          onClick={
-            () => {
-              if (details && typeof details.onExpand === 'function') {
-                details.onExpand();
+      details && details.show && (
+        <FormExpandableArea initiallyExpanded={ascents && ascents.length > 0}>
+          <RouteAscentsTable
+            ascents={ascents}
+            onAscentDateChanged={
+              (ascentId, newDate) => {
+                onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
               }
             }
-          }
-        >
-          Подробнее <img src={require('./assets/expander_flag.svg')} />
+            onRemoveAscent={
+              (ascentId) => {
+                onRemoveAscent && onRemoveAscent(ascentId);
+              }
+            }
+          />
+        </FormExpandableArea>
+      )
+    }
+    {
+      false && (
+        <div className={css(style.categoryBlameRow)}>
+        {
+          blameCategory
+            ? <>
+              {'Моя оценка: '}
+              <CategoryPicker
+                category={categoryOpinion}
+                changeCategory={
+                  category => onCategoryOpinionChanged(category)
+                }
+              />
+            </>
+            : 'Не согласен с категорией!'
+        }
         </div>
       )
     }
-    {
-      details && details.expanded && ascents && ascents.length > 0 && (
-        <RouteAscentsTable
-          ascents={ascents}
-          onAscentDateChanged={
-            (ascentId, newDate) => {
-              onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
-            }
-          }
-          onRemoveAscent={
-            (ascentId) => {
-              onRemoveAscent && onRemoveAscent(ascentId);
-            }
-          }
-        />
-      )
-    }
-    <div className={css(style.categoryBlameRow)}>
-    {
-      blameCategory
-        ? <>
-          {'Моя оценка: '}
-          <CategoryPicker
-            category={categoryOpinion}
-            changeCategory={
-              category => onCategoryOpinionChanged(category)
-            }
-          />
-        </>
-        : 'Не согласен с категорией!'
-    }
-    </div>
   </div>
 );
 
@@ -141,29 +94,6 @@ const style = StyleSheet.create({
       cursor: 'pointer',
       color: '#005eb9',
       backgroundColor: 'rgba(0,0,0,0.02)',
-    },
-  },
-  expander: {
-    color: '#919191',
-    textAlign: 'center',
-    cursor: 'pointer',
-    marginBottom: '12px',
-
-    '> img': {
-      verticalAlign: 'middle',
-      transform: 'rotate(180deg)',
-    },
-
-    ':hover': {
-      color: '#878787',
-    },
-    ':active': {
-      color: '#787878',
-    },
-  },
-  expanderActivated: {
-    '> img': {
-      transform: 'rotate(0deg)',
     },
   },
   detailsContainer: {
