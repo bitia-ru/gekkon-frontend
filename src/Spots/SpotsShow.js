@@ -48,6 +48,7 @@ import { avail, notAvail } from '../Utils';
 import { userStateToUser } from '../Utils/Workarounds';
 import { BACKEND_DATE_FORMAT } from '../Constants/Date';
 import numToStr from '../Constants/NumToStr';
+import prepareFilters from '@/Utils/prepareFilters';
 
 const NumOfDays = 7;
 
@@ -817,7 +818,8 @@ class SpotsShow extends Authorization {
         setSelectedFilter: setSelectedFilterProp,
       } = this.props;
       const { spotId, sectorId } = this.state;
-      const filters = R.clone(selectedFilters[spotId][sectorId].filters);
+      let filters = R.clone(selectedFilters[spotId][sectorId].filters);
+      filters = prepareFilters(filters);
       const index = R.findIndex(e => e.id === id, filters);
       if (filters[index].selected) {
         filters[index].text = R.slice(0, -2, filters[index].text);
@@ -1493,11 +1495,12 @@ class SpotsShow extends Authorization {
           : undefined
       );
       date = date || DEFAULT_FILTERS.date;
-      const filters = (
+      let filters = (
         (selectedFilters && selectedFilters[spotId])
           ? selectedFilters[spotId][sectorId].filters
           : DEFAULT_FILTERS.filters
       );
+      filters = prepareFilters(filters);
       let categoryId = 0;
       if (categoryFrom === CATEGORIES[0] && categoryTo === '6a+') {
         categoryId = 1;
