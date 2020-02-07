@@ -21,6 +21,7 @@ const reloadRoutes = (spotId, sectorId) => {
     result: currentResult,
     personal: currentPersonal,
     outdated: currentOutdated,
+    liked: currentLiked,
   } = getFilters(spotId, sectorId);
   const currentPage = getPage(spotId, sectorId);
   const params = {
@@ -32,6 +33,9 @@ const reloadRoutes = (spotId, sectorId) => {
   };
   if (avail(user)) {
     params.filters.result = (currentResult.length === 0 ? [null] : currentResult);
+    if (currentLiked) {
+      params.filters.liked_by = 'self';
+    }
   }
   if (currentPeriod !== 0) {
     const d = new Date();

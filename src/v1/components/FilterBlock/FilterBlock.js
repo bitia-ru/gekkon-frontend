@@ -118,12 +118,12 @@ class FilterBlock extends Component {
       filters[index].text = `${filters[index].text} ✓`;
     }
     filters[index].selected = !filters[index].selected;
-    if (R.contains(id, ['personal', 'outdated'])) {
+    if (R.contains(id, ['personal', 'outdated', 'liked'])) {
       this.changeFilter(id, filters[index].selected);
     }
     if (R.contains(id, R.map(e => e.id, RESULT_FILTERS))) {
       const resultFilters = R.filter(
-        e => R.contains(e.id, R.map(f => f.id, RESULT_FILTERS)),
+        e => R.contains(e.id, R.append('liked', R.map(f => f.id, RESULT_FILTERS))),
         filters,
       );
       this.changeResultFilter(
