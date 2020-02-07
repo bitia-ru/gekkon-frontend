@@ -1,32 +1,47 @@
 import React from 'react';
 import * as R from 'ramda';
-import theme from '../../theme';
-import { StyleSheet, css } from '../../aphrodite';
+import theme from '../../../theme';
+import { StyleSheet, css } from '../../../aphrodite';
 
 
-const TryptichButtons = ({ buttons }) => (
+const TryptichButtons = ({ buttons, loading }) => (
   <div className={css(style.container)}>
-    {
-      R.addIndex(R.map)(
-        (button, i) => (
-          <div
-            key={button.key || i}
-            className={css(style.button, button.default && style.defaultButton)}
-            onClick={() => { if (typeof button.onClick === 'function') button.onClick(); }}
-          >
-            <div>
-              <div>{ button.icon && <img src={button.icon} /> }</div>
-              <div>{button.name}</div>
+    <div className={css(style.buttonsRow)}>
+      {
+        R.addIndex(R.map)(
+          (button, i) => (
+            <div
+              key={button.key || i}
+              className={css(style.button, button.default && style.defaultButton)}
+              onClick={() => { if (typeof button.onClick === 'function') button.onClick(); }}
+            >
+              <div>
+                <div>{button.name}</div>
+                <div>{button.description}</div>
+              </div>
             </div>
-          </div>
-        ),
-      )(buttons)
+          ),
+        )(buttons)
+      }
+    </div>
+    {
+      loading && (
+        <div className={css(style.loadingRow)}>
+          <div className={css(style.loading, loading.active && style.loadingActive)} />
+        </div>
+      )
     }
   </div>
 );
 
 const style = StyleSheet.create({
   container: {
+    display: 'flex',
+    flexFlow: 'column',
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonsRow: {
     display: 'flex',
     flexFlow: 'row',
     width: '100%',
@@ -42,8 +57,12 @@ const style = StyleSheet.create({
     color: theme.controls.buttons.notDefault.foreground,
     fontFamily: 'GilroyBold',
     '> div': {
+      userSelect: 'none',
       '> div': {
         textAlign: 'center',
+      },
+      '> div:first-child': {
+        fontSize: '24px',
       },
     },
     ':hover': {
@@ -71,6 +90,22 @@ const style = StyleSheet.create({
       backgroundColor: theme.controls.buttons.default.pressed.background,
       color: theme.controls.buttons.default.pressed.foreground,
     },
+  },
+  loadingRow: {
+    width: '100%',
+    marginTop: '2px',
+  },
+  loading: {
+    height: '4px',
+    width: '0%',
+    backgroundColor: '#d1d1d1',
+    transition: 'width 0s',
+    opacity: 0,
+  },
+  loadingActive: {
+    width: '100%',
+    opacity: 1,
+    transition: 'width 1.5s',
   },
 });
 

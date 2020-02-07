@@ -1,8 +1,7 @@
 import React from 'react';
 import * as R from 'ramda';
-import moment from 'moment';
 import { StyleSheet, css } from '../../../aphrodite';
-import Calendar from '@/v1/components/Calendar/Calendar';
+import Calendar from '../../../components/common/Calendar/Calendar';
 
 
 const RouteAscentsTableLayout = ({
@@ -35,9 +34,9 @@ const RouteAscentsTableLayout = ({
                     <img
                       src={
                         ascent.success ? (
-                          require('../assets/success_indicator.svg')
+                          require('./assets/success_indicator.svg')
                         ) : (
-                          require('../assets/fail_indicator.svg')
+                          require('./assets/fail_indicator.svg')
                         )
                       }
                     />
@@ -50,11 +49,13 @@ const RouteAscentsTableLayout = ({
                     {
                       dateChangingAscentId === ascent.id && (
                         <Calendar
-                          date={moment(ascent.accomplished_at, 'YYYY-MM-DD')}
-                          hide={() => { onDateClicked && onDateClicked(null); }}
+                          date={ascent.accomplished_at}
                           onSelect={
                             (newDate) => {
-                              onDateSelected && onDateSelected(ascent.id, newDate.format());
+                              onDateSelected && onDateSelected(
+                                ascent.id,
+                                newDate ? newDate : null,
+                              );
                             }
                           }
                         />
@@ -69,7 +70,7 @@ const RouteAscentsTableLayout = ({
                           onRemoveClicked && onRemoveClicked(ascent.id);
                         }
                       }
-                      src={require('../assets/remove.svg')}
+                      src={require('./assets/remove.svg')}
                     />
                   </td>
                 </tr>
@@ -86,7 +87,7 @@ const style = StyleSheet.create({
   detailsContainer: {
     width: '100%',
     maxHeight: '400px',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     marginBottom: '16px',
   },
   table: {

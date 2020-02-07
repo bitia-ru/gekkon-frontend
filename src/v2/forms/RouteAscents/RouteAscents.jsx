@@ -5,10 +5,6 @@ import { connect } from 'react-redux';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import { updateUsers as updateUsersAction } from '../../redux/users/actions';
-import {
-  decreaseNumOfActiveRequests,
-  increaseNumOfActiveRequests,
-} from '@/v1/actions';
 import RouteAscentsLayout from './RouteAscentsLayout';
 
 
@@ -17,7 +13,6 @@ class RouteAscents extends Component {
     super(props);
 
     this.state = {
-      detailsExpanded: true,
     };
   }
 
@@ -26,6 +21,7 @@ class RouteAscents extends Component {
       <Modal maxWidth="400px">
         <RouteAscentsLayout
           title="Добавление пролаза"
+          initialWithFlash={true}
           blameCategory={false}
           ascents={[
             { success: false, id: 1000, accomplished_at: '2020-01-21' },
@@ -33,13 +29,18 @@ class RouteAscents extends Component {
           ]}
           details={{
             show: true,
-            expanded: this.state.detailsExpanded,
-            onExpand: () => {
-              this.setState({ detailsExpanded: !this.state.detailsExpanded });
-            },
           }}
-          onAddButtonClicked={buttonId => console.log(buttonId)}
+          onAddAscents={
+            (ascents, afterAscentsAdded) => {
+              console.log(ascents);
+
+              if (true) {
+                afterAscentsAdded();
+              }
+            }
+          }
           onRemoveAscent={ascentId => console.log(ascentId)}
+          onAscentDateChanged={(ascentId, newDate) => console.log(ascentId, newDate)}
         />
       </Modal>
     );
@@ -57,8 +58,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   updateUsers: users => dispatch(updateUsersAction(users)),
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RouteAscents));
