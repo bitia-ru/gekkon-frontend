@@ -1,0 +1,6 @@
+.content__toggle_v2 {
+    display: flex;
+    align-self: flex-end;
+    align-items: center;
+    margin-left: auto;
+}
