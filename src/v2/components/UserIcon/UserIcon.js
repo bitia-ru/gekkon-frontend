@@ -104,8 +104,6 @@ const style = StyleSheet.create({
     minWidth: '225px',
     boxSizing: 'border-box',
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.08)',
-  },
-  userIconUserMenu: {
     ':before': {
       position: 'absolute',
       content: '',
@@ -113,14 +111,13 @@ const style = StyleSheet.create({
       right: '23px',
       height: '14px',
       width: '23px',
-      backgroundImage:
-        'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2223%22%20height%3D%2214%22%20viewBox%3D%220%200%2023%2014%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2223%22%20height%3D%2214%22%3E%0A%3Crect%20width%3D%2223%22%20height%3D%2214%22%20fill%3D%22%23C4C4C4%22/%3E%0A%3C/mask%3E%0A%3Cg%20mask%3D%22url%28%23mask0%29%22%3E%0A%3Cpath%20d%3D%22M11.5%200L23.1913%2014.25H-0.191343L11.5%200Z%22%20fill%3D%22white%22/%3E%0A%3C/g%3E%0A%3C/svg%3E%0A")',
+      backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2223%22%20height%3D%2214%22%20viewBox%3D%220%200%2023%2014%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%3Cmask%20id%3D%22mask0%22%20mask-type%3D%22alpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2223%22%20height%3D%2214%22%3E%0A%3Crect%20width%3D%2223%22%20height%3D%2214%22%20fill%3D%22%23C4C4C4%22/%3E%0A%3C/mask%3E%0A%3Cg%20mask%3D%22url%28%23mask0%29%22%3E%0A%3Cpath%20d%3D%22M11.5%200L23.1913%2014.25H-0.191343L11.5%200Z%22%20fill%3D%22white%22/%3E%0A%3C/g%3E%0A%3C/svg%3E%0A")',
       backgroundRepeat: 'no-repeat',
-    }
+    },
   },
   userIconUserMenuActive: {
     display: 'block',
-  }
+  },
 });
 
 UserIcon.propTypes = {
