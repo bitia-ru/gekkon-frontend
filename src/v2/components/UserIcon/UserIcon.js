@@ -96,7 +96,7 @@ const style = StyleSheet.create({
   },
   userIconUserMenu: {
     position: 'absolute',
-    content: '',
+    content: '\'\'',
     right: '5px',
     top: 'calc(100% + 25px)',
     backgroundColor: '#ffffff',
@@ -106,7 +106,7 @@ const style = StyleSheet.create({
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.08)',
     ':before': {
       position: 'absolute',
-      content: '',
+      content: '\'\'',
       top: '-14px',
       right: '23px',
       height: '14px',
