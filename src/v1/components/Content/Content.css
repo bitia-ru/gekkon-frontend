@@ -4,6 +4,7 @@
 }
 
 .content__container {
+    outline: 0;
     max-width: 1600px;
     padding-left: 30px;
     padding-right: 30px;
