@@ -21,6 +21,9 @@ class Scheme extends Component {
 
   showRouteCard = (id) => {
     this.setState({ shownRouteId: id });
+    if (this.TimerId) {
+      clearTimeout(this.TimerId);
+    }
   };
 
   hideCard = () => {
