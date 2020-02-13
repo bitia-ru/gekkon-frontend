@@ -43,6 +43,7 @@
 }
 
 .modal__hall-scheme {
+    width: 100%;
     position: relative;
     align-self: center;
     max-height: 100%;
