@@ -14,10 +14,11 @@ const V2 = ({ currentUser }) => (
     {
       currentUser !== undefined ? (
         <Switch>
-          <Route path="/v2/users/:user_id" component={UserShow} />
-          <Route path="/v2/users" component={Users} />
-          <Route path="/v2/spots/:id/sectors/:sector_id/photos" component={RoutePhotos} />
-          <Route path="/v2/spots/:id/sectors/:sector_id" component={SpotsShow} />
+          <Route path="/users/:user_id" component={UserShow} />
+          <Route path="/users" component={Users} />
+          <Route path="/spots/:id/sectors/:sector_id/photos" component={RoutePhotos} />
+          <Route path="/spots/:id/sectors/:sector_id" component={SpotsShow} />
+          <Route path="/spots/:id" component={SpotsShow} />
         </Switch>
       ) : (
         <BootingScreen />
