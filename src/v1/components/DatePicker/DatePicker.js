@@ -57,11 +57,7 @@ export default class DatePicker extends Component {
       >
         <input
           className={`${dateClass}${styleClass}${sizeClass}`}
-          value={
-            date
-              ? formatter(date)
-              : ''
-          }
+          value={date ? formatter(date) : 'сегодня'}
           readOnly
           style={{ cursor: 'default' }}
           onClick={() => this.setState({ showCalendar: true })}
