@@ -35,6 +35,7 @@ class AscentTriptych extends React.PureComponent {
       flash: 'success',
       success: 'success',
       attempt: 'attempt',
+      red_point: 'success',
       ascentSerieComposingIsInProgress: false,
     }[rawResult];
 
