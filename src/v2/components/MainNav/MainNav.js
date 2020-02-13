@@ -46,12 +46,14 @@ class MainNav extends Component {
       tab,
       signUp,
       openProfile,
+      history,
     } = this.props;
 
     const { searchOpened } = this.state;
     const inputClass = (searchOpened ? ' main-nav__search-input_active' : '');
     const tab1Class = (tab === 1 ? ' main-nav__nav-list-link_active' : '');
     const tab2Class = (tab === 2 ? ' main-nav__nav-list-link_active' : '');
+    const tab3Class = (tab === 3 ? ' main-nav__nav-list-link_active' : '');
 
     return (
       <div className="main-nav__container-v2">
@@ -110,6 +112,18 @@ class MainNav extends Component {
                       className={`main-nav__nav-list-link${tab2Class} main-nav__nav-list-link-disabled`}
                     >
                       Скалы
+                    </a>
+                  </li>
+                  <li className="main-nav__nav-list-item">
+                    <a
+                      onClick={event => {
+                        event.stopPropagation();
+                        changeTabProp(3);
+                        history.push('/users');
+                      }}
+                      className={`main-nav__nav-list-link${tab3Class}`}
+                    >
+                      Рейтинги
                     </a>
                   </li>
                 </ul>

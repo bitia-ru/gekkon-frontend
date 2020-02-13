@@ -78,9 +78,6 @@ class Footer extends React.PureComponent {
                     </>
                   )
                 }
-                <li className="footer__list-item">
-                  <Link to="/v2/users" className="footer__list-link">Пользователи</Link>
-                </li>
               </ul>
             </div>
             <div className="footer__item">
@@ -92,7 +89,12 @@ class Footer extends React.PureComponent {
                   <Link to="/" className="footer__list-link">Скалодромы</Link>
                 </li>
                 <li className="footer__list-item">
-                  <Link to="/crags" className="footer__list-link footer__list-link-disabled">Скалы</Link>
+                  <Link to="/crags" className="footer__list-link footer__list-link-disabled">
+                    Скалы
+                  </Link>
+                </li>
+                <li className="footer__list-item">
+                  <Link to="/users" className="footer__list-link">Рейтинги</Link>
                 </li>
               </ul>
             </div>

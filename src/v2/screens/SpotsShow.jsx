@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as R from 'ramda';
 import { ToastContainer } from 'react-toastr';
 import Content from '@/v1/components/Content/Content';
-import Header from '@/v1/components/Header/Header';
+import Header from '../components/Header/Header';
 import Footer from '@/v1/components/Footer/Footer';
 import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
 import RoutesEditModal from '@/v1/components/RoutesEditModal/RoutesEditModal';
