@@ -74,6 +74,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
             afterLogInFail();
           });
       }).catch((error) => {
+        console.log(error);
         dispatch(loadUsersFailed());
         const resp = error.response;
         if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {

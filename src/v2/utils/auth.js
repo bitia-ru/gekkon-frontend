@@ -43,6 +43,7 @@ export const createUserSession = (
         );
       },
       failed(error) {
+        console.log(error);
         const resp = error.response;
         let errorDetails;
         if (resp && resp.status === 404 && resp.statusText === 'Not Found' && R.path(['data', 'model'], resp) === 'User') {
