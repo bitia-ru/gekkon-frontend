@@ -27,7 +27,7 @@ class AscentTriptych extends React.PureComponent {
   }
 
   onAscentButtonClicked = (rawResult) => {
-    const { onAddAscents, initialWithFlash } = this.props;
+    const { onAddAscents, initialWithFlash, instantMode } = this.props;
     const { withFlash, ascentCounts } = this.state;
     let { newAscents } = this.state;
 
@@ -93,7 +93,7 @@ class AscentTriptych extends React.PureComponent {
                 },
               );
             },
-            1500,
+            instantMode ? 0 : 1500,
           );
         },
       );

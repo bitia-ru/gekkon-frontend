@@ -23,6 +23,7 @@ const RouteAscentsLayout = ({
     <div className={css(style.tryptichRow)}>
       <AscentTriptych
         initialWithFlash={initialWithFlash}
+        instantMode={false}
         onAddAscents={
           (ascents, afterAscentsAdded) => onAddAscents && onAddAscents(ascents, afterAscentsAdded)
         }
