@@ -71,11 +71,14 @@ class InfoBlock extends Component {
                               type="button"
                               onClick={() => this.onClick(sector ? sector.id : 0, currentSectors)}
                             >
-                      <span className="info-block__info-icon">
-                        <svg aria-hidden="true">
-                          <use xlinkHref={`${require('./images/arrow.svg')}#arrow`} />
-                        </svg>
-                      </span>
+                              <div className="info-block__info-icon" style={{display: 'flex', flexFlow: 'column',color: 'white'}}>
+                                <div style={{ height: '10px' }}>
+                                  <svg aria-hidden="true">
+                                    <use xlinkHref={`${require('./images/arrow.svg')}#arrow`} />
+                                  </svg>
+                                </div>
+                                <div>Залы</div>
+                              </div>
                             </button>
                           </div>
                           <Slider
