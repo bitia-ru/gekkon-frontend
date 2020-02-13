@@ -13,13 +13,13 @@
 }
 
 .track-point {
-    width: 18px;
-    height: 18px;
+    width: 1vw;
+    height: 1vw;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 9px;
+    font-size: 0.65vw;
     font-family: Gilroy, sans-serif;
     border: none;
     padding: 0;
