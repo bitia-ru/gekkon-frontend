@@ -15,7 +15,6 @@ jobs:
           SSH_KEY_GPG_PASSPHRASE: ${{ secrets.ssh_key_gpg_passphrase }}
         run: |
           mkdir -p ~/.ssh
-          ls -la
           gpg --quiet --batch --yes --decrypt --passphrase="${SSH_KEY_GPG_PASSPHRASE}" --output ~/.ssh/id_rsa.deploy deploy/secrets/peclet.id_rsa.gpg
           chmod 600 ~/.ssh/id_rsa.deploy
           cat << EOF >> ~/.ssh/config
