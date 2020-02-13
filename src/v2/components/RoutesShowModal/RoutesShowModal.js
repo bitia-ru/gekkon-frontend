@@ -6,7 +6,7 @@ import * as R from 'ramda';
 import LikeButton from '@/v1/components/LikeButton/LikeButton';
 import Button from '@/v1/components/Button/Button';
 import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
-import RouteStatus from '@/v1/components/RouteStatus/RouteStatus';
+import RouteStatus from '../RouteStatus/RouteStatus';
 import CollapsableBlock from '@/v1/components/CollapsableBlock/CollapsableBlock';
 import CommentForm from '@/v1/components/CommentForm/CommentForm';
 import Counter from '@/v1/components/Counter/Counter';
@@ -603,7 +603,10 @@ class RoutesShowModal extends Component {
                         <div className="modal__track-status">
                           {
                             user && (
-                              <RouteStatus changeAscentResult={this.changeAscentResultV2} />
+                              <RouteStatus
+                                changeAscentResult={() => this.changeAscentResult(routeId)}
+                                onEditAdvancedClicked={this.changeAscentResultV2}
+                              />
                             )
                           }
                         </div>
