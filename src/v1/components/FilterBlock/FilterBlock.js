@@ -251,7 +251,7 @@ class FilterBlock extends Component {
             <Button
               tabIndex={4}
               style="gray"
-              onClick={() => { history.push(`${match.url}/new`); }}
+              onClick={() => { history.push(`${match.url}/routes/new`); }}
             >
               +
             </Button>

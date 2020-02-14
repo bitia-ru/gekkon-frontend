@@ -65,7 +65,7 @@ class SpotsShow extends BaseComponent {
       }
     };
 
-    openEdit = (routeId) => { this.props.history.push(`${this.props.match.url}/${routeId}/edit`); };
+    openEdit = (routeId) => { this.props.history.push(`${this.props.match.url}/routes/${routeId}/edit`); };
 
     cancelEdit = () => { this.props.history.goBack(); };
 
@@ -165,7 +165,7 @@ class SpotsShow extends BaseComponent {
               <div className={showModal ? null : 'page__scroll'}>
                 <Switch>
                   <Route
-                    path={[`${match.path}/:route_id/edit`, `${match.path}/new`]}
+                    path={[`${match.path}/routes/:route_id/edit`, `${match.path}/routes/new`]}
                     render={() => (
                       <RoutesEditModal
                         onClose={this.closeRoutesModal}

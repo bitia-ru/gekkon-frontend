@@ -39,7 +39,6 @@ export const signIn = afterSignIn => (
 
     Axios.get(`${ApiUrl}/v1/users/self`, { withCredentials: true })
       .then((response) => {
-        console.log(response.data.payload);
         dispatch(loadUserSuccess(response.data.payload));
         if (afterSignIn) {
           afterSignIn(response.data.payload);
