@@ -311,6 +311,7 @@ export const addAscent = params => (
       params,
       {
         method: 'post',
+        type: 'form-multipart',
         success(payload) {
           dispatch({
             type: acts.LOAD_ROUTE_PROPERTY_SUCCESS,
@@ -342,43 +343,13 @@ export const updateAscent = (id, params) => (
       params,
       {
         method: 'patch',
+        type: 'form-multipart',
         success(payload) {
           dispatch({
             type: acts.LOAD_ROUTE_PROPERTY_SUCCESS,
             routeId: payload.route_id,
             routePropertyName: 'ascents',
             routePropertyData: payload,
-          });
-        },
-        failed(error) {
-          dispatch({
-            type: acts.LOAD_ROUTES_FAILED,
-          });
-
-          console.log(error);
-        },
-      },
-    );
-  }
-);
-
-export const removeAscent = id => (
-  (dispatch) => {
-    dispatch({
-      type: acts.LOAD_ROUTES_REQUEST,
-    });
-
-    Api.post(
-      `/v1/ascents/${id}`,
-      null,
-      {
-        method: 'delete',
-        success(payload) {
-          dispatch({
-            type: acts.REMOVE_ROUTE_PROPERTY_BY_ID_SUCCESS,
-            routeId: payload.route_id,
-            routePropertyName: 'ascents',
-            routePropertyId: payload.id,
           });
         },
         failed(error) {

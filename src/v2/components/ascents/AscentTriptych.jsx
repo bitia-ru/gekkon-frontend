@@ -31,13 +31,25 @@ class AscentTriptych extends React.PureComponent {
     const { withFlash, ascentCounts } = this.state;
     let { newAscents } = this.state;
 
-    const result = {
+    const resultType = {
       flash: 'success',
       success: 'success',
       attempt: 'attempt',
       red_point: 'success',
       ascentSerieComposingIsInProgress: false,
     }[rawResult];
+    let result;
+    if (instantMode) {
+      result = resultType;
+    } else {
+      result = {
+        flash: 'flash',
+        attempt: 'unsuccessful',
+        red_point: 'red_point',
+        success: 'red_point',
+        ascentSerieComposingIsInProgress: false,
+      }[rawResult];
+    }
 
     if (withFlash) {
       this.setState({ withFlash: false });
@@ -67,7 +79,7 @@ class AscentTriptych extends React.PureComponent {
       newAscents,
       ascentCounts: {
         ...ascentCounts,
-        [result]: ascentCounts[result] + 1,
+        [resultType]: ascentCounts[resultType] + 1,
       },
     });
 

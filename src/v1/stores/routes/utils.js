@@ -235,7 +235,7 @@ export const addAscent = params => (
       url: `${ApiUrl}/v1/ascents`,
       method: 'post',
       data: params,
-      config: { withCredentials: true },
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(
@@ -258,7 +258,7 @@ export const updateAscent = (url, params) => (
       url,
       method: 'patch',
       data: params,
-      config: { withCredentials: true },
+      config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then((response) => {
         dispatch(loadRoutePropertySuccess(

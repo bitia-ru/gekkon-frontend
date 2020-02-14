@@ -17,13 +17,14 @@ const RouteAscentsLayout = ({
   onRemoveAscent,
   onAscentDateChanged,
   ascents,
+  instantMode,
 }) => (
   <div className={css(style.container)}>
     <div className={css(style.titleRow)}>{title}</div>
     <div className={css(style.tryptichRow)}>
       <AscentTriptych
         initialWithFlash={initialWithFlash}
-        instantMode={false}
+        instantMode={instantMode}
         onAddAscents={
           (ascents, afterAscentsAdded) => onAddAscents && onAddAscents(ascents, afterAscentsAdded)
         }

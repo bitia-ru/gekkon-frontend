@@ -33,9 +33,13 @@ import {
   removeLike,
   addLike,
   removeRoute,
-} from '@/v2/redux/routes/actions';
+  addAscent,
+  updateAscent,
+  removeAscent,
+} from '@/v1/stores/routes/utils';
 import CtrlPressedContext from '@/v1/contexts/CtrlPressedContext';
 import './RoutesShowModal.css';
+import { ApiUrl } from '@/v1/Environ';
 import getState from '@/v1/utils/getState';
 import getFilters from '@/v1/utils/getFilters';
 import reloadRoutes from '@/v1/utils/reloadRoutes';
@@ -69,7 +73,7 @@ class RoutesShowModal extends Component {
 
   componentDidMount() {
     const { loadRoute: loadRouteProp } = this.props;
-    loadRouteProp(this.getRouteId());
+    loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId()}`);
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -226,7 +230,7 @@ class RoutesShowModal extends Component {
     const spotId = sectors[sectorId].spot_id;
     if (window.confirm('Удалить трассу?')) {
       removeRouteProp(
-        routeId,
+        `${ApiUrl}/v1/routes/${routeId}`,
         () => {
           if (R.contains('sectors', match.url)) {
             reloadSector(sectorId);
@@ -286,7 +290,7 @@ class RoutesShowModal extends Component {
     if (!window.confirm('Удалить комментарий?')) {
       return;
     }
-    removeCommentProp(comment.id);
+    removeCommentProp(`${ApiUrl}/v1/route_comments/${comment.id}`);
   };
 
   onLikeChange = (routeId, afterChange) => {
@@ -299,7 +303,7 @@ class RoutesShowModal extends Component {
     const route = routes[routeId];
     const like = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.likes));
     if (like) {
-      removeLikeProp(like.id, afterChange);
+      removeLikeProp(`${ApiUrl}/v1/likes/${like.id}`, afterChange);
     } else {
       const params = { like: { user_id: user.id, route_id: routeId } };
       addLikeProp(params, afterChange);
@@ -307,6 +311,40 @@ class RoutesShowModal extends Component {
   };
 
   changeAscentResultV2 = () => this.props.history.push('#ascents');
+
+  changeAscentResult = (routeId) => {
+    const {
+      user,
+      routes,
+      addAscent: addAscentProp,
+      updateAscent: updateAscentProp,
+      removeAscent: removeAscentProp,
+    } = this.props;
+    const route = routes[routeId];
+    const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
+    if (ascent) {
+      if (ascent.history) {
+        this.changeAscentResultV2();
+        return;
+      }
+      let result;
+      if (ascent.result === 'red_point') {
+        result = 'flash';
+      } else if (ascent.result === 'flash') {
+        result = 'unsuccessful';
+        removeAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`);
+        return;
+      } else {
+        result = 'red_point';
+      }
+      const params = { ascent: { result } };
+      updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
+    } else {
+      const result = 'red_point';
+      const params = { ascent: { result, user_id: user.id, route_id: routeId } };
+      addAscentProp(params);
+    }
+  };
 
   content = () => {
     const {
@@ -686,18 +724,21 @@ RoutesShowModal.propTypes = {
 
 const mapStateToProps = state => ({
   sectors: state.sectorsStore.sectors,
-  routes: state.routesStoreV2.routes,
+  routes: state.routesStore.routes,
   user: currentUserObtainer(state),
   loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadRoute: (id, afterLoad) => dispatch(loadRoute(id, afterLoad)),
-  removeComment: id => dispatch(removeComment(id)),
+  loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
+  removeComment: url => dispatch(removeComment(url)),
   addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),
-  removeLike: (id, afterAll) => dispatch(removeLike(id, afterAll)),
+  removeLike: (url, afterAll) => dispatch(removeLike(url, afterAll)),
   addLike: (params, afterAll) => dispatch(addLike(params, afterAll)),
-  removeRoute: (id, afterSuccess) => dispatch(removeRoute(id, afterSuccess)),
+  addAscent: params => dispatch(addAscent(params)),
+  updateAscent: (url, params) => dispatch(updateAscent(url, params)),
+  removeAscent: url => dispatch(removeAscent(url)),
+  removeRoute: (url, afterSuccess) => dispatch(removeRoute(url, afterSuccess)),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
 });
 

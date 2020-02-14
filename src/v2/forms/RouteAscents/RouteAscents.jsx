@@ -1,101 +1,57 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import RouteAscentsLayout from './RouteAscentsLayout';
+import { ApiUrl } from '@/v1/Environ';
 import {
   updateAscent as updateAscentAction,
   addAscent as addAscentAction,
-  removeAscent as removeAscentAction,
-} from '@/v2/redux/routes/actions';
+} from '@/v1/stores/routes/utils';
 
-const ADD_ATTEMPT_TIMEOUT = 1000;
+const SAVE_REQUEST_DELAY = 3000;
 
 class RouteAscents extends Component {
   constructor(props) {
     super(props);
 
-    this.noAscents = this.ascentsForLayout().length === 0;
+    const ascent = this.getAscent();
     this.state = {
-      detailsExpanded: !this.noAscents,
-      attempts: { count: 0 },
+      details: ascent,
+      ascent,
     };
     this.timerId = null;
   }
 
-  onAddButtonClicked = (buttonId) => {
-    if (R.contains(buttonId, ['attempt', 'success'])) {
-      const { attempts } = this.state;
-      let count;
-      if (R.contains(attempts.type, [buttonId, undefined])) {
-        count = attempts.count + 1;
-        this.setState({ attempts: { count, type: buttonId } });
-      } else {
-        count = 1;
-        this.createAttempts(attempts.count, attempts.type);
-      }
+  componentWillUnmount() {
+    if (this.timerId) {
       clearTimeout(this.timerId);
-      this.timerId = setTimeout(
-        this.createAttempts,
-        ADD_ATTEMPT_TIMEOUT,
-        count,
-        buttonId,
-        true,
-      );
-      return;
+      this.save();
     }
-    const { user, addAscent } = this.props;
-    const params = {
-      ascent: {
-        result: buttonId,
-        user_id: user.id,
-        route_id: this.getRouteId(),
-      },
-    };
-    addAscent(params);
-    this.afterRequestSend();
-  };
+  }
 
-  afterRequestSend = () => {
-    const { history } = this.props;
-    if (this.noAscents) {
-      history.goBack();
-    }
-  };
-
-  createAttempts = (count, type, onTimeout) => {
-    const { user, addAscent } = this.props;
-    const params = {
-      ascent: {
-        result: type === 'attempt' ? 'unsuccessful' : 'red_point',
-        user_id: user.id,
-        route_id: this.getRouteId(),
-        count,
-      },
-    };
-    addAscent(params);
-    if (onTimeout) {
-      this.setState({ attempts: { count: 0 } });
-    } else {
-      this.setState(
-        { attempts: { count: 1, type: type === 'attempt' ? 'success' : 'attempt' } },
-      );
-    }
-    this.afterRequestSend();
+  save = () => {
+    const { updateAscent } = this.props;
+    const { ascent } = this.state;
+    const { id } = this.getAscent();
+    updateAscent(`${ApiUrl}/v1/ascents/${id}`, { ascent });
   };
 
   onAscentDateChanged = (id, date) => {
-    const { updateAscent } = this.props;
-    const params = { ascent: { accomplished_at: date } };
-    updateAscent(id, params);
+    const { ascent } = this.state;
+    const history = R.clone(ascent.history);
+    history[id].accomplished_at = date.format('YYYY-MM-DD');
+    this.updateStateAscent(this.sortAscents(history));
   };
 
   removeAscent = (id) => {
-    const { removeAscent } = this.props;
-    removeAscent(id);
+    const { ascent } = this.state;
+    const history = R.remove(id, 1, ascent.history);
+    this.updateStateAscent(history);
   };
 
   getRouteId = () => {
@@ -107,43 +63,152 @@ class RouteAscents extends Component {
     );
   };
 
-  ascentsForLayout = () => {
+  getAscent = () => {
     const { routes, user } = this.props;
     const route = routes[this.getRouteId()];
-    return R.map(
-      ascent => (
-        R.merge(
-          ascent,
-          { success: R.contains(ascent.result, ['flash', 'red_point']) },
-        )
+    return R.find(R.propEq('user_id', user.id), R.values(route.ascents));
+  };
+
+  ascentsForLayout = () => {
+    const { ascent } = this.state;
+    const mapIndexed = R.addIndex(R.map);
+    return mapIndexed(
+      (a, index) => (
+        {
+          id: index,
+          success: a.result === 'success',
+          accomplished_at: a.accomplished_at,
+        }
       ),
-      R.filter(R.propEq('user_id', user.id), R.values(route.ascents)),
+      (ascent && ascent.history) || [],
     );
   };
 
+  getResult = (history) => {
+    if (history === null || history.length === 0) {
+      return 'unsuccessful';
+    }
+    if (history[0].result === 'success') {
+      return 'flash';
+    }
+    if (R.find(R.propEq('result', 'success'), history)) {
+      return 'red_point';
+    }
+    return 'unsuccessful';
+  };
+
+  sortAscents = history => (
+    R.sort(
+      (a, b) => (moment(
+        a.accomplished_at,
+        'YYYY-MM-DD',
+      ) - moment(
+        b.accomplished_at,
+        'YYYY-MM-DD',
+      )),
+      history,
+    )
+  );
+
+  prepareAscentsHistory = (ascents) => {
+    const { ascent } = this.state;
+    let date;
+    if (ascent && ascent.history && ascent.history.length > 0) {
+      date = R.last(ascent.history).accomplished_at;
+    } else {
+      date = moment().format('YYYY-MM-DD');
+    }
+    return R.flatten(R.map(
+      a => (
+        R.repeat(
+          {
+            result: a.result,
+            accomplished_at: date,
+          },
+          a.count,
+        )
+      ),
+      ascents,
+    ));
+  };
+
+  updateStateAscent = (history) => {
+    this.setState({
+      ascent: {
+        result: this.getResult(history),
+        history: (history === null || history.length === 0) ? null : history,
+      },
+    });
+    clearTimeout(this.timerId);
+    this.timerId = setTimeout(this.save, SAVE_REQUEST_DELAY);
+  };
+
+  onAddAscents = (ascents, afterAscentsAdded) => {
+    const { ascent } = this.state;
+    if (ascent) {
+      const history = R.concat(ascent.history || [], this.prepareAscentsHistory(ascents));
+      this.updateStateAscent(history);
+    } else {
+      const { user, addAscent, history: historyProp } = this.props;
+      let params;
+      if (ascents.length > 1) {
+        const lookup = {
+          red_point: 'success',
+          flash: 'success',
+          unsuccessful: 'attempt',
+        };
+        const ascentsNew = R.map(
+          a => (
+            {
+              result: lookup[a.result],
+              count: a.count,
+            }
+          ),
+          ascents,
+        );
+        const history = this.prepareAscentsHistory(ascentsNew);
+        params = {
+          ascent: {
+            history,
+            result: this.getResult(history),
+            user_id: user.id,
+            route_id: this.getRouteId(),
+          },
+        };
+      } else {
+        params = {
+          ascent: {
+            result: ascents[0].result,
+            user_id: user.id,
+            route_id: this.getRouteId(),
+          },
+        };
+      }
+      addAscent(params);
+      historyProp.goBack();
+    }
+
+    if (afterAscentsAdded) {
+      afterAscentsAdded();
+    }
+  };
+
   render() {
-    const { detailsExpanded, attempts } = this.state;
-    const ascents = this.ascentsForLayout();
+    const { details, ascent } = this.state;
+    const ascentsHistory = this.ascentsForLayout();
     return (
       <Modal maxWidth="400px">
         <RouteAscentsLayout
           title="Добавление пролаза"
-          initialWithFlash={true}
+          initialWithFlash={!ascent}
+          instantMode={ascent}
           blameCategory={false}
-          ascents={ascents}
+          ascents={ascentsHistory}
           onClick={this.onClick}
           details={{
-            show: true,
+            show: details,
           }}
-          onAddAscents={
-            (ascents, afterAscentsAdded) => {
-              console.log(ascents);
-
-              if (true) {
-                afterAscentsAdded();
-              }
-            }
-          }
+          onAddAscents={this.onAddAscents}
           onRemoveAscent={this.removeAscent}
           onAscentDateChanged={this.onAscentDateChanged}
         />
@@ -155,7 +220,6 @@ class RouteAscents extends Component {
 RouteAscents.propTypes = {
   user: PropTypes.object.isRequired,
   routes: PropTypes.object.isRequired,
-  removeAscent: PropTypes.func.isRequired,
   addAscent: PropTypes.func.isRequired,
   updateAscent: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
@@ -165,13 +229,12 @@ RouteAscents.propTypes = {
 const mapStateToProps = state => ({
   user: currentUser(state),
   formErrors: {},
-  routes: state.routesStoreV2.routes,
+  routes: state.routesStore.routes,
 });
 
 const mapDispatchToProps = dispatch => ({
   addAscent: params => dispatch(addAscentAction(params)),
-  removeAscent: id => dispatch(removeAscentAction(id)),
-  updateAscent: (id, params) => dispatch(updateAscentAction(id, params)),
+  updateAscent: (url, params) => dispatch(updateAscentAction(url, params)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RouteAscents));
