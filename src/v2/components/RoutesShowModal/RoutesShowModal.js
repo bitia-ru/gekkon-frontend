@@ -104,6 +104,22 @@ class RoutesShowModal extends Component {
     if (event.key === 'Escape') {
       onClose();
     }
+
+    if (event.key === 'ArrowRight') {
+      this.props.history.push(
+        R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() + 1}`)(this.props.match.url),
+      );
+      const { loadRoute: loadRouteProp } = this.props;
+      loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId() + 1}`);
+    }
+
+    if (event.key === 'ArrowLeft') {
+      this.props.history.push(
+        R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() - 1}`)(this.props.match.url),
+      );
+      const { loadRoute: loadRouteProp } = this.props;
+      loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId() - 1}`);
+    }
   };
 
   startAnswer = (quoteComment) => {
