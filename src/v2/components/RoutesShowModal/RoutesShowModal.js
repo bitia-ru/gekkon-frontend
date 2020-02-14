@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+// Start
 import LikeButton from '@/v1/components/LikeButton/LikeButton';
 import Button from '@/v1/components/Button/Button';
 import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
@@ -13,15 +14,20 @@ import Counter from '@/v1/components/Counter/Counter';
 import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';
 import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
+// End
 import { DEFAULT_COMMENTS_DISPLAYED } from '@/v1/Constants/Comments';
+// Start
 import StickyBar from '@/v1/components/StickyBar/StickyBar';
 import SchemeModal from '@/v1/components/SchemeModal/SchemeModal';
 import ShowSchemeButton from '@/v1/components/ShowSchemeButton/ShowSchemeButton';
 import NoticeButton from '@/v1/components/NoticeButton/NoticeButton';
 import NoticeForm from '@/v1/components/NoticeForm/NoticeForm';
 import Tooltip from '@/v1/components/Tooltip/Tooltip';
+// End
 import { avail, notAvail } from '@/v1/utils';
+// Start
 import TooltipPerson from '@/v1/components/TooltipPerson/TooltipPerson';
+// End
 import { HIDE_DELAY } from '@/v1/Constants/TooltipPerson';
 import numToStr from '@/v1/Constants/NumToStr';
 import RouteContext from '@/v1/contexts/RouteContext';
@@ -38,7 +44,7 @@ import {
   removeAscent,
 } from '@/v1/stores/routes/utils';
 import CtrlPressedContext from '@/v1/contexts/CtrlPressedContext';
-import './RoutesShowModal.css';
+import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
 import getState from '@/v1/utils/getState';
 import getFilters from '@/v1/utils/getFilters';
@@ -407,8 +413,8 @@ class RoutesShowModal extends Component {
     );
     const numOfFlash = (avail(flashes) && flashes.length) || 0;
     return (
-      <div className="modal-overlay__wrapper">
-        <div className="modal modal-overlay__modal">
+      <div className={css(styles.modalOverlayWrapper)}>
+        <div className={css(styles.modal, styles.modalOverlayModal)}>
           <div className="modal-block__close">
             <CloseButton
               onClick={
@@ -420,13 +426,13 @@ class RoutesShowModal extends Component {
           </div>
           {
             (user !== undefined) && <div
-              className="modal-block__notice"
+              className={css(styles.modalBlockNotice)}
               onMouseEnter={() => this.setState({ showTooltip: true })}
               onMouseLeave={() => this.setState({ showTooltip: false })}
               onClick={event => event.stopPropagation()}
             >
               <NoticeButton onClick={this.showNoticeForm} />
-              <div className="modal-block__notice-tooltip">
+              <div className={css(styles.modalBlockNoticeTooltip)}>
                 {showTooltip && <Tooltip text="Сообщить об ошибке" />}
               </div>
               {
@@ -451,7 +457,7 @@ class RoutesShowModal extends Component {
                   {
                     avail(route) && <>
                       <div
-                        className="modal__track-block"
+                        className={css(styles.modalTrackBlock)}
                         role="button"
                         tabIndex={0}
                         style={{ outline: 'none' }}
@@ -462,15 +468,15 @@ class RoutesShowModal extends Component {
                           this.mouseOver = false;
                         }}
                       >
-                        <div className="modal__track">
+                        <div className={css(styles.modalTrack)}>
                           <ShowSchemeButton
                             disabled={!route.data || route.data.position === undefined}
                             onClick={() => this.setState({ schemeModalVisible: true })}
                           />
                           {
                             showLoadPhotoMsg && (
-                              <div className="modal__track-descr">
-                                <div className="modal__route-photo-placeholder" />
+                              <div className={css(styles.modalTrackDescr)}>
+                                <div className={css(style.modalRoutePhotoPlaceholder)} />
                               </div>
                             )
                           }
@@ -489,11 +495,11 @@ class RoutesShowModal extends Component {
                           }
                         </div>
                         <div
-                          className="modal__track-footer"
+                          className={css(styles.modalTrackFooter)}
                         >
-                          <div className="modal__track-information">
+                          <div className={css(styles.modalTrackInformation)}>
                             <div
-                              className="modal__track-count"
+                              className={css(styles.modalTrackCount)}
                               onMouseEnter={() => this.setState({
                                 showLikesTooltip: true,
                                 showRedpointsTooltip: false,
@@ -530,7 +536,7 @@ class RoutesShowModal extends Component {
                               />
                             </div>
                             <div
-                              className="modal__track-count"
+                              className={css(styles.modalTrackCount)}
                               style={{ cursor: 'pointer' }}
                               onMouseEnter={() => this.setState({
                                 showLikesTooltip: false,
@@ -557,7 +563,7 @@ class RoutesShowModal extends Component {
                               <Counter number={numOfRedpoints} text="redpoints" />
                             </div>
                             <div
-                              className="modal__track-count"
+                              className={css(styles.modalTrackCount)}
                               style={{ cursor: 'pointer' }}
                               onMouseEnter={() => this.setState({
                                 showLikesTooltip: false,
@@ -616,7 +622,7 @@ class RoutesShowModal extends Component {
                         </div>
                       </div>
                       <div
-                        className="modal__track-info"
+                        className={css(styles.modalTrackInfo)}
                         onMouseOver={() => {
                           this.mouseOver = true;
                         }}
@@ -624,7 +630,7 @@ class RoutesShowModal extends Component {
                           this.mouseOver = false;
                         }}
                       >
-                        <div className="modal__track-status">
+                        <div className={css(styles.modalTrackStatus)}>
                           {
                             user && (
                               <RouteStatus
@@ -634,18 +640,18 @@ class RoutesShowModal extends Component {
                             )
                           }
                         </div>
-                        <div className="modal__track-header">
-                          <h1 className="modal__title">
+                        <div className={css(styles.modalTrackHeader)}>
+                          <h1 className={css(styles.modalTitle)}>
                             {this.getRouteNumber(route)}
-                            <span className="modal__title-place-wrapper">
-                              <span className="modal__title-place">
+                            <span className={css(styles.modalTitlePlaceWrapper)}>
+                              <span className={css(styles.modalTitlePlace)}>
                                 {route.name ? `(“${route.name}”)` : ''}
                               </span>
                             </span>
                           </h1>
                           <RouteDataTable route={route} user={user} />
                         </div>
-                        <div className="modal__item modal__descr-item">
+                        <div className={css(styles.modalItem, styles.modalDescrItem)}>
                           <CollapsableBlock
                             title="Описание"
                             isCollapsed={descriptionCollapsed}
@@ -653,7 +659,7 @@ class RoutesShowModal extends Component {
                             text={route.description ? route.description : ''}
                           />
                         </div>
-                        <div className="modal__item">
+                        <div className={css(styles.modalItem)}>
                           <CommentBlock
                             startAnswer={this.startAnswer}
                             user={user}
@@ -679,7 +685,7 @@ class RoutesShowModal extends Component {
                             objectListTitle="route_comments"
                           />
                         </div>
-                        <div className="modal__enter-comment">
+                        <div className={css(styles.modalEnterComment)}>
                           <CommentForm
                             quoteComment={quoteComment}
                             setTextareaRef={this.setTextareaRef}
@@ -710,7 +716,7 @@ class RoutesShowModal extends Component {
     return (
       <RouteContext.Provider value={{ route }}>
         <div
-          className="modal-overlay"
+          className={css(styles.modalOverlay)}
           onClick={() => {
             if (!this.mouseOver) {
               onClose();
@@ -728,6 +734,273 @@ class RoutesShowModal extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    display: 'block',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    overflow: 'auto',
+    width: '100%',
+    height: '100%',
+    background: 'rgba(0, 0, 0, 0.8)',
+    zIndex: '100',
+  },
+
+  modalOverlayWrapper: {
+    position: 'relative',
+    backgroundColor: 'transparent',
+    paddingLeft: '70px',
+    paddingRight: '70px',
+    width: '100%',
+    maxWidth: '1464px',
+    boxSizing: 'border-box',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: '100%',
+    minWidth: '1100px',
+  },
+
+  modalOverlayModal: {
+    '@media screen and (minWidth: 1920px)': {
+      alignSelf: 'center',
+    },
+  },
+
+  modal: {
+    maxWidth: '1320px',
+    width: '100%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '20px',
+    marginBottom: '20px',
+    backgroundColor: '#ffffff',
+    display: 'flex',
+    position: 'relative',
+    minHeight: '800px',
+    minWidth: '960px',
+    maxHeight: '1050px',
+    height: '95vh',
+
+    '@media screen and (maxWidth: 1600px)': {
+      minHeight: '700px',
+    },
+
+    '@media screen and (maxWidth: 1440px)': {
+      minHeight: '600px',
+    },
+  },
+
+  modalTrackBlock: {
+    maxWidth: '530px',
+    flexBasis: '45%',
+    width: '100%',
+    backgroundColor: '#FAFAFA',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  modalTrackInfo: {
+    paddingTop: '45px',
+    width: '55%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: '1',
+    backgroundColor: '#ffffff',
+
+    '@media screen and (maxWidth: 1440px)': {
+      minWidth: '410px',
+      paddingTop: '24px',
+    },
+  },
+
+  modalTrackHeader: {
+    paddingLeft: '45px',
+    paddingRight: '45px',
+    paddingBottom: '15px',
+    width: '100%',
+    boxSizing: 'border-box',
+
+    '@media screen and (maxWidth: 1440px)': {
+      paddingBottom: '6px',
+      paddingLeft: '32px',
+      paddingRight: '32px',
+    },
+  },
+
+  modalTrackFooter: {
+    padding: '33px 30px',
+    alignSelf: 'flex-end',
+    width: '100%',
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+
+    '@media screen and (maxWidth: 1440px)': {
+      padding: '16px 24px',
+    },
+  },
+
+  // NOT SURE!!!!!!!!!!!!!!!!!!!!!!!!!!
+  modalTrackCount: {
+    position: 'relative',
+    ':not': {
+      ':last-child': {
+        marginRight: '30px',
+      },
+    },
+  },
+
+  // HOW?!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // .modal__track-count:not(:last-child) {
+  //     marginRight: 30px,
+  // },
+
+  modalTrack: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F3F3F3',
+    overflow: 'hidden',
+    display: 'block',
+    alignItems: 'center',
+    position: 'relative',
+  },
+
+  modalTrackDescr: {
+    position: 'absolute',
+    content: '\'\'',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    zIndex: '1',
+  },
+
+  modalRoutePhotoPlaceholder: {
+    width: '118px',
+    height: '118px',
+    position: 'relative',
+    backgroundImage: 'url(./photo-placeholder.svg)',
+    backgroundSize: 'contain',
+  },
+
+  modalTrackStatus: {
+    position: 'absolute',
+    content: '\'\'',
+    top: '42px',
+    right: '-3px',
+  },
+
+  modalTrackInformation: {
+    display: 'flex',
+    paddingRight: '15px',
+  },
+
+  modalItem: {
+    paddingLeft: '45px',
+    paddingRight: '45px',
+    paddingTop: '15px',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: '1',
+    '@media screen and (maxWidth: 1440px)': {
+      paddingLeft: '32px',
+      paddingRight: '32px',
+      paddingTop: '6px',
+      paddingBottom: '6px',
+    },
+  },
+
+  modalEnterComment: {
+    padding: '12px 45px',
+    boxSizing: 'border-box',
+    width: '100%',
+    position: 'relative',
+    backgroundColor: '#ffffff',
+    alignSelf: 'flex-end',
+    '@media screen and (maxWidth: 1440px)': {
+      padding: '3px 32px',
+    },
+    ':before': {
+      position: 'absolute',
+      content: '\'\'',
+      left: '45px',
+      right: '45px',
+      height: '1px',
+      top: '-1px',
+      backgroundColor: '#CECECE',
+      zIndex: '2',
+    },
+  },
+
+  modalDescrItem: {
+    flexShrink: '0',
+    flexGrow: '0',
+    paddingBottom: '15px',
+    '@media screen and (maxWidth: 1440px)': {
+      paddingBottom: '6px',
+    },
+  },
+
+  modalTitle: {
+    color: '#1f1f1f',
+    fontSize: '30px',
+    fontFamily: ['GilroyBold', 'sans-serif'],
+    marginTop: '0',
+    marginBottom: '30px',
+    paddingRight: '100px',
+    '@media screen and (maxWidth: 1440px)': {
+      display: 'block',
+      paddingRight: '0',
+      fontSize: '24px',
+      marginBottom: '12px',
+    },
+  },
+
+  modalTitlePlace: {
+    color: '#797979',
+    '@media screen and (maxWidth: 1440px)': {
+      marginTop: '12px',
+    },
+  },
+
+  modalTitlePlaceWrapper: {
+    display: 'inline-block',
+    marginLeft: '18px',
+    '@media screen and (maxWidth: 1440px)': {
+      display: 'block',
+      marginTop: '10px',
+      marginLeft: '0',
+    },
+  },
+
+  modalBlockNotice: {
+    position: 'absolute',
+    content: '\'\'',
+    right: '-40px',
+    top: '32px',
+    width: '17px',
+    height: '17px',
+    zIndex: '10',
+  },
+
+
+  modalBlockNoticeTooltip: {
+    position: 'absolute',
+    content: '\'\'',
+    right: 'calc(100% + 12px)',
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
+});
+
 
 RoutesShowModal.propTypes = {
   user: PropTypes.object,
