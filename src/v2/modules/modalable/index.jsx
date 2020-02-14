@@ -43,7 +43,7 @@ const withModals = (BaseComponent) => {
         processLocation(this.props.history.location);
       }
 
-      window.addEventListener('keydown', this.onKeyDown);
+      window.addEventListener('keydown', this.onModalKeyDown);
     }
 
     componentWillUnmount(...args) {
@@ -53,11 +53,11 @@ const withModals = (BaseComponent) => {
         this.modalWrapperRouterHistoryListenerUnlisten();
       }
 
-      window.removeEventListener('keydown', this.onKeyDown);
+      window.removeEventListener('keydown', this.onModalKeyDown);
     }
 
-    onKeyDown = (event) => {
-      if (event.key === 'Escape') {
+    onModalKeyDown = (event) => {
+      if (event.key === 'Escape' && this.isModalShown()) {
         this.closeForm();
       }
     };
