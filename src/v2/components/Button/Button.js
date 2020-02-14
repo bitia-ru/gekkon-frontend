@@ -1,47 +1,124 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Button.css';
+import { StyleSheet, css } from '../../aphrodite';
 
 const Button = ({
   disabled,
   submit,
   fullLength,
   isWaiting,
+  title,
   size,
   style,
   onClick,
-  children,
 }) => {
-  let styleClass = '';
+  let styleClassGrey = false;
+  let styleClassNotNormal = false;
+  let sizeClassSmall = false;
+  let sizeClassMedium = false;
+
   if (style !== 'normal') {
     if (style === 'gray') {
-      styleClass = ' btn_gray';
+      styleClassGrey = true;
     } else {
-      styleClass = ' btn_transparent';
+      styleClassNotNormal = true;
     }
   }
-  let sizeClass = '';
   if (size === 'small') {
-    sizeClass = ' btn__small';
+    sizeClassSmall = true;
   } else if (size === 'medium') {
-    sizeClass = ' btn__medium';
+    sizeClassMedium = true;
   }
-  const fullLengthClass = fullLength ? ' btn_full-length' : '';
-  const submitClass = submit ? ' btn__submit' : '';
+  const fullLengthClass = !!fullLength;
+  const submitClass = !!submit;
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={!!disabled}
       style={disabled ? { cursor: 'not-allowed' } : (isWaiting ? { cursor: 'wait' } : {})}
-      className={
-        `btn${styleClass}${sizeClass}${fullLengthClass}${submitClass}`
-      }
+      className={css(styles.btn,
+        styleClassGrey ? styles.btnGray : '',
+        styleClassNotNormal ? styles.btnTransparent : '',
+        sizeClassSmall ? styles.btnSmall : '',
+        sizeClassMedium ? styles.btnMedium : '',
+        fullLengthClass ? styles.btnFullLength : '',
+        submitClass ? styles.btnSubmit : '')}
     >
-      {children}
+      {title}
     </button>
   );
 };
+
+const styles = StyleSheet.create({
+  btn: {
+    backgroundColor: '#006CEB',
+    fontFamily: ['GilroyRegular', 'sans-serif'],
+    color: '#ffffff',
+    textDecoration: 'none',
+    fontSize: '18px',
+    padding: '0 62px',
+    lineHeight: '70px',
+    height: '70px',
+    border: 'none',
+    boxShadow: 'none',
+    boxSizing: 'border-box',
+    transition: 'background-color .4s ease-out',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    whiteSpace: 'nowrap',
+    ':hover': {
+      backgroundColor: '#2F86ED',
+    },
+    '@media screen and (max-width: 1600px)': {
+      fontSize: '14px',
+      height: '58px',
+      lineHeight: '58px',
+      paddingLeft: '30px',
+      paddingRight: '30px',
+    },
+  },
+  btnSmall: {
+    fontSize: '14px',
+    color: '#ffffff',
+    lineHeight: '38px',
+    height: '38px',
+    padding: '0 25px',
+  },
+  btnMedium: {
+    fontSize: '16px',
+    color: '#ffffff',
+    lineHeight: '50px',
+    height: '50px',
+    padding: '0 25px',
+  },
+  btnFullLength: {
+    width: '100%',
+  },
+  btnTransparent: {
+    backgroundColor: 'transparent',
+    color: '#1f1f1f',
+    padding: '0 40px',
+    transition: 'color .4s ease-out',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: '#666666',
+    },
+  },
+  btnSubmit: {
+    marginTop: '27px',
+  },
+  btnGray: {
+    backgroundColor: '#E4E8ED',
+    color: '#1f1f1f',
+    padding: '0 40px',
+    transition: 'backgroundColor .4s ease-out',
+    ':hover': {
+      backgroundColor: '#D7D7D7',
+    },
+  },
+});
 
 Button.propTypes = {
   disabled: PropTypes.bool,
@@ -51,6 +128,7 @@ Button.propTypes = {
   size: PropTypes.string,
   style: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  title: PropTypes.string,
 };
 
 Button.defaultProps = {
