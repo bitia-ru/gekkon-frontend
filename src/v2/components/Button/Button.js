@@ -7,10 +7,10 @@ const Button = ({
   submit,
   fullLength,
   isWaiting,
-  title,
   size,
   style,
   onClick,
+  children
 }) => {
   let styleClassGrey = false;
   let styleClassNotNormal = false;
@@ -45,7 +45,7 @@ const Button = ({
         fullLengthClass ? styles.btnFullLength : '',
         submitClass ? styles.btnSubmit : '')}
     >
-      {title}
+      {children}
     </button>
   );
 };
@@ -128,7 +128,6 @@ Button.propTypes = {
   size: PropTypes.string,
   style: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-  title: PropTypes.string,
 };
 
 Button.defaultProps = {
