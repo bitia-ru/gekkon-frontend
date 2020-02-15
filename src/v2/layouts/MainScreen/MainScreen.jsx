@@ -48,7 +48,7 @@ class MainScreen extends React.PureComponent {
               className={
                 css(
                   style.container,
-                  true ? style.unscrollable : style.scrollable,
+                  isModalShown ? style.unscrollable : style.scrollable,
                 )
               }
             >

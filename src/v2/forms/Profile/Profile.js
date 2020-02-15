@@ -15,10 +15,6 @@ import './Profile.css';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import { updateUsers as updateUsersAction } from '../../redux/users/actions';
-import {
-  decreaseNumOfActiveRequests,
-  increaseNumOfActiveRequests,
-} from '@/v1/actions';
 
 
 class Profile extends Component {
@@ -112,8 +108,6 @@ class Profile extends Component {
   onSubmit = (data, afterSuccess) => {
     const {
       user,
-      increaseNumOfActiveRequests,
-      decreaseNumOfActiveRequests,
     } = this.props;
 
     this.setState({ profileIsWaiting: true });
@@ -125,8 +119,6 @@ class Profile extends Component {
       delete dataCopy.password;
     }
 
-    increaseNumOfActiveRequests();
-
     const self = this;
 
     Api.patch(
@@ -135,7 +127,6 @@ class Profile extends Component {
       {
         type: 'form-multipart',
         success(updatedUser) {
-          decreaseNumOfActiveRequests();
           self.props.updateUsers({ [updatedUser.id]: updatedUser });
           self.setState({ profileIsWaiting: false });
           if (afterSuccess) {
@@ -143,7 +134,6 @@ class Profile extends Component {
           }
         },
         failed(error) {
-          decreaseNumOfActiveRequests();
           if (R.path(['response', 'status'])(error) === 400) {
             self.setState({ errors: error.response.data });
           } else {
@@ -522,8 +512,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   updateUsers: users => dispatch(updateUsersAction(users)),
-  increaseNumOfActiveRequests: () => dispatch(increaseNumOfActiveRequests()),
-  decreaseNumOfActiveRequests: () => dispatch(decreaseNumOfActiveRequests()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Profile));
