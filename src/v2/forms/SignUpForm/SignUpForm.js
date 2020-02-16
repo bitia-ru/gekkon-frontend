@@ -12,9 +12,11 @@ import FormField from '@/v1/components/FormField/FormField';
 import { PASSWORD_MIN_LENGTH } from '@/v1/Constants/User';
 import { reEmail } from '@/v1/Constants/Constraints';
 import { enterWithVk } from '../../utils/vk';
+import { createUser } from '../../utils/users';
 import Modal from '../../layouts/Modal';
 
 import './SignUpForm.css';
+import { ModalContext } from '@/v2/modules/modalable';
 
 
 class SignUpForm extends Component {
@@ -93,31 +95,46 @@ class SignUpForm extends Component {
     }
   };
 
-  checkAndSubmit = (type, data, passwordNew) => {
+  checkAndSubmit = (type, data, { success }) => {
     const { email, password, repeatPassword } = this.state;
-    let res = !this.check('email', email);
-    res += !this.check('password', password);
-    res += !this.check('repeatPassword', repeatPassword);
-    if (res > 0) {
+
+    const errors = !this.check('email', email)
+      + !this.check('password', password)
+      + !this.check('repeatPassword', repeatPassword);
+
+    if (errors > 0) {
       return;
     }
-    this.onFormSubmit(type, data, passwordNew);
+
+    this.onFormSubmit(type, data, repeatPassword, { success });
   };
 
-  onFormSubmit = (type, data, password) => {
+  onFormSubmit = (type, data, password, { success: submitSuccess }) => {
     const { errors } = this.state;
-    const { signUp } = this.props;
-    const { location } = window;
+
     if (type === 'email') {
       this.setState({ isWaiting: true });
+
+      const self = this;
       const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-      const hash = bcrypt.hashSync(password, salt);
-      const params = { user: { password_digest: hash, email: data } };
-      signUp(
-        params,
-        () => location.reload(),
-        () => this.setState({ isWaiting: false }),
-        error => this.setState({ errors: R.merge(errors, error.response.data) }),
+      const user = {
+        password_digest: bcrypt.hashSync(password, salt),
+        email: data,
+      };
+
+      createUser(
+        user,
+        {
+          success() {
+            submitSuccess && submitSuccess();
+          },
+          failed(error) {
+            self.setState({ isWaiting: false });
+            if (error.response && error.response.data) {
+              self.setState({ errors: R.merge(errors, error.response.data) });
+            }
+          },
+        },
       );
     }
   };
@@ -178,7 +195,7 @@ class SignUpForm extends Component {
     );
   };
 
-  secondTabContent = () => {
+  secondTabContent = (closeModal) => {
     const {
       isWaiting, email, password, repeatPassword,
     } = this.state;
@@ -210,7 +227,16 @@ class SignUpForm extends Component {
           hasError={this.hasError('repeatPassword')}
           errorText={this.errorText('repeatPassword')}
           onEnter={
-            () => this.checkAndSubmit('email', email, password, repeatPassword)
+            () => this.checkAndSubmit(
+              'email',
+              email,
+              {
+                success() {
+                  closeModal();
+                  window.location.reload();
+                },
+              },
+            )
           }
           value={repeatPassword}
         />
@@ -222,7 +248,16 @@ class SignUpForm extends Component {
           submit
           isWaiting={isWaiting}
           onClick={
-            () => this.checkAndSubmit('email', email, password, repeatPassword)
+            () => this.checkAndSubmit(
+              'email',
+              email,
+              {
+                success() {
+                  closeModal();
+                  window.location.reload();
+                },
+              },
+            )
           }
         />
       </form>
@@ -242,32 +277,38 @@ class SignUpForm extends Component {
 
     return (
       <Modal maxWidth="580px">
-        <div className="modal-block__padding-wrapper">
-          <h3 className="modal-block__title">Регистрация</h3>
-          <TabBar
-            contentList={[this.firstTabContent(), this.secondTabContent()]}
-            activeList={[false, true]}
-            activeTab={2}
-            test={this.firstTabContent()}
-            titleList={['Телефон', 'Email']}
-          />
-          <div className="modal-block__or">
-            <div className="modal-block__or-inner">или через</div>
-          </div>
-          <div className="modal-block__social">
-            <ul className="social-links">
-              <li><SocialLinkButton onClick={() => enterWithVk('signUp')} xlinkHref={iconVk} dark /></li>
-              { false
-                  && <>
-                    <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
-                    <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
-                    <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
-                    <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
-                  </>
-              }
-            </ul>
-          </div>
-        </div>
+        <ModalContext.Consumer>
+          {
+            ({ closeModal }) => (
+              <div className="modal-block__padding-wrapper">
+                <h3 className="modal-block__title">Регистрация</h3>
+                <TabBar
+                  contentList={[this.firstTabContent(), this.secondTabContent(closeModal)]}
+                  activeList={[false, true]}
+                  activeTab={2}
+                  test={this.firstTabContent()}
+                  titleList={['Телефон', 'Email']}
+                />
+                <div className="modal-block__or">
+                  <div className="modal-block__or-inner">или через</div>
+                </div>
+                <div className="modal-block__social">
+                  <ul className="social-links">
+                    <li><SocialLinkButton onClick={() => enterWithVk('signUp')} xlinkHref={iconVk} dark /></li>
+                    { false
+                        && <>
+                          <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
+                          <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
+                        </>
+                    }
+                  </ul>
+                </div>
+              </div>
+            )
+          }
+        </ModalContext.Consumer>
       </Modal>
     );
   }

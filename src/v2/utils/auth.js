@@ -32,10 +32,6 @@ export const createUserSession = (
             },
             failed(error) {
               let errorDetails;
-              console.log({
-                error,
-                response: error.response,
-              });
               if (error && error.response && error.response.status === 400) {
                 errorDetails = error.response.data;
               } else {
@@ -47,10 +43,6 @@ export const createUserSession = (
         );
       },
       failed(error) {
-        console.log({
-          error,
-          response: error.response,
-        });
         const resp = error.response;
         let errorDetails;
         if (resp && resp.status === 404 && R.path(['data', 'model'], resp) === 'User') {
@@ -70,10 +62,10 @@ export const closeUserSession = () => {
     null,
     {
       success() {
-        window.location.reload();
+        window.location.reload(true);
       },
       failed() {
-        window.location.reload();
+        window.location.reload(true);
       },
     },
   );

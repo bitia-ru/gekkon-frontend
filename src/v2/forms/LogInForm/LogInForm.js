@@ -109,7 +109,6 @@ class LogInForm extends Component {
         after && after();
       },
       (errorDetails) => {
-        console.log(errorDetails);
         this.setState({ isWaiting: false });
         if (errorDetails) {
           this.setState({ errors: R.merge(errors, errorDetails) });
@@ -231,7 +230,10 @@ class LogInForm extends Component {
               'email',
               email,
               password,
-              () => { closeModal(); window.location.reload(); },
+              () => {
+                closeModal();
+                window.location.reload(true);
+              },
             )
           }
           value={password}
@@ -243,7 +245,17 @@ class LogInForm extends Component {
           fullLength
           submit
           isWaiting={isWaiting}
-          onClick={() => this.checkAndSubmit('email', email, password, closeModal)}
+          onClick={
+            () => this.checkAndSubmit(
+              'email',
+              email,
+              password,
+              () => {
+                closeModal();
+                window.location.reload(true);
+              },
+            )
+          }
         />
         <div className="modal-block__settings">
           <CheckBox
