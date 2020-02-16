@@ -109,6 +109,7 @@ class LogInForm extends Component {
         after && after();
       },
       (errorDetails) => {
+        console.log(errorDetails);
         this.setState({ isWaiting: false });
         if (errorDetails) {
           this.setState({ errors: R.merge(errors, errorDetails) });

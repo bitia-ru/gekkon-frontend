@@ -65,7 +65,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
             afterLogInSuccess();
           }).catch((error) => {
             dispatch(loadUsersFailed());
-            if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
+            if (error.response && error.response.status === 400) {
               onFormError(error.response.data);
             } else {
             //  dispatch(pushError(error));
@@ -76,7 +76,7 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
         console.log(error);
         dispatch(loadUsersFailed());
         const resp = error.response;
-        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.data.model === 'User') {
           onFormError({ email: ['Пользователь не найден'] });
         } else {
         //  dispatch(pushError(error));
@@ -138,7 +138,7 @@ export const signUp = (params, afterSuccess, afterFail, onFormError) => (
         afterSuccess(response);
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
+        if (error.response && error.response.status === 400) {
           onFormError(error);
         } else {
           // dispatch(pushError(error));
@@ -165,7 +165,7 @@ export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
       }).catch((error) => {
         dispatch(loadUsersFailed());
         const resp = error.response;
-        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.data.model === 'User') {
           afterFail();
         } else {
           // dispatch(pushError(error));
@@ -193,7 +193,7 @@ export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response && error.response.status === 400 && error.response.statusText === 'Bad Request') {
+        if (error.response && error.response.status === 400) {
           afterFail(error);
         } else {
           // dispatch(pushError(error));
@@ -242,9 +242,9 @@ export const sendResetPasswordMail = (params, afterAll) => (
         dispatch(loadUsersFailed());
         // dispatch(pushError(error));
         const resp = error.response;
-        if (resp && resp.status === 404 && resp.statusText === 'Not Found' && resp.data.model === 'User') {
+        if (resp && resp.status === 404 && resp.data.model === 'User') {
           afterAll('error', 'Ошибка', 'Пользователь не найден');
-        } else if (resp && resp.status === 400 && resp.statusText === 'Bad Request' && resp.data.email) {
+        } else if (resp && resp.status === 400 && resp.data.email) {
           afterAll(
             'warning',
             'Восстановление пароля',
