@@ -11,14 +11,14 @@ import { userBaseName } from '../utils/users';
 
 
 const obtainUsers = (users, sortBy) => {
-  const sortByInternal = {
-    id: R.prop('id'),
-    registration_date: R.prop('created_at'),
-    karma: R.pipe(R.path(['data', 'karma']), R.divide(1)),
-    score: R.pipe(R.path(['statistics', 'score']), R.divide(1)),
+  const transform = {
+    id: R.sortBy(R.prop('id')),
+    registration_date: R.sortBy(R.prop('created_at')),
+    karma: R.pipe(R.filter(u => (u.data && u.data.karma > 0)), R.sortBy(R.pipe(R.path(['data', 'karma']), R.divide(1)))),
+    score: R.pipe(R.filter(u => u.statistics.score > 0), R.sortBy(R.pipe(R.path(['statistics', 'score']), R.divide(1)))),
   };
 
-  return R.sortBy(sortByInternal[sortBy])(
+  return transform[sortBy](
     R.reduce((list, userId) => [...list, users[userId]], [])(R.keys(users)),
   );
 };
