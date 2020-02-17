@@ -70,12 +70,6 @@ const styles = StyleSheet.create({
     lineHeight: '0',
   },
   markerImage: {
-    // DOESNT WORK
-    '-webkit-touch-callout': 'none',
-    '-webkit-user-select': 'none',
-    '-moz-user-select': 'none',
-    '-ms-user-select': 'none',
-    // END
     userSelect: 'none',
   },
 });
