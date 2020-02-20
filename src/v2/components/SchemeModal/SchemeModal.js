@@ -7,9 +7,9 @@ import * as R from 'ramda';
 import Scheme from '../Scheme/Scheme';
 import BackButton from '../BackButton/BackButton';
 import { StyleSheet, css } from '../../aphrodite';
-import { DEFAULT_FILTERS } from '../../Constants/DefaultFilters';
-import { BACKEND_DATE_FORMAT } from '../../Constants/Date';
-import { ApiUrl } from '../../Environ';
+import { DEFAULT_FILTERS } from '@/v1/Constants/DefaultFilters';
+import { BACKEND_DATE_FORMAT } from '@/v1/Constants/Date';
+import { ApiUrl } from '@/v1/Environ';
 
 class SchemeModal extends Component {
   constructor(props) {

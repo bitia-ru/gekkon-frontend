@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import Marker from '../Marker/Marker';
-import { MARKER_RADIUS } from '../../Constants/Marker';
-import { SHORT_CLICK_DELAY } from '../../Constants/Route';
-import RouteContext from '../../contexts/RouteContext';
-import { StyleSheet, css } from "../../aphrodite";
+import { MARKER_RADIUS } from '@/v1/Constants/Marker';
+import { SHORT_CLICK_DELAY } from '@/v1/Constants/Route';
+import RouteContext from '@/v1/contexts/RouteContext';
+import { StyleSheet, css } from '../../aphrodite';
 
 export default class RouteEditor extends Component {
   constructor(props) {

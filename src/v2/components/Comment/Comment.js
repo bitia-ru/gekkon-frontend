@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import AvatarRound from '../AvatarRound/AvatarRound';
-import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
-import { timeFromNow } from '../../Constants/DateTimeFormatter';
+import { COMMENT_DATETIME_FORMAT } from '@/v1/Constants/Date';
+import { timeFromNow } from '@/v1/Constants/DateTimeFormatter';
 import { StyleSheet, css } from '../../aphrodite';
 
 const Comment = ({

@@ -741,7 +741,6 @@ const styles = StyleSheet.create({
     background: 'rgba(0, 0, 0, 0.8)',
     zIndex: '100',
   },
-
   modalOverlayWrapper: {
     position: 'relative',
     backgroundColor: 'transparent',
@@ -757,13 +756,11 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     minWidth: '1100px',
   },
-
   modalOverlayModal: {
     '@media screen and (minWidth: 1920px)': {
       alignSelf: 'center',
     },
   },
-
   modal: {
     maxWidth: '1320px',
     width: '100%',
@@ -778,16 +775,13 @@ const styles = StyleSheet.create({
     minWidth: '960px',
     maxHeight: '1050px',
     height: '95vh',
-
     '@media screen and (maxWidth: 1600px)': {
       minHeight: '700px',
     },
-
     '@media screen and (maxWidth: 1440px)': {
       minHeight: '600px',
     },
   },
-
   modalTrackBlock: {
     maxWidth: '530px',
     flexBasis: '45%',
@@ -796,7 +790,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
   },
-
   modalTrackInfo: {
     paddingTop: '45px',
     width: '55%',
@@ -805,27 +798,23 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexGrow: '1',
     backgroundColor: '#ffffff',
-
     '@media screen and (maxWidth: 1440px)': {
       minWidth: '410px',
       paddingTop: '24px',
     },
   },
-
   modalTrackHeader: {
     paddingLeft: '45px',
     paddingRight: '45px',
     paddingBottom: '15px',
     width: '100%',
     boxSizing: 'border-box',
-
     '@media screen and (maxWidth: 1440px)': {
       paddingBottom: '6px',
       paddingLeft: '32px',
       paddingRight: '32px',
     },
   },
-
   modalTrackFooter: {
     padding: '33px 30px',
     alignSelf: 'flex-end',
@@ -834,27 +823,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-
     '@media screen and (maxWidth: 1440px)': {
       padding: '16px 24px',
     },
   },
-
-  // NOT SURE!!!!!!!!!!!!!!!!!!!!!!!!!!
   modalTrackCount: {
     position: 'relative',
-    ':not': {
-      ':last-child': {
-        marginRight: '30px',
-      },
+    ':not(:last-child)': {
+      marginRight: '30px',
     },
   },
-
-  // HOW?!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // .modal__track-count:not(:last-child) {
-  //     marginRight: 30px,
-  // },
-
   modalTrack: {
     width: '100%',
     height: '100%',
@@ -864,7 +842,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
-
   modalTrackDescr: {
     position: 'absolute',
     content: '\'\'',
@@ -876,7 +853,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     zIndex: '1',
   },
-
   modalRoutePhotoPlaceholder: {
     width: '118px',
     height: '118px',
@@ -884,19 +860,16 @@ const styles = StyleSheet.create({
     backgroundImage: 'url(./photo-placeholder.svg)',
     backgroundSize: 'contain',
   },
-
   modalTrackStatus: {
     position: 'absolute',
     content: '\'\'',
     top: '42px',
     right: '-3px',
   },
-
   modalTrackInformation: {
     display: 'flex',
     paddingRight: '15px',
   },
-
   modalItem: {
     paddingLeft: '45px',
     paddingRight: '45px',
@@ -911,7 +884,6 @@ const styles = StyleSheet.create({
       paddingBottom: '6px',
     },
   },
-
   modalEnterComment: {
     padding: '12px 45px',
     boxSizing: 'border-box',
@@ -933,7 +905,6 @@ const styles = StyleSheet.create({
       zIndex: '2',
     },
   },
-
   modalDescrItem: {
     flexShrink: '0',
     flexGrow: '0',
@@ -942,7 +913,6 @@ const styles = StyleSheet.create({
       paddingBottom: '6px',
     },
   },
-
   modalTitle: {
     color: '#1f1f1f',
     fontSize: '30px',
@@ -957,14 +927,12 @@ const styles = StyleSheet.create({
       marginBottom: '12px',
     },
   },
-
   modalTitlePlace: {
     color: '#797979',
     '@media screen and (maxWidth: 1440px)': {
       marginTop: '12px',
     },
   },
-
   modalTitlePlaceWrapper: {
     display: 'inline-block',
     marginLeft: '18px',
@@ -974,7 +942,6 @@ const styles = StyleSheet.create({
       marginLeft: '0',
     },
   },
-
   modalBlockNotice: {
     position: 'absolute',
     content: '\'\'',
@@ -984,8 +951,6 @@ const styles = StyleSheet.create({
     height: '17px',
     zIndex: '10',
   },
-
-
   modalBlockNoticeTooltip: {
     position: 'absolute',
     content: '\'\'',

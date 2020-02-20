@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import RouteContext from '../../contexts/RouteContext';
+import RouteContext from '@/v1/contexts/RouteContext';
 import { StyleSheet, css } from '../../aphrodite';
 
 const ShowSchemeButton = ({

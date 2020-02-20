@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getColorStyle } from '../../Constants/Route';
+import { getColorStyle } from '@/v1/Constants/Route';
 import { StyleSheet, css } from '../../aphrodite';
 
 export default class RouteColorPicker extends Component {
