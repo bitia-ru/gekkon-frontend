@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { notAvail } from '../../utils';
+import { notAvail } from '@/v1/utils/index';
 import { StyleSheet, css } from '../../aphrodite';
 
 export default class LikeButton extends Component {

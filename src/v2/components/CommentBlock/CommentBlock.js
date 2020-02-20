@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import Comment from '../Comment/Comment';
-import RouteContext from '../../contexts/RouteContext';
+import RouteContext from '@/v1/contexts/RouteContext';
 import { StyleSheet, css } from '../../aphrodite';
 
 export default class CommentBlock extends Component {

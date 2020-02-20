@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { DISPLAYED_DEFAULT } from '../../Constants/TooltipPerson';
+import { DISPLAYED_DEFAULT } from '@/v1/Constants/TooltipPerson';
 import { StyleSheet, css } from '../../aphrodite';
 
 export default class TooltipPerson extends Component {

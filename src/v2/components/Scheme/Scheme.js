@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import RouteCard from '../RouteCard/RouteCard';
-import { HIDE_DELAY } from '../../Constants/Scheme';
+import { HIDE_DELAY } from '@/v1/Constants/Scheme';
 import SchemePointer from '../SchemePointer/SchemePointer';
-import SectorContext from '../../contexts/SectorContext';
+import SectorContext from '@/v1/contexts/SectorContext';
 import { StyleSheet, css } from '../../aphrodite';
 
 class Scheme extends Component {

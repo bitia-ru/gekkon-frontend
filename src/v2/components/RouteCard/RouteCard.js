@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import moment from 'moment';
-import { SOON_END_PERIOD } from '../../Constants/Route';
+import { SOON_END_PERIOD } from '@/v1/Constants/Route';
 import RouteStatus from '../RouteStatus/RouteStatus';
-import { timeFromNow } from '../../Constants/DateTimeFormatter';
-import RouteContext from '../../contexts/RouteContext';
-import { avail, notAvail } from '../../utils';
-import getArrayFromObject from '../../utils/getArrayFromObject';
+import { timeFromNow } from '@/v1/Constants/DateTimeFormatter';
+import RouteContext from '@/v1/contexts/RouteContext';
+import { avail, notAvail } from '@/v1/utils';
+import getArrayFromObject from '@/v1/utils/getArrayFromObject';
 import { StyleSheet, css } from '../../aphrodite';
 
 class RouteCard extends Component {

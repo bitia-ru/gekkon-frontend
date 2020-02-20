@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as R from 'ramda';
-import { getCategoryColor } from '../../Constants/Categories';
-import { GetUserName } from '../../Constants/User';
-import { ROUTE_KINDS } from '../../Constants/Route';
+import { getCategoryColor } from '@/v1/Constants/Categories';
+import { GetUserName } from '@/v1/Constants/User';
+import { ROUTE_KINDS } from '@/v1/Constants/Route';
 import RouteColorPicker from '../RouteColorPicker/RouteColorPicker';
 import { StyleSheet, css } from '../../aphrodite';
 
