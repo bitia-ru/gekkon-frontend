@@ -13,7 +13,9 @@ const StickyBar = ({
       <div className={css(styles.stickyBarItem)}>
         <div
           style={(loading ? {} : (hideLoaded ? { opacity: 0 } : {}))}
-          className={css(styles.stickyBarItemIndicator, loading ? styles.stickyBarItemIndicatorActive : '')}
+          className={css(styles.stickyBarItemIndicator,
+            loading ? styles.stickyBarItemIndicatorActive : '',
+            styles.loading)}
         />
       </div>
     </div>
@@ -30,13 +32,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: '2',
   },
-  // ??
-  '@keyframes loading': {
-    '0%': {
-      width: '0',
-    },
+  loading: {
+    animationName: [{
+      '0%': {
+        width: '0',
+      },
+    }],
   },
-  // END
   stickyBarItemIndicator: {
     backgroundColor: '#006CEB',
     height: '100%',
