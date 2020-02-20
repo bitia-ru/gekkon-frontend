@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-// Start
 import LikeButton from '@/v1/components/LikeButton/LikeButton';
 import Button from '@/v1/components/Button/Button';
 import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
@@ -14,20 +13,15 @@ import Counter from '@/v1/components/Counter/Counter';
 import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';
 import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
-// End
 import { DEFAULT_COMMENTS_DISPLAYED } from '@/v1/Constants/Comments';
-// Start
 import StickyBar from '@/v1/components/StickyBar/StickyBar';
 import SchemeModal from '@/v1/components/SchemeModal/SchemeModal';
 import ShowSchemeButton from '@/v1/components/ShowSchemeButton/ShowSchemeButton';
 import NoticeButton from '@/v1/components/NoticeButton/NoticeButton';
 import NoticeForm from '@/v1/components/NoticeForm/NoticeForm';
 import Tooltip from '@/v1/components/Tooltip/Tooltip';
-// End
 import { avail, notAvail } from '@/v1/utils';
-// Start
 import TooltipPerson from '@/v1/components/TooltipPerson/TooltipPerson';
-// End
 import { HIDE_DELAY } from '@/v1/Constants/TooltipPerson';
 import numToStr from '@/v1/Constants/NumToStr';
 import RouteContext from '@/v1/contexts/RouteContext';
@@ -476,7 +470,7 @@ class RoutesShowModal extends Component {
                           {
                             showLoadPhotoMsg && (
                               <div className={css(styles.modalTrackDescr)}>
-                                <div className={css(style.modalRoutePhotoPlaceholder)} />
+                                <div className={css(styles.modalRoutePhotoPlaceholder)} />
                               </div>
                             )
                           }
