@@ -9,9 +9,15 @@ import FormField from '@/v1/components/FormField/FormField';
 import { PASSWORD_MIN_LENGTH } from '@/v1/Constants/User';
 import { SALT_ROUNDS } from '@/v1/Constants/Bcrypt';
 import { reEmail } from '@/v1/Constants/Constraints';
+import { resetPassword } from '@/v1/stores/users/utils';
 import Modal from '../../layouts/Modal';
 
 import './ResetPasswordForm.css';
+import Axios from 'axios';
+import { ApiUrl } from '@/v1/Environ';
+import { loadUsersFailed, resetPasswordSuccess } from '@/v1/stores/users/actions';
+import Api from '@/v2/utils/Api';
+import { acts } from '@/v2/redux/routes/actions';
 
 
 class ResetPasswordForm extends Component {
@@ -19,6 +25,7 @@ class ResetPasswordForm extends Component {
     super(props);
 
     this.state = {
+      email: '',
       passwordFromSms: '',
       password: '',
       repeatPassword: '',
@@ -29,6 +36,16 @@ class ResetPasswordForm extends Component {
   }
 
   componentDidMount() {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get('reset_password_code');
+    if (code !== null) {
+      const email = url.searchParams.get('user_email');
+      this.setState(
+        {
+          email: email || url.searchParams.get('user_login'),
+        },
+      );
+    }
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -94,7 +111,6 @@ class ResetPasswordForm extends Component {
       if (type !== 'email') {
         throw `Argument error: value ${type} for argument type is invalid.`;
       }
-      const { resetPassword: resetPasswordProp } = this.props;
       this.setState({ isWaiting: true });
       const url = new URL(window.location.href);
       const salt = bcrypt.genSaltSync(SALT_ROUNDS);
@@ -111,18 +127,21 @@ class ResetPasswordForm extends Component {
           token: url.searchParams.get('reset_password_code'),
         };
       }
-      resetPasswordProp(
+
+      const self = this;
+      Api.post(
+        '/v1/users/reset_password',
         params,
-        () => {
-          this.logIn(data, password);
-        },
-        () => {
-          this.setState({ isWaiting: false });
-          //this.showToastr(
-          //  'error',
-          //  'Ошибка',
-          //  'Срок действия ссылки для восстановления пароля истек или пользователь не найден',
-          //);
+        {
+          method: 'patch',
+          success() {
+            console.log('Пароль успешно изменен');
+            window.history.back();
+          },
+          failed(error) {
+            self.setState({ isWaiting: false });
+            console.log(error);
+          },
         },
       );
     };
@@ -191,8 +210,9 @@ class ResetPasswordForm extends Component {
     };
 
     secondTabContent = () => {
-      const { email } = this.props;
-      const { password, repeatPassword, isWaiting } = this.state;
+      const {
+        email, password, repeatPassword, isWaiting,
+      } = this.state;
       return (
         <form action="#" className="form">
           <FormField
@@ -267,9 +287,6 @@ ResetPasswordForm.propTypes = {
 const mapDispatchToProps = dispatch => ({
   resetPassword: (
     params, afterSuccess, afterFail, afterAll,
-  ) => {},
-  logIn: (
-    params, password, afterLogInSuccess, afterLogInFail, onFormError,
   ) => {},
 });
 

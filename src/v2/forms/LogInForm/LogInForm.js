@@ -10,9 +10,11 @@ import CheckBox from '@/v1/components/CheckBox/CheckBox';
 import { reEmail } from '@/v1/Constants/Constraints';
 import Modal from '../../layouts/Modal';
 import { createUserSession } from '../../utils/auth';
+import { enterWithVk } from '../../utils/vk';
 
 import './LogInForm.css';
 import { ModalContext } from '../../modules/modalable';
+import Api from '@/v2/utils/Api';
 
 
 class LogInForm extends Component {
@@ -128,7 +130,7 @@ class LogInForm extends Component {
   };
 
   resetPassword = (type) => {
-    const { email } = this.state;
+    const { email, errors } = this.state;
 
     if (type === 'email') {
       if (email === '') {
@@ -140,8 +142,36 @@ class LogInForm extends Component {
         } else {
           params = { user: { login: email } };
         }
-        store.dispatch(
-          sendResetPasswordMail(params, /* showToastr */() => {}),
+
+        const self = this;
+        Api.get(
+          '/v1/users/send_reset_password_mail',
+          {
+            params,
+            success() {
+              console.log('На почту было отправлено сообщение для восстановления пароля');
+              window.history.back();
+            },
+            failed(error) {
+              const resp = error.response;
+              let errorMsg;
+              if (resp && resp.status === 404 && resp.data.model === 'User') {
+                errorMsg = 'Пользователь не найден';
+              } else if (resp && resp.status === 400 && resp.data.email) {
+                errorMsg = 'Без почты невозможно восстановить пароль. Обратитесь к администратору.';
+              } else {
+                errorMsg = 'Не удалось отправить на почту сообщение для восстановления пароля';
+              }
+              self.setState(
+                {
+                  errors: R.merge(
+                    errors,
+                    { email: [errorMsg] },
+                  ),
+                },
+              );
+            },
+          },
         );
       }
     }
@@ -308,7 +338,7 @@ class LogInForm extends Component {
                 <div className="modal-block__social">
                   <ul className="social-links">
                     <li>
-                      <SocialLinkButton onClick={() => this.enterWithVk('logIn')} xlinkHref={iconVk} dark />
+                      <SocialLinkButton onClick={() => enterWithVk('logIn')} xlinkHref={iconVk} dark />
                     </li>
                     { false
                     && <>

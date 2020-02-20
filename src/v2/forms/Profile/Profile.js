@@ -15,6 +15,8 @@ import './Profile.css';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import { updateUsers as updateUsersAction } from '../../redux/users/actions';
+import { enterWithVk } from '../../utils/vk';
+import closeForm from '@/v2/utils/closeForm';
 
 
 class Profile extends Component {
@@ -176,9 +178,7 @@ class Profile extends Component {
   };
 
   onRepeatPasswordChange = (event) => {
-    const { resetErrors } = this.props;
     this.resetErrors();
-    resetErrors();
     this.setState({ repeatPassword: event.target.value });
     this.check('repeatPassword', event.target.value);
   };
@@ -313,22 +313,29 @@ class Profile extends Component {
   };
 
   removeVk = () => {
-    const { user, showToastr, removeVk } = this.props;
+    const { user } = this.props;
     if ((!user.email && !user.login && !user.phone) || (!user.password_digest)) {
-      showToastr(
-        'error',
-        'Ошибка',
-        'Невозможно отключить вход через VK. '
-              + 'Заполните логин, email или номер телефона и задайте пароль',
-      );
+      console.log('Заполните логин, email или номер телефона и задайте пароль');
       return;
     }
-    removeVk();
+    Api.post(
+      `/v1/users/${user.id}/integrations/vk`,
+      null,
+      {
+        method: 'delete',
+        success() {
+          closeForm();
+        },
+        failed(error) {
+          console.log(error);
+        },
+      },
+    );
   };
 
   render() {
     const {
-      user, enterWithVk, isWaiting,
+      user, isWaiting, token,
     } = this.props;
 
     const {
@@ -463,7 +470,7 @@ class Profile extends Component {
                           onClick={
                             (user.data.vk_user_id !== undefined)
                               ? this.removeVk
-                              : (() => enterWithVk('addVk'))
+                              : (() => enterWithVk('addVk', token))
                           }
                           xlinkHref={iconVk}
                           active={user.data.vk_user_id !== undefined}
@@ -507,6 +514,7 @@ Profile.propTypes = {
 
 const mapStateToProps = state => ({
   user: currentUser(state),
+  token: state.userSessionV2.token,
   formErrors: {},
 });
 

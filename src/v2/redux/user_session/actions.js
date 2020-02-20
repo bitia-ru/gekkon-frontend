@@ -3,9 +3,9 @@ import { acts as usersActs } from '../users/actions';
 
 
 export const acts = {
-  LOAD_USER_SESSION_REQUEST: 'LOAD_USER_SESSION_REQUEST',
-  LOAD_USER_SESSION_FAILED: 'LOAD_USER_SESSION_FAILED',
-  LOAD_USER_SESSION_SUCCESS: 'LOAD_USER_SESSION_SUCCESS',
+  LOAD_USER_SESSION_REQUEST: 'LOAD_USER_SESSION_REQUEST_V2',
+  LOAD_USER_SESSION_FAILED: 'LOAD_USER_SESSION_FAILED_V2',
+  LOAD_USER_SESSION_SUCCESS: 'LOAD_USER_SESSION_SUCCESS_V2',
 };
 
 
@@ -16,16 +16,16 @@ export const loadUserSession = () => (
     });
 
     Api.get(
-      '/v1/users/self',
+      '/v1/user_sessions/self',
       {
         success(payload) {
           dispatch({
             type: acts.LOAD_USER_SESSION_SUCCESS,
-            user_session: { user_id: payload.id },
+            user_session: payload,
           });
           dispatch({
             type: usersActs.LOAD_USERS,
-            user: payload,
+            user: payload.user,
           });
         },
         failed() {
