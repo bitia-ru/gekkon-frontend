@@ -41,7 +41,23 @@ class Users extends React.PureComponent {
 
   componentDidMount() {
     this.props.loadUsers();
+    window.addEventListener('keydown', this.onKeyDown);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+  }
+
+  onKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      this.closeProfileForm();
+    }
+  }
+
+  closeProfileForm = () => {
+    const { history, match } = this.props;
+    history.push(match.url);
+  };
 
   onSortChanged = (selectedSort) => {
     this.setState({ currentSortOption: selectedSort });
