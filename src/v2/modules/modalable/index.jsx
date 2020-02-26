@@ -58,7 +58,7 @@ const withModals = (BaseComponent) => {
 
     onModalKeyDown = (event) => {
       if (event.key === 'Escape' && this.isModalShown()) {
-        this.closeForm();
+        this.closeModal();
       }
     };
 
