@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import InfoBlock from '@/v1/components/InfoBlock/InfoBlock';
-import MainNav from '../MainNav/MainNav';
-import Logo from '../Logo/Logo';
 import './Header.css';
 
-export default class Header extends Component {
+class Header extends Component {
   constructor(props) {
     super(props);
 
@@ -32,11 +31,6 @@ export default class Header extends Component {
 
   render() {
     const {
-      logIn,
-      signUp,
-      openProfile,
-      logOut,
-      user,
       data,
       changeSectorFilter,
     } = this.props;
@@ -69,11 +63,8 @@ export default class Header extends Component {
 }
 
 Header.propTypes = {
-  user: PropTypes.object,
   data: PropTypes.object.isRequired,
   changeSectorFilter: PropTypes.func.isRequired,
-  logIn: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
+
+export default withRouter(Header);
