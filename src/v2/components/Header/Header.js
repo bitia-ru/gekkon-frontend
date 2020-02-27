@@ -44,16 +44,6 @@ export default class Header extends Component {
 
     return (
       <header className="header">
-        <div className="header__top">
-          <Logo />
-          <MainNav
-            logIn={logIn}
-            signUp={signUp}
-            openProfile={openProfile}
-            logOut={logOut}
-            user={user}
-          />
-        </div>
         <ul className="header__items-container">
           <li
             className="header__item"
