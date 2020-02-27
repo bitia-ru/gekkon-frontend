@@ -53,7 +53,7 @@ class MainScreen extends React.PureComponent {
               }
             >
               <div style={{ flex: 1 }}>
-                <LoadingIndicator>
+                <LoadingIndicator isSticky={!isModalShown}>
                   <Logo />
                   <MainNav
                     logIn={() => {}}
