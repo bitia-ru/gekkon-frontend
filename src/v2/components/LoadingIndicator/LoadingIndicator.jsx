@@ -21,7 +21,7 @@ class LoadingIndicator extends React.PureComponent {
   };
 
   render() {
-    const { children, showAlways } = this.props;
+    const { children, showAlways, isSticky } = this.props;
     const isLoading = this.state.counter > 0;
 
     return (
@@ -30,7 +30,7 @@ class LoadingIndicator extends React.PureComponent {
           {children}
         </div>
 
-        <div className={css(style.indicatorContainer)}>
+        <div className={css(style.indicatorContainer, isSticky && style.stickyIndicator)}>
           <div
             className={
               css(
@@ -54,7 +54,7 @@ const style = StyleSheet.create({
     marginBottom: '-3px',
   },
   indicatorContainer: {
-    position: 'sticky',
+    position: 'fixed',
     bottom: 0,
     height: '3px',
     width: '100%',
@@ -83,11 +83,15 @@ const style = StyleSheet.create({
   hideIndicator: {
     opacity: 0,
   },
+  stickyIndicator: {
+    position: 'sticky',
+  },
 });
 
 LoadingIndicator.propTypes = {
   showAlways: PropTypes.bool,
   isLoading: PropTypes.bool,
+  isSticky: PropTypes.bool,
 };
 
 LoadingIndicator.defaultProps = {
