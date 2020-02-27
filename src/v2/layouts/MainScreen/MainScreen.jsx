@@ -38,7 +38,7 @@ class MainScreen extends React.PureComponent {
   }
 
   render() {
-    const { children, header } = this.props;
+    const { children, header, styles } = this.props;
 
     return (
       <ModalContainerContext.Consumer>
@@ -64,7 +64,7 @@ class MainScreen extends React.PureComponent {
                   {
                     header && (
                       typeof header === 'string' || typeof header === 'number'
-                        ? <TextHeader title={header} /> : header
+                        ? <TextHeader title={header} styles={styles} /> : header
                     )
                   }
                   {children && children}

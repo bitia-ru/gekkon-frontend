@@ -1,8 +1,8 @@
 import React from 'react';
 import { css, StyleSheet } from '../../aphrodite';
 
-const TextHeader = ({ title }) => (
-  <div className={css(style.container)}>
+const TextHeader = ({ title, styles }) => (
+  <div className={css(style.container, styles)}>
     {title}
   </div>
 );
