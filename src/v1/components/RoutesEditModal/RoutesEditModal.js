@@ -140,6 +140,7 @@ class RoutesEditModal extends Component {
       const {
         history,
         match,
+        sectors,
         updateRoute: updateRouteProp,
       } = this.props;
       const routeId = this.getRouteId();
@@ -147,7 +148,13 @@ class RoutesEditModal extends Component {
       updateRouteProp(
         `${ApiUrl}/v1/routes/${routeId}`,
         params,
-        () => history.push(R.replace('/edit', '', `${match.url}`)),
+        (response) => {
+          history.push(R.replace('/edit', '', `${match.url}`));
+          reloadSector(response.data.payload.sector_id);
+          reloadRoutes(
+              sectors[response.data.payload.sector_id].spot_id, response.data.payload.sector_id,
+          );
+        },
         () => this.setState({ isWaiting: false }),
       );
     };
