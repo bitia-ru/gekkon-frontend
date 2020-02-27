@@ -245,18 +245,20 @@ class FilterBlock extends Component {
             />
           </div>
         </div>
-        <div className="content__filter-item">
-          <div>
-            <span className="filter-block__title">&nbsp;</span>
-            <Button
-              tabIndex={4}
-              style="gray"
-              onClick={() => { history.push(`${match.url}/routes/new`); }}
-            >
-              +
-            </Button>
+        {
+          avail(user) && sectorId !== 0 && <div className="content__filter-item">
+            <div>
+              <span className="filter-block__title">&nbsp;</span>
+              <Button
+                tabIndex={4}
+                style="gray"
+                onClick={() => { history.push(`${match.url}/routes/new`); }}
+              >
+                +
+              </Button>
+            </div>
           </div>
-        </div>
+        }
         <ViewModeSwitcher
           viewModeData={viewModeData}
           onViewModeChange={this.onViewModeChange}
