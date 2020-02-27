@@ -19,28 +19,28 @@ const loadState = () => {
     const state = {};
 
     try {
-      state.selectedViewModes = R.clone(data.selectedViewModes);
-      state.selectedFilters = R.clone(data.selectedFilters);
+      state.selectedViewModes = data.selectedViewModes;
+      state.selectedFilters = data.selectedFilters;
 
       state.newsStore = NEWS_DEFAULT_STORE_FORMAT;
-      state.newsStore.news = R.clone(data.news);
+      state.newsStore.news = data.news;
 
       state.routeMarkColorsStore = ROUTE_MARK_COLORS_DEFAULT_STORE_FORMAT;
-      state.routeMarkColorsStore.routeMarkColors = R.clone(data.routeMarkColors);
+      state.routeMarkColorsStore.routeMarkColors = data.routeMarkColors;
 
       state.routesStore = ROUTES_DEFAULT_STORE_FORMAT;
-      state.routesStore.routes = R.clone(data.routes);
-      state.routesStore.filtrationResults = R.clone(data.filtrationResults);
+      state.routesStore.routes = data.routes;
+      state.routesStore.filtrationResults = data.filtrationResults;
 
       state.spotsStore = SPOTS_DEFAULT_STORE_FORMAT;
-      state.spotsStore.spots = R.clone(data.spots);
+      state.spotsStore.spots = data.spots;
 
       state.sectorsStore = SECTORS_DEFAULT_STORE_FORMAT;
-      state.sectorsStore.sectors = R.clone(data.sectors);
+      state.sectorsStore.sectors = data.sectors;
 
       state.usersStore = USERS_DEFAULT_STORE_FORMAT;
-      state.usersStore.users = R.clone(data.users);
-      state.usersStore.sortedUserIds = R.clone(data.sortedUserIds);
+      state.usersStore.users = data.users;
+      state.usersStore.sortedUserIds = data.sortedUserIds;
     } catch (err) {
       // ignore error
     }
@@ -54,21 +54,21 @@ const loadState = () => {
 const saveState = (state) => {
   try {
     const data = {};
-    data.selectedViewModes = R.clone(state.selectedViewModes);
-    data.selectedFilters = R.clone(state.selectedFilters);
+    data.selectedViewModes = state.selectedViewModes;
+    data.selectedFilters = state.selectedFilters;
 
-    data.routes = R.clone(state.routesStore.routes);
-    data.filtrationResults = R.clone(state.routesStore.filtrationResults);
+    data.routes = state.routesStore.routes;
+    data.filtrationResults = state.routesStore.filtrationResults;
 
-    data.spots = R.clone(state.spotsStore.spots);
+    data.spots = state.spotsStore.spots;
 
-    data.sectors = R.clone(state.sectorsStore.sectors);
+    data.sectors = state.sectorsStore.sectors;
 
-    data.users = R.clone(state.usersStore.users);
-    data.sortedUserIds = R.clone(state.usersStore.sortedUserIds);
+    data.users = state.usersStore.users;
+    data.sortedUserIds = state.usersStore.sortedUserIds;
 
-    data.routeMarkColors = R.clone(state.routeMarkColorsStore.routeMarkColors);
-    data.news = R.clone(state.newsStore.news);
+    data.routeMarkColors = state.routeMarkColorsStore.routeMarkColors;
+    data.news = state.newsStore.news;
     const serializedState = JSON.stringify(data);
     localStorage.setItem('reduxState', serializedState);
   } catch (_err) {
