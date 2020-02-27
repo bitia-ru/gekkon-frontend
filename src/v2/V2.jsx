@@ -8,6 +8,8 @@ import SpotsShow from './screens/SpotsShow';
 import SpotsIndex from './screens/SpotsIndex';
 import RoutePhotos from './screens/RoutePhotos';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
+import About from '@/v1/components/About/About';
+import Faq from './components/Faq/Faq';
 
 
 const V2 = ({ currentUser }) => (
@@ -21,6 +23,8 @@ const V2 = ({ currentUser }) => (
           <Route path="/spots/:id/sectors/:sector_id/photos" component={RoutePhotos} />
           <Route path="/spots/:id/sectors/:sector_id" component={SpotsShow} />
           <Route path="/spots/:id" component={SpotsShow} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/faq" component={Faq} />
         </Switch>
       ) : (
         <BootingScreen />
