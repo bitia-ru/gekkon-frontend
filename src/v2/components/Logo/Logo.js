@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: '75px',
     height: '75px',
+    zIndex: 10,
 
     '@media screen and (max-width: 1440px)': {
       width: '65px',
