@@ -1,0 +1,28 @@
+name: DeployForMaster
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy
+        env:
+          SSH_KEY_GPG_PASSPHRASE: ${{ secrets.ssh_key_gpg_passphrase }}
+        run: |
+          mkdir -p ~/.ssh
+          gpg --quiet --batch --yes --decrypt --passphrase="${SSH_KEY_GPG_PASSPHRASE}" --output ~/.ssh/id_rsa.deploy deploy/secrets/peclet.id_rsa.gpg
+          chmod 600 ~/.ssh/id_rsa.deploy
+          cat << EOF >> ~/.ssh/config
+          Host peclet
+            StrictHostKeyChecking no
+            IdentityFile ~/.ssh/id_rsa.deploy
+            HostName peclet.hq.levenkov.ru
+            Port 22001
+            User peclet
+          EOF
+          ssh peclet 'cd services/gekkon-production/frontend && git fetch && git reset --hard origin/master && cd .. && . ./.env && docker-compose build frontend && docker-compose up -d frontend'
