@@ -35,6 +35,7 @@ const InfoPageContent = ({ titles, data }) => {
 
 const styles = StyleSheet.create({
   aboutUsContent: {
+    flex: 1,
     paddingTop: '75px',
     paddingBottom: '75px',
   },
