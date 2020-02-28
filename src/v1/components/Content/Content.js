@@ -18,7 +18,6 @@ import reloadRoutes from '../../utils/reloadRoutes';
 import getViewMode from '../../utils/getViewMode';
 import getPage from '../../utils/getPage';
 import { ApiUrl } from '@/v1/Environ';
-import { loadRoutesFailed, loadRouteSuccess } from '@/v1/stores/routes/actions';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
 

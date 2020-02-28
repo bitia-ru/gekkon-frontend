@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import Main from './Main';
+import V2 from '@/v2/V2';
 import store from './store';
 import './index.css';
 import './fonts.css';
@@ -58,7 +58,7 @@ ReactDOM.render(
   (
     <Provider store={store}>
       <BrowserRouter>
-        <Main />
+        <V2 />
       </BrowserRouter>
     </Provider>
   ),
