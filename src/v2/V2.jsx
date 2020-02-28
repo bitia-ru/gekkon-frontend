@@ -8,7 +8,7 @@ import SpotsShow from './screens/SpotsShow';
 import SpotsIndex from './screens/SpotsIndex';
 import RoutePhotos from './screens/RoutePhotos';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
-import About from '@/v1/components/About/About';
+import About from './components/About/About';
 import Faq from './components/Faq/Faq';
 
 

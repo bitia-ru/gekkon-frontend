@@ -2,29 +2,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import InfoPageContent from '../InfoPageContent/InfoPageContent';
-import { TITLE, TITLES, FAQ_DATA } from '@/v1/Constants/Faq';
-import MainScreen from '../../layouts/MainScreen/MainScreen';
-import Background from './images/faq.jpg';
+import { TITLE, TITLES, ABOUT_DATA } from '@/v1/Constants/About';
+import MainScreen from '@/v2/layouts/MainScreen/MainScreen';
+import BackgroundImage from './images/about-us.jpg';
 import { StyleSheet, css } from '../../aphrodite';
 
-class Faq extends React.PureComponent {
+class About extends React.PureComponent {
   render() {
     return (
-      <MainScreen header={TITLE} styles={[styles.aboutUsHeader, styles.aboutUsHeaderTitle]}>
-        <InfoPageContent titles={TITLES} data={FAQ_DATA}/>
+      <MainScreen header={TITLE} styles={[styles.background, styles.aboutUsHeaderTitle]}>
+        <InfoPageContent titles={TITLES} data={ABOUT_DATA} />
       </MainScreen>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  aboutUsHeader: {
+  background: {
     backgroundColor: '#EBEBE2',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     height: '40vh',
-    backgroundImage: `url(${Background})`,
+    backgroundImage: `url(${BackgroundImage})`,
   },
   aboutUsHeaderTitle: {
     fontSize: '100px',
@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 const mapStateToProps = () => ({});
 
-export default withRouter(connect(mapStateToProps)(Faq));
+export default withRouter(connect(mapStateToProps)(About));
