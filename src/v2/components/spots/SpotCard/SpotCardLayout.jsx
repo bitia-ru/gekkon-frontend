@@ -1,6 +1,8 @@
 import React from 'react';
 import * as R from 'ramda';
 import { css, StyleSheet } from '../../../aphrodite';
+import DivWithBackgroundImage from '../../common/DivWithBackgroundImage/DivWithBackgroundImage';
+import SpotCardPlaceholder from './SpotCardPlaceholder';
 
 
 const SpotCardLayout = ({ spot, onClick, style: inputStyle, className }) => (
@@ -8,76 +10,79 @@ const SpotCardLayout = ({ spot, onClick, style: inputStyle, className }) => (
     className={[css(inputStyle, style.container), ...(className ? [className] : [])].join(' ')}
     onClick={onClick}
   >
-    <div
-      className={css(style.photo)}
-      style={{
-        backgroundImage: spot.photo && `url(${spot.photo.url})`,
-      }}
-    >
-      &nbsp;
-    </div>
-    <div className={css(style.description)}>
-      <div className={css(style.spotType)}>
-        {
-          R.map(
-            kind => ({
-              sport: 'веревка',
-              boulder: 'боулдер',
-            }[kind]),
-          )(spot.kinds).join(', ')
-        }
-      </div>
-      <div className={css(style.spotName)}>{spot.name}</div>
-      <div className={css(style.spotInfo)}>
-        <table>
-          <tbody>
-            {
-              spot.data.hours && (
-                R.addIndex(R.map)(
-                  (e, i) => (
-                    <tr>
-                      <td>{i === 0 ? <img src={require('./assets/calendar.svg')} /> : ''}</td>
-                      <td style={{ color: '#B4BABC' }}>{e.days}</td>
-                      <td>{e.hours}</td>
-                    </tr>
-                  ),
-                )(spot.data.hours)
-              )
-            }
-            {
-              spot.data.wayInfo && (
-                R.addIndex(R.map)(
-                  (way, i) => (
-                    <tr>
-                      <td>{ i === 0 ? <img src={require('./assets/landmark.svg')} /> : '' }</td>
-                      <td>{way.pointFrom}</td>
-                      <td style={{ color: '#B4BABC' }}>
-                        <img src={require(`./assets/${way.pointFromType}.svg`)} />
-                        &nbsp;
-                        {way.distance}
-                      </td>
-                    </tr>
-                  ),
-                )(spot.data.wayInfo)
-              )
-            }
-            {
-              spot.data.price && (
-                R.addIndex(R.map)(
-                  (priceLine, i) => (
-                    <tr>
-                      <td><img src={i === 0 ? require('./assets/coin.svg') : ''} /></td>
-                      <td style={{ color: '#B4BABC' }}>{priceLine.days}</td>
-                      <td>{priceLine.cost}</td>
-                    </tr>
-                  ),
-                )(spot.data.price)
-              )
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+    {
+      Object.keys(spot) !== ['id'] ? (
+        <>
+          <DivWithBackgroundImage className={css(style.photo)} image={spot.photo?.url}>
+            &nbsp;
+          </DivWithBackgroundImage>
+          <div className={css(style.description)}>
+            <div className={css(style.spotType)}>
+              {
+                R.map(
+                  kind => ({
+                    sport: 'веревка',
+                    boulder: 'боулдер',
+                  }[kind]),
+                )(spot.kinds).join(', ')
+              }
+            </div>
+            <div className={css(style.spotName)}>{spot.name}</div>
+            <div className={css(style.spotInfo)}>
+              <table>
+                <tbody>
+                  {
+                    spot.data.hours && (
+                      R.addIndex(R.map)(
+                        (e, i) => (
+                          <tr>
+                            <td>{i === 0 ? <img src={require('./assets/calendar.svg')} /> : ''}</td>
+                            <td style={{ color: '#B4BABC' }}>{e.days}</td>
+                            <td>{e.hours}</td>
+                          </tr>
+                        ),
+                      )(spot.data.hours)
+                    )
+                  }
+                  {
+                    spot.data.wayInfo && (
+                      R.addIndex(R.map)(
+                        (way, i) => (
+                          <tr>
+                            <td>{ i === 0 ? <img src={require('./assets/landmark.svg')} /> : '' }</td>
+                            <td>{way.pointFrom}</td>
+                            <td style={{ color: '#B4BABC' }}>
+                              <img src={require(`./assets/${way.pointFromType}.svg`)} />
+                              &nbsp;
+                              {way.distance}
+                            </td>
+                          </tr>
+                        ),
+                      )(spot.data.wayInfo)
+                    )
+                  }
+                  {
+                    spot.data.price && (
+                      R.addIndex(R.map)(
+                        (priceLine, i) => (
+                          <tr>
+                            <td><img src={i === 0 ? require('./assets/coin.svg') : ''} /></td>
+                            <td style={{ color: '#B4BABC' }}>{priceLine.days}</td>
+                            <td>{priceLine.cost}</td>
+                          </tr>
+                        ),
+                      )(spot.data.price)
+                    )
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      ) : (
+        <SpotCardPlaceholder />
+      )
+    }
   </div>
 );
 
