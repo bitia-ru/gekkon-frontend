@@ -53,17 +53,21 @@ const RouteStatus = ({
                 )
                 : 'Не пройдена'
             }
-            <div
-              className="route-status__pencil"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (onEditAdvancedClicked) {
-                  onEditAdvancedClicked();
-                }
-              }}
-            >
-              ☰
-            </div>
+            {
+              false && (
+                <div
+                  className="route-status__pencil"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (onEditAdvancedClicked) {
+                      onEditAdvancedClicked();
+                    }
+                  }}
+                >
+                  ☰
+                </div>
+              )
+            }
           </div>
         );
       }

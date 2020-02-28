@@ -77,7 +77,8 @@ class Users extends React.PureComponent {
                     <tr
                       className={css(style.userRow)}
                       onClick={
-                        () => { this.props.history.push(this.props.match.url + `/${user.id}`); }
+                        () => {}
+                        /*() => { this.props.history.push(this.props.match.url + `/${user.id}`); }*/
                       }
                     >
                       <td style={{ fontWeight: 'bold' }}>{index + 1}</td>
@@ -131,11 +132,11 @@ const style = StyleSheet.create({
     marginBottom: '20px',
     backgroundColor: 'white',
 
-    ':hover': {
-      boxShadow: '0px 8px 8px rgba(0, 0, 0, 0.12)',
-      cursor: 'pointer',
-      fontWeight: 600,
-    },
+    //':hover': {
+    //  boxShadow: '0px 8px 8px rgba(0, 0, 0, 0.12)',
+    //  cursor: 'pointer',
+    //  fontWeight: 600,
+    //},
 
     '> td': {
       padding: '10px',
