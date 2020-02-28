@@ -1,46 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import MainScreen from '../../layouts/MainScreen/MainScreen';
+import InfoPageHeader from '../InfoPageHeader/InfoPageHeader';
 import InfoPageContent from '../InfoPageContent/InfoPageContent';
 import { TITLE, TITLES, FAQ_DATA } from '@/v1/Constants/Faq';
-import MainScreen from '../../layouts/MainScreen/MainScreen';
 import Background from './images/faq.jpg';
-import { StyleSheet, css } from '../../aphrodite';
 
 class Faq extends React.PureComponent {
   render() {
     return (
-      <MainScreen header={TITLE} styles={[styles.aboutUsHeader, styles.aboutUsHeaderTitle]}>
-        <InfoPageContent titles={TITLES} data={FAQ_DATA}/>
+      <MainScreen
+        header={
+          <InfoPageHeader
+            image={Background}
+            title={TITLE}
+          />
+        }
+      >
+        <InfoPageContent
+          titles={TITLES}
+          data={FAQ_DATA}
+        />
       </MainScreen>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  aboutUsHeader: {
-    backgroundColor: '#EBEBE2',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '40vh',
-    backgroundImage: `url(${Background})`,
-  },
-  aboutUsHeaderTitle: {
-    fontSize: '100px',
-    lineHeight: '1em',
-    color: '#FDFDFD',
-    fontWeight: 'normal',
-    fontFamily: ['GilroyBold', ' sans-serif'],
-    marginTop: '0',
-    marginBottom: '0',
-    '@media screen and (max-width: 1600px)': {
-      fontSize: '70px',
-      marginBottom: '60px',
-    },
-  },
-});
-
 
 const mapStateToProps = () => ({});
 
