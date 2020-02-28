@@ -132,7 +132,10 @@ const style = StyleSheet.create({
   spotInfo: {
     flex: '0 0 175px',
     overflowY: 'scroll',
-    scroll: 'none',
+    scrollbarWidth: 'none',
+    '::-webkit-scrollbar': {
+      width: '12px',
+    },
     '> table':
     {
       borderSpacing: 0,
