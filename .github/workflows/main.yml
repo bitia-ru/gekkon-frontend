@@ -3,7 +3,7 @@ name: DeployForNg
 on:
   push:
     branches:
-      - published_to_0.8.0
+      - alpha
 
 jobs:
   build:
@@ -25,4 +25,4 @@ jobs:
             Port 22001
             User peclet
           EOF
-          ssh peclet 'cd services/gekkon-production/frontend_ng && git fetch && git reset --hard origin/published_to_0.8.0 && cd .. && . ./.env && docker-compose build frontend_ng && docker-compose up -d frontend_ng'
+          ssh peclet 'cd services/gekkon-production/frontend_ng && git fetch && git reset --hard origin/alpha && cd .. && . ./.env && docker-compose build frontend_ng && docker-compose up -d frontend_ng'
