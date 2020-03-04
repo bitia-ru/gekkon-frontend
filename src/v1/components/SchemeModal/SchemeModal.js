@@ -136,7 +136,7 @@ class SchemeModal extends Component {
         <div
           role="button"
           tabIndex={0}
-          style={{ outline: 'none' }}
+          style={{ margin: '50px 70px', outline: 'none' }}
           className="modal__hall-scheme"
           ref={(ref) => {
             this.schemeContainerRef = ref;
