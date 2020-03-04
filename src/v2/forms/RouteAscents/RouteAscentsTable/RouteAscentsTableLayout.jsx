@@ -42,7 +42,7 @@ const RouteAscentsTableLayout = ({
                     />
                   </td>
                   <td
-                    style={{ width: '45%', position: 'relative', cursor: 'pointer' }}
+                    style={{ width: '45%', position: 'absolute', cursor: 'pointer' }}
                     onClick={() => { onDateClicked && onDateClicked(ascent.id); }}
                   >
                     {ascent.accomplished_at}
