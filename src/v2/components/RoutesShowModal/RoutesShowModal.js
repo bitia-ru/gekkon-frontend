@@ -857,7 +857,7 @@ const styles = StyleSheet.create({
     width: '118px',
     height: '118px',
     position: 'relative',
-    backgroundImage: 'url(./photo-placeholder.svg)',
+    backgroundImage: `url(${require('./photo-placeholder.svg')})`,
     backgroundSize: 'contain',
   },
   modalTrackStatus: {
