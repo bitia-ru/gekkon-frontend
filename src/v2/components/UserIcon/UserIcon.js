@@ -10,6 +10,8 @@ import { GetUserName, USER_ITEMS_DATA, GUEST_ITEMS_DATA } from '@/v1/Constants/U
 
 import './UserIcon.css';
 import { closeUserSession } from '../../utils/auth';
+import MainMenuNotificationButtonLayout
+  from '@/v2/components/mainmenu/MainMenuNotificationButton/MainMenuNotificationButtonLayout';
 
 
 class UserIcon extends React.PureComponent {
@@ -63,10 +65,9 @@ class UserIcon extends React.PureComponent {
         onBlur={() => this.setState({ droppedDown: false })}
         tabIndex={0}
       >
-        <Avatar
-          onClick={this.onAvatarClick}
-          user={user}
-        />
+        <MainMenuNotificationButtonLayout>
+          <Avatar onClick={this.onAvatarClick} user={user} />
+        </MainMenuNotificationButtonLayout>
         {
           droppedDown
             ? (
