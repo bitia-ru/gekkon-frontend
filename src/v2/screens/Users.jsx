@@ -7,6 +7,7 @@ import { loadUsers as loadUsersAction } from '../redux/users/actions';
 import ContentWithLeftPanel from '../layouts/ContentWithLeftPanel';
 import LeftPanelList from '../layouts/LeftPanelList';
 import TableLayout from '../components/common/Table/TableLayout';
+import Img from "../components/common/Img/Img";
 import { userBaseName } from '../utils/users';
 import { StyleSheet } from '@/v2/aphrodite';
 
@@ -22,6 +23,14 @@ const Users = ({ users, loadUsers, match, history }) => {
   const [currentSortOption, setCurrentSortOption] = useState(Object.keys(sortOptions)[0]);
 
   useEffect(() => { loadUsers(); }, []);
+
+  const userRoleToText = (role) => {
+    switch (role) {
+    case 'admin': return 'Админ';
+    case 'creator': return 'Наполнитель';
+    default: return 'Юзер';
+    }
+  };
 
   const usersSorted = (usersData, sortBy) => {
     const transform = {
@@ -52,6 +61,12 @@ const Users = ({ users, loadUsers, match, history }) => {
     );
   };
 
+  const getDate = (date) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const dayRegistration = new Date(date);
+    return dayRegistration.toLocaleDateString('ru-RU', options);
+  };
+
   const onUserClick = url => history.push(url);
 
   return (
@@ -65,21 +80,25 @@ const Users = ({ users, loadUsers, match, history }) => {
             index: '№',
             avatar: 'Аватар',
             name: { style: { textAlign: 'left' }, content: 'Имя' },
-            scores: 'Очки',
-            karma: 'Карма',
             userId: 'ID',
+            dateRegistration: 'Зарегистрирован',
+            scores: 'Очки',
+            role: 'Роль',
+            karma: 'Карма',
           }}
-          currentCols={['index', 'avatar', 'name', 'scores', 'karma']}
+          currentCols={['index', 'avatar', 'name', 'userId', 'dateRegistration', 'scores', 'role', 'karma']}
           rows={
             usersSorted(users, currentSortOption).map(
               (user, index) => ({
                 key: user.id,
-                userId: user.id,
                 index: index + 1,
                 avatar: user.avatar ? user.avatar.url : '',
                 name: userBaseName(user),
-                scores: Math.round(user.statistics.score || 0),
-                karma: Math.round((user.data.karma || 0) * 100) / 100.0,
+                userId: user.id,
+                dateRegistration: getDate(user.created_at),
+                scores: Math.round(user.statistics.score),
+                role: userRoleToText(user.role),
+                karma: Math.round(user.data.karma * 100) / 100.0,
                 url: `${match.url}/${user.id}`,
               }),
             )
@@ -89,7 +108,7 @@ const Users = ({ users, loadUsers, match, history }) => {
               index: { style: { fontWeight: 'bold' }, content: user.index },
               avatar: {
                 style: { minWidth: '75px' },
-                content: <img height={55} src={user.avatar} />,
+                content: <Img height={55} src={user.avatar} />,
               },
               name: {
                 style: { textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' },
@@ -139,12 +158,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
-  users: state.usersStoreV2.store,
-});
+const mapStateToProps = state => ({ users: state.usersStoreV2.store });
 
-const mapDispatchToProps = dispatch => ({
-  loadUsers: () => dispatch(loadUsersAction()),
-});
+const mapDispatchToProps = dispatch => ({ loadUsers: () => dispatch(loadUsersAction()) });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));
