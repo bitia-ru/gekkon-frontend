@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { css } from '@/v2/aphrodite';
 import TablePlaceholder from './TablePlaceholder';
 
-
 const TableLayout = ({
   cols,
   currentCols,
@@ -70,8 +69,7 @@ const TableLayout = ({
         </tbody>
       </table>
   );
-}
-
+};
 
 TableLayout.propTypes = {
   cols: PropTypes.object,

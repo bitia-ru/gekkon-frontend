@@ -1,13 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import defaultAvatar from './images/avatar_placeholder.svg';
 
-class Img extends React.PureComponent {
-  render() {
-    const { height, src } = this.props;
-    return (
-      <img height={height} src={(src || defaultAvatar)} />
-    );
-  }
-}
+const Img = ({ height, src }) => (
+  <img height={height} src={(src || defaultAvatar)} />
+);
+
+Img.PropTypes = {
+  height: PropTypes.number,
+  src: PropTypes.string,
+};
 
 export default Img;
