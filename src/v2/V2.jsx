@@ -10,10 +10,11 @@ import RoutePhotos from './screens/RoutePhotos';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import About from './components/About/About';
 import Faq from './components/Faq/Faq';
+import CtrlPressedCatcher from './components/common/CtrlPressedCatcher/CtrlPressedCatcher';
 
 
 const V2 = ({ currentUser }) => (
-  <>
+  <CtrlPressedCatcher>
     {
       currentUser !== undefined ? (
         <Switch>
@@ -30,7 +31,7 @@ const V2 = ({ currentUser }) => (
         <BootingScreen />
       )
     }
-  </>
+  </CtrlPressedCatcher>
 );
 
 const mapStateToProps = state => ({
