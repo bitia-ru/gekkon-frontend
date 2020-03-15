@@ -99,6 +99,24 @@ class RoutesShowModal extends Component {
     );
   };
 
+  getSectorId = () => {
+    const { match } = this.props;
+    return (
+      match.params.sector_id
+        ? parseInt(match.params.sector_id, 10)
+        : null
+    );
+  };
+
+  getSpotId = () => {
+    const { match } = this.props;
+    return (
+      match.params.id
+        ? parseInt(match.params.id, 10)
+        : null
+    );
+  };
+
   onKeyDown = (event) => {
     const { onClose } = this.props;
     if (event.key === 'Escape') {
@@ -267,9 +285,11 @@ class RoutesShowModal extends Component {
     const {
       user,
     } = this.props;
+
     const routeId = this.getRouteId();
     const sectorId = this.getSectorId();
     const spotId = this.getSpotId();
+
     Sentry.withScope((scope) => {
       scope.setExtra('user_id', user.id);
       scope.setExtra('route_id', routeId);
@@ -288,6 +308,7 @@ class RoutesShowModal extends Component {
       Sentry.captureException(msg);
       //this.showToastr('success', 'Успешно', 'Сообщение успешно отправлено');
     });
+
     this.setState({ showTooltip: false, showNoticeForm: false });
   };
 
