@@ -9,12 +9,7 @@ import getArrayFromObject from '@/v1/utils/getArrayFromObject';
 import { StyleSheet, css } from '../../aphrodite';
 
 
-const RouteStatus = ({
-  changeAscentResult,
-  onEditAdvancedClicked,
-  user,
-
-}) => (
+const RouteStatus = ({ onClick, user }) => (
   <RouteContext.Consumer>
     {
       ({ route }) => {
@@ -39,7 +34,7 @@ const RouteStatus = ({
             role="button"
             tabIndex={0}
             style={{ outline: 'none' }}
-            onClick={changeAscentResult || null}
+            onClick={onClick || null}
           >
             <div
               className={css(styles.routeStatusType,
@@ -52,21 +47,6 @@ const RouteStatus = ({
                   ascent.result === 'red_point' ? 'Пролез' : 'Флешанул'
                 )
                 : 'Не пройдена'
-            }
-            {
-              false && (
-                <div
-                  className="route-status__pencil"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    if (onEditAdvancedClicked) {
-                      onEditAdvancedClicked();
-                    }
-                  }}
-                >
-                  ☰
-                </div>
-              )
             }
           </div>
         );
@@ -115,13 +95,12 @@ const styles = StyleSheet.create({
 });
 
 RouteStatus.propTypes = {
-  changeAscentResult: PropTypes.func,
-  onEditAdvancedClicked: PropTypes.func,
+  user: PropTypes.object,
+  onClick: PropTypes.func,
 };
 
 RouteStatus.defaultProps = {
-  changeAscentResult: null,
-  onEditAdvancedClicked: null,
+  onClick: null,
 };
 
 const mapStateToProps = state => ({
