@@ -7,11 +7,13 @@ import * as R from 'ramda';
 import Modal from '../../layouts/Modal';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import RouteAscentsLayout from './RouteAscentsLayout';
-import { ApiUrl } from '@/v1/Environ';
 import {
   updateAscent as updateAscentAction,
   addAscent as addAscentAction,
-} from '@/v1/stores/routes/utils';
+  removeAscent as removeAscentAction,
+} from '@/v2/redux/routes/actions';
+import RouteAscentsTableContext from './contexts/RouteAscentsTableContext';
+import isHtmlElChild from '@/v2/utils/isHtmlElChild';
 
 const SAVE_REQUEST_DELAY = 3000;
 
@@ -23,34 +25,48 @@ class RouteAscents extends Component {
     this.state = {
       details: ascent,
       ascent,
+      mergeLastRow: true,
     };
     this.timerId = null;
+    this.lastTableRowRef = null;
   }
 
   componentWillUnmount() {
     if (this.timerId) {
       clearTimeout(this.timerId);
-      this.save();
+      this.save(true);
     }
   }
 
-  save = () => {
-    const { updateAscent } = this.props;
+  save = (removeIfEmpty) => {
+    const { removeAscent, updateAscent } = this.props;
     const { ascent } = this.state;
     const { id } = this.getAscent();
-    updateAscent(`${ApiUrl}/v1/ascents/${id}`, { ascent });
+    if (ascent.history === null && removeIfEmpty ) {
+      removeAscent(id);
+    } else {
+      updateAscent(id, { ascent });
+    }
   };
 
-  onAscentDateChanged = (id, date) => {
-    const { ascent } = this.state;
+  onAscentDateChanged = (index, date) => {
+    const { ascent, mergeLastRow } = this.state;
     const history = R.clone(ascent.history);
-    history[id].accomplished_at = date.format('YYYY-MM-DD');
+    if (index !== history.length - 1 || (index === history.length - 1 && mergeLastRow)) {
+      let i = index - 1;
+      const fields = ['result', 'accomplished_at'];
+      while (i >= 0 && R.equals(R.pick(fields, history[i]), R.pick(fields, history[index]))) {
+        history[i].accomplished_at = date.format('YYYY-MM-DD');
+        i -= 1;
+      }
+    }
+    history[index].accomplished_at = date.format('YYYY-MM-DD');
     this.updateStateAscent(this.sortAscents(history));
   };
 
-  removeAscent = (id) => {
+  removeAscent = (index) => {
     const { ascent } = this.state;
-    const history = R.remove(id, 1, ascent.history);
+    const history = R.remove(index, 1, ascent.history);
     this.updateStateAscent(history);
   };
 
@@ -148,42 +164,44 @@ class RouteAscents extends Component {
     if (ascent) {
       const history = R.concat(ascent.history || [], this.prepareAscentsHistory(ascents));
       this.updateStateAscent(history);
+      this.setState({ mergeLastRow: false });
     } else {
       const { user, addAscent, history: historyProp } = this.props;
       let params;
-      if (ascents.length > 1) {
-        const lookup = {
-          red_point: 'success',
-          flash: 'success',
-          unsuccessful: 'attempt',
-        };
-        const ascentsNew = R.map(
-          a => (
-            {
-              result: lookup[a.result],
-              count: a.count,
-            }
-          ),
+      let ascentsPrepared = ascents;
+      if (ascents[0].result === 'red_point') {
+        ascentsPrepared = R.prepend(
+          {
+            ...ascents[0],
+            result: 'attempt',
+            count: 1,
+          },
           ascents,
         );
-        const history = this.prepareAscentsHistory(ascentsNew);
-        params = {
-          ascent: {
-            history,
-            result: this.getResult(history),
-            user_id: user.id,
-            route_id: this.getRouteId(),
-          },
-        };
-      } else {
-        params = {
-          ascent: {
-            result: ascents[0].result,
-            user_id: user.id,
-            route_id: this.getRouteId(),
-          },
-        };
       }
+      const lookup = {
+        red_point: 'success',
+        flash: 'success',
+        unsuccessful: 'attempt',
+      };
+      const ascentsNew = R.map(
+        a => (
+          {
+            result: lookup[a.result],
+            count: a.count,
+          }
+        ),
+        ascentsPrepared,
+      );
+      const history = this.prepareAscentsHistory(ascentsNew);
+      params = {
+        ascent: {
+          history,
+          result: this.getResult(history),
+          user_id: user.id,
+          route_id: this.getRouteId(),
+        },
+      };
       addAscent(params);
       historyProp.goBack();
     }
@@ -193,25 +211,41 @@ class RouteAscents extends Component {
     }
   };
 
+  onChangeFocus = (event) => {
+    const { mergeLastRow } = this.state;
+    if (!mergeLastRow) {
+      this.setState(
+        { mergeLastRow: !isHtmlElChild(event.target, this.lastTableRowRef) },
+      );
+    }
+  };
+
   render() {
-    const { details, ascent } = this.state;
+    const { details, ascent, mergeLastRow } = this.state;
     const ascentsHistory = this.ascentsForLayout();
     return (
       <Modal maxWidth="400px">
-        <RouteAscentsLayout
-          title="Добавление пролаза"
-          initialWithFlash={!ascent}
-          instantMode={ascent}
-          blameCategory={false}
-          ascents={ascentsHistory}
-          onClick={this.onClick}
-          details={{
-            show: details,
-          }}
-          onAddAscents={this.onAddAscents}
-          onRemoveAscent={this.removeAscent}
-          onAscentDateChanged={this.onAscentDateChanged}
-        />
+        <RouteAscentsTableContext.Provider
+          value={{ setLastRowRef: (ref) => { this.lastTableRowRef = ref; } }}
+        >
+          <div onFocus={this.onChangeFocus}>
+            <RouteAscentsLayout
+              title="Добавление пролаза"
+              initialWithFlash={!ascent}
+              instantMode={ascent}
+              blameCategory={false}
+              ascents={ascentsHistory}
+              onClick={this.onClick}
+              details={{
+                show: details,
+              }}
+              mergeLastRow={mergeLastRow}
+              onAddAscents={this.onAddAscents}
+              onRemoveAscent={this.removeAscent}
+              onAscentDateChanged={this.onAscentDateChanged}
+            />
+          </div>
+        </RouteAscentsTableContext.Provider>
       </Modal>
     );
   }
@@ -222,6 +256,7 @@ RouteAscents.propTypes = {
   routes: PropTypes.object.isRequired,
   addAscent: PropTypes.func.isRequired,
   updateAscent: PropTypes.func.isRequired,
+  removeAscent: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
@@ -235,6 +270,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   addAscent: params => dispatch(addAscentAction(params)),
   updateAscent: (url, params) => dispatch(updateAscentAction(url, params)),
+  removeAscent: url => dispatch(removeAscentAction(url)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RouteAscents));

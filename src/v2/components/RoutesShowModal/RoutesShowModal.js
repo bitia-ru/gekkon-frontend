@@ -346,41 +346,7 @@ class RoutesShowModal extends Component {
     }
   };
 
-  changeAscentResultV2 = () => this.props.history.push('#ascents');
-
-  changeAscentResult = (routeId) => {
-    const {
-      user,
-      routes,
-      addAscent,
-      updateAscent,
-      removeAscent,
-    } = this.props;
-    const route = routes[routeId];
-    const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
-    if (ascent) {
-      if (ascent.history) {
-        this.changeAscentResultV2();
-        return;
-      }
-      let result;
-      if (ascent.result === 'red_point') {
-        result = 'flash';
-      } else if (ascent.result === 'flash') {
-        result = 'unsuccessful';
-        removeAscent(ascent.id);
-        return;
-      } else {
-        result = 'red_point';
-      }
-      const params = { ascent: { result } };
-      updateAscent(ascent.id, params);
-    } else {
-      const result = 'red_point';
-      const params = { ascent: { result, user_id: user.id, route_id: routeId } };
-      addAscent(params);
-    }
-  };
+  changeAscentResult = () => this.props.history.push('#ascents');
 
   content = () => {
     const {
@@ -647,10 +613,7 @@ class RoutesShowModal extends Component {
                         <div className={css(styles.modalTrackStatus)}>
                           {
                             user && (
-                              <RouteStatus
-                                changeAscentResult={() => this.changeAscentResult(routeId)}
-                                onEditAdvancedClicked={this.changeAscentResultV2}
-                              />
+                              <RouteStatus onClick={this.changeAscentResult} />
                             )
                           }
                         </div>
