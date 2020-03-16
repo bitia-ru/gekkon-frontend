@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 import RouteAscentsTableLayout from './RouteAscentsTableLayout';
 
 
@@ -11,8 +12,49 @@ class RouteAscentsTable extends React.PureComponent {
     };
   }
 
+  ascentsForLayout = () => {
+    const { ascents, mergeLastRow } = this.props;
+    const res = [];
+    R.forEach(
+      (ascent) => {
+        const fields = ['success', 'accomplished_at'];
+        if (res.length > 0 && R.equals(R.pick(fields, R.last(res)), R.pick(fields, ascent))) {
+          res[res.length - 1].count += 1;
+          res[res.length - 1].id = ascent.id;
+        } else {
+          res.push(
+            {
+              ...ascent,
+              count: 1,
+              id: ascent.id,
+            },
+          );
+        }
+      },
+      ascents,
+    );
+
+    const last = R.last(res);
+    if (!mergeLastRow && last.count > 1) {
+      return R.concat(
+        R.slice(0, -1, res),
+        [
+          {
+            ...last,
+            count: last.count - 1,
+          },
+          {
+            ...last,
+            count: 1,
+          },
+        ],
+      );
+    }
+    return res;
+  };
+
   render() {
-    const { ascents, onRemoveAscent, onAscentDateChanged } = this.props;
+    const { onRemoveAscent, onAscentDateChanged } = this.props;
 
     return (
       <RouteAscentsTableLayout
@@ -24,7 +66,7 @@ class RouteAscentsTable extends React.PureComponent {
             this.setState({ dateChangingAscentId: null });
           }
         }
-        ascents={ascents}
+        ascents={this.ascentsForLayout()}
         dateChangingAscentId={this.state.dateChangingAscentId}
       />
     );

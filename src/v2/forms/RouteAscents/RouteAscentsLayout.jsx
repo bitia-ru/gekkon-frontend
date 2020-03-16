@@ -18,6 +18,7 @@ const RouteAscentsLayout = ({
   onAscentDateChanged,
   ascents,
   instantMode,
+  mergeLastRow,
 }) => (
   <div className={css(style.container)}>
     <div className={css(style.titleRow)}>{title}</div>
@@ -35,6 +36,7 @@ const RouteAscentsLayout = ({
         <FormExpandableArea initiallyExpanded={ascents && ascents.length > 0}>
           <RouteAscentsTable
             ascents={ascents}
+            mergeLastRow={mergeLastRow}
             onAscentDateChanged={
               (ascentId, newDate) => {
                 onAscentDateChanged && onAscentDateChanged(ascentId, newDate);

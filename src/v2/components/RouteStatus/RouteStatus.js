@@ -13,7 +13,6 @@ const RouteStatus = ({
   changeAscentResult,
   onEditAdvancedClicked,
   user,
-
 }) => (
   <RouteContext.Consumer>
     {
