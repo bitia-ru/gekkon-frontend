@@ -49,6 +49,7 @@ import { setSelectedPage } from '@/v1/actions';
 import { currentUser as currentUserObtainer } from '@/v2/redux/user_session/utils';
 import withModals from '@/v2/modules/modalable';
 import RouteAscents from '../../forms/RouteAscents/RouteAscents';
+import moment from 'moment';
 
 
 class RoutesShowModal extends Component {
@@ -350,6 +351,16 @@ class RoutesShowModal extends Component {
 
   changeAscentResultV2 = () => this.props.history.push('#ascents');
 
+  needAscentModal = (ascent) => {
+    if (ascent.result === 'flash' && ascent.history.length === 1) {
+      return false;
+    }
+    if (ascent.result === 'red_point' && ascent.history.length === 2) {
+      return false;
+    }
+    return true;
+  };
+
   changeAscentResult = (routeId) => {
     const {
       user,
@@ -360,26 +371,36 @@ class RoutesShowModal extends Component {
     } = this.props;
     const route = routes[routeId];
     const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
+    const date = moment().format('YYYY-MM-DD');
+    let history;
     if (ascent) {
-      if (ascent.history) {
+      if (this.needAscentModal(ascent)) {
         this.changeAscentResultV2();
         return;
       }
       let result;
       if (ascent.result === 'red_point') {
         result = 'flash';
+        history = [{ result: 'success', accomplished_at: date }];
       } else if (ascent.result === 'flash') {
-        result = 'unsuccessful';
         removeAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`);
         return;
       } else {
         result = 'red_point';
+        history = [
+          { result: 'attempt', accomplished_at: date },
+          { result: 'success', accomplished_at: date },
+        ];
       }
-      const params = { ascent: { result } };
+      const params = { ascent: { result, history } };
       updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
     } else {
       const result = 'red_point';
-      const params = { ascent: { result, user_id: user.id, route_id: routeId } };
+      history = [
+        { result: 'attempt', accomplished_at: date },
+        { result: 'success', accomplished_at: date },
+      ];
+      const params = { ascent: { result, user_id: user.id, route_id: routeId, history } };
       addAscentProp(params);
     }
   };
