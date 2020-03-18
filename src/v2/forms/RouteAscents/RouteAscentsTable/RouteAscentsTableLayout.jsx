@@ -73,14 +73,14 @@ const RouteAscentsTableLayout = ({
                             )
                           }
                         </td>
-                        <td style={{ outline: 'none' }}>
+                        <td style={{ width: '10%', outline: 'none' }}>
                           {
                             ascent.count > 1 && `×${ascent.count}`
                           }
                         </td>
                         <td
                           style={{
-                            width: '20%',
+                            width: '10%',
                             textAlign: 'right',
                             outline: 'none',
                           }}
