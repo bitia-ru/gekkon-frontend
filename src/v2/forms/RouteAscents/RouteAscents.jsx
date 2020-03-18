@@ -265,7 +265,7 @@ RouteAscents.propTypes = {
 const mapStateToProps = state => ({
   user: currentUser(state),
   formErrors: {},
-  routes: state.routesStore.routes,
+  routes: state.routesStoreV2.routes,
 });
 
 const mapDispatchToProps = dispatch => ({

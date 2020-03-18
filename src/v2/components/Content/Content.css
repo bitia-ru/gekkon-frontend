@@ -1,0 +1,20 @@
+.content {
+    padding-top: 105px;
+    padding-bottom: 105px;
+}
+
+.content__container {
+    outline: 0;
+    max-width: 1600px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media screen and (max-width: 1440px) {
+    .content {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+}

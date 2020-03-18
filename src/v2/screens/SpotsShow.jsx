@@ -6,12 +6,12 @@ import { StyleSheet, css } from '../aphrodite';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import Header from '@/v2/components/Header/Header';
 import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
-import RoutesEditModal from '@/v1/components/RoutesEditModal/RoutesEditModal';
+import RoutesEditModal from '@/v2/components/RoutesEditModal/RoutesEditModal';
 import reloadSector from '@/v1/utils/reloadSector';
 import reloadSpot from '@/v1/utils/reloadSpot';
 import getCurrentSector from '@/v1/utils/getCurrentSector';
 import getCurrentSpotOrSectorData from '@/v1/utils/getCurrentSpotOrSectorData';
-import Content from '@/v1/components/Content/Content';
+import Content from '@/v2/components/Content/Content';
 import SpotContext from '@/v1/contexts/SpotContext';
 import SectorContext from '@/v1/contexts/SectorContext';
 
@@ -104,7 +104,7 @@ const style = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  routes: state.routesStore.routes,
+  routes: state.routesStoreV2.routes,
   spots: state.spotsStore.spots,
   sectors: state.sectorsStore.sectors,
 });

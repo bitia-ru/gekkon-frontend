@@ -14,7 +14,6 @@ import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';
 import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
 import { DEFAULT_COMMENTS_DISPLAYED } from '@/v1/Constants/Comments';
-import StickyBar from '@/v1/components/StickyBar/StickyBar';
 import SchemeModal from '@/v1/components/SchemeModal/SchemeModal';
 import ShowSchemeButton from '@/v1/components/ShowSchemeButton/ShowSchemeButton';
 import NoticeButton from '@/v1/components/NoticeButton/NoticeButton';
@@ -27,20 +26,19 @@ import numToStr from '@/v1/Constants/NumToStr';
 import RouteContext from '@/v1/contexts/RouteContext';
 import getArrayFromObject from '@/v1/utils/getArrayFromObject';
 import {
-  loadRoute,
-  removeComment,
-  addComment,
-  removeLike,
-  addLike,
-  removeRoute,
-  addAscent,
-  updateAscent,
-  removeAscent,
-} from '@/v1/stores/routes/utils';
+  loadRoute as loadRouteAction,
+  removeComment as removeCommentAction,
+  addComment as addCommentAction,
+  removeLike as removeLikeAction,
+  addLike as addLikeAction,
+  removeRoute as removeRouteAction,
+  addAscent as addAscentAction,
+  updateAscent as updateAscentAction,
+  removeAscent as removeAscentAction,
+} from '@/v2/redux/routes/actions';
 import CtrlPressedContext from '@/v1/contexts/CtrlPressedContext';
 import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
-import getState from '@/v1/utils/getState';
 import getFilters from '@/v1/utils/getFilters';
 import reloadRoutes from '@/v1/utils/reloadRoutes';
 import reloadSector from '@/v1/utils/reloadSector';
@@ -73,8 +71,8 @@ class RoutesShowModal extends Component {
   }
 
   componentDidMount() {
-    const { loadRoute: loadRouteProp } = this.props;
-    loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId()}`);
+    const { loadRoute } = this.props;
+    loadRoute(this.getRouteId());
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -129,16 +127,16 @@ class RoutesShowModal extends Component {
       this.props.history.push(
         R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() + 1}`)(this.props.match.url),
       );
-      const { loadRoute: loadRouteProp } = this.props;
-      loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId() + 1}`);
+      const { loadRoute } = this.props;
+      loadRoute(this.getRouteId() + 1);
     }
 
     if (event.key === 'ArrowLeft') {
       this.props.history.push(
         R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() - 1}`)(this.props.match.url),
       );
-      const { loadRoute: loadRouteProp } = this.props;
-      loadRouteProp(`${ApiUrl}/v1/routes/${this.getRouteId() - 1}`);
+      const { loadRoute } = this.props;
+      loadRoute(this.getRouteId() - 1);
     }
   };
 
@@ -172,7 +170,7 @@ class RoutesShowModal extends Component {
     const {
       routes,
       user,
-      addComment: addCommentProp,
+      addComment,
     } = this.props;
     const { commentContent } = this.state;
     const route = routes[this.getRouteId()];
@@ -187,7 +185,7 @@ class RoutesShowModal extends Component {
       params.route_comment.route_comment_id = routeCommentId;
     }
     const self = this;
-    addCommentProp(
+    addComment(
       params,
       () => {
         self.removeQuoteComment();
@@ -325,27 +323,27 @@ class RoutesShowModal extends Component {
   };
 
   removeComment = (routeId, comment) => {
-    const { removeComment: removeCommentProp } = this.props;
+    const { removeComment } = this.props;
     if (!window.confirm('Удалить комментарий?')) {
       return;
     }
-    removeCommentProp(`${ApiUrl}/v1/route_comments/${comment.id}`);
+    removeComment(comment.id);
   };
 
   onLikeChange = (routeId, afterChange) => {
     const {
       user,
       routes,
-      removeLike: removeLikeProp,
-      addLike: addLikeProp,
+      removeLike,
+      addLike,
     } = this.props;
     const route = routes[routeId];
     const like = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.likes));
     if (like) {
-      removeLikeProp(`${ApiUrl}/v1/likes/${like.id}`, afterChange);
+      removeLike(like.id, afterChange);
     } else {
       const params = { like: { user_id: user.id, route_id: routeId } };
-      addLikeProp(params, afterChange);
+      addLike(params, afterChange);
     }
   };
 
@@ -365,9 +363,9 @@ class RoutesShowModal extends Component {
     const {
       user,
       routes,
-      addAscent: addAscentProp,
-      updateAscent: updateAscentProp,
-      removeAscent: removeAscentProp,
+      addAscent,
+      updateAscent,
+      removeAscent,
     } = this.props;
     const route = routes[routeId];
     const ascent = R.find(R.propEq('user_id', user.id))(getArrayFromObject(route.ascents));
@@ -383,7 +381,7 @@ class RoutesShowModal extends Component {
         result = 'flash';
         history = [{ result: 'success', accomplished_at: date }];
       } else if (ascent.result === 'flash') {
-        removeAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`);
+        removeAscent(ascent.id);
         return;
       } else {
         result = 'red_point';
@@ -393,7 +391,7 @@ class RoutesShowModal extends Component {
         ];
       }
       const params = { ascent: { result, history } };
-      updateAscentProp(`${ApiUrl}/v1/ascents/${ascent.id}`, params);
+      updateAscent(ascent.id, params);
     } else {
       const result = 'red_point';
       history = [
@@ -401,7 +399,7 @@ class RoutesShowModal extends Component {
         { result: 'success', accomplished_at: date },
       ];
       const params = { ascent: { result, user_id: user.id, route_id: routeId, history } };
-      addAscentProp(params);
+      addAscent(params);
     }
   };
 
@@ -747,7 +745,7 @@ class RoutesShowModal extends Component {
 
   render() {
     const {
-      onClose, loading, routes,
+      onClose, routes,
     } = this.props;
     const route = routes[this.getRouteId()];
     return (
@@ -760,12 +758,7 @@ class RoutesShowModal extends Component {
             }
           }}
         >
-          <StickyBar
-            loading={loading}
-            hideLoaded
-          >
-            {this.content()}
-          </StickyBar>
+          {this.content()}
         </div>
       </RouteContext.Provider>
     );
@@ -1010,26 +1003,24 @@ RoutesShowModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   openEdit: PropTypes.func.isRequired,
   goToProfile: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   sectors: state.sectorsStore.sectors,
-  routes: state.routesStore.routes,
+  routes: state.routesStoreV2.routes,
   user: currentUserObtainer(state),
-  loading: getState(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
-  removeComment: url => dispatch(removeComment(url)),
-  addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),
-  removeLike: (url, afterAll) => dispatch(removeLike(url, afterAll)),
-  addLike: (params, afterAll) => dispatch(addLike(params, afterAll)),
-  addAscent: params => dispatch(addAscent(params)),
-  updateAscent: (url, params) => dispatch(updateAscent(url, params)),
-  removeAscent: url => dispatch(removeAscent(url)),
-  removeRoute: (url, afterSuccess) => dispatch(removeRoute(url, afterSuccess)),
+  loadRoute: (id, afterLoad) => dispatch(loadRouteAction(id, afterLoad)),
+  removeComment: id => dispatch(removeCommentAction(id)),
+  addComment: (params, afterSuccess) => dispatch(addCommentAction(params, afterSuccess)),
+  removeLike: (id, afterAll) => dispatch(removeLikeAction(id, afterAll)),
+  addLike: (params, afterAll) => dispatch(addLikeAction(params, afterAll)),
+  addAscent: params => dispatch(addAscentAction(params)),
+  updateAscent: (id, params) => dispatch(updateAscentAction(id, params)),
+  removeAscent: id => dispatch(removeAscentAction(id)),
+  removeRoute: (id, afterSuccess) => dispatch(removeRouteAction(id, afterSuccess)),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
 });
 
