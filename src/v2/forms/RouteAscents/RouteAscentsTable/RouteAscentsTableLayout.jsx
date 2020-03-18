@@ -34,8 +34,8 @@ const RouteAscentsTableLayout = ({
                   ascents && R.addIndex(R.map)(
                     (ascent, i) => (
                       <tr key={i} ref={i === ascents.length - 1 ? setLastRowRef : null}>
-                        <td style={{ width: '10%' }} tabIndex={0}>{i + 1}</td>
-                        <td tabIndex={0} style={{ width: '25%', textAlign: 'center' }}>
+                        <td style={{ width: '10%', outline: 'none' }}>{i + 1}</td>
+                        <td style={{ width: '25%', textAlign: 'center', outline: 'none' }}>
                           <img
                             src={
                               ascent.success ? (
@@ -52,6 +52,7 @@ const RouteAscentsTableLayout = ({
                             width: '45%',
                             position: 'absolute',
                             cursor: 'pointer',
+                            outline: 'none',
                           }}
                           onClick={() => { onDateClicked && onDateClicked(ascent.id); }}
                         >
@@ -72,8 +73,18 @@ const RouteAscentsTableLayout = ({
                             )
                           }
                         </td>
-                        <td tabIndex={0}>{ ascent.count > 1 && `×${ascent.count}` }</td>
-                        <td tabIndex={0} style={{ width: "20%", textAlign: 'right' }}>
+                        <td style={{ outline: 'none' }}>
+                          {
+                            ascent.count > 1 && `×${ascent.count}`
+                          }
+                        </td>
+                        <td
+                          style={{
+                            width: '20%',
+                            textAlign: 'right',
+                            outline: 'none',
+                          }}
+                        >
                           <img
                             style={{ cursor: 'pointer' }}
                             onClick={

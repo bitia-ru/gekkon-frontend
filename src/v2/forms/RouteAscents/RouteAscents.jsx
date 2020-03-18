@@ -51,9 +51,9 @@ class RouteAscents extends Component {
   };
 
   onAscentDateChanged = (index, date) => {
-    const { ascent } = this.state;
+    const { ascent, mergeLastRow } = this.state;
     const history = R.clone(ascent.history);
-    if (index !== history.length - 1) {
+    if (index !== history.length - 1 || (index === history.length - 1 && mergeLastRow)) {
       let i = index - 1;
       const fields = ['result', 'accomplished_at'];
       while (i >= 0 && R.equals(R.pick(fields, history[i]), R.pick(fields, history[index]))) {

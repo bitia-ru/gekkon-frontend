@@ -42,6 +42,7 @@ class RouteAscentsTable extends React.PureComponent {
           {
             ...last,
             count: last.count - 1,
+            id: ascents[ascents.length - 2].id,
           },
           {
             ...last,
