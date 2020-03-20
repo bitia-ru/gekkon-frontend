@@ -6,6 +6,7 @@ import {
   loadSectorSuccess,
 } from './actions';
 import numToStr from '../../Constants/NumToStr';
+import { displayError } from '@/v2/utils/showToastr';
 
 export const loadSector = (url, params, afterLoad) => (
   (dispatch) => {
@@ -46,7 +47,7 @@ export const loadSector = (url, params, afterLoad) => (
         }
       }).catch((error) => {
         dispatch(loadSectorsFailed());
-        // dispatch(pushError(error));
+        displayError(error);
       });
   }
 );

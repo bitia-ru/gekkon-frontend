@@ -8,6 +8,7 @@ import {
 import { loadSectors } from '../sectors/actions';
 import numToStr from '../../Constants/NumToStr';
 import { setDefaultSelectedFilters, setDefaultSelectedPages } from '../../actions';
+import { displayError } from '@/v2/utils/showToastr';
 
 export const loadSpot = (url, params) => (
   (dispatch, getState) => {
@@ -58,7 +59,7 @@ export const loadSpot = (url, params) => (
         dispatch(loadSectors(spot.sectors));
       }).catch((error) => {
         dispatch(loadSpotsFailed());
-        // dispatch(pushError(error));
+        displayError(error);
       });
   }
 );

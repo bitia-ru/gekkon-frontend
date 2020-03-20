@@ -17,6 +17,7 @@ import Modal from '../../layouts/Modal';
 
 import './SignUpForm.css';
 import { ModalContext } from '@/v2/modules/modalable';
+import { displayError, showToastr } from '@/v2/utils/showToastr';
 
 
 class SignUpForm extends Component {
@@ -126,12 +127,18 @@ class SignUpForm extends Component {
         user,
         {
           success() {
-            submitSuccess && submitSuccess();
+            showToastr(
+              'Вам на почту было отправлено письмо. Для окончания регистрации перейдите по ссылке в письме.',
+              'success',
+              submitSuccess,
+            );
           },
           failed(error) {
             self.setState({ isWaiting: false });
             if (error.response && error.response.data) {
               self.setState({ errors: R.merge(errors, error.response.data) });
+            } else {
+              displayError(error);
             }
           },
         },

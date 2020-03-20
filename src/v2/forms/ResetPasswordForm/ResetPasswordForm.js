@@ -18,6 +18,7 @@ import { ApiUrl } from '@/v1/Environ';
 import { loadUsersFailed, resetPasswordSuccess } from '@/v1/stores/users/actions';
 import Api from '@/v2/utils/Api';
 import { acts } from '@/v2/redux/routes/actions';
+import { displayError, showToastr } from '@/v2/utils/showToastr';
 
 
 class ResetPasswordForm extends Component {
@@ -135,12 +136,15 @@ class ResetPasswordForm extends Component {
         {
           method: 'patch',
           success() {
-            console.log('Пароль успешно изменен');
-            window.history.back();
+            showToastr(
+              'Пароль успешно изменен',
+              'success',
+              () => window.location.href = '/',
+            );
           },
           failed(error) {
             self.setState({ isWaiting: false });
-            console.log(error);
+            displayError(error);
           },
         },
       );

@@ -15,6 +15,7 @@ import { enterWithVk } from '../../utils/vk';
 import './LogInForm.css';
 import { ModalContext } from '../../modules/modalable';
 import Api from '@/v2/utils/Api';
+import { showToastr } from '@/v2/utils/showToastr';
 
 
 class LogInForm extends Component {
@@ -149,8 +150,11 @@ class LogInForm extends Component {
           {
             params,
             success() {
-              console.log('На почту было отправлено сообщение для восстановления пароля');
-              window.history.back();
+              showToastr(
+                'На почту было отправлено сообщение для восстановления пароля',
+                'success',
+                () => window.history.back(),
+              );
             },
             failed(error) {
               const resp = error.response;

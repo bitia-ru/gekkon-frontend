@@ -5,6 +5,7 @@ import {
   loadNewsFailed,
   loadNewsSuccess,
 } from './actions';
+import { displayError } from '@/v2/utils/showToastr';
 
 export const loadNews = params => (
   (dispatch) => {
@@ -15,7 +16,7 @@ export const loadNews = params => (
         dispatch(loadNewsSuccess(response.data));
       }).catch((error) => {
         dispatch(loadNewsFailed());
-        // dispatch(pushError(error));
+        displayError(error);
       });
   }
 );

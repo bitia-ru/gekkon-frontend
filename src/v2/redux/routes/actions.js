@@ -8,6 +8,7 @@ import {
   removeRoutePropertyByIdSuccess
 } from '@/v1/stores/routes/actions';
 import Axios from 'axios';
+import { displayError } from '@/v2/utils/showToastr';
 
 export const acts = {
   LOAD_ROUTES_REQUEST: 'LOAD_ROUTES_REQUEST_V2',
@@ -105,7 +106,7 @@ export const loadRoutes = (url, params) => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -137,7 +138,7 @@ export const loadRoute = (id, afterLoad) => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -170,7 +171,7 @@ export const removeLike = (id, afterAll) => (
           });
           afterAll();
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -203,7 +204,7 @@ export const addRoute = (params, afterSuccess, afterAll) => (
           });
           afterAll();
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -236,7 +237,7 @@ export const updateRoute = (id, params, afterSuccess, afterAll) => (
           });
           afterAll();
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -266,7 +267,7 @@ export const removeRoute = (id, afterSuccess) => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -299,7 +300,7 @@ export const addLike = (params, afterAll) => (
           });
           afterAll();
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -331,7 +332,7 @@ export const addAscent = params => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -363,7 +364,7 @@ export const updateAscent = (id, params) => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -441,7 +442,7 @@ export const addComment = (params, afterSuccess) => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -519,7 +520,7 @@ export const removeComment = id => (
             type: acts.LOAD_ROUTES_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );

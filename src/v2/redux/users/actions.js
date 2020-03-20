@@ -1,4 +1,5 @@
 import Api from '../../utils/Api';
+import { displayError } from '@/v2/utils/showToastr';
 
 export const acts = {
   UPDATE_USERS: 'UPDATE_USERS_V2',
@@ -30,7 +31,7 @@ export const loadSpecificUser = userId => (
             type: acts.LOAD_USERS_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
@@ -64,7 +65,7 @@ export const loadUsers = () => (
             type: acts.LOAD_USERS_FAILED,
           });
 
-          console.log(error);
+          displayError(error);
         },
       },
     );
