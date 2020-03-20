@@ -1,4 +1,5 @@
 import Api from '../../utils/Api';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 export const acts = {
   LOAD_PHOTOS_REQUEST: 'LOAD_PHOTOS_REQUEST_V2',
@@ -25,8 +26,7 @@ export const loadRoutePhotos = sectorId => (
           dispatch({
             type: acts.LOAD_PHOTOS_FAILED,
           });
-
-          console.log(error);
+          toastHttpError(error);
         },
       },
     );

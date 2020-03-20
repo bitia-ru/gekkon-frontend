@@ -18,6 +18,7 @@ import reloadRoutes from '../../utils/reloadRoutes';
 import getViewMode from '../../utils/getViewMode';
 import getPage from '../../utils/getPage';
 import { ApiUrl } from '@/v1/Environ';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 const NUM_OF_DISPLAYED_PAGES = 5;
 
@@ -113,7 +114,7 @@ class Content extends Component {
           this.onDropFiles(R.slice(1, Infinity, acceptedFiles));
         }
       }).catch((error) => {
-        console.log(error);
+        toastHttpError(error);
       });
   };
 

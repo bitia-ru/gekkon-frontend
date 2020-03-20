@@ -15,6 +15,7 @@ import {
 import { CARDS_PER_PAGE } from '../../Constants/RouteCardTable';
 import getObjectFromArray from '../../utils/getObjectFromArray';
 import { ApiUrl } from '../../Environ';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 Axios.interceptors.request.use(
   config => ({
@@ -69,7 +70,7 @@ export const loadRoutes = (url, params) => (
         dispatch(loadRoutesSuccess(prepareAllRoutes(response.data.payload)));
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -87,7 +88,7 @@ export const loadRoute = (url, afterLoad) => (
         }
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -110,7 +111,7 @@ export const removeLike = (url, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterAll();
       });
   }
@@ -132,7 +133,7 @@ export const addRoute = (params, afterSuccess, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterAll();
       });
   }
@@ -154,7 +155,7 @@ export const updateRoute = (url, params, afterSuccess, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterAll();
       });
   }
@@ -174,7 +175,7 @@ export const removeRoute = (url, afterSuccess) => (
         afterSuccess(response);
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -198,7 +199,7 @@ export const addLike = (params, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterAll();
       });
   }
@@ -222,7 +223,7 @@ export const addAscent = params => (
         ));
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -245,7 +246,7 @@ export const updateAscent = (url, params) => (
         ));
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -267,7 +268,7 @@ export const removeAscent = url => (
         ));
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -311,7 +312,7 @@ export const addComment = (params, afterSuccess) => (
         }
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -382,7 +383,7 @@ export const removeComment = url => (
         );
       }).catch((error) => {
         dispatch(loadRoutesFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );

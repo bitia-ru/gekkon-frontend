@@ -9,6 +9,7 @@ import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
 import RoutePhotosCardsLayout from './RoutePhotosCardsLayout';
 import { loadRoutePhotos as loadRoutePhotosAction } from '../../redux/route_photos/actions';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 
 class RoutePhotosCards extends Component {
@@ -44,7 +45,7 @@ class RoutePhotosCards extends Component {
           this.onDropFiles(R.slice(1, Infinity, acceptedFiles));
         }
       }).catch((error) => {
-        console.log(error);
+        toastHttpError(error);
       });
   };
 

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import * as R from 'ramda';
 import Api from '@/v2/utils/Api';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 
 export const createUserSession = (
@@ -32,10 +33,10 @@ export const createUserSession = (
             },
             failed(error) {
               let errorDetails;
-              if (error && error.response && error.response.status === 400) {
+              if (error?.response?.status === 400) {
                 errorDetails = error.response.data;
               } else {
-                //  dispatch(pushError(error));
+                toastHttpError(error);
               }
               afterLogInFail && afterLogInFail(errorDetails);
             },
@@ -48,7 +49,7 @@ export const createUserSession = (
         if (resp && resp.status === 404 && R.path(['data', 'model'], resp) === 'User') {
           errorDetails = { email: ['Пользователь не найден'] };
         } else {
-          //  dispatch(pushError(error));
+          toastHttpError(error);
         }
         afterLogInFail && afterLogInFail(errorDetails);
       },
