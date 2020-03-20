@@ -13,6 +13,7 @@ import {
   sendResetPasswordMailSuccess,
   logInSuccess,
 } from './actions';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 export const loadUsers = () => (
   (dispatch) => {
@@ -28,7 +29,7 @@ export const loadUsers = () => (
         dispatch(loadSortedUserIds(sortedUserIds));
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -65,21 +66,20 @@ export const logIn = (params, password, afterLogInSuccess, afterLogInFail, onFor
             afterLogInSuccess();
           }).catch((error) => {
             dispatch(loadUsersFailed());
-            if (error.response && error.response.status === 400) {
+            if (error?.response?.status === 400) {
               onFormError(error.response.data);
             } else {
-            //  dispatch(pushError(error));
+              toastHttpError(error);
             }
             afterLogInFail();
           });
       }).catch((error) => {
-        console.log(error);
         dispatch(loadUsersFailed());
         const resp = error.response;
         if (resp && resp.status === 404 && resp.data.model === 'User') {
           onFormError({ email: ['Пользователь не найден'] });
         } else {
-        //  dispatch(pushError(error));
+          toastHttpError(error);
         }
         afterLogInFail();
       });
@@ -94,9 +94,9 @@ export const activateEmail = (url, params, afterSuccess, afterFail) => (
       .then((response) => {
         dispatch(loadUserSuccess(response.data.payload));
         afterSuccess();
-      }).catch(() => {
+      }).catch((error) => {
         dispatch(loadUsersFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterFail();
       });
   }
@@ -116,9 +116,9 @@ export const logOut = afterSuccess => (
         if (afterSuccess) {
           afterSuccess();
         }
-      }).catch(() => {
+      }).catch((error) => {
         dispatch(loadUsersFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );
@@ -138,10 +138,10 @@ export const signUp = (params, afterSuccess, afterFail, onFormError) => (
         afterSuccess(response);
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response && error.response.status === 400) {
+        if (error?.response?.status === 400) {
           onFormError(error);
         } else {
-          // dispatch(pushError(error));
+          toastHttpError(error);
         }
         afterFail();
       });
@@ -168,7 +168,7 @@ export const resetPassword = (params, afterSuccess, afterFail, afterAll) => (
         if (resp && resp.status === 404 && resp.data.model === 'User') {
           afterFail();
         } else {
-          // dispatch(pushError(error));
+          toastHttpError(error);
         }
         afterAll();
       });
@@ -193,10 +193,10 @@ export const updateUser = (url, data, afterSuccess, afterFail, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        if (error.response && error.response.status === 400) {
+        if (error?.response?.status === 400) {
           afterFail(error);
         } else {
-          // dispatch(pushError(error));
+          toastHttpError(error);
         }
         afterAll();
       });
@@ -217,7 +217,7 @@ export const removeVk = (url, afterAll) => (
         afterAll();
       }).catch((error) => {
         dispatch(loadUsersFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
         afterAll();
       });
   }

@@ -1,4 +1,5 @@
 import Api from '../../utils/Api';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 export const acts = {
   LOAD_SPECIFIC_SPOT_REQUEST: 'LOAD_SPECIFIC_SPOT_REQUEST_V2',
@@ -29,7 +30,7 @@ export const loadSpot = spotId => (
             type: acts.LOAD_SPOTS_FAILED,
           });
 
-          console.log(error);
+          toastHttpError(error);
         },
       },
     );
@@ -56,7 +57,7 @@ export const loadSpots = () => (
             type: acts.LOAD_SPOTS_FAILED,
           });
 
-          console.log(error);
+          toastHttpError(error);
         },
       },
     );
