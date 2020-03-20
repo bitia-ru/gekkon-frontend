@@ -23,7 +23,12 @@ class NewsBlock extends Component {
 
   componentDidMount() {
     const { dateFrom, dateTo } = this.state;
-    this.loadNews(dateFrom, dateTo);
+    setTimeout(
+      () => {
+        this.loadNews(dateFrom, dateTo);
+      },
+      0,
+    );
   }
 
   loadMoreNews = () => {

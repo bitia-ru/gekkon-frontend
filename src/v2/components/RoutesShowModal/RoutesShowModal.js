@@ -72,7 +72,14 @@ class RoutesShowModal extends Component {
 
   componentDidMount() {
     const { loadRoute } = this.props;
-    loadRoute(this.getRouteId());
+
+    setTimeout(
+      () => {
+        loadRoute(this.getRouteId());
+      },
+      0,
+    );
+
     window.addEventListener('keydown', this.onKeyDown);
   }
 

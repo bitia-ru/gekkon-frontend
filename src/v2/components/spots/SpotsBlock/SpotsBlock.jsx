@@ -16,7 +16,12 @@ class SpotsBlock extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.props.loadSpots();
+    setTimeout(
+      () => {
+        this.props.loadSpots();
+      },
+      0,
+    );
   }
 
   render() {

@@ -23,7 +23,12 @@ const NUM_OF_DISPLAYED_PAGES = 5;
 
 class Content extends Component {
   componentDidMount() {
-    reloadRoutes(this.getSpotId(), this.getSectorId());
+    setTimeout(
+      () => {
+        reloadRoutes(this.getSpotId(), this.getSectorId());
+      },
+      0,
+    );
   }
 
   componentDidUpdate(prevProps) {

@@ -40,7 +40,12 @@ class Users extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.props.loadUsers();
+    setTimeout(
+      () => {
+        this.props.loadUsers();
+      },
+      0,
+    );
   }
 
   onSortChanged = (selectedSort) => {

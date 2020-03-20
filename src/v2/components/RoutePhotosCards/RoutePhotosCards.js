@@ -21,7 +21,12 @@ class RoutePhotosCards extends Component {
   }
 
   componentDidMount() {
-    this.props.loadRoutePhotos(this.getSectorId());
+    setTimeout(
+      () => {
+        this.props.loadRoutePhotos(this.getSectorId());
+      },
+      0,
+    );
   }
 
   getSectorId = () => parseInt(R.propOr(0, 'sector_id', this.props.match.params), 10);

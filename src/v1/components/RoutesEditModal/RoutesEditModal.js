@@ -62,43 +62,55 @@ class RoutesEditModal extends Component {
       loadSector: loadSectorProp,
       loadRouteMarkColors: loadRouteMarkColorsProp,
     } = this.props;
+
     const sectorId = match.params.sector_id ? parseInt(match.params.sector_id, 10) : null;
     const routeId = this.getRouteId();
-    if (routeId === null && !sectors[sectorId]) {
-      const params = {};
-      params.numOfDays = NUM_OF_DAYS;
-      loadSectorProp(
-        `${ApiUrl}/v1/sectors/${sectorId}`,
-        params,
-        (response) => {
-          this.afterSectorIsLoaded(response.data.payload);
-        },
-      );
-    }
-    if (routeId === null && sectors[sectorId]) {
-      this.afterSectorIsLoaded(sectors[sectorId]);
-    }
-    if (routeId) {
-      loadRouteProp(
-        `${ApiUrl}/v1/routes/${this.getRouteId()}`,
-        (response) => {
-          const route = response.data.payload;
-          const routeCopy = R.clone(route);
-          if (route.photo) {
-            routeCopy.photo = routeCopy.photo.url;
-          }
-          if (route.category === null) {
-            routeCopy.category = DEFAULT_CATEGORY;
-          }
-          this.setState({ fieldsOld: routeCopy, route: R.clone(routeCopy) });
-          this.loadPointers(route);
-        },
-      );
-    }
-    loadUsersProp();
-    if (routeMarkColors.length === 0) {
-      loadRouteMarkColorsProp();
-    }
+
+    setTimeout(
+      () => {
+        if (routeId === null && !sectors[sectorId]) {
+          const params = {};
+          params.numOfDays = NUM_OF_DAYS;
+          loadSectorProp(
+            `${ApiUrl}/v1/sectors/${sectorId}`,
+            params,
+            (response) => {
+              this.afterSectorIsLoaded(response.data.payload);
+            },
+          );
+        }
+
+        if (routeId === null && sectors[sectorId]) {
+          this.afterSectorIsLoaded(sectors[sectorId]);
+        }
+
+        if (routeId) {
+          loadRouteProp(
+            `${ApiUrl}/v1/routes/${this.getRouteId()}`,
+            (response) => {
+              const route = response.data.payload;
+              const routeCopy = R.clone(route);
+              if (route.photo) {
+                routeCopy.photo = routeCopy.photo.url;
+              }
+              if (route.category === null) {
+                routeCopy.category = DEFAULT_CATEGORY;
+              }
+              this.setState({ fieldsOld: routeCopy, route: R.clone(routeCopy) });
+              this.loadPointers(route);
+            },
+          );
+        }
+
+        loadUsersProp();
+
+        if (routeMarkColors.length === 0) {
+          loadRouteMarkColorsProp();
+        }
+      },
+      0,
+    );
+
     window.addEventListener('keydown', this.onKeyDown);
   }
 

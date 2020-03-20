@@ -24,7 +24,12 @@ class SchemeModal extends Component {
   }
 
   componentDidMount() {
-    this.loadRoutes();
+    setTimeout(
+      () => {
+        this.loadRoutes();
+      },
+      0,
+    );
   }
 
   loadRoutes = () => {

@@ -17,11 +17,16 @@ import SectorContext from '@/v1/contexts/SectorContext';
 
 class SpotsShow extends React.PureComponent {
   componentDidMount() {
-    const sectorId = this.getSectorId();
-    reloadSpot(this.getSpotId());
-    if (sectorId !== 0) {
-      reloadSector(sectorId);
-    }
+    setTimeout(
+      () => {
+        const sectorId = this.getSectorId();
+        reloadSpot(this.getSpotId());
+        if (sectorId !== 0) {
+          reloadSector(sectorId);
+        }
+      },
+      0,
+    );
   }
 
   getSpotId = () => {
