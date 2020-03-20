@@ -9,6 +9,7 @@ import { loadSectors } from '../sectors/actions';
 import numToStr from '../../Constants/NumToStr';
 import { setDefaultSelectedPages } from '../../actions';
 import { setDefaultSelectedFilters } from '@/v2/redux/selectedFilters/actions';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 export const loadSpot = (url, params) => (
   (dispatch, getState) => {
@@ -59,7 +60,7 @@ export const loadSpot = (url, params) => (
         dispatch(loadSectors(spot.sectors));
       }).catch((error) => {
         dispatch(loadSpotsFailed());
-        // dispatch(pushError(error));
+        toastHttpError(error);
       });
   }
 );

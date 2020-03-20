@@ -10,6 +10,7 @@ import { StyleSheet, css } from '../../aphrodite';
 import { DEFAULT_FILTERS } from '@/v1/Constants/DefaultFilters';
 import { BACKEND_DATE_FORMAT } from '@/v1/Constants/Date';
 import { ApiUrl } from '@/v1/Environ';
+import toastHttpError from '@/v2/utils/toastHttpError';
 
 class SchemeModal extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ class SchemeModal extends Component {
           { routes: R.reject(R.propEq('id', currentRoute.id), response.data.payload) },
         );
       }).catch((error) => {
-        this.displayError(error);
+        toastHttpError(error);
       });
   };
 

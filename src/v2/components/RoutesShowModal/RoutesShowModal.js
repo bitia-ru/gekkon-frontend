@@ -49,7 +49,7 @@ import { setSelectedPage } from '@/v1/actions';
 import { currentUser as currentUserObtainer } from '@/v2/redux/user_session/utils';
 import withModals from '@/v2/modules/modalable';
 import RouteAscents from '../../forms/RouteAscents/RouteAscents';
-
+import showToastr from '@/v2/utils/showToastr';
 
 class RoutesShowModal extends Component {
   constructor(props) {
@@ -306,7 +306,7 @@ class RoutesShowModal extends Component {
         scope.setExtra('user_phone', user.phone);
       }
       Sentry.captureException(msg);
-      //this.showToastr('success', 'Успешно', 'Сообщение успешно отправлено');
+      showToastr('Сообщение успешно отправлено', { type: 'success' });
     });
 
     this.setState({ showTooltip: false, showNoticeForm: false });
