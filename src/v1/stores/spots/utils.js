@@ -7,7 +7,8 @@ import {
 } from './actions';
 import { loadSectors } from '../sectors/actions';
 import numToStr from '../../Constants/NumToStr';
-import { setDefaultSelectedFilters, setDefaultSelectedPages } from '../../actions';
+import { setDefaultSelectedPages } from '../../actions';
+import { setDefaultSelectedFilters } from '@/v2/redux/selectedFilters/actions';
 
 export const loadSpot = (url, params) => (
   (dispatch, getState) => {
