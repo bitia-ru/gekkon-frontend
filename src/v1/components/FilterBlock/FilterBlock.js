@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ViewModeSwitcher from '../ViewModeSwitcher/ViewModeSwitcher';
 import DatePicker from '../DatePicker/DatePicker';
 import ComboBox from '../ComboBox/ComboBox';
@@ -8,16 +10,24 @@ import { PERIOD_FILTERS } from '../../Constants/PeriodFilters';
 import { CATEGORIES, CATEGORIES_ITEMS } from '../../Constants/Categories';
 import { dateToTextFormatter } from '../../Constants/Date';
 import './FilterBlock.css';
-import getFilters from '../../utils/getFilters';
+import getFilters, { getMergedFilters } from '../../utils/getFilters';
 import { RESULT_FILTERS } from '../../Constants/ResultFilters';
-import { setSelectedFilter, setSelectedPage, setSelectedViewMode } from '../../actions';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { setSelectedPage, setSelectedViewMode } from '../../actions';
+import { setAllSelectedFilters } from '@/v2/redux/selectedFilters/actions';
 import { avail } from '../../utils';
 import Button from '@/v2/components/Button/Button';
 import getCategoryId from '../../utils/getCategoryId';
 
 class FilterBlock extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { filtersList: {} };
+
+    this.timer = null;
+    this.timeout = 1500;
+  }
+
   getSpotId = () => {
     const { match } = this.props;
     return parseInt(match.params.id, 10);
@@ -28,68 +38,111 @@ class FilterBlock extends Component {
     return match.params.sector_id ? parseInt(match.params.sector_id, 10) : 0;
   };
 
+  setFiltersList = (key, value) => {
+    const sectorId = this.getSectorId();
+    const { filtersList } = this.state;
+    this.setState({
+      filtersList: {
+        ...filtersList,
+        [sectorId]: { ...filtersList[sectorId], [key]: value },
+      },
+    });
+  };
+
   changeCategoryFilter = (categoryFrom, categoryTo) => {
+    clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    if (categoryFrom !== null) {
-      setSelectedFilterProp(spotId, sectorId, 'categoryFrom', categoryFrom);
-      setSelectedPageProp(spotId, sectorId, 1);
-    }
-    if (categoryTo !== null) {
-      setSelectedFilterProp(spotId, sectorId, 'categoryTo', categoryTo);
-      setSelectedPageProp(spotId, sectorId, 1);
-    }
+    const { filtersList } = this.state;
+    this.setState({
+      filtersList: {
+        ...filtersList,
+        [sectorId]: {
+          ...filtersList[sectorId],
+          categoryFrom,
+          categoryTo,
+        },
+      },
+    });
+    this.timer = setTimeout(
+      () => {
+        if (categoryFrom !== null) {
+          setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
+          setSelectedPageProp(spotId, sectorId, 1);
+        }
+        if (categoryTo !== null) {
+          setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
+          setSelectedPageProp(spotId, sectorId, 1);
+        }
+      },
+      this.timeout,
+    );
   };
 
   changePeriodFilter = (period) => {
+    clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, 'period', period);
-    setSelectedPageProp(spotId, sectorId, 1);
+    this.setFiltersList('period', period);
+    this.timer = setTimeout(
+      () => {
+        setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
+        setSelectedPageProp(spotId, sectorId, 1);
+      },
+      this.timeout,
+    );
   };
 
   changeDateFilter = (date) => {
-    const {
-      setSelectedFilter: setSelectedFilterProp,
-    } = this.props;
+    clearTimeout(this.timer);
+    const { setAllSelectedFilters: setAllSelectedFiltersProp } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, 'date', date ? date.format() : undefined);
+    this.setFiltersList('date', date ? date.format() : undefined);
+    this.timer = setTimeout(
+      () => {
+        setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
+      },
+      this.timeout,
+    );
   };
 
   changeFilter = (name, value) => {
+    clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, name, value);
-    setSelectedPageProp(spotId, sectorId, 1);
-    const state = {};
-    state[name] = value;
+    this.setFiltersList(name, value);
+    this.timer = setTimeout(
+      () => {
+        setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
+        setSelectedPageProp(spotId, sectorId, 1);
+      },
+      this.timeout,
+    );
   };
 
   onViewModeChange = (viewMode) => {
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedViewMode: setSelectedViewModeProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    let date = '';
     setSelectedViewModeProp(spotId, sectorId, viewMode);
     if (viewMode === 'scheme') {
-      date = getFilters(spotId, sectorId).date;
-      setSelectedFilterProp(spotId, sectorId, 'date', date);
+      setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
     }
   };
 
@@ -138,7 +191,7 @@ class FilterBlock extends Component {
       period,
       date,
       filters,
-    } = getFilters(spotId, sectorId);
+    } = getMergedFilters(this.state.filtersList, spotId, sectorId);
     const defaultFilters = R.filter(
       e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
       filters,
@@ -241,18 +294,16 @@ FilterBlock.propTypes = {
   viewMode: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
-  user: state.usersStore.users[state.usersStore.currentUserId],
-});
+const mapStateToProps = state => ({ user: state.usersStore.users[state.usersStore.currentUserId] });
 
 const mapDispatchToProps = dispatch => ({
-  setSelectedViewMode: (spotId, sectorId, viewMode) => (
-    dispatch(setSelectedViewMode(spotId, sectorId, viewMode))
-  ),
-  setSelectedFilter: (spotId, sectorId, filterName, filterValue) => (
-    dispatch(setSelectedFilter(spotId, sectorId, filterName, filterValue))
+  setSelectedViewMode: (spotId, sectorId, viewMode) => dispatch(
+    setSelectedViewMode(spotId, sectorId, viewMode),
   ),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
+  setAllSelectedFilters: (spotId, sectorId, filters) => dispatch(
+    setAllSelectedFilters(spotId, sectorId, filters),
+  ),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FilterBlock));
