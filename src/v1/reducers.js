@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import * as R from 'ramda';
 import * as acts from './Constants/Actions';
-import { DEFAULT_FILTERS } from './Constants/DefaultFilters';
 import routeMarkColorsStoreReducer from './stores/route_mark_colors/reducers';
 import usersStoreReducer from './stores/users/reducers';
 import routesStoreReducer from './stores/routes/reducers';
@@ -13,6 +12,7 @@ import { default as userSessionReducerV2 } from '@/v2/redux/user_session/reducer
 import { default as routePhotosReducerV2 } from '@/v2/redux/route_photos/reducer';
 import { default as spotsReducerV2 } from '@/v2/redux/spots/reducer';
 import { default as routesReducerV2 } from '@/v2/redux/routes/reducer';
+import { default as selectedFiltersReducerV2 } from '@/v2/redux/selectedFilters/reducer';
 
 
 const tabReducer = (state = 1, action) => {
@@ -49,58 +49,6 @@ const selectedPagesReducer = (state = {}, action) => {
   }
 };
 
-const selectedFiltersReducer = (state = {}, action) => {
-  switch (action.type) {
-  case acts.SET_DEFAULT_SELECTED_FILTERS: {
-    const defaultFilters = {
-      ...DEFAULT_FILTERS,
-      wasChanged: false,
-    };
-    const sectorsDefaultFilters = R.map(
-      sectorId => [sectorId, defaultFilters],
-      action.sectorIds,
-    );
-    const spotFilters = {
-      0: defaultFilters,
-      ...R.fromPairs(sectorsDefaultFilters),
-    };
-    return {
-      ...state,
-      [action.spotId]: spotFilters,
-    };
-  }
-  case acts.SET_SELECTED_FILTER:
-    if (action.sectorId === 0) {
-      const spotSelectedFilters = { ...state[action.spotId] };
-      return {
-        ...state,
-        [action.spotId]: R.map(
-          filters => ({
-            ...filters,
-            [action.filterName]: (
-              filters.wasChanged ? filters[action.filterName] : action.filterValue
-            ),
-          }),
-          spotSelectedFilters,
-        ),
-      };
-    }
-    return {
-      ...state,
-      [action.spotId]: {
-        ...state[action.spotId],
-        [action.sectorId]: {
-          ...state[action.spotId][action.sectorId],
-          [action.filterName]: action.filterValue,
-          wasChanged: true,
-        },
-      },
-    };
-  default:
-    return state;
-  }
-};
-
 const selectedViewModesReducer = (state = {}, action) => {
   switch (action.type) {
   case acts.SET_SELECTED_VIEW_MODE:
@@ -119,7 +67,7 @@ const selectedViewModesReducer = (state = {}, action) => {
 export default combineReducers({
   tab: tabReducer,
   selectedPages: selectedPagesReducer,
-  selectedFilters: selectedFiltersReducer,
+  selectedFilters: selectedFiltersReducerV2,
   selectedViewModes: selectedViewModesReducer,
   routeMarkColorsStore: routeMarkColorsStoreReducer,
   usersStore: usersStoreReducer,
