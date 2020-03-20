@@ -18,6 +18,12 @@ import Button from '@/v2/components/Button/Button';
 import getCategoryId from '../../utils/getCategoryId';
 
 class FilterBlock extends Component {
+  constructor(props) {
+    super(props);
+
+    this.timer = null;
+  }
+
   getSpotId = () => {
     const { match } = this.props;
     return parseInt(match.params.id, 10);
@@ -29,6 +35,7 @@ class FilterBlock extends Component {
   };
 
   changeCategoryFilter = (categoryFrom, categoryTo) => {
+    clearTimeout(this.timer);
     const {
       setSelectedFilter: setSelectedFilterProp,
       setSelectedPage: setSelectedPageProp,
@@ -36,23 +43,30 @@ class FilterBlock extends Component {
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
     if (categoryFrom !== null) {
-      setSelectedFilterProp(spotId, sectorId, 'categoryFrom', categoryFrom);
+      this.timer = setTimeout(() => {
+        setSelectedFilterProp(spotId, sectorId, 'categoryFrom', categoryFrom);
+      }, 1500);
       setSelectedPageProp(spotId, sectorId, 1);
     }
     if (categoryTo !== null) {
-      setSelectedFilterProp(spotId, sectorId, 'categoryTo', categoryTo);
+      this.timer = setTimeout(() => {
+        setSelectedFilterProp(spotId, sectorId, 'categoryTo', categoryTo);
+      }, 1500);
       setSelectedPageProp(spotId, sectorId, 1);
     }
   };
 
   changePeriodFilter = (period) => {
+    clearTimeout(this.timer);
     const {
       setSelectedFilter: setSelectedFilterProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, 'period', period);
+    this.timer = setTimeout(() => {
+      setSelectedFilterProp(spotId, sectorId, 'period', period);
+    }, 1500);
     setSelectedPageProp(spotId, sectorId, 1);
   };
 
@@ -66,16 +80,17 @@ class FilterBlock extends Component {
   };
 
   changeFilter = (name, value) => {
+    clearTimeout(this.timer);
     const {
       setSelectedFilter: setSelectedFilterProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, name, value);
+    this.timer = setTimeout(() => {
+      setSelectedFilterProp(spotId, sectorId, name, value);
+    }, 1500);
     setSelectedPageProp(spotId, sectorId, 1);
-    const state = {};
-    state[name] = value;
   };
 
   onViewModeChange = (viewMode) => {
