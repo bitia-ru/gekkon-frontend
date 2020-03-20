@@ -7,34 +7,60 @@ import getArrayByIds from '../../utils/getArrayByIds';
 import './RouteCardScheme.css';
 import SchemePlaceholder from '@/v2/components/common/SchemePlaceholder/SchemePlaceholder';
 
-const RouteCardScheme = ({
-  onRouteClick,
-  diagram,
-  routeIds,
-  routes,
-}) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const loadingTimeout = () => new Promise(resolve => setTimeout(resolve, 3000));
-  useEffect(() => {
-    loadingTimeout().then(() => {
-      setIsLoading(false);
-    });
-  }, [isLoading]);
+class RouteCardScheme extends React.PureComponent {
+  constructor(props) {
+    super(props);
 
-  return (
-    <div className="hall-scheme">
-      { isLoading
-        ? <SchemePlaceholder />
-        : <Scheme
-          diagram={diagram}
-          onRouteClick={onRouteClick}
-          currentRoutes={routeIds}
-          routes={getArrayByIds(routeIds, routes)}
-        />
-      }
-    </div>
-  );
-};
+    this.state = {
+      image: undefined,
+    };
+
+    this.imagesInternal = {};
+  }
+
+  componentDidMount() {
+    this.processProps(this.props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.processProps(this.props);
+    }
+  }
+
+  processProps(props) {
+    this.imagesInternal[props.diagram] = new Image();
+    this.imagesInternal[props.diagram].src = props.diagram;
+    this.setState(
+      { image: undefined },
+      () => {
+        this.imagesInternal[props.diagram].onload = () => {
+          this.setState({ image: props.diagram });
+        };
+      },
+    );
+  }
+
+  render() {
+    const {
+      onRouteClick, diagram, routeIds, routes,
+    } = this.props;
+    const { image } = this.state;
+    return (
+      <div className="hall-scheme">
+        {
+          image ? <Scheme
+            diagram={diagram}
+            onRouteClick={onRouteClick}
+            currentRoutes={routeIds}
+            routes={getArrayByIds(routeIds, routes)}
+          />
+            : <SchemePlaceholder />
+        }
+      </div>
+    );
+  }
+}
 RouteCardScheme.propTypes = {
   diagram: PropTypes.string,
   onRouteClick: PropTypes.func.isRequired,
