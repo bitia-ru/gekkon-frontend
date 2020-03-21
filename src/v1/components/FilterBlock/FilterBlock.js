@@ -65,17 +65,6 @@ class FilterBlock extends Component {
     setSelectedFilterProp(spotId, sectorId, 'date', date ? date.format() : undefined);
   };
 
-  changeResultFilter = (result) => {
-    const {
-      setSelectedFilter: setSelectedFilterProp,
-      setSelectedPage: setSelectedPageProp,
-    } = this.props;
-    const spotId = this.getSpotId();
-    const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, 'result', result);
-    setSelectedPageProp(spotId, sectorId, 1);
-  };
-
   changeFilter = (name, value) => {
     const {
       setSelectedFilter: setSelectedFilterProp,
@@ -105,32 +94,10 @@ class FilterBlock extends Component {
   };
 
   onFilterChange = (id) => {
-    const {
-      setSelectedFilter: setSelectedFilterProp,
-    } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    const filters = R.clone(getFilters(spotId, sectorId).filters);
-    const index = R.findIndex(e => e.id === id, filters);
-    if (filters[index].selected) {
-      filters[index].text = R.slice(0, -2, filters[index].text);
-    } else {
-      filters[index].text = `${filters[index].text} ✓`;
-    }
-    filters[index].selected = !filters[index].selected;
-    if (R.contains(id, ['personal', 'outdated', 'liked'])) {
-      this.changeFilter(id, filters[index].selected);
-    }
-    if (R.contains(id, R.map(e => e.id, RESULT_FILTERS))) {
-      const resultFilters = R.filter(
-        e => R.contains(e.id, R.append('liked', R.map(f => f.id, RESULT_FILTERS))),
-        filters,
-      );
-      this.changeResultFilter(
-        R.map(e => e.value, R.filter(e => e.selected, resultFilters)),
-      );
-    }
-    setSelectedFilterProp(spotId, sectorId, 'filters', filters);
+    const filters = getFilters(spotId, sectorId);
+    this.changeFilter(id, !filters[id]);
   };
 
   onCategoryChange = (id) => {
@@ -173,7 +140,7 @@ class FilterBlock extends Component {
       filters,
     } = getFilters(spotId, sectorId);
     const defaultFilters = R.filter(
-      e => !R.contains(e.id, R.map(f => f.id, RESULT_FILTERS)),
+      e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
       filters,
     );
     const currentFilters = (
