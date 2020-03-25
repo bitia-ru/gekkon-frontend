@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Scheme from '../Scheme/Scheme';
@@ -29,6 +30,10 @@ class RouteCardScheme extends React.PureComponent {
   }
 
   processProps(props) {
+    if (R.has([props.src], this.imagesInternal)) {
+      this.setState({ image: props.src });
+      return;
+    }
     this.imagesInternal[props.diagram] = new Image();
     this.imagesInternal[props.diagram].src = props.diagram;
     this.setState(
