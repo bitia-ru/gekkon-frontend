@@ -8,9 +8,10 @@ import { PERIOD_FILTERS } from '../../Constants/PeriodFilters';
 import { CATEGORIES, CATEGORIES_ITEMS } from '../../Constants/Categories';
 import { dateToTextFormatter } from '../../Constants/Date';
 import './FilterBlock.css';
-import getFilters from '../../utils/getFilters';
+import getFilters, { getMergedFilters } from '../../utils/getFilters';
 import { RESULT_FILTERS } from '../../Constants/ResultFilters';
-import { setSelectedFilter, setSelectedPage, setSelectedViewMode } from '../../actions';
+import { setSelectedPage, setSelectedViewMode } from '../../actions';
+import { setAllSelectedFilters } from '@/v2/redux/selectedFilters/actions';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { avail } from '../../utils';
@@ -21,7 +22,12 @@ class FilterBlock extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      mergedFilters: {},
+    };
+    this.filtersList = {};
     this.timer = null;
+    this.timeout = 1500;
   }
 
   getSpotId = () => {
@@ -34,68 +40,89 @@ class FilterBlock extends Component {
     return match.params.sector_id ? parseInt(match.params.sector_id, 10) : 0;
   };
 
+  setFiltersList = (key, value) => {
+    const spotId = this.getSpotId();
+    const sectorId = this.getSectorId();
+    R.has(key, this.filtersList)
+      ? this.filtersList[sectorId][key] = value
+      : this.filtersList[sectorId] = { ...this.filtersList[sectorId], [key]: value };
+    this.setMergedFilters(spotId, sectorId);
+  };
+
+  setMergedFilters = (spotId, sectorId) => {
+    this.setState(() => ({
+      mergedFilters: getMergedFilters(this.filtersList, spotId, sectorId),
+    }));
+  };
+
   changeCategoryFilter = (categoryFrom, categoryTo) => {
     clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    if (categoryFrom !== null) {
-      this.timer = setTimeout(() => {
-        setSelectedFilterProp(spotId, sectorId, 'categoryFrom', categoryFrom);
-      }, 1500);
-      setSelectedPageProp(spotId, sectorId, 1);
-    }
-    if (categoryTo !== null) {
-      this.timer = setTimeout(() => {
-        setSelectedFilterProp(spotId, sectorId, 'categoryTo', categoryTo);
-      }, 1500);
-      setSelectedPageProp(spotId, sectorId, 1);
-    }
+    this.setFiltersList('categoryFrom', categoryFrom);
+    this.setFiltersList('categoryTo', categoryTo);
+    this.timer = setTimeout(() => {
+      if (categoryFrom !== null) {
+        setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+        setSelectedPageProp(spotId, sectorId, 1);
+      }
+      if (categoryTo !== null) {
+        setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+        setSelectedPageProp(spotId, sectorId, 1);
+      }
+    }, this.timeout);
   };
 
   changePeriodFilter = (period) => {
     clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
+    this.setFiltersList('period', period);
     this.timer = setTimeout(() => {
-      setSelectedFilterProp(spotId, sectorId, 'period', period);
-    }, 1500);
-    setSelectedPageProp(spotId, sectorId, 1);
+      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setSelectedPageProp(spotId, sectorId, 1);
+    }, this.timeout);
   };
 
   changeDateFilter = (date) => {
+    clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    setSelectedFilterProp(spotId, sectorId, 'date', date ? date.format() : undefined);
+    this.setFiltersList('date', date ? date.format() : undefined);
+    this.timer = setTimeout(() => {
+      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+    }, this.timeout);
   };
 
   changeFilter = (name, value) => {
     clearTimeout(this.timer);
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedPage: setSelectedPageProp,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
+    this.setFiltersList(name, value);
     this.timer = setTimeout(() => {
-      setSelectedFilterProp(spotId, sectorId, name, value);
-    }, 1500);
-    setSelectedPageProp(spotId, sectorId, 1);
+      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setSelectedPageProp(spotId, sectorId, 1);
+    }, this.timeout);
   };
 
   onViewModeChange = (viewMode) => {
     const {
-      setSelectedFilter: setSelectedFilterProp,
+      setAllSelectedFilters: setAllSelectedFiltersProp,
       setSelectedViewMode: setSelectedViewModeProp,
     } = this.props;
     const spotId = this.getSpotId();
@@ -104,7 +131,7 @@ class FilterBlock extends Component {
     setSelectedViewModeProp(spotId, sectorId, viewMode);
     if (viewMode === 'scheme') {
       date = getFilters(spotId, sectorId).date;
-      setSelectedFilterProp(spotId, sectorId, 'date', date);
+      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
     }
   };
 
@@ -153,7 +180,7 @@ class FilterBlock extends Component {
       period,
       date,
       filters,
-    } = getFilters(spotId, sectorId);
+    } = getMergedFilters(this.filtersList, spotId, sectorId);
     const defaultFilters = R.filter(
       e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
       filters,
@@ -264,10 +291,10 @@ const mapDispatchToProps = dispatch => ({
   setSelectedViewMode: (spotId, sectorId, viewMode) => (
     dispatch(setSelectedViewMode(spotId, sectorId, viewMode))
   ),
-  setSelectedFilter: (spotId, sectorId, filterName, filterValue) => (
-    dispatch(setSelectedFilter(spotId, sectorId, filterName, filterValue))
-  ),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
+  setAllSelectedFilters: (spotId, sectorId, filters) => (
+    dispatch(setAllSelectedFilters(spotId, sectorId, filters))
+  ),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FilterBlock));

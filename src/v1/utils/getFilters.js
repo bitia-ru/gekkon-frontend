@@ -40,3 +40,23 @@ const getFilters = (spotId, sectorId) => {
 };
 
 export default getFilters;
+
+export const getMergedFilters = (filters, spotId, sectorId) => {
+  const state = store.getState();
+  const { selectedFilters } = state;
+  if (selectedFilters && selectedFilters[spotId] && selectedFilters[spotId][sectorId]) {
+    const mergeResult = R.mergeDeepLeft(
+      filters[sectorId],
+      selectedFilters[spotId][sectorId],
+    );
+    const mergedSelectedFilters = {
+      ...selectedFilters,
+      [spotId]: {
+        ...selectedFilters[spotId],
+        [sectorId]: { ...mergeResult },
+      },
+    };
+    return prepareFilters(mergedSelectedFilters[spotId][sectorId]);
+  }
+  return prepareFilters(DEFAULT_FILTERS);
+};
