@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import defaultAvatar from './images/avatar_placeholder.svg';
 
@@ -24,6 +25,10 @@ class Img extends React.PureComponent {
   }
 
   processProps(props) {
+    if (R.has([props.src], this.imagesInternal)) {
+      this.setState({ image: props.src });
+      return;
+    }
     this.imagesInternal[props.src] = new Image();
     this.imagesInternal[props.src].src = props.src;
     this.setState(
