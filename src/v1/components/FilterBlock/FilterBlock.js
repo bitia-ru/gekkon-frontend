@@ -42,11 +42,11 @@ class FilterBlock extends Component {
 
   setFiltersList = (key, value) => {
     const sectorId = this.getSectorId();
-    const currentFiltersList = R.clone(this.state.filtersList);
+    const { filtersList } = this.state;
     this.setState(() => ({
       filtersList: {
-        ...currentFiltersList,
-        [sectorId]: { ...currentFiltersList[sectorId], [key]: value },
+        ...filtersList,
+        [sectorId]: { ...filtersList[sectorId], [key]: value },
       },
     }));
   };
@@ -59,12 +59,12 @@ class FilterBlock extends Component {
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    const currentFiltersList = R.clone(this.state.filtersList);
+    const { filtersList } = this.state;
     this.setState({
       filtersList: {
-        ...currentFiltersList,
+        ...filtersList,
         [sectorId]: {
-          ...currentFiltersList[sectorId],
+          ...filtersList[sectorId],
           categoryFrom,
           categoryTo,
         },
