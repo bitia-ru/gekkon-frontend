@@ -8,20 +8,19 @@ const selectedFiltersReducer = (
 ) => {
   let selectedFilters;
   switch (action.type) {
-  case acts.SET_DEFAULT_SELECTED_FILTERS:
+  case acts.SET_DEFAULT_SELECTED_FILTERS_V2:
     selectedFilters = state === null ? {} : R.clone(state);
-    const defaultFilters = R.merge(DEFAULT_FILTERS, { wasChanged: false });
     const sectorsDefaultFilters = R.map(
-      sectorId => [sectorId, R.clone(defaultFilters)],
+      sectorId => [sectorId, R.clone(DEFAULT_FILTERS)],
       action.sectorIds,
     );
     const spotFilters = R.merge(
-      { 0: R.clone(defaultFilters) },
+      { 0: R.clone(DEFAULT_FILTERS) },
       R.fromPairs(sectorsDefaultFilters),
     );
     selectedFilters[action.spotId] = spotFilters;
     return R.clone(selectedFilters);
-  case acts.SET_ALL_SELECTED_FILTERS:
+  case acts.SET_ALL_SELECTED_FILTERS_V2:
     const newFilters = R.mergeDeepLeft(
       action.filters[action.sectorId],
       state[action.spotId][action.sectorId],

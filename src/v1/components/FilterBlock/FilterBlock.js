@@ -23,9 +23,9 @@ class FilterBlock extends Component {
     super(props);
 
     this.state = {
-      mergedFilters: {},
+      filtersList: {},
     };
-    this.filtersList = {};
+
     this.timer = null;
     this.timeout = 1500;
   }
@@ -41,17 +41,13 @@ class FilterBlock extends Component {
   };
 
   setFiltersList = (key, value) => {
-    const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    R.has(key, this.filtersList)
-      ? this.filtersList[sectorId][key] = value
-      : this.filtersList[sectorId] = { ...this.filtersList[sectorId], [key]: value };
-    this.setMergedFilters(spotId, sectorId);
-  };
-
-  setMergedFilters = (spotId, sectorId) => {
+    const currentFiltersList = R.clone(this.state.filtersList);
     this.setState(() => ({
-      mergedFilters: getMergedFilters(this.filtersList, spotId, sectorId),
+      filtersList: {
+        ...currentFiltersList,
+        [sectorId]: { ...currentFiltersList[sectorId], [key]: value },
+      },
     }));
   };
 
@@ -63,15 +59,24 @@ class FilterBlock extends Component {
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    this.setFiltersList('categoryFrom', categoryFrom);
-    this.setFiltersList('categoryTo', categoryTo);
+    const currentFiltersList = R.clone(this.state.filtersList);
+    this.setState({
+      filtersList: {
+        ...currentFiltersList,
+        [sectorId]: {
+          ...currentFiltersList[sectorId],
+          categoryFrom,
+          categoryTo,
+        },
+      },
+    });
     this.timer = setTimeout(() => {
       if (categoryFrom !== null) {
-        setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+        setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
         setSelectedPageProp(spotId, sectorId, 1);
       }
       if (categoryTo !== null) {
-        setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+        setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
         setSelectedPageProp(spotId, sectorId, 1);
       }
     }, this.timeout);
@@ -87,7 +92,7 @@ class FilterBlock extends Component {
     const sectorId = this.getSectorId();
     this.setFiltersList('period', period);
     this.timer = setTimeout(() => {
-      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
       setSelectedPageProp(spotId, sectorId, 1);
     }, this.timeout);
   };
@@ -101,7 +106,7 @@ class FilterBlock extends Component {
     const sectorId = this.getSectorId();
     this.setFiltersList('date', date ? date.format() : undefined);
     this.timer = setTimeout(() => {
-      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
     }, this.timeout);
   };
 
@@ -115,7 +120,7 @@ class FilterBlock extends Component {
     const sectorId = this.getSectorId();
     this.setFiltersList(name, value);
     this.timer = setTimeout(() => {
-      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
       setSelectedPageProp(spotId, sectorId, 1);
     }, this.timeout);
   };
@@ -131,7 +136,7 @@ class FilterBlock extends Component {
     setSelectedViewModeProp(spotId, sectorId, viewMode);
     if (viewMode === 'scheme') {
       date = getFilters(spotId, sectorId).date;
-      setAllSelectedFiltersProp(spotId, sectorId, this.filtersList);
+      setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
     }
   };
 
@@ -180,7 +185,7 @@ class FilterBlock extends Component {
       period,
       date,
       filters,
-    } = getMergedFilters(this.filtersList, spotId, sectorId);
+    } = getMergedFilters(this.state.filtersList, spotId, sectorId);
     const defaultFilters = R.filter(
       e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
       filters,
