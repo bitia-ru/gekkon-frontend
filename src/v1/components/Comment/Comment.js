@@ -9,6 +9,15 @@ import './Comment.css';
 const Comment = ({
   user, comment, startAnswer, removeComment,
 }) => {
+  const linkDecorator = (text) => {
+    const regExp = /(https?:\/\/[^\s]+)/g;
+    const arrayOfText = text.split(regExp);
+    for (let i = 1; i < arrayOfText.length; i += 2) {
+      arrayOfText[i] = <a key={`link${i}`} href={arrayOfText[i]}>{arrayOfText[i]}</a>;
+    }
+    return arrayOfText;
+  };
+  const preparedComment = linkDecorator(comment.content);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -26,7 +35,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{comment.content}</div>
+        <div className="comment__text">{preparedComment}</div>
         <div className="comment__footer">
           <div
             className="comment__date"

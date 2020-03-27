@@ -4,33 +4,45 @@ import './CollapsableBlock.css';
 
 const CollapsableBlock = ({
   title, text, isCollapsed, onCollapseChange,
-}) => (
-  <div>
-    <button
-      onClick={() => onCollapseChange(!isCollapsed)}
-      type="button"
-      className={
-        `collapsable-block__header${
+}) => {
+  const linkDecorator = (string) => {
+    const regExp = /(https?:\/\/[^\s]+)/g;
+    const arrayOfText = string.split(regExp);
+    for (let i = 1; i < arrayOfText.length; i += 2) {
+      arrayOfText[i] = <a key={`link${i}`} href={arrayOfText[i]}>{arrayOfText[i]}</a>;
+    }
+    return arrayOfText;
+  };
+  const preparedDescription = linkDecorator(text);
+  return (
+    <div>
+      <button
+        onClick={() => onCollapseChange(!isCollapsed)}
+        type="button"
+        className={
+          `collapsable-block__header${
+            isCollapsed
+              ? ''
+              : ' collapsable-block__header_active'}`
+        }
+      >
+        {title}
+      </button>
+      <React.Fragment>
+        {
           isCollapsed
             ? ''
-            : ' collapsable-block__header_active'}`
-      }
-    >
-      {title}
-    </button>
-    <React.Fragment>
-      {
-        isCollapsed
-          ? ''
-          : (
-            <div className="collapsable-block__content">
-              {text}
-            </div>
-          )
-      }
-    </React.Fragment>
-  </div>
-);
+            : (
+              <div className="collapsable-block__content">
+                {preparedDescription}
+              </div>
+            )
+        }
+      </React.Fragment>
+    </div>
+  );
+};
+
 
 CollapsableBlock.propTypes = {
   title: PropTypes.string.isRequired,
