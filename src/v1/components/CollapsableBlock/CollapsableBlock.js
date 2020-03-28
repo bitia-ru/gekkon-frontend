@@ -1,19 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './CollapsableBlock.css';
+import { wrapWebLinksInText } from '@/v2/utils/text_processors';
 
 const CollapsableBlock = ({
   title, text, isCollapsed, onCollapseChange,
 }) => {
-  const linkDecorator = (string) => {
-    const regExp = /(https?:\/\/[^\s]+)/g;
-    const arrayOfText = string.split(regExp);
-    for (let i = 1; i < arrayOfText.length; i += 2) {
-      arrayOfText[i] = <a key={`link${i}`} href={arrayOfText[i]}>{arrayOfText[i]}</a>;
-    }
-    return arrayOfText;
-  };
-  const preparedDescription = linkDecorator(text);
+  const preparedText = wrapWebLinksInText(text);
   return (
     <div>
       <button
@@ -34,7 +27,7 @@ const CollapsableBlock = ({
             ? ''
             : (
               <div className="collapsable-block__content">
-                {preparedDescription}
+                {preparedText}
               </div>
             )
         }

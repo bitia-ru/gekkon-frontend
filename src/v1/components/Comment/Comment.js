@@ -5,19 +5,12 @@ import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
 import { timeFromNow } from '../../Constants/DateTimeFormatter';
 import './Comment.css';
+import { wrapWebLinksInText } from '@/v2/utils/text_processors';
 
 const Comment = ({
   user, comment, startAnswer, removeComment,
 }) => {
-  const linkDecorator = (text) => {
-    const regExp = /(https?:\/\/[^\s]+)/g;
-    const arrayOfText = text.split(regExp);
-    for (let i = 1; i < arrayOfText.length; i += 2) {
-      arrayOfText[i] = <a key={`link${i}`} href={arrayOfText[i]}>{arrayOfText[i]}</a>;
-    }
-    return arrayOfText;
-  };
-  const preparedComment = linkDecorator(comment.content);
+  const preparedCommentContent = wrapWebLinksInText(comment.content);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -35,7 +28,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{preparedComment}</div>
+        <div className="comment__text">{preparedCommentContent}</div>
         <div className="comment__footer">
           <div
             className="comment__date"
