@@ -79,7 +79,8 @@ class Content extends Component {
   };
 
   pagesList = () => {
-    const { numOfPages, page } = this.props;
+    const { numOfPages } = this.props;
+    const page = getPage(this.getSpotId(), this.getSectorId());
     if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
       return R.range(1, numOfPages + 1);
     }
