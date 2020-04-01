@@ -14,7 +14,7 @@ import './Content.css';
 import {
   setSelectedPage,
 } from '../../actions';
-import reloadRoutes from '../../utils/reloadRoutes';
+import { reloadRoutes as reloadRoutesAction } from '../../utils/reloadRoutes';
 import getViewMode from '../../utils/getViewMode';
 import getPage from '../../utils/getPage';
 import { ApiUrl } from '@/v1/Environ';
@@ -24,12 +24,12 @@ const NUM_OF_DISPLAYED_PAGES = 5;
 
 class Content extends Component {
   componentDidMount() {
-    reloadRoutes(this.getSpotId(), this.getSectorId());
+    this.props.reloadRoutes(this.getSpotId(), this.getSectorId());
   }
 
   componentDidUpdate(prevProps) {
     if (this.needReload(prevProps)) {
-      reloadRoutes(this.getSpotId(), this.getSectorId());
+      this.props.reloadRoutes(this.getSpotId(), this.getSectorId());
     }
   }
 
@@ -80,8 +80,8 @@ class Content extends Component {
   };
 
   pagesList = () => {
-    const { numOfPages } = this.props;
-    const page = getPage(this.getSpotId(), this.getSectorId());
+    const { selectedPages, numOfPages } = this.props;
+    const page = getPage(selectedPages, this.getSpotId(), this.getSectorId());
     if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
       return R.range(1, numOfPages + 1);
     }
@@ -121,9 +121,17 @@ class Content extends Component {
   render() {
     const {
       numOfPages,
+      sectors,
+      selectedViewModes,
+      selectedPages,
     } = this.props;
-    const page = getPage(this.getSpotId(), this.getSectorId());
-    const viewMode = getViewMode(this.getSpotId(), this.getSectorId());
+    const page = getPage(selectedPages, this.getSpotId(), this.getSectorId());
+    const viewMode = getViewMode(
+      sectors,
+      selectedViewModes,
+      this.getSpotId(),
+      this.getSectorId(),
+    );
     return (
       <SectorContext.Consumer>
         {
@@ -187,12 +195,14 @@ Content.propTypes = {
 
 const mapStateToProps = state => ({
   numOfPages: getNumOfPages(state),
+  sectors: state.sectorsStore.sectors,
   selectedViewModes: state.selectedViewModes,
   selectedPages: state.selectedPages,
   selectedFilters: state.selectedFilters,
 });
 
 const mapDispatchToProps = dispatch => ({
+  reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
   setSelectedPage: (spotId, sectorId, page) => dispatch(setSelectedPage(spotId, sectorId, page)),
 });
 
