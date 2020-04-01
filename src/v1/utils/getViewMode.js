@@ -3,13 +3,9 @@ import {
   DEFAULT_SECTOR_VIEW_MODE_LIST,
   DEFAULT_SPOT_VIEW_MODE,
 } from '../Constants/ViewModeSwitcher';
-import store from '../store';
 
-const getViewMode = (spotId, sectorId) => {
-  const state = store.getState();
-  const { sectors } = state.sectorsStore;
-  const { selectedViewModes } = state;
-  const currSector = sectors[sectorId];
+const getViewMode = (sectors, selectedViewModes, spotId, sectorId) => {
+  const currSector = sectors ? sectors[sectorId] : undefined;
   if (selectedViewModes && selectedViewModes[spotId] && selectedViewModes[spotId][sectorId]) {
     return selectedViewModes[spotId][sectorId];
   }

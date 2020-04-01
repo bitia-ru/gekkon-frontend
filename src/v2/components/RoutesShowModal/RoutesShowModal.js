@@ -42,9 +42,9 @@ import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
 import getState from '@/v1/utils/getState';
 import getFilters from '@/v1/utils/getFilters';
-import reloadRoutes from '@/v1/utils/reloadRoutes';
-import reloadSector from '@/v1/utils/reloadSector';
-import reloadSpot from '@/v1/utils/reloadSpot';
+import { reloadRoutes as reloadRoutesAction } from '@/v1/utils/reloadRoutes';
+import { reloadSector as reloadSectorAction } from '@/v1/utils/reloadSector';
+import { reloadSpot as reloadSpotAction } from '@/v1/utils/reloadSpot';
 import { setSelectedPage } from '@/v1/actions';
 import { currentUser as currentUserObtainer } from '@/v2/redux/user_session/utils';
 import withModals from '@/v2/modules/modalable';
@@ -267,12 +267,12 @@ class RoutesShowModal extends Component {
         `${ApiUrl}/v1/routes/${routeId}`,
         () => {
           if (R.contains('sectors', match.url)) {
-            reloadSector(sectorId);
-            reloadRoutes(spotId, sectorId);
+            this.props.reloadSector(sectorId);
+            this.props.reloadRoutes(spotId, sectorId);
             setSelectedPageProp(spotId, sectorId, 1);
           } else {
-            reloadSpot(spotId);
-            reloadRoutes(spotId, 0);
+            this.props.reloadSpot(spotId);
+            this.props.reloadRoutes(spotId, 0);
             setSelectedPageProp(spotId, 0, 1);
           }
           history.push(R.replace(/\/routes\/[0-9]*/, '', match.url));
@@ -284,6 +284,7 @@ class RoutesShowModal extends Component {
   submitNoticeForm = (msg) => {
     const {
       user,
+      selectedFilters,
     } = this.props;
 
     const routeId = this.getRouteId();
@@ -295,7 +296,7 @@ class RoutesShowModal extends Component {
       scope.setExtra('route_id', routeId);
       scope.setExtra(
         'filters',
-        getFilters(spotId, sectorId),
+        getFilters(selectedFilters, spotId, sectorId),
       );
       scope.setExtra('url', window.location.href);
       if (user.login) {
@@ -992,6 +993,7 @@ RoutesShowModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  selectedFilters: state.selectedFilters,
   sectors: state.sectorsStore.sectors,
   routes: state.routesStore.routes,
   user: currentUserObtainer(state),
@@ -999,6 +1001,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  reloadSpot: spotId => dispatch(reloadSpotAction(spotId)),
+  reloadSector: sectorId => dispatch(reloadSectorAction(sectorId)),
+  reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
   loadRoute: (url, afterLoad) => dispatch(loadRoute(url, afterLoad)),
   removeComment: url => dispatch(removeComment(url)),
   addComment: (params, afterSuccess) => dispatch(addComment(params, afterSuccess)),

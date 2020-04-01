@@ -7,8 +7,8 @@ import MainScreen from '../layouts/MainScreen/MainScreen';
 import Header from '@/v2/components/Header/Header';
 import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
 import RoutesEditModal from '@/v1/components/RoutesEditModal/RoutesEditModal';
-import reloadSector from '@/v1/utils/reloadSector';
-import reloadSpot from '@/v1/utils/reloadSpot';
+import { reloadSector as reloadSectorAction } from '@/v1/utils/reloadSector';
+import { reloadSpot as reloadSpotAction } from '@/v1/utils/reloadSpot';
 import getCurrentSector from '@/v1/utils/getCurrentSector';
 import getCurrentSpotOrSectorData from '@/v1/utils/getCurrentSpotOrSectorData';
 import Content from '@/v1/components/Content/Content';
@@ -18,9 +18,9 @@ import SectorContext from '@/v1/contexts/SectorContext';
 class SpotsShow extends React.PureComponent {
   componentDidMount() {
     const sectorId = this.getSectorId();
-    reloadSpot(this.getSpotId());
+    this.props.reloadSpot(this.getSpotId());
     if (sectorId !== 0) {
-      reloadSector(sectorId);
+      this.props.reloadSector(sectorId);
     }
   }
 
@@ -39,10 +39,10 @@ class SpotsShow extends React.PureComponent {
   changeSectorFilter = (id) => {
     const { history, match } = this.props;
     if (id !== 0) {
-      reloadSector(id);
+      this.props.reloadSector(id);
       history.push(`${R.replace(/\/sectors\/[0-9]*/, '', match.url)}/sectors/${id}`);
     } else {
-      reloadSpot(this.getSpotId());
+      this.props.reloadSpot(this.getSpotId());
       history.push(R.replace(/\/sectors\/[0-9]*/, '', match.url));
     }
   };
@@ -55,11 +55,12 @@ class SpotsShow extends React.PureComponent {
     const {
       match,
       spots,
+      sectors,
     } = this.props;
     const spotId = this.getSpotId();
     const spot = spots[spotId];
     const sectorId = this.getSectorId();
-    const sector = getCurrentSector(sectorId);
+    const sector = getCurrentSector(sectors, sectorId);
     return (
       <SpotContext.Provider value={{ spot }}>
         <SectorContext.Provider value={{ sector }}>
@@ -87,7 +88,7 @@ class SpotsShow extends React.PureComponent {
           <MainScreen
             header={
               <Header
-                data={getCurrentSpotOrSectorData(spotId, sectorId)}
+                data={getCurrentSpotOrSectorData(spots, sectors, spotId, sectorId)}
                 changeSectorFilter={this.changeSectorFilter}
               />
             }
@@ -110,6 +111,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  reloadSpot: spotId => dispatch(reloadSpotAction(spotId)),
+  reloadSector: sectorId => dispatch(reloadSectorAction(sectorId)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SpotsShow));

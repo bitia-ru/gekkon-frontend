@@ -29,8 +29,8 @@ import getArrayByIds from '../../utils/getArrayByIds';
 import { NUM_OF_DAYS } from '../../Constants/Route';
 import { ApiUrl } from '../../Environ';
 import getState from '../../utils/getState';
-import reloadSector from '../../utils/reloadSector';
-import reloadRoutes from '../../utils/reloadRoutes';
+import { reloadSector as reloadSectorAction } from '../../utils/reloadSector';
+import { reloadRoutes as reloadRoutesAction } from '../../utils/reloadRoutes';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -150,8 +150,8 @@ class RoutesEditModal extends Component {
         params,
         (response) => {
           history.push(R.replace('/edit', '', `${match.url}`));
-          reloadSector(response.data.payload.sector_id);
-          reloadRoutes(
+          this.props.reloadSector(response.data.payload.sector_id);
+          this.props.reloadRoutes(
               sectors[response.data.payload.sector_id].spot_id, response.data.payload.sector_id,
           );
         },
@@ -173,8 +173,8 @@ class RoutesEditModal extends Component {
           history.push(
             R.replace('new', response.data.payload.id, `${match.url}`),
           );
-          reloadSector(response.data.payload.sector_id);
-          reloadRoutes(
+          this.props.reloadSector(response.data.payload.sector_id);
+          this.props.reloadRoutes(
             sectors[response.data.payload.sector_id].spot_id, response.data.payload.sector_id,
           );
         },
@@ -650,6 +650,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  reloadSector: sectorId => dispatch(reloadSectorAction(sectorId)),
+  reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
   loadRouteMarkColors: () => dispatch(loadRouteMarkColors()),
   loadUsers: () => dispatch(loadUsers()),
   loadSector: (url, params, afterLoad) => dispatch(loadSector(url, params, afterLoad)),
