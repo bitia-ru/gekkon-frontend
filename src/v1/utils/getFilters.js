@@ -1,11 +1,8 @@
 import * as R from 'ramda';
-import store from '../store';
 import { DEFAULT_FILTERS } from '../Constants/DefaultFilters';
 import prepareFilters from '@/v1/utils/prepareFilters';
 
-const getFilters = (spotId, sectorId) => {
-  const state = store.getState();
-  const { selectedFilters } = state;
+const getFilters = (selectedFilters, spotId, sectorId) => {
   if (selectedFilters && selectedFilters[spotId] && selectedFilters[spotId][sectorId]) {
     return prepareFilters(selectedFilters[spotId][sectorId]);
   }
@@ -14,9 +11,7 @@ const getFilters = (spotId, sectorId) => {
 
 export default getFilters;
 
-export const getMergedFilters = (filters, spotId, sectorId) => {
-  const state = store.getState();
-  const { selectedFilters } = state;
+export const getMergedFilters = (selectedFilters, filters, spotId, sectorId) => {
   let currentFilters = null;
   if (selectedFilters && selectedFilters[spotId] && selectedFilters[spotId][sectorId]) {
     currentFilters = selectedFilters[spotId][sectorId];

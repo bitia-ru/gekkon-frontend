@@ -149,7 +149,7 @@ class FilterBlock extends Component {
   onFilterChange = (id) => {
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    const filters = getFilters(spotId, sectorId);
+    const filters = getFilters(this.props.selectedFilters, spotId, sectorId);
     this.changeFilter(id, !filters[id]);
   };
 
@@ -182,6 +182,7 @@ class FilterBlock extends Component {
       viewMode,
       history,
       match,
+      selectedFilters,
     } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
@@ -191,7 +192,7 @@ class FilterBlock extends Component {
       period,
       date,
       filters,
-    } = getMergedFilters(this.state.filtersList, spotId, sectorId);
+    } = getMergedFilters(selectedFilters, this.state.filtersList, spotId, sectorId);
     const defaultFilters = R.filter(
       e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
       filters,
@@ -294,7 +295,10 @@ FilterBlock.propTypes = {
   viewMode: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({ user: state.usersStore.users[state.usersStore.currentUserId] });
+const mapStateToProps = state => ({
+  selectedFilters: state.selectedFilters,
+  user: state.usersStore.users[state.usersStore.currentUserId],
+});
 
 const mapDispatchToProps = dispatch => ({
   setSelectedViewMode: (spotId, sectorId, viewMode) => dispatch(
