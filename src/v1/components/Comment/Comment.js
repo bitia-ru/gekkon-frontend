@@ -5,12 +5,15 @@ import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
 import { timeFromNow } from '../../Constants/DateTimeFormatter';
 import './Comment.css';
-import { wrapWebLinksInText } from '@/v2/utils/text_processors';
+import { wrapHashtagInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
 
 const Comment = ({
-  user, comment, startAnswer, removeComment,
+  user, comment, startAnswer, removeComment, history,
 }) => {
-  const preparedCommentContent = wrapWebLinksInText(comment.content);
+  const preparedCommentContentWithLinks = wrapWebLinksInText(comment.content);
+  const path = history.location.pathname;
+  const params = history.location.search;
+  const preparedCommentContentWithHashtag = wrapHashtagInText(path, params, preparedCommentContentWithLinks);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -28,7 +31,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{preparedCommentContent}</div>
+        <div className="comment__text">{preparedCommentContentWithHashtag}</div>
         <div className="comment__footer">
           <div
             className="comment__date"

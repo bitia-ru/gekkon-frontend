@@ -676,6 +676,7 @@ class RoutesShowModal extends Component {
                               )
                             }
                             objectListTitle="route_comments"
+                            history={this.props.history}
                           />
                         </div>
                         <div className={css(styles.modalEnterComment)}>
