@@ -11,9 +11,8 @@ const Comment = ({
   user, comment, startAnswer, removeComment, history,
 }) => {
   const preparedCommentContentWithLinks = wrapWebLinksInText(comment.content);
-  const path = history.location.pathname;
-  const params = history.location.search;
-  const preparedCommentContentWithHashtag = wrapHashtagInText(path, params, preparedCommentContentWithLinks);
+  const path = history.location;
+  const preparedCommentContentWithHashtag = wrapHashtagInText(path, preparedCommentContentWithLinks);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">

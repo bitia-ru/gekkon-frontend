@@ -1,5 +1,6 @@
 import React from 'react';
 import * as R from 'ramda';
+import { Link } from 'react-router-dom';
 
 export const wrapWebLinksInText = (text) => {
   const regExp = /\b((?:[A-Za-z]+:\/\/)?(?:[A-Za-z0-9]+\:[A-Za-z0-9]+\@)?(?:[A-Za-z0-9]+\.)+[A-Za-z0-9]+(?:\:[0-9]+)?(?:\/(?:[A-Za-z0-9]+(?:\/[A-Za-z0-9]+)*(?:\.[A-Za-z0-9]+)?)?(?:\?[A-Za-z0-9]+=[A-Za-z0-9]+(?:&[A-Za-z0-9]+=[A-Za-z0-9]+)*)?(?:#[A-Za-z0-9]+)?)?)\b/gi;
@@ -12,10 +13,10 @@ export const wrapWebLinksInText = (text) => {
   )(preparedText);
 };
 
-export const wrapHashtagInText = (url, params, text) => {
-  const path = url.split('/routes')[0];
-  const urlWithParams = `https:/${path}${params ? `${params}&filter[hashtag][]=` : '?filter[hashtag][]='}`;
-  const regExp = /(#[a-zA-Zа-яА-Я0-9_\-~!%&*`@$^=+]+)/g;
+export const wrapHashtagInText = (path, text) => {
+  const pathWithoutRoutes = path.pathname.match('([\\/a-z0-9]+\\/)(?:routes)');
+  const params = new URLSearchParams(path.search);
+  const regExp = /(#[a-zA-Zа-яА-Я0-9_-~!%&*`@$^=+]+)/g;
   const mapIndexed = R.addIndex(R.map);
   const preparedText = R.flatten(mapIndexed(
     (e, i) => (
@@ -26,7 +27,20 @@ export const wrapHashtagInText = (url, params, text) => {
     (e, i) => {
       if (e[0] === '#') {
         const hashTag = e.slice(1);
-        return <a key={`link${i}`} href={`${urlWithParams}${hashTag}`}>{e}</a>;
+        params.set('filter[hashtag][]', hashTag);
+        console.log('path: ', `${pathWithoutRoutes[1]}?${params.toString()}${path.hash}`);
+        return (
+          <Link
+            key={`hashtag${i}`}
+            to={{
+              pathname: `${pathWithoutRoutes[1]}`,
+              search: `?${params.toString()}`,
+              hash: `${path.hash}`,
+            }}
+          >
+            {e}
+          </Link>
+        );
       }
       return e;
     },
