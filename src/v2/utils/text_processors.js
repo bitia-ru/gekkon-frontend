@@ -14,9 +14,9 @@ export const wrapWebLinksInText = (text) => {
 };
 
 export const wrapHashtagInText = (path, text) => {
-  const pathWithoutRoutes = path.pathname.match('([\\/a-z0-9]+\\/)(?:routes)');
+  const pathWithoutRoutes = path.pathname.match('([\\/a-z0-9]+\\/)routes');
   const params = new URLSearchParams(path.search);
-  const regExp = /(#[a-zA-Zа-яА-Я0-9_-~!%&*`@$^=+]+)/g;
+  const regExp = /(#[a-zA-Zа-яА-Я0-9_\-~!%&*`@$^=+]+)/g;
   const mapIndexed = R.addIndex(R.map);
   const preparedText = R.flatten(mapIndexed(
     (e, i) => (
