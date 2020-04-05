@@ -25,67 +25,84 @@ const tabReducer = (state = 1, action) => {
 };
 
 const selectedPagesReducer = (state = {}, action) => {
-  let selectedPages;
   switch (action.type) {
-  case acts.SET_DEFAULT_SELECTED_PAGES:
-    selectedPages = R.clone(state);
+  case acts.SET_DEFAULT_SELECTED_PAGES: {
     const sectorsDefaultPages = R.map(sectorId => [sectorId, 1], action.sectorIds);
-    selectedPages[action.spotId] = R.merge({ 0: 1 }, R.fromPairs(sectorsDefaultPages));
-    return selectedPages;
+    return {
+      ...state,
+      [action.spotId]: R.merge({ 0: 1 }, R.fromPairs(sectorsDefaultPages)),
+    };
+  }
   case acts.SET_SELECTED_PAGE:
-    selectedPages = R.clone(state);
-    selectedPages[action.spotId][action.sectorId] = action.page;
-    return selectedPages;
+    return {
+      ...state,
+      [action.spotId]: {
+        ...state[action.spotId],
+        [action.sectorId]: action.page,
+      },
+    };
   default:
     return state;
   }
 };
 
 const selectedFiltersReducer = (state = {}, action) => {
-  let selectedFilters;
   switch (action.type) {
-  case acts.SET_DEFAULT_SELECTED_FILTERS:
-    selectedFilters = state === null ? {} : R.clone(state);
+  case acts.SET_DEFAULT_SELECTED_FILTERS: {
     const defaultFilters = R.merge(DEFAULT_FILTERS, { wasChanged: false });
     const sectorsDefaultFilters = R.map(
-      sectorId => [sectorId, R.clone(defaultFilters)],
+      sectorId => [sectorId, { ...defaultFilters }],
       action.sectorIds,
     );
     const spotFilters = R.merge(
-      { 0: R.clone(defaultFilters) },
+      { 0: { ...defaultFilters } },
       R.fromPairs(sectorsDefaultFilters),
     );
-    selectedFilters[action.spotId] = spotFilters;
-    return R.clone(selectedFilters);
+    return {
+      ...state,
+      [action.spotId]: spotFilters,
+    };
+  }
   case acts.SET_SELECTED_FILTER:
-    selectedFilters = R.clone(state);
     if (action.sectorId === 0) {
-      const spotSelectedFilters = R.clone(selectedFilters[action.spotId]);
-      selectedFilters[action.spotId] = R.map((filters) => {
-        const filtersCopy = R.clone(filters);
-        if (!filtersCopy.wasChanged) {
-          filtersCopy[action.filterName] = action.filterValue;
-        }
-        return filtersCopy;
-      }, spotSelectedFilters);
-    } else {
-      selectedFilters[action.spotId][action.sectorId][action.filterName] = action.filterValue;
-      selectedFilters[action.spotId][action.sectorId].wasChanged = true;
+      const spotSelectedFilters = { ...state[action.spotId] };
+      return {
+        ...state,
+        [action.spotId]: R.map((filters) => {
+          const filtersCopy = { ...filters };
+          if (!filtersCopy.wasChanged) {
+            filtersCopy[action.filterName] = action.filterValue;
+          }
+          return filtersCopy;
+        }, spotSelectedFilters),
+      };
     }
-    return R.clone(selectedFilters);
+    return {
+      ...state,
+      [action.spotId]: {
+        ...state[action.spotId],
+        [action.sectorId]: {
+          ...state[action.spotId][action.sectorId],
+          [action.filterName]: action.filterValue,
+          wasChanged: true,
+        },
+      },
+    };
   default:
     return state;
   }
 };
 
 const selectedViewModesReducer = (state = {}, action) => {
-  let selectedViewModes;
   switch (action.type) {
   case acts.SET_SELECTED_VIEW_MODE:
-    selectedViewModes = R.clone(state);
-    selectedViewModes[action.spotId] = selectedViewModes[action.spotId] || {};
-    selectedViewModes[action.spotId][action.sectorId] = action.viewMode;
-    return selectedViewModes;
+    return {
+      ...state,
+      [action.spotId]: {
+        ...state[action.spotId],
+        [action.sectorId]: action.viewMode,
+      },
+    };
   default:
     return state;
   }

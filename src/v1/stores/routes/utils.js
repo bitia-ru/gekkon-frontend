@@ -35,9 +35,9 @@ const formattedCommentsData = data => R.map(comment => ({
 
 const prepareRoute = route => ({
   ...route,
-  ascents: getObjectFromArray(route.ascents),
-  comments: formattedCommentsData(route.comments),
-  likes: getObjectFromArray(route.likes),
+  ascent: (route.ascents && getObjectFromArray(route.ascents)),
+  comments: (route.comments && formattedCommentsData(route.comments)),
+  likes: (route.likes && getObjectFromArray(route.likes)),
 });
 
 const prepareAllRoutes = routes => (
