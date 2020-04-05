@@ -51,8 +51,7 @@ export const loadRoutes = (url, params) => (
   (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    const paramsCopy = { ...params };
-    paramsCopy.with = ['ascents'];
+    const paramsCopy = { ...params, with: ['ascents'] };
     Axios.get(url, { params: paramsCopy, withCredentials: true })
       .then((response) => {
         const routeIds = R.map(route => route.id, response.data.payload);
