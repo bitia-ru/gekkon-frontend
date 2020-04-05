@@ -650,6 +650,7 @@ class RoutesShowModal extends Component {
                             isCollapsed={descriptionCollapsed}
                             onCollapseChange={this.onDescriptionCollapseChange}
                             text={route.description ? route.description : ''}
+                            history={this.props.history}
                           />
                         </div>
                         <div className={css(styles.modalItem)}>

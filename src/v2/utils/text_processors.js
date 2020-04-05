@@ -14,26 +14,26 @@ export const wrapWebLinksInText = (text) => {
 };
 
 export const wrapHashtagInText = (path, text) => {
-  const pathWithoutRoutes = path.pathname.match('([\\/a-z0-9]+\\/)routes');
+  const routesRegExp = /([/a-z0-9]+)\/routes/;
+  const pathWithoutRoutes = path.pathname.match(routesRegExp)[1];
   const params = new URLSearchParams(path.search);
-  const regExp = /(#[a-zA-Zа-яА-Я0-9_\-~!%&*`@$^=+]+)/g;
+  const hashTagRegExp = /(#[a-zA-Zа-яА-Я0-9_]+)/g;
   const mapIndexed = R.addIndex(R.map);
-  const preparedText = R.flatten(mapIndexed(
-    (e, i) => (
-      typeof e === 'object' ? e : R.split(regExp, e)
+  const preparedText = R.flatten(R.map(
+    e => (
+      typeof e === 'string' ? R.split(hashTagRegExp, e) : e
     ),
   )(text));
   return mapIndexed(
     (e, i) => {
-      if (e[0] === '#') {
+      if (hashTagRegExp.test(e)) {
         const hashTag = e.slice(1);
         params.set('filter[hashtag][]', hashTag);
-        console.log('path: ', `${pathWithoutRoutes[1]}?${params.toString()}${path.hash}`);
         return (
           <Link
             key={`hashtag${i}`}
             to={{
-              pathname: `${pathWithoutRoutes[1]}`,
+              pathname: `${pathWithoutRoutes}`,
               search: `?${params.toString()}`,
               hash: `${path.hash}`,
             }}

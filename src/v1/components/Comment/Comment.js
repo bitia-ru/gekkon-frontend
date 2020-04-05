@@ -10,9 +10,9 @@ import { wrapHashtagInText, wrapWebLinksInText } from '@/v2/utils/text_processor
 const Comment = ({
   user, comment, startAnswer, removeComment, history,
 }) => {
-  const preparedCommentContentWithLinks = wrapWebLinksInText(comment.content);
+  const commentContentWithLinks = wrapWebLinksInText(comment.content);
   const path = history.location;
-  const preparedCommentContentWithHashtag = wrapHashtagInText(path, preparedCommentContentWithLinks);
+  const commentContentWithHashtag = wrapHashtagInText(path, commentContentWithLinks);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -30,7 +30,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{preparedCommentContentWithHashtag}</div>
+        <div className="comment__text">{commentContentWithHashtag}</div>
         <div className="comment__footer">
           <div
             className="comment__date"
@@ -83,6 +83,7 @@ Comment.propTypes = {
   startAnswer: PropTypes.func.isRequired,
   removeComment: PropTypes.func.isRequired,
   comment: PropTypes.object.isRequired,
+  history: PropTypes.object,
 };
 
 export default Comment;

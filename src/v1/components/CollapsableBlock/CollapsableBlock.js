@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './CollapsableBlock.css';
-import { wrapWebLinksInText } from '@/v2/utils/text_processors';
+import { wrapHashtagInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
 
 const CollapsableBlock = ({
-  title, text, isCollapsed, onCollapseChange,
+  title, text, isCollapsed, onCollapseChange, history,
 }) => {
-  const preparedText = wrapWebLinksInText(text);
+  const textWithLinks = wrapWebLinksInText(text);
+  const path = history.location;
+  const textWithHashtag = wrapHashtagInText(path, textWithLinks);
   return (
     <div>
       <button
@@ -27,7 +29,7 @@ const CollapsableBlock = ({
             ? ''
             : (
               <div className="collapsable-block__content">
-                {preparedText}
+                {textWithHashtag}
               </div>
             )
         }
@@ -42,6 +44,7 @@ CollapsableBlock.propTypes = {
   text: PropTypes.string.isRequired,
   isCollapsed: PropTypes.bool.isRequired,
   onCollapseChange: PropTypes.func.isRequired,
+  history: PropTypes.object,
 };
 
 export default CollapsableBlock;

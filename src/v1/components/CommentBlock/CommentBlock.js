@@ -133,6 +133,7 @@ CommentBlock.propTypes = {
   comments: PropTypes.array.isRequired,
   showPrevious: PropTypes.func.isRequired,
   allShown: PropTypes.bool.isRequired,
+  history: PropTypes.object,
 };
 
 CommentBlock.defaultProps = {
