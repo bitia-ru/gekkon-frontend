@@ -48,7 +48,7 @@ const routesStoreReducer = (
       ...state,
       routes: R.mergeDeepRight(
         state.routes,
-        R.fromPairs([[action.routeId, action.routeData]]),
+        { [action.routeId]: action.routeData },
       ),
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
@@ -57,17 +57,13 @@ const routesStoreReducer = (
       ...state,
       routes: R.mergeDeepRight(
         state.routes,
-        R.fromPairs(
-          [[
-            action.routeId,
-            R.fromPairs(
-              [[
-                action.routePropertyName,
-                R.fromPairs([[action.routePropertyData.id, action.routePropertyData]]),
-              ]],
-            ),
-          ]],
-        ),
+        {
+          [action.routeId]: {
+            [action.routePropertyName]: {
+              [action.routPropertyData.id]: action.routePropertyData,
+            },
+          },
+        },
       ),
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
