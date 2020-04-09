@@ -33,12 +33,19 @@ const formattedCommentsData = data => R.map(comment => ({
   route_comments: R.flatten(flatten(comment.route_comments)),
 }), data);
 
-const prepareRoute = route => ({
-  ...route,
-  ascent: (route.ascents && getObjectFromArray(route.ascents)),
-  comments: (route.comments && formattedCommentsData(route.comments)),
-  likes: (route.likes && getObjectFromArray(route.likes)),
-});
+const prepareRoute = (route) => {
+  let routeNew = { ...route };
+  if (route.ascents) {
+    routeNew = { ...routeNew, ascents: getObjectFromArray(route.ascents) };
+  }
+  if (route.comments) {
+    routeNew = { ...routeNew, comments: formattedCommentsData(route.comments) };
+  }
+  if (route.likes) {
+    routeNew = { ...routeNew, likes: getObjectFromArray(route.likes) };
+  }
+  return routeNew;
+};
 
 const prepareAllRoutes = routes => (
   R.map(
@@ -280,7 +287,7 @@ export const addComment = (params, afterSuccess) => (
       .then((response) => {
         const comment = response.data.payload;
         const { comments, numOfComments } = routes[comment.route_id];
-        let commentsNew = { ...comments };
+        let commentsNew = R.clone(comments);
         if (comment.route_comment_id === null) {
           commentsNew = R.append(comment, commentsNew);
         } else {
@@ -323,7 +330,7 @@ export const removeComment = url => (
       .then((response) => {
         const comment = response.data.payload;
         const { comments, numOfComments } = routes[comment.route_id];
-        let commentsNew = { ...comments };
+        let commentsNew = R.clone(comments);
         let numOfCommentsNew;
         if (comment.route_comment_id === null) {
           const index = R.findIndex(c => c.id === comment.id)(commentsNew);

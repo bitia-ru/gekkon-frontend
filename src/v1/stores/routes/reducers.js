@@ -60,7 +60,7 @@ const routesStoreReducer = (
         {
           [action.routeId]: {
             [action.routePropertyName]: {
-              [action.routPropertyData.id]: action.routePropertyData,
+              [action.routePropertyData.id]: action.routePropertyData,
             },
           },
         },
@@ -79,7 +79,7 @@ const routesStoreReducer = (
   case acts.REMOVE_ROUTE_SUCCESS:
     return {
       ...state,
-      routes: R.dissoc(action.routeId, stateCopy.routes),
+      routes: R.dissoc(action.routeId, state.routes),
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
   default:
