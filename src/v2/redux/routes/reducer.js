@@ -60,7 +60,7 @@ const routesStoreReducer = (
         {
           [action.routeId]: {
             [action.routePropertyName]: {
-              [action.routPropertyData.id]: action.routePropertyData,
+              [action.routePropertyData.id]: action.routePropertyData,
             },
           },
         },

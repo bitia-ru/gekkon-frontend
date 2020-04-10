@@ -34,19 +34,12 @@ const formattedCommentsData = data => R.map(comment => ({
   route_comments: R.flatten(flatten(comment.route_comments)),
 }), data);
 
-const prepareRoute = (route) => {
-  let routeNew = { ...route };
-  if (route.ascents) {
-    routeNew = { ...routeNew, ascents: getObjectFromArray(route.ascents) };
-  }
-  if (route.comments) {
-    routeNew = { ...routeNew, comments: formattedCommentsData(route.comments) };
-  }
-  if (route.likes) {
-    routeNew = { ...routeNew, likes: getObjectFromArray(route.likes) };
-  }
-  return routeNew;
-};
+const prepareRoute = route => ({
+  ...route,
+  ...(route.ascents && { ascents: getObjectFromArray(route.ascents) }),
+  ...(route.comments && { comments: formattedCommentsData(route.comments) }),
+  ...(route.likes && { likes: getObjectFromArray(route.likes) }),
+});
 
 const prepareAllRoutes = routes => (
   R.map(
