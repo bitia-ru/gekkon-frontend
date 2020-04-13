@@ -28,10 +28,13 @@ const flatten = (arr) => {
   return R.map(e => R.concat([e], flatten(e.route_comments)), arr);
 };
 
-const formattedCommentsData = data => R.map(comment => ({
-  ...comment,
-  route_comments: R.flatten(flatten(comment.route_comments)),
-}), data);
+const formattedCommentsData = data => R.map(
+  comment => ({
+    ...comment,
+    route_comments: R.flatten(flatten(comment.route_comments)),
+  }),
+  data,
+);
 
 const prepareRoute = route => ({
   ...route,

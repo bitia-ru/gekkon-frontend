@@ -30,7 +30,10 @@ const selectedPagesReducer = (state = {}, action) => {
     const sectorsDefaultPages = R.map(sectorId => [sectorId, 1], action.sectorIds);
     return {
       ...state,
-      [action.spotId]: R.merge({ 0: 1 }, R.fromPairs(sectorsDefaultPages)),
+      [action.spotId]: {
+        0: 1,
+        ...(R.fromPairs(sectorsDefaultPages)),
+      },
     };
   }
   case acts.SET_SELECTED_PAGE:
@@ -49,15 +52,18 @@ const selectedPagesReducer = (state = {}, action) => {
 const selectedFiltersReducer = (state = {}, action) => {
   switch (action.type) {
   case acts.SET_DEFAULT_SELECTED_FILTERS: {
-    const defaultFilters = R.merge(DEFAULT_FILTERS, { wasChanged: false });
+    const defaultFilters = {
+      ...DEFAULT_FILTERS,
+      wasChanged: false,
+    };
     const sectorsDefaultFilters = R.map(
-      sectorId => [sectorId, { ...defaultFilters }],
+      sectorId => [sectorId, defaultFilters],
       action.sectorIds,
     );
-    const spotFilters = R.merge(
-      { 0: { ...defaultFilters } },
-      R.fromPairs(sectorsDefaultFilters),
-    );
+    const spotFilters = {
+      0: defaultFilters,
+      ...(R.fromPairs(sectorsDefaultFilters)),
+    };
     return {
       ...state,
       [action.spotId]: spotFilters,
@@ -68,13 +74,16 @@ const selectedFiltersReducer = (state = {}, action) => {
       const spotSelectedFilters = { ...state[action.spotId] };
       return {
         ...state,
-        [action.spotId]: R.map((filters) => {
-          const filtersCopy = { ...filters };
-          if (!filtersCopy.wasChanged) {
-            filtersCopy[action.filterName] = action.filterValue;
-          }
-          return filtersCopy;
-        }, spotSelectedFilters),
+        [action.spotId]: R.map(
+          (filters) => {
+            const filtersCopy = { ...filters };
+            if (!filtersCopy.wasChanged) {
+              filtersCopy[action.filterName] = action.filterValue;
+            }
+            return filtersCopy;
+          },
+          spotSelectedFilters,
+        ),
       };
     }
     return {
