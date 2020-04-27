@@ -7,7 +7,7 @@ import LikeButton from '@/v1/components/LikeButton/LikeButton';
 import Button from '@/v1/components/Button/Button';
 import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
 import RouteStatus from '../RouteStatus/RouteStatus';
-import CollapsableBlock from '@/v1/components/CollapsableBlock/CollapsableBlock';
+import CollapsableBlock from '../CollapsableBlock/CollapsableBlock';
 import CommentForm from '@/v1/components/CommentForm/CommentForm';
 import Counter from '@/v2/components/Counter/Counter';
 import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';

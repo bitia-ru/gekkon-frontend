@@ -1,36 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { wrapWebLinksInText } from '../../utils/text_processors';
 import { StyleSheet, css } from '../../aphrodite';
 
 const CollapsableBlock = ({
   title, text, isCollapsed, onCollapseChange,
-}) => (
-  <div>
-    <button
-      onClick={() => onCollapseChange(!isCollapsed)}
-      type="button"
-      className={css(styles.collapsableBlockHeader,
-        isCollapsed
-          ? ''
-          : styles.collapsableBlockHeaderActive)
-      }
-    >
-      {title}
-    </button>
-    <React.Fragment>
-      {
-        isCollapsed
-          ? ''
-          : (
-            <div className={css(styles.collapsableBlockContent)}>
-              {text}
-            </div>
-          )
-      }
-    </React.Fragment>
-  </div>
-);
-
+}) => {
+  const preparedText = wrapWebLinksInText(text);
+  return (
+    <div>
+      <button
+        onClick={() => onCollapseChange(!isCollapsed)}
+        type="button"
+        className={css(styles.collapsableBlockHeader,
+          isCollapsed
+            ? ''
+            : styles.collapsableBlockHeaderActive)
+        }
+      >
+        {title}
+      </button>
+      <React.Fragment>
+        {
+          isCollapsed
+            ? ''
+            : (
+              <div className={css(styles.collapsableBlockContent)}>
+                {preparedText}
+              </div>
+            )
+        }
+      </React.Fragment>
+    </div>
+  );
+};
 const styles = StyleSheet.create({
   collapsableBlockHeader: {
     backgroundColor: 'transparent',
