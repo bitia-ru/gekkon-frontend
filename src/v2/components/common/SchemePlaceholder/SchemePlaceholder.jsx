@@ -4,8 +4,8 @@ import ContentLoader from 'react-content-loader';
 const SchemePreloader = () => (
   <ContentLoader
     speed={2}
-    width={800}
-    height={600}
+    width="100%"
+    height="100%"
     viewBox="0 0 800 600"
     backgroundColor="#e7e4e4"
     foregroundColor="#ffffff"

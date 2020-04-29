@@ -7,6 +7,7 @@ import RouteCard from '../RouteCard/RouteCard';
 import { HIDE_DELAY } from '@/v1/Constants/Scheme';
 import SchemePointer from '../SchemePointer/SchemePointer';
 import SectorContext from '@/v1/contexts/SectorContext';
+import SchemePlaceholder from '../common/SchemePlaceholder/SchemePlaceholder';
 import { StyleSheet, css } from '../../aphrodite';
 
 class Scheme extends Component {
@@ -16,7 +17,9 @@ class Scheme extends Component {
     this.state = {
       shownRouteId: null,
       imageIsLoading: true,
+      image: undefined,
     };
+    this.imagesInternal = {};
   }
 
   showRouteCard = (id) => {
@@ -30,6 +33,23 @@ class Scheme extends Component {
     this.TimerId = setTimeout(() => this.setState({ shownRouteId: null }), HIDE_DELAY);
   };
 
+  processUrl(url) {
+    if (R.has(url, this.imagesInternal)) {
+      this.setState({ image: url });
+      return;
+    }
+    this.imagesInternal[url] = new Image();
+    this.imagesInternal[url].src = url;
+    this.setState(
+      { image: undefined },
+      () => {
+        this.imagesInternal[url].onload = () => {
+          this.setState({ image: url, imageIsLoading: false });
+        };
+      },
+    );
+  }
+
   render() {
     const {
       sectors,
@@ -39,7 +59,7 @@ class Scheme extends Component {
       routes,
       onStartMoving,
     } = this.props;
-    const { shownRouteId, imageIsLoading } = this.state;
+    const { shownRouteId, imageIsLoading, image } = this.state;
     const position = (left, top) => {
       const dist = [left, top, 100 - left, 100 - top];
       const maxIndex = R.findIndex(e => e === R.sort((a, b) => b - a, dist)[0], dist);
@@ -55,67 +75,76 @@ class Scheme extends Component {
                 : sector
             );
             const diagram = currentSector && currentSector.diagram && currentSector.diagram.url;
+            if (diagram !== image) {
+              this.setState({ imageIsLoading: true });
+              this.processUrl(diagram);
+            }
             return (
               <>
                 {
-                  diagram && <>
-                    <img
-                      onLoad={() => this.setState({ imageIsLoading: false })}
-                      style={{ visibility: imageIsLoading ? 'hidden' : 'visible' }}
-                      src={diagram}
-                      alt=""
-                    />
-                    {
-                      !imageIsLoading && R.map(
-                        route => (
-                          <React.Fragment key={route.id}>
-                            {
-                              route.data && route.data.position && <div
-                                className={css(styles.hallSchemeTrack)}
-                                style={{
-                                  left: `${parseFloat(route.data.position.left) + (route.data.position.dx || 0)}%`,
-                                  top: `${parseFloat(route.data.position.top) + (route.data.position.dy || 0)}%`,
-                                }}
-                              >
-                                <SchemePointer
-                                  onClick={onRouteClick ? () => onRouteClick(route.id) : null}
-                                  onMouseEnter={() => this.showRouteCard(route.id)}
-                                  onMouseLeave={this.hideCard}
-                                  onStartMoving={
-                                    route.id === undefined || R.contains(route.id, currentRoutes)
-                                      ? onStartMoving
-                                      : null
+                  imageIsLoading ? (
+                    <SchemePlaceholder />
+                  ) : (
+                    <>
+                      {
+                        <img
+                          style={{ visibility: imageIsLoading ? 'hidden' : 'visible' }}
+                          src={image}
+                          alt=""
+                        />
+                      }
+                      {
+                        !imageIsLoading && R.map(
+                          route => (
+                            <React.Fragment key={route.id}>
+                              {
+                                route.data && route.data.position && <div
+                                  className={css(styles.hallSchemeTrack)}
+                                  style={{
+                                    left: `${route.data.position.left + (route.data.position.dx || 0)}%`,
+                                    top: `${route.data.position.top + (route.data.position.dy || 0)}%`,
+                                  }}
+                                >
+                                  <SchemePointer
+                                    onClick={onRouteClick ? () => onRouteClick(route.id) : null}
+                                    onMouseEnter={() => this.showRouteCard(route.id)}
+                                    onMouseLeave={this.hideCard}
+                                    onStartMoving={
+                                      route.id === undefined || R.contains(route.id, currentRoutes)
+                                        ? onStartMoving
+                                        : null
+                                    }
+                                    category={route.category}
+                                    transparent={!R.contains(route.id, currentRoutes)}
+                                    color={
+                                      route.holds_color === null ? undefined : route.holds_color.color
+                                    }
+                                  />
+                                  {
+                                    (showCards && route.id === shownRouteId) && <div
+                                      role="button"
+                                      tabIndex={0}
+                                      style={{ outline: 'none' }}
+                                      onMouseEnter={() => clearTimeout(this.TimerId)}
+                                      onMouseLeave={() => this.setState({ shownRouteId: null })}
+                                      onClick={() => onRouteClick(route.id)}
+                                      className={css(styles.trackPointTooltip,
+                                        (position(route.data.position.left, route.data.position.top) === 'left') ? styles.trackPointTooltipLeft : '',
+                                        (position(route.data.position.left, route.data.position.top) === 'top') ? styles.trackPointTooltipTop : '',
+                                        (position(route.data.position.left, route.data.position.top) === 'right') ? styles.trackPointTooltipRight : '',
+                                        (position(route.data.position.left, route.data.position.top) === 'bottom') ? styles.trackPointTooltipBottom : '')}
+                                    >
+                                      <RouteCard route={route} />
+                                    </div>
                                   }
-                                  category={route.category}
-                                  transparent={!R.contains(route.id, currentRoutes)}
-                                  color={
-                                    route.holds_color === null ? undefined : route.holds_color.color
-                                  }
-                                />
-                                {
-                                  (showCards && route.id === shownRouteId) && <div
-                                    role="button"
-                                    tabIndex={0}
-                                    style={{ outline: 'none' }}
-                                    onMouseEnter={() => clearTimeout(this.TimerId)}
-                                    onMouseLeave={() => this.setState({ shownRouteId: null })}
-                                    onClick={() => onRouteClick(route.id)}
-                                    className={css(styles.trackPointTooltip,
-                                      (position(route.data.position.left, route.data.position.top) === 'left') ? styles.trackPointTooltipLeft : '',
-                                      (position(route.data.position.left, route.data.position.top) === 'top') ? styles.trackPointTooltipTop : '',
-                                      (position(route.data.position.left, route.data.position.top) === 'right') ? styles.trackPointTooltipRight : '',
-                                      (position(route.data.position.left, route.data.position.top) === 'bottom') ? styles.trackPointTooltipBottom : '')}
-                                  >
-                                    <RouteCard route={route} />
-                                  </div>
-                                }
-                              </div>
-                            }
-                          </React.Fragment>),
-                        routes,
-                      )
-                    }
-                  </>
+                                </div>
+                              }
+                            </React.Fragment>),
+                          routes,
+                        )
+                      }
+                    </>
+                  )
                 }
               </>
             );
@@ -130,9 +159,7 @@ const styles = StyleSheet.create({
   hallSchemeTrack: {
     position: 'absolute',
     content: '\'\'',
-    ':hover': {
-      zIndex: '9',
-    },
+    ':hover': { zIndex: '9' },
   },
   // NOT USED
   trackPoint: {
@@ -155,9 +182,7 @@ const styles = StyleSheet.create({
       height: '18px',
       fontSize: '12px',
     },
-    ':hover': {
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.08), inset 0px 0px 0px 50px rgba(255, 255, 255, 0.4)',
-    },
+    ':hover': { boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.08), inset 0px 0px 0px 50px rgba(255, 255, 255, 0.4)' },
   },
   // END
 
@@ -187,9 +212,7 @@ const styles = StyleSheet.create({
   },
 
   // NOT USED
-  trackPointTooltipActive: {
-    display: 'block',
-  },
+  trackPointTooltipActive: { display: 'block' },
   // END
 
   trackPointTooltipRight: {
