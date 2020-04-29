@@ -16,10 +16,12 @@ import { CARDS_PER_PAGE } from '../../Constants/RouteCardTable';
 import getObjectFromArray from '../../utils/getObjectFromArray';
 import { ApiUrl } from '../../Environ';
 
-Axios.interceptors.request.use(config => ({
-  ...config,
-  paramsSerializer: params => Qs.stringify(params, { arrayFormat: 'brackets' }),
-}));
+Axios.interceptors.request.use(
+  config => ({
+    ...config,
+    paramsSerializer: params => Qs.stringify(params, { arrayFormat: 'brackets' }),
+  }),
+);
 
 const flatten = (arr) => {
   if (arr.length === 0) {
@@ -54,8 +56,10 @@ export const loadRoutes = (url, params) => (
   (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    const paramsCopy = { ...params, with: ['ascents'] };
-    Axios.get(url, { params: paramsCopy, withCredentials: true })
+    Axios.get(
+      url,
+      { params: { ...params, with: ['ascents'] }, withCredentials: true },
+    )
       .then((response) => {
         const routeIds = R.map(route => route.id, response.data.payload);
         const numOfPages = Math.max(
