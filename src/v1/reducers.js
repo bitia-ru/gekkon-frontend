@@ -32,7 +32,7 @@ const selectedPagesReducer = (state = {}, action) => {
       ...state,
       [action.spotId]: {
         0: 1,
-        ...(R.fromPairs(sectorsDefaultPages)),
+        ...R.fromPairs(sectorsDefaultPages),
       },
     };
   }
@@ -62,7 +62,7 @@ const selectedFiltersReducer = (state = {}, action) => {
     );
     const spotFilters = {
       0: defaultFilters,
-      ...(R.fromPairs(sectorsDefaultFilters)),
+      ...R.fromPairs(sectorsDefaultFilters),
     };
     return {
       ...state,
@@ -75,13 +75,12 @@ const selectedFiltersReducer = (state = {}, action) => {
       return {
         ...state,
         [action.spotId]: R.map(
-          (filters) => {
-            const filtersCopy = { ...filters };
-            if (!filtersCopy.wasChanged) {
-              filtersCopy[action.filterName] = action.filterValue;
-            }
-            return filtersCopy;
-          },
+          filters => ({
+            ...filters,
+            [action.filterName]: (
+              filters.wasChanged ? filters[action.filterName] : action.filterValue
+            ),
+          }),
           spotSelectedFilters,
         ),
       };
