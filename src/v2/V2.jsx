@@ -11,7 +11,7 @@ import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import About from './components/About/About';
 import Faq from './components/Faq/Faq';
 import CtrlPressedCatcher from './components/common/CtrlPressedCatcher/CtrlPressedCatcher';
-
+import BotLinkage from './components/BotLinkage/BotLinkage';
 
 const V2 = ({ currentUser }) => (
   <CtrlPressedCatcher>
@@ -26,6 +26,7 @@ const V2 = ({ currentUser }) => (
           <Route path="/spots/:id" component={SpotsShow} />
           <Route exact path="/about" component={About} />
           <Route exact path="/faq" component={Faq} />
+          <Route exact path="/bot_likage" component={BotLinkage} />
         </Switch>
       ) : (
         <BootingScreen />
