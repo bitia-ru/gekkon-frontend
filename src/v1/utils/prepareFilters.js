@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { DEFAULT_FILTERS } from '@/v1/Constants/DefaultFilters';
 import { RESULT_FILTERS } from '@/v1/Constants/ResultFilters';
 
 const filtersLookUp = {
@@ -10,22 +11,21 @@ const filtersLookUp = {
   unsuccessful: 'Не пройдена',
 };
 
-const prepareFilters = (filters) => {
-  return {
-    ...filters,
-    filters: R.map(
-      e => (
-        {
-          clickable: true,
-          id: e,
-          selected: filters[e],
-          text: `${filtersLookUp[e]} ${filters[e] ? ' ✓' : ''}`,
-          value: e,
-        }
-      ),
-      R.concat(R.keys(RESULT_FILTERS), ['personal', 'outdated', 'liked']),
-    ),
-  };
-};
+const prepareFilters = filters => ({
+  ...filters,
+  filters: R.map(
+    (e) => {
+      const filter = filters[e] || R.find(R.propEq('id', e))(DEFAULT_FILTERS);
+      return {
+        clickable: true,
+        id: e,
+        selected: filter,
+        text: `${filtersLookUp[e]} ${filter ? ' ✓' : ''}`,
+        value: e,
+      };
+    },
+    R.concat(R.keys(RESULT_FILTERS), ['personal', 'outdated', 'liked']),
+  ),
+});
 
 export default prepareFilters;
