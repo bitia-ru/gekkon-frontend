@@ -23,7 +23,7 @@ const Users = ({ users, loadUsers, match, history }) => {
   const [currentSortOption, setCurrentSortOption] = useState(Object.keys(sortOptions)[0]);
   const [usersLoading, setUsersLoading] = useState(true);
 
-  useEffect(() => { loadUsers(setUsersLoading(false)); }, []);
+  useEffect(() => { loadUsers(() => setUsersLoading(false)); }, []);
 
   const userRoleToText = (role) => {
     switch (role) {
@@ -63,22 +63,13 @@ const Users = ({ users, loadUsers, match, history }) => {
   };
 
   const getCurrentCols = (sortType) => {
-    const colsHeaderText = ['index', 'avatar', 'name', 'userId', 'dateRegistration', 'scores', 'role', 'karma'];
-    let colsIndex = [];
-    switch (sortType) {
-    case 'karma':
-      colsIndex = [0, 1, 2, 4, 6, 7];
-      break;
-    case 'registration_date':
-      colsIndex = [0, 1, 2, 4, 5, 7];
-      break;
-    case 'id':
-      colsIndex = [0, 1, 2, 3, 5, 7];
-      break;
-    default:
-      colsIndex = [0, 1, 2, 5, 7];
-    }
-    return colsHeaderText.filter((el, i) => colsIndex.includes(i));
+    const cols = {
+      id: ['index', 'avatar', 'name', 'userId', 'scoresSport', 'scoresBoulder', 'karma'],
+      registration_date: ['index', 'avatar', 'name', 'dateRegistration', 'scoresSport', 'scoresBoulder', 'karma'],
+      karma: ['index', 'avatar', 'name', 'dateRegistration', 'role', 'karma'],
+      score: ['index', 'avatar', 'name', 'scoresSport', 'scoresBoulder', 'karma'],
+    };
+    return cols[sortType];
   };
 
   const getDate = (date) => {
@@ -102,7 +93,8 @@ const Users = ({ users, loadUsers, match, history }) => {
             name: { style: { textAlign: 'left' }, content: 'Имя' },
             userId: 'ID',
             dateRegistration: 'Зарегистрирован',
-            scores: 'Очки',
+            scoresSport: 'Очки трудность',
+            scoresBoulder: 'Очки болдер',
             role: 'Роль',
             karma: 'Карма',
           }}
@@ -116,7 +108,8 @@ const Users = ({ users, loadUsers, match, history }) => {
                 name: userBaseName(user),
                 userId: user.id,
                 dateRegistration: getDate(user.created_at),
-                scores: Math.round(user.statistics.score),
+                scoresSport: Math.round(user.statistics.score),
+                scoresBoulder: Math.round(user.statistics.score),
                 role: userRoleToText(user.role),
                 karma: Math.round(user.data.karma * 100) / 100.0,
                 url: `${match.url}/${user.id}`,
@@ -192,6 +185,6 @@ Users.propTypes = {
 
 const mapStateToProps = state => ({ users: state.usersStoreV2.store });
 
-const mapDispatchToProps = dispatch => ({ loadUsers: () => dispatch(loadUsersAction()) });
+const mapDispatchToProps = dispatch => ({ loadUsers: afterUsersLoad => dispatch(loadUsersAction(afterUsersLoad)) });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));
