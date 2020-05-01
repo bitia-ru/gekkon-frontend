@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import * as R from 'ramda';
+import PropTypes from 'prop-types';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadUsers as loadUsersAction } from '../redux/users/actions';
 import ContentWithLeftPanel from '../layouts/ContentWithLeftPanel';
 import LeftPanelList from '../layouts/LeftPanelList';
 import TableLayout from '../components/common/Table/TableLayout';
-import Img from "../components/common/Img/Img";
+import Img from '../components/common/Img/Img';
 import { userBaseName } from '../utils/users';
 import { StyleSheet } from '@/v2/aphrodite';
-
 
 const Users = ({ users, loadUsers, match, history }) => {
   const sortOptions = {
@@ -21,8 +21,9 @@ const Users = ({ users, loadUsers, match, history }) => {
   };
 
   const [currentSortOption, setCurrentSortOption] = useState(Object.keys(sortOptions)[0]);
+  const [usersLoading, setUsersLoading] = useState(true);
 
-  useEffect(() => { loadUsers(); }, []);
+  useEffect(() => { loadUsers(setUsersLoading(false)); }, []);
 
   const userRoleToText = (role) => {
     switch (role) {
@@ -61,6 +62,25 @@ const Users = ({ users, loadUsers, match, history }) => {
     );
   };
 
+  const getCurrentCols = (sortType) => {
+    const colsHeaderText = ['index', 'avatar', 'name', 'userId', 'dateRegistration', 'scores', 'role', 'karma'];
+    let colsIndex = [];
+    switch (sortType) {
+    case 'karma':
+      colsIndex = [0, 1, 2, 4, 6, 7];
+      break;
+    case 'registration_date':
+      colsIndex = [0, 1, 2, 4, 5, 7];
+      break;
+    case 'id':
+      colsIndex = [0, 1, 2, 3, 5, 7];
+      break;
+    default:
+      colsIndex = [0, 1, 2, 5, 7];
+    }
+    return colsHeaderText.filter((el, i) => colsIndex.includes(i));
+  };
+
   const getDate = (date) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const dayRegistration = new Date(date);
@@ -86,7 +106,7 @@ const Users = ({ users, loadUsers, match, history }) => {
             role: 'Роль',
             karma: 'Карма',
           }}
-          currentCols={['index', 'avatar', 'name', 'userId', 'dateRegistration', 'scores', 'role', 'karma']}
+          currentCols={getCurrentCols(currentSortOption)}
           rows={
             usersSorted(users, currentSortOption).map(
               (user, index) => ({
@@ -108,7 +128,11 @@ const Users = ({ users, loadUsers, match, history }) => {
               index: { style: { fontWeight: 'bold' }, content: user.index },
               avatar: {
                 style: { minWidth: '75px' },
-                content: <Img height={55} src={user.avatar} />,
+                content: <Img
+                  height={55}
+                  src={user.avatar}
+                  defaultImage={require('../components/common/Img/images/avatar_placeholder.svg')}
+                />,
               },
               name: {
                 style: { textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' },
@@ -120,6 +144,7 @@ const Users = ({ users, loadUsers, match, history }) => {
           tableStyle={styles.userTable}
           rowStyle={styles.userRow}
           onRowClick={onUserClick}
+          isLoading={usersLoading}
         />
       </ContentWithLeftPanel>
     </MainScreen>
@@ -157,6 +182,13 @@ const styles = StyleSheet.create({
     },
   },
 });
+
+Users.propTypes = {
+  users: PropTypes.object,
+  loadUsers: PropTypes.func,
+  match: PropTypes.object,
+  history: PropTypes.object,
+};
 
 const mapStateToProps = state => ({ users: state.usersStoreV2.store });
 

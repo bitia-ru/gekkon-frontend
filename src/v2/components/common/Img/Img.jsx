@@ -1,16 +1,12 @@
 import React from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import defaultAvatar from './images/avatar_placeholder.svg';
 
 class Img extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      image: undefined,
-    };
-
+    this.state = { image: undefined };
     this.imagesInternal = {};
   }
 
@@ -25,7 +21,7 @@ class Img extends React.PureComponent {
   }
 
   processProps(props) {
-    if (R.has([props.src], this.imagesInternal)) {
+    if (R.has(props.src, this.imagesInternal)) {
       this.setState({ image: props.src });
       return;
     }
@@ -42,17 +38,17 @@ class Img extends React.PureComponent {
   }
 
   render() {
-    const { style, placeholder } = this.props;
+    const { height, defaultImage } = this.props;
     const { image } = this.state;
     return (
-      <img height={style.height} src={image ? `${image}` : placeholder} />
+      <img height={height} src={image || defaultImage} alt="avatar" />
     );
   }
 }
 
-Img.PropTypes = {
+Img.propTypes = {
   height: PropTypes.number,
-  src: PropTypes.string,
+  defaultImage: PropTypes.string,
 };
 
 export default Img;

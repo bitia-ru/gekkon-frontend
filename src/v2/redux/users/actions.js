@@ -27,9 +27,7 @@ export const loadSpecificUser = userId => (
           });
         },
         failed(error) {
-          dispatch({
-            type: acts.LOAD_USERS_FAILED,
-          });
+          dispatch({ type: acts.LOAD_USERS_FAILED });
 
           toastHttpError(error);
         },
@@ -45,11 +43,9 @@ export const updateUsers = users => (
   }
 );
 
-export const loadUsers = () => (
+export const loadUsers = afterUsersLoad => (
   (dispatch) => {
-    dispatch({
-      type: acts.LOAD_USERS_REQUEST,
-    });
+    dispatch({ type: acts.LOAD_USERS_REQUEST });
 
     Api.get(
       '/v1/users',
@@ -59,11 +55,12 @@ export const loadUsers = () => (
             type: acts.LOAD_USERS_SUCCESS,
             users: payload,
           });
+          if (afterUsersLoad) {
+            afterUsersLoad();
+          }
         },
         failed(error) {
-          dispatch({
-            type: acts.LOAD_USERS_FAILED,
-          });
+          dispatch({ type: acts.LOAD_USERS_FAILED });
 
           toastHttpError(error);
         },
