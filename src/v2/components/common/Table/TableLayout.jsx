@@ -12,62 +12,65 @@ const TableLayout = ({
   tableStyle,
   rowStyle,
   isLoading,
-}) => (
-  isLoading
+}) => {
+  const setContent = (row, col) => {
+    if (rowFormat(row)[col] === undefined) {
+      return row[col];
+    }
+    if (
+      isValidElement(rowFormat(row)[col])
+      || rowFormat(row)[col] === null
+      || typeof rowFormat(row)[col] === 'string'
+    ) {
+      return rowFormat(row)[col];
+    }
+    return rowFormat(row)[col].content;
+  };
+  return isLoading
     ? <TablePlaceholder />
-    : <table className={css(tableStyle)}>
-      <thead>
-        <tr>
+    : (
+      <table className={css(tableStyle)}>
+        <thead>
+          <tr>
+            {
+              currentCols.map(
+                prop => (
+                  <th key={prop} style={cols[prop]?.style}>
+                    {cols[prop].content || cols[prop]}
+                  </th>
+                ),
+              )
+            }
+          </tr>
+        </thead>
+        <tbody>
           {
-            currentCols.map(
-              (prop) => {
-                if (typeof cols[prop] === 'string') {
-                  return <th key={prop}>{cols[prop]}</th>;
-                }
-                return <th key={prop} style={cols[prop]?.style}>{cols[prop].content}</th>;
-              },
+            rows.map(
+              row => (
+                <tr
+                  className={css(rowStyle)}
+                  key={row.key}
+                  onClick={() => {
+                    onRowClick(row.url);
+                  }}
+                >
+                  {
+                    currentCols.map(
+                      col => (
+                        <td key={col} style={rowFormat(row)[col]?.style}>
+                          {setContent(row, col)}
+                        </td>
+                      ),
+                    )
+                  }
+                </tr>
+              ),
             )
           }
-        </tr>
-      </thead>
-      <tbody>
-        {
-          rows.map(
-            row => (
-              <tr
-                className={css(rowStyle)}
-                key={row.key}
-                onClick={() => {
-                  onRowClick(row.url);
-                }}
-              >
-                {
-                  currentCols.map(
-                    (col) => {
-                      if (rowFormat(row)[col] === undefined) {
-                        return <td key={col}>{row[col]}</td>;
-                      }
-                      if (
-                        isValidElement(rowFormat(row)[col])
-                        || rowFormat(row)[col] === null
-                        || typeof rowFormat(row)[col] === 'string'
-                      ) {
-                        return <td key={col}>{rowFormat(row)[col]}</td>;
-                      }
-                      return (
-                        <td key={col} style={rowFormat(row)[col]?.style}>
-                          {rowFormat(row)[col].content}
-                        </td>);
-                    },
-                  )
-                }
-              </tr>
-            ),
-          )
-        }
-      </tbody>
-    </table>
-);
+        </tbody>
+      </table>
+    );
+};
 
 TableLayout.propTypes = {
   cols: PropTypes.object,

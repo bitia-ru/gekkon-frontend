@@ -55,9 +55,7 @@ export const loadUsers = afterUsersLoad => (
             type: acts.LOAD_USERS_SUCCESS,
             users: payload,
           });
-          if (afterUsersLoad) {
-            afterUsersLoad();
-          }
+          afterUsersLoad && afterUsersLoad();
         },
         failed(error) {
           dispatch({ type: acts.LOAD_USERS_FAILED });

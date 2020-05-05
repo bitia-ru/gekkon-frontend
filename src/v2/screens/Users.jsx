@@ -26,11 +26,12 @@ const Users = ({ users, loadUsers, match, history }) => {
   useEffect(() => { loadUsers(() => setUsersLoading(false)); }, []);
 
   const userRoleToText = (role) => {
-    switch (role) {
-    case 'admin': return 'Админ';
-    case 'creator': return 'Наполнитель';
-    default: return 'Юзер';
-    }
+    const user = {
+      admin: 'Админ',
+      creator: 'Наполнитель',
+      user: 'Юзер',
+    };
+    return user[role];
   };
 
   const usersSorted = (usersData, sortBy) => {
@@ -64,10 +65,40 @@ const Users = ({ users, loadUsers, match, history }) => {
 
   const getCurrentCols = (sortType) => {
     const cols = {
-      id: ['index', 'avatar', 'name', 'userId', 'scoresSport', 'scoresBoulder', 'karma'],
-      registration_date: ['index', 'avatar', 'name', 'dateRegistration', 'scoresSport', 'scoresBoulder', 'karma'],
-      karma: ['index', 'avatar', 'name', 'dateRegistration', 'role', 'karma'],
-      score: ['index', 'avatar', 'name', 'scoresSport', 'scoresBoulder', 'karma'],
+      id: [
+        'index',
+        'avatar',
+        'name',
+        'userId',
+        'scoresSport',
+        'scoresBoulder',
+        'karma',
+      ],
+      registration_date: [
+        'index',
+        'avatar',
+        'name',
+        'dateRegistration',
+        'scoresSport',
+        'scoresBoulder',
+        'karma',
+      ],
+      karma: [
+        'index',
+        'avatar',
+        'name',
+        'dateRegistration',
+        'role',
+        'karma',
+      ],
+      score: [
+        'index',
+        'avatar',
+        'name',
+        'scoresSport',
+        'scoresBoulder',
+        'karma',
+      ],
     };
     return cols[sortType];
   };
@@ -185,6 +216,8 @@ Users.propTypes = {
 
 const mapStateToProps = state => ({ users: state.usersStoreV2.store });
 
-const mapDispatchToProps = dispatch => ({ loadUsers: afterUsersLoad => dispatch(loadUsersAction(afterUsersLoad)) });
+const mapDispatchToProps = dispatch => (
+  { loadUsers: afterUsersLoad => dispatch(loadUsersAction(afterUsersLoad)) }
+);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));
