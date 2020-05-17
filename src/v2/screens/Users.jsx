@@ -14,7 +14,8 @@ import { StyleSheet } from '@/v2/aphrodite';
 
 const Users = ({ users, loadUsers, match, history }) => {
   const sortOptions = {
-    score: 'По очкам',
+    scoresSport: 'По очкам трудность',
+    scoresBoulder: 'По очкам боулдеринг',
     karma: 'По карме',
     registration_date: 'По дате регистрации',
     id: 'По ID',
@@ -29,7 +30,7 @@ const Users = ({ users, loadUsers, match, history }) => {
     const user = {
       admin: 'Админ',
       creator: 'Наполнитель',
-      user: 'Юзер',
+      user: 'Пользователь',
     };
     return user[role];
   };
@@ -47,7 +48,16 @@ const Users = ({ users, loadUsers, match, history }) => {
           ),
         ),
       ),
-      score: R.pipe(
+      scoresSport: R.pipe(
+        R.filter(u => u.statistics.score > 0),
+        R.sortBy(
+          R.pipe(
+            R.path(['statistics', 'score']),
+            R.divide(1),
+          ),
+        ),
+      ),
+      scoresBoulder: R.pipe(
         R.filter(u => u.statistics.score > 0),
         R.sortBy(
           R.pipe(
@@ -70,8 +80,6 @@ const Users = ({ users, loadUsers, match, history }) => {
         'avatar',
         'name',
         'userId',
-        'scoresSport',
-        'scoresBoulder',
         'karma',
       ],
       registration_date: [
@@ -79,23 +87,27 @@ const Users = ({ users, loadUsers, match, history }) => {
         'avatar',
         'name',
         'dateRegistration',
-        'scoresSport',
-        'scoresBoulder',
         'karma',
       ],
       karma: [
         'index',
         'avatar',
         'name',
+        'karma',
         'dateRegistration',
         'role',
-        'karma',
       ],
-      score: [
+      scoresSport: [
         'index',
         'avatar',
         'name',
         'scoresSport',
+        'karma',
+      ],
+      scoresBoulder: [
+        'index',
+        'avatar',
+        'name',
         'scoresBoulder',
         'karma',
       ],
@@ -124,8 +136,8 @@ const Users = ({ users, loadUsers, match, history }) => {
             name: { style: { textAlign: 'left' }, content: 'Имя' },
             userId: 'ID',
             dateRegistration: 'Зарегистрирован',
-            scoresSport: 'Очки трудность',
-            scoresBoulder: 'Очки болдер',
+            scoresSport: 'Очки',
+            scoresBoulder: 'Очки',
             role: 'Роль',
             karma: 'Карма',
           }}
