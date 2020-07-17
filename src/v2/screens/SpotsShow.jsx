@@ -9,6 +9,7 @@ import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
 import RoutesEditModal from '@/v1/components/RoutesEditModal/RoutesEditModal';
 import reloadSector from '@/v1/utils/reloadSector';
 import reloadSpot from '@/v1/utils/reloadSpot';
+import CtrlPressedCatcher from '@/v2/components/CtrlPressedCatcher/CtrlPressedCatcher';
 import getCurrentSector from '@/v1/utils/getCurrentSector';
 import getCurrentSpotOrSectorData from '@/v1/utils/getCurrentSpotOrSectorData';
 import Content from '@/v1/components/Content/Content';
@@ -61,41 +62,43 @@ class SpotsShow extends React.PureComponent {
     const sectorId = this.getSectorId();
     const sector = getCurrentSector(sectorId);
     return (
-      <SpotContext.Provider value={{ spot }}>
-        <SectorContext.Provider value={{ sector }}>
-          <Switch>
-            <Route
-              path={[`${match.path}/routes/:route_id/edit`, `${match.path}/routes/new`]}
-              render={() => (
-                <RoutesEditModal
-                  onClose={this.closeRoutesModal}
-                  cancel={this.cancelEdit}
-                />
-              )}
-            />
-            <Route
-              path={`${match.path}/routes/:route_id`}
-              render={() => (
-                <RoutesShowModal
-                  onClose={this.closeRoutesModal}
-                  openEdit={this.openEdit}
-                  goToProfile={this.openProfileForm}
-                />
-              )}
-            />
-          </Switch>
-          <MainScreen
-            header={
-              <Header
-                data={getCurrentSpotOrSectorData(spotId, sectorId)}
-                changeSectorFilter={this.changeSectorFilter}
+      <CtrlPressedCatcher>
+        <SpotContext.Provider value={{ spot }}>
+          <SectorContext.Provider value={{ sector }}>
+            <Switch>
+              <Route
+                path={[`${match.path}/routes/:route_id/edit`, `${match.path}/routes/new`]}
+                render={() => (
+                  <RoutesEditModal
+                    onClose={this.closeRoutesModal}
+                    cancel={this.cancelEdit}
+                  />
+                )}
               />
-            }
-          >
-            <Content />
-          </MainScreen>
-        </SectorContext.Provider>
-      </SpotContext.Provider>
+              <Route
+                path={`${match.path}/routes/:route_id`}
+                render={() => (
+                  <RoutesShowModal
+                    onClose={this.closeRoutesModal}
+                    openEdit={this.openEdit}
+                    goToProfile={this.openProfileForm}
+                  />
+                )}
+              />
+            </Switch>
+            <MainScreen
+              header={
+                <Header
+                  data={getCurrentSpotOrSectorData(spotId, sectorId)}
+                  changeSectorFilter={this.changeSectorFilter}
+                />
+              }
+            >
+              <Content />
+            </MainScreen>
+          </SectorContext.Provider>
+        </SpotContext.Provider>
+      </CtrlPressedCatcher>
     );
   }
 }
