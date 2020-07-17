@@ -12,7 +12,7 @@ import {
   updateAscent as updateAscentAction,
   addAscent as addAscentAction,
   removeAscent as removeAscentAction,
-} from '@/v1/stores/routes/utils';
+} from '@/v2/redux/routes/actions';
 import RouteAscentsTableContext from './contexts/RouteAscentsTableContext';
 import isHtmlElChild from '@/v2/utils/isHtmlElChild';
 
@@ -44,9 +44,9 @@ class RouteAscents extends Component {
     const { ascent } = this.state;
     const { id } = this.getAscent();
     if (ascent.history === null && removeIfEmpty ) {
-      removeAscent(`${ApiUrl}/v1/ascents/${id}`);
+      removeAscent(id);
     } else {
-      updateAscent(`${ApiUrl}/v1/ascents/${id}`, { ascent });
+      updateAscent(id, { ascent });
     }
   };
 
