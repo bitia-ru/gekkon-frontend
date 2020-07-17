@@ -271,7 +271,7 @@ class RoutesShowModal extends Component {
     const spotId = sectors[sectorId].spot_id;
     if (window.confirm('Удалить трассу?')) {
       removeRouteProp(
-        `${ApiUrl}/v1/routes/${routeId}`,
+        routeId,
         () => {
           if (R.contains('sectors', match.url)) {
             reloadSector(sectorId);
