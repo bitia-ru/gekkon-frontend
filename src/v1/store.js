@@ -1,5 +1,4 @@
 import { createStore, applyMiddleware } from 'redux';
-import * as R from 'ramda';
 import thunk from 'redux-thunk';
 import localForage from 'localforage';
 import rootReducer from './reducers';
@@ -52,9 +51,9 @@ const getDataFromLocalForagePromise = () => (
           state.routeMarkColorsStore = ROUTE_MARK_COLORS_DEFAULT_STORE_FORMAT;
           state.routeMarkColorsStore.routeMarkColors = data.routeMarkColors;
 
-          state.routesStore = ROUTES_DEFAULT_STORE_FORMAT;
-          state.routesStore.routes = data.routes;
-          state.routesStore.filtrationResults = data.filtrationResults;
+          state.routesStoreV2 = ROUTES_DEFAULT_STORE_FORMAT;
+          state.routesStoreV2.routes = data.routes;
+          state.routesStoreV2.filtrationResults = data.filtrationResults;
 
           state.spotsStore = SPOTS_DEFAULT_STORE_FORMAT;
           state.spotsStore.spots = data.spots;
@@ -92,6 +91,3 @@ export const configureStoreAsync = () => (
     }
   })
 );
-
-
-export default configureStoreAsync;

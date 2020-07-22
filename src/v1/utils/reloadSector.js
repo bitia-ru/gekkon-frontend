@@ -3,7 +3,7 @@ import { ApiUrl } from '../Environ';
 import { loadSector } from '../stores/sectors/utils';
 import { NUM_OF_DAYS } from '../Constants/Route';
 
-export const reloadSector = sectorId => (
+const reloadSector = sectorId => (
   (dispatch, getState) => {
     const state = getState();
     const user = state.usersStore.users[state.usersStore.currentUserId];
@@ -15,3 +15,5 @@ export const reloadSector = sectorId => (
     dispatch(loadSector(`${ApiUrl}/v1/sectors/${sectorId}`, params));
   }
 );
+
+export default reloadSector;
