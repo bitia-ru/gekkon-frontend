@@ -1,16 +1,15 @@
 import moment from 'moment';
 import * as R from 'ramda';
-import { avail } from './index';
-import { ApiUrl } from '../Environ';
-import { loadRoutes } from '../stores/routes/utils';
-import getViewMode from './getViewMode';
-import getFilters from './getFilters';
-import getPage from './getPage';
-import { BACKEND_DATE_FORMAT } from '../Constants/Date';
-import { CARDS_PER_PAGE } from '../Constants/RouteCardTable';
+import { avail } from '@/v1/utils';
+import { loadRoutes } from '../redux/routes/actions';
+import getViewMode from '@/v1/utils/getViewMode';
+import getFilters from '@/v1/utils/getFilters';
+import getPage from '@/v1/utils/getPage';
+import { BACKEND_DATE_FORMAT } from '@/v1/Constants/Date';
+import { CARDS_PER_PAGE } from '@/v1/Constants/RouteCardTable';
 import { RESULT_FILTERS } from '@/v1/Constants/ResultFilters';
 
-export const reloadRoutes = (spotId, sectorId) => (
+const reloadRoutes = (spotId, sectorId) => (
   (dispatch, getState) => {
     const state = getState();
     const user = state.usersStore.users[state.usersStore.currentUserId];
@@ -63,8 +62,7 @@ export const reloadRoutes = (spotId, sectorId) => (
       params.filters.installed_at = [[dFrom], [d]];
     }
     if (currentViewMode === 'scheme') {
-      params.filters.installed_at = [[null], [moment(currentDate)
-        .format(BACKEND_DATE_FORMAT)]];
+      params.filters.installed_at = [[null], [moment(currentDate).format(BACKEND_DATE_FORMAT)]];
       params.filters.installed_until = [
         [moment(currentDate)
           .add(1, 'days')
@@ -76,9 +74,11 @@ export const reloadRoutes = (spotId, sectorId) => (
       params.offset = (currentPage - 1) * CARDS_PER_PAGE;
     }
     if (sectorId === 0) {
-      dispatch(loadRoutes(`${ApiUrl}/v1/spots/${spotId}/routes`, params));
+      dispatch(loadRoutes(`/v1/spots/${spotId}/routes`, params));
     } else {
-      dispatch(loadRoutes(`${ApiUrl}/v1/sectors/${sectorId}/routes`, params));
+      dispatch(loadRoutes(`/v1/sectors/${sectorId}/routes`, params));
     }
   }
 );
+
+export default reloadRoutes;

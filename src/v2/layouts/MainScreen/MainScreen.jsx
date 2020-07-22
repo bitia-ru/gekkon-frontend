@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import * as R from 'ramda';
 import Footer from '../../components/Footer/Footer';
 import { css, StyleSheet } from '../../aphrodite';
 import Logo from '../../components/Logo/Logo';
@@ -43,42 +44,42 @@ class MainScreen extends React.PureComponent {
     return (
       <ModalContainerContext.Consumer>
         {
-          ({ isModalShown }) => (
-            <div
-              className={
-                css(
-                  style.container,
-                  isModalShown ? style.unscrollable : style.scrollable,
-                )
-              }
-            >
-              <div style={{ flex: 1 }}>
-                <LoadingIndicator isSticky={!isModalShown}>
-                  <Logo />
-                  <MainNav
-                    logIn={() => {}}
-                    signUp={() => {}}
-                    openProfile={() => {}}
-                    user={null}
-                  />
-                  {
-                    header && (
-                      typeof header === 'string' || typeof header === 'number'
-                        ? <TextHeader title={header} /> : header
-                    )
-                  }
-                  {children && children}
-                </LoadingIndicator>
+          ({ isModalShown: isModalableWindowShown }) => {
+            const isRoutedModalShown = !!R.find(urlRe => window.location.pathname.match(urlRe))([
+              /\/spots\/[0-9]+\/routes\/[0-9]+(\/.*)?/,
+              /\/spots\/[0-9]+\/sectors\/[0-9]+\/routes\/[0-9]+(\/.*)?/,
+            ]);
+
+            const isModalShown = isModalableWindowShown || isRoutedModalShown;
+
+            return (
+              <div
+                className={
+                  css(
+                    style.container,
+                    isModalShown ? style.unscrollable : style.scrollable,
+                  )
+                }
+              >
+                <div style={{ flex: 1 }}>
+                  <LoadingIndicator isSticky={!isModalShown}>
+                    <Logo />
+                    <MainNav />
+                    {
+                      header && (
+                        typeof header === 'string' || typeof header === 'number'
+                          ? <TextHeader title={header} /> : header
+                      )
+                    }
+                    {children && children}
+                  </LoadingIndicator>
+                </div>
+                <div style={{ flex: 0 }}>
+                  <Footer />
+                </div>
               </div>
-              <div style={{ flex: 0 }}>
-                <Footer
-                  logIn={() => {}}
-                  signUp={() => {}}
-                  logOut={() => {}}
-                />
-              </div>
-            </div>
-          )
+            );
+          }
         }
       </ModalContainerContext.Consumer>
     );

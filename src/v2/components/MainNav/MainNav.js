@@ -44,8 +44,6 @@ class MainNav extends Component {
     const {
       changeTab: changeTabProp,
       tab,
-      signUp,
-      openProfile,
       history,
     } = this.props;
 
@@ -130,10 +128,7 @@ class MainNav extends Component {
               </nav>
             </div>
           </div>
-          <UserIcon
-            signUp={signUp}
-            openProfile={openProfile}
-          />
+          <UserIcon />
         </div>
       </div>
     );
@@ -143,8 +138,6 @@ class MainNav extends Component {
 MainNav.propTypes = {
   changeTab: PropTypes.func,
   tab: PropTypes.number,
-  signUp: PropTypes.func.isRequired,
-  openProfile: PropTypes.func.isRequired,
 };
 
 MainNav.defaultProps = {

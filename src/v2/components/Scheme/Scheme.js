@@ -99,7 +99,7 @@ class Scheme extends Component {
                                     style={{ outline: 'none' }}
                                     onMouseEnter={() => clearTimeout(this.TimerId)}
                                     onMouseLeave={() => this.setState({ shownRouteId: null })}
-                                    onClick={() => onRouteCliаck(route.id)}
+                                    onClick={() => onRouteClick(route.id)}
                                     className={css(styles.trackPointTooltip,
                                       (position(route.data.position.left, route.data.position.top) === 'left') ? styles.trackPointTooltipLeft : '',
                                       (position(route.data.position.left, route.data.position.top) === 'top') ? styles.trackPointTooltipTop : '',
@@ -127,14 +127,6 @@ class Scheme extends Component {
 }
 
 const styles = StyleSheet.create({
-  // NOT USED
-  hallScheme: {
-    '> img': {
-      width: '100%',
-      height: 'auto',
-    },
-  },
-  // END
   hallSchemeTrack: {
     position: 'absolute',
     content: '\'\'',
