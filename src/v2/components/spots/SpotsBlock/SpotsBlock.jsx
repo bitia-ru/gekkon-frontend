@@ -37,7 +37,9 @@ class SpotsBlock extends React.PureComponent {
         }}
         onSpotClicked={
           (spot_id) => {
-            this.props.history.push(`/spots/${spot_id}`);
+            this.props.history.push(
+              `/spots/${spot_id}/sectors/${this.props.spots[spot_id].sectors[0].id}`,
+            );
           }
         }
       />
