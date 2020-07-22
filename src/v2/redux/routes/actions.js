@@ -3,6 +3,7 @@ import Api from '../../utils/Api';
 import { CARDS_PER_PAGE } from '@/v1/Constants/RouteCardTable';
 import getObjectFromArray from '@/v1/utils/getObjectFromArray';
 import toastHttpError from '@/v2/utils/toastHttpError';
+import { loadRoutesRequest } from '@/v1/stores/routes/actions';
 
 export const acts = {
   LOAD_ROUTES_REQUEST: 'LOAD_ROUTES_REQUEST_V2',
@@ -359,6 +360,33 @@ export const updateAscent = (id, params) => (
           });
 
           toastHttpError(error);
+        },
+      },
+    );
+  }
+);
+
+export const removeAscent = id => (
+  (dispatch) => {
+    dispatch(loadRoutesRequest());
+
+    Api.post(
+      `/v1/ascents/${id}`,
+      null,
+      {
+        method: 'delete',
+        success(payload) {
+          dispatch({
+            type: acts.REMOVE_ROUTE_PROPERTY_BY_ID_SUCCESS,
+            routeId: payload.route_id,
+            routePropertyName: 'ascents',
+            routePropertyId: payload.id,
+          });
+        },
+        failed(error) {
+          dispatch({
+            type: acts.LOAD_ROUTES_FAILED,
+          });
         },
       },
     );

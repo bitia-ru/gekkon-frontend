@@ -3,7 +3,6 @@ import * as R from 'ramda';
 import * as acts from './Constants/Actions';
 import routeMarkColorsStoreReducer from './stores/route_mark_colors/reducers';
 import usersStoreReducer from './stores/users/reducers';
-import routesStoreReducer from './stores/routes/reducers';
 import sectorsStoreReducer from './stores/sectors/reducers';
 import spotsStoreReducer from './stores/spots/reducers';
 import newsStoreReducer from './stores/news/reducers';
@@ -73,7 +72,6 @@ export default combineReducers({
   usersStore: usersStoreReducer,
   spotsStore: spotsStoreReducer,
   sectorsStore: sectorsStoreReducer,
-  routesStore: routesStoreReducer,
   newsStore: newsStoreReducer,
   usersStoreV2: usersReducerV2,
   userSessionV2: userSessionReducerV2,
