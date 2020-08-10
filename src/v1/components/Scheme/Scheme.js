@@ -73,8 +73,8 @@ class Scheme extends Component {
                               route.data && route.data.position && <div
                                 className="hall-scheme__track"
                                 style={{
-                                  left: `${route.data.position.left + (route.data.position.dx || 0)}%`,
-                                  top: `${route.data.position.top + (route.data.position.dy || 0)}%`,
+                                  left: `${parseFloat(route.data.position.left) + (route.data.position.dx || 0)}%`,
+                                  top: `${parseFloat(route.data.position.top) + (route.data.position.dy || 0)}%`,
                                 }}
                               >
                                 <SchemePointer
