@@ -302,7 +302,7 @@ export const addLike = (params, afterAll) => (
   }
 );
 
-export const addAscent = params => (
+export const addAscent = (params, afterSuccess) => (
   (dispatch) => {
     dispatch({
       type: acts.LOAD_ROUTES_REQUEST,
@@ -321,6 +321,7 @@ export const addAscent = params => (
             routePropertyName: 'ascents',
             routePropertyData: payload,
           });
+          afterSuccess();
         },
         failed(error) {
           dispatch({
@@ -334,7 +335,7 @@ export const addAscent = params => (
   }
 );
 
-export const updateAscent = (id, params) => (
+export const updateAscent = (id, params, afterSuccess) => (
   (dispatch) => {
     dispatch({
       type: acts.LOAD_ROUTES_REQUEST,
@@ -353,6 +354,7 @@ export const updateAscent = (id, params) => (
             routePropertyName: 'ascents',
             routePropertyData: payload,
           });
+          afterSuccess();
         },
         failed(error) {
           dispatch({
@@ -366,10 +368,8 @@ export const updateAscent = (id, params) => (
   }
 );
 
-export const removeAscent = id => (
+export const removeAscent = (id, afterSuccess) => (
   (dispatch) => {
-    dispatch(loadRoutesRequest());
-
     Api.post(
       `/v1/ascents/${id}`,
       null,
@@ -382,6 +382,7 @@ export const removeAscent = id => (
             routePropertyName: 'ascents',
             routePropertyId: payload.id,
           });
+          afterSuccess();
         },
         failed(error) {
           dispatch({
