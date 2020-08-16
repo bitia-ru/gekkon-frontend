@@ -227,6 +227,7 @@ class FilterBlock extends Component {
                       date={date}
                       onSelect={this.changeDateFilter}
                       formatter={dateToTextFormatter}
+                      defaultDate="сегодня"
                     />
                   </>
                 )
