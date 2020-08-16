@@ -76,10 +76,8 @@ const styles = StyleSheet.create({
     ':hover': {
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.08), inset 0px 0px 0px 50px rgba(255, 255, 255, 0.4)',
     },
+    userSelect: 'none',
   },
-  // .track-point:hover + .track-point__tooltip {
-  //     display: block,
-  // }
 });
 
 SchemePointer.propTypes = {
