@@ -12,6 +12,7 @@ import {
   addAscent as addAscentAction,
   removeAscent as removeAscentAction,
 } from '@/v2/redux/routes/actions';
+import reloadRoutesAction from '@/v2/utils/reloadRoutes';
 import RouteAscentsTableContext from './contexts/RouteAscentsTableContext';
 import isHtmlElChild from '@/v2/utils/isHtmlElChild';
 
@@ -38,14 +39,31 @@ class RouteAscents extends Component {
     }
   }
 
+  getSpotId = () => {
+    const { match } = this.props;
+    return parseInt(match.params.id, 10);
+  };
+
+  getSectorId = () => {
+    const { match } = this.props;
+    return match.params.sector_id ? parseInt(match.params.sector_id, 10) : 0;
+  };
+
   save = (removeIfEmpty) => {
-    const { removeAscent, updateAscent } = this.props;
+    const { removeAscent, updateAscent, reloadRoutes } = this.props;
     const { ascent } = this.state;
     const { id } = this.getAscent();
-    if (ascent.history === null && removeIfEmpty ) {
-      removeAscent(id);
+    if (ascent.history === null && removeIfEmpty) {
+      removeAscent(
+        id,
+        () => reloadRoutes(this.getSpotId(), this.getSectorId()),
+      );
     } else {
-      updateAscent(id, { ascent });
+      updateAscent(
+        id,
+        { ascent },
+        () => reloadRoutes(this.getSpotId(), this.getSectorId()),
+      );
     }
   };
 
@@ -161,6 +179,7 @@ class RouteAscents extends Component {
 
   onAddAscents = (ascents, afterAscentsAdded) => {
     const { ascent } = this.state;
+    const { reloadRoutes } = this.props;
     if (ascent) {
       const history = R.concat(ascent.history || [], this.prepareAscentsHistory(ascents));
       this.updateStateAscent(history);
@@ -202,7 +221,10 @@ class RouteAscents extends Component {
           route_id: this.getRouteId(),
         },
       };
-      addAscent(params);
+      addAscent(
+        params,
+        () => reloadRoutes(this.getSpotId(), this.getSectorId()),
+      );
       historyProp.goBack();
     }
 
@@ -259,6 +281,7 @@ RouteAscents.propTypes = {
   removeAscent: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  reloadRoutes: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -268,9 +291,12 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  addAscent: params => dispatch(addAscentAction(params)),
-  updateAscent: (url, params) => dispatch(updateAscentAction(url, params)),
-  removeAscent: url => dispatch(removeAscentAction(url)),
+  addAscent: (params, afterSuccess) => dispatch(addAscentAction(params, afterSuccess)),
+  updateAscent: (url, params, afterSuccess) => {
+    dispatch(updateAscentAction(url, params, afterSuccess));
+  },
+  removeAscent: (url, afterSuccess) => dispatch(removeAscentAction(url, afterSuccess)),
+  reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RouteAscents));
