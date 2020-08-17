@@ -15,8 +15,8 @@ export const saveState = (state) => {
     data.selectedViewModes = state.selectedViewModes;
     data.selectedFilters = state.selectedFilters;
 
-    data.routes = state.routesStore.routes;
-    data.filtrationResults = state.routesStore.filtrationResults;
+    data.routes = state.routesStoreV2.routes;
+    data.filtrationResults = state.routesStoreV2.filtrationResults;
 
     data.spots = state.spotsStore.spots;
 
@@ -28,8 +28,8 @@ export const saveState = (state) => {
     data.routeMarkColors = state.routeMarkColorsStore.routeMarkColors;
     data.news = state.newsStore.news;
     localForage.setItem('reduxState', data);
-  } catch (_err) {
-    // ignore write errors
+  } catch (err) {
+    console.log('Error saving redux state', err);
   }
 };
 
