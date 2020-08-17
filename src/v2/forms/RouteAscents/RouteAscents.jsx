@@ -257,7 +257,6 @@ class RouteAscents extends Component {
               instantMode={ascent}
               blameCategory={false}
               ascents={ascentsHistory}
-              onClick={this.onClick}
               details={{
                 show: details,
               }}
