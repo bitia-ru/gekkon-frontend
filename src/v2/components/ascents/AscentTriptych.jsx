@@ -22,6 +22,7 @@ class AscentTriptych extends React.PureComponent {
 
   componentWillUnmount() {
     if (this.timeout) {
+      this?.props?.onAddAscents(this.state.newAscents);
       clearTimeout(this.timeout);
     }
   }
