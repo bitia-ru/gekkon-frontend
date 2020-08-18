@@ -92,6 +92,7 @@ class AscentTriptych extends React.PureComponent {
         () => {
           this.timeout = setTimeout(
             () => {
+              this.timeout = null;
               onAddAscents && onAddAscents(
                 this.state.newAscents,
                 () => {
