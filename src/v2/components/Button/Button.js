@@ -13,37 +13,46 @@ const Button = ({
   children
 }) => {
   let styleClassGrey = false;
+  let styleClassFilter = false;
   let styleClassNotNormal = false;
   let sizeClassSmall = false;
   let sizeClassMedium = false;
 
-  if (style !== 'normal') {
-    if (style === 'gray') {
-      styleClassGrey = true;
-    } else {
-      styleClassNotNormal = true;
-    }
+  if (style === 'gray') {
+    styleClassGrey = true;
+  } else if (style === 'filter') {
+    styleClassFilter = true;
+  } else if (style !== 'normal') {
+    styleClassNotNormal = true;
   }
+
   if (size === 'small') {
     sizeClassSmall = true;
   } else if (size === 'medium') {
     sizeClassMedium = true;
   }
+
   const fullLengthClass = !!fullLength;
   const submitClass = !!submit;
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={!!disabled}
       style={disabled ? { cursor: 'not-allowed' } : (isWaiting ? { cursor: 'wait' } : {})}
-      className={css(styles.btn,
-        styleClassGrey ? styles.btnGray : '',
-        styleClassNotNormal ? styles.btnTransparent : '',
-        sizeClassSmall ? styles.btnSmall : '',
-        sizeClassMedium ? styles.btnMedium : '',
-        fullLengthClass ? styles.btnFullLength : '',
-        submitClass ? styles.btnSubmit : '')}
+      className={
+        css(
+          styles.btn,
+          styleClassGrey && styles.btnGray,
+          styleClassFilter && styles.btnFilter,
+          styleClassNotNormal && styles.btnTransparent,
+          sizeClassSmall && styles.btnSmall,
+          sizeClassMedium && styles.btnMedium,
+          fullLengthClass && styles.btnFullLength,
+          submitClass && styles.btnSubmit,
+        )
+      }
     >
       {children}
     </button>
@@ -116,6 +125,22 @@ const styles = StyleSheet.create({
     transition: 'backgroundColor .4s ease-out',
     ':hover': {
       backgroundColor: '#D7D7D7',
+    },
+  },
+  btnFilter: {
+    backgroundColor: '#ffffff',
+    border: '2px solid #DDE2EF',
+    height: '57px',
+    width: '57px',
+    padding: 0,
+    fontSize: '24px',
+    lineHeight: '57px',
+    color: '#DDE2EF',
+    fontWeight: 'bold',
+    ':hover': {
+      backgroundColor: '#fafafa',
+      borderColor: '#006CEB',
+      color: '#006CEB',
     },
   },
 });
