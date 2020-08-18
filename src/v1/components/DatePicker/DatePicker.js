@@ -29,8 +29,6 @@ export default class DatePicker extends Component {
     }
   };
 
-  isToday = date => moment(date).format('DD-MM-YYYY') === (moment().format('DD-MM-YYYY'));
-
   render() {
     const { showCalendar } = this.state;
     const {
@@ -39,7 +37,7 @@ export default class DatePicker extends Component {
       size,
       borderStyle,
       formatter: formatterProp,
-      defaultDate,
+      placeholder,
     } = this.props;
     const dateClass = 'date-picker-block__select';
     const styleClass = (
@@ -60,11 +58,11 @@ export default class DatePicker extends Component {
       >
         <input
           className={`${dateClass}${styleClass}${sizeClass}`}
-          value={this.isToday(date) || !date ? defaultDate : formatter(date)}
+          value={date ? formatter(date) : ''}
           readOnly
           style={{ cursor: 'default' }}
           onClick={() => this.setState({ showCalendar: true })}
-          placeholder="не задана"
+          placeholder={placeholder}
         />
         {
           showCalendar && <Calendar
@@ -78,7 +76,7 @@ export default class DatePicker extends Component {
   }
 }
 
-DatePicker.defaultProps = { defaultDate: '' };
+DatePicker.defaultProps = { placeholder: 'не задана' };
 
 DatePicker.propTypes = {
   size: PropTypes.string,
@@ -86,5 +84,5 @@ DatePicker.propTypes = {
   borderStyle: PropTypes.string,
   date: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
-  defaultDate: PropTypes.string,
+  placeholder: PropTypes.string,
 };
