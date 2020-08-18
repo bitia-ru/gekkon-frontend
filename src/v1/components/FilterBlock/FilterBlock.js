@@ -273,7 +273,7 @@ class FilterBlock extends Component {
               <span className="filter-block__title">&nbsp;</span>
               <Button
                 tabIndex={4}
-                style="gray"
+                style="filter"
                 onClick={() => { history.push(`${match.url}/routes/new`); }}
               >
                 +

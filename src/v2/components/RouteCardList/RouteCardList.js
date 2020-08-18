@@ -10,61 +10,34 @@ import { StyleSheet, css } from '../../aphrodite';
 
 const RouteCardList = ({
   user,
-  addRoute,
   onRouteClick,
   routes,
   routeIds,
 }) => (
   <SectorContext.Consumer>
-    {
-      ({ sector }) => (
-        <div className={css(styles.tableCard)}>
-          {
-            (sector && user) && (
-              <button
-                className={css(styles.tableCardAdd)}
-                type="button"
-                onClick={addRoute}
-                title="Добавить трассу"
-              />
-            )
-          }
-          <div className={css(styles.tableCardHeader)}>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardNumber)}>
-              Номер
-            </div>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardName)}>
-              Название трассы
-            </div>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardCategory)}>
-              Категория
-            </div>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardHooks)}>
-              Зацепы
-            </div>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardMarking)}>
-              Маркеры
-            </div>
-            <div className={css(styles.tableCardHeaderItem, styles.tableCardAuthor)}>
-              Накрутчик
-            </div>
-          </div>
-          {
-            R.map(
-              route => (
-                <RouteRow
-                  key={route.id}
-                  route={route}
-                  user={user}
-                  onRouteClick={() => onRouteClick(route.id)}
-                />
-              ),
-              getArrayByIds(routeIds, routes),
-            )
-          }
-        </div>
-      )
-    }
+    <div className={css(styles.tableCard)}>
+      <div className={css(styles.tableCardHeader)}>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardNumber)}>Номер</div>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardName)}>Название трассы</div>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardCategory)}>Категория</div>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardHooks)}>Зацепы</div>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardMarking)}>Маркеры</div>
+        <div className={css(styles.tableCardHeaderItem, styles.tableCardAuthor)}>Накрутчик</div>
+      </div>
+      {
+        R.map(
+          route => (
+            <RouteRow
+              key={route.id}
+              route={route}
+              user={user}
+              onRouteClick={() => onRouteClick(route.id)}
+            />
+          ),
+          getArrayByIds(routeIds, routes),
+        )
+      }
+    </div>
   </SectorContext.Consumer>
 );
 
@@ -155,7 +128,6 @@ RouteCardList.propTypes = {
   user: PropTypes.object,
   routes: PropTypes.object.isRequired,
   routeIds: PropTypes.array.isRequired,
-  addRoute: PropTypes.func.isRequired,
   onRouteClick: PropTypes.func.isRequired,
 };
 

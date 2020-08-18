@@ -13,26 +13,17 @@ const RouteCardView = ({
   <React.Fragment>
     {
       viewMode === 'table' && (
-        <RouteCardTable
-          addRoute={addRoute}
-          onRouteClick={onRouteClick}
-        />
+        <RouteCardTable addRoute={addRoute} onRouteClick={onRouteClick} />
       )
     }
     {
       viewMode === 'list' && (
-        <RouteCardList
-          addRoute={addRoute}
-          onRouteClick={onRouteClick}
-        />
+        <RouteCardList onRouteClick={onRouteClick} />
       )
     }
     {
       viewMode === 'scheme' && (
-        <RouteCardScheme
-          onRouteClick={onRouteClick}
-          diagram={diagram}
-        />
+        <RouteCardScheme onRouteClick={onRouteClick} diagram={diagram} />
       )
     }
   </React.Fragment>
