@@ -6,6 +6,8 @@ import Button from '@/v1/components/Button/Button';
 import { notReady, notExist } from '@/v1/utils';
 import './MainPageHeader.css';
 import { currentUser } from '@/v2/redux/user_session/utils';
+import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
+import { INSTA_LINK, TELEGRAM_LINK, VK_LINK } from '@/v1/Constants/SocialLinks';
 
 const bgImage = require('./images/main-page-header.jpg');
 
@@ -26,10 +28,13 @@ class MainPageHeader extends Component {
   }
 
   render() {
-    const {
-      user, history,
-    } = this.props;
+    const { user, history } = this.props;
     const { bgImageLoaded, posterPhotoLoaded } = this.state;
+
+    const socialLinksSprite = require(
+      '@/../img/social-links-sprite/social-links-sprite.svg',
+    );
+
     return (
       <header
         className="main-page-header"
@@ -40,12 +45,10 @@ class MainPageHeader extends Component {
             <h1 className="main-page-header__title">
               Не можешь вспомнить свою первую 6С?
             </h1>
-            <p className="main-page-header__descr">
-              Не пытайся запоминать боль, записывай
-            </p>
+            <p className="main-page-header__descr">Не пытайся запоминать боль, записывай</p>
             <div className="main-page-header__button-wrapper">
               {
-                (!notReady(user) && notExist(user)) && (
+                (!notReady(user) && notExist(user)) ? (
                   <>
                     <Button
                       size="big"
@@ -60,6 +63,30 @@ class MainPageHeader extends Component {
                       onClick={() => history.push('#signin')}
                     />
                   </>
+                ) : (
+                  <ul className="social-links">
+                    <li>
+                      <SocialLinkButton
+                        dark
+                        href={TELEGRAM_LINK}
+                        xlinkHref={`${socialLinksSprite}#icon-telegram`}
+                      />
+                    </li>
+                    <li>
+                      <SocialLinkButton
+                        dark
+                        href={VK_LINK}
+                        xlinkHref={`${socialLinksSprite}#icon-vk`}
+                      />
+                    </li>
+                    <li>
+                      <SocialLinkButton
+                        dark
+                        href={INSTA_LINK}
+                        xlinkHref={`${socialLinksSprite}#icon-inst`}
+                      />
+                    </li>
+                  </ul>
                 )
               }
             </div>
@@ -84,12 +111,8 @@ class MainPageHeader extends Component {
   }
 }
 
-MainPageHeader.propTypes = {
-  user: PropTypes.object,
-};
+MainPageHeader.propTypes = { user: PropTypes.object };
 
-const mapStateToProps = state => ({
-  user: currentUser(state),
-});
+const mapStateToProps = state => ({ user: currentUser(state) });
 
 export default connect(mapStateToProps)(withRouter(MainPageHeader));

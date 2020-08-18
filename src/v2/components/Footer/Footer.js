@@ -5,10 +5,9 @@ import { Link, withRouter } from 'react-router-dom';
 import { currentUser } from '../../redux/user_session/utils';
 import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
 import {
+  TELEGRAM_LINK,
   INSTA_LINK,
   VK_LINK,
-  FACEBOOK_LINK,
-  TWITTER_LINK,
 } from '@/v1/Constants/SocialLinks';
 import { notReady, notExist } from '@/v1/utils';
 
@@ -21,7 +20,7 @@ class Footer extends React.PureComponent {
     const { user, history } = this.props;
 
     const socialLinksSprite = require(
-      '../../../../img/social-links-sprite/social-links-sprite.svg',
+      '@/../img/social-links-sprite/social-links-sprite.svg',
     );
 
     return (
@@ -120,8 +119,8 @@ class Footer extends React.PureComponent {
             <ul className="social-links">
               <li>
                 <SocialLinkButton
-                  href={INSTA_LINK}
-                  xlinkHref={`${socialLinksSprite}#icon-inst`}
+                  href={TELEGRAM_LINK}
+                  xlinkHref={`${socialLinksSprite}#icon-telegram`}
                 />
               </li>
               <li>
@@ -132,14 +131,8 @@ class Footer extends React.PureComponent {
               </li>
               <li>
                 <SocialLinkButton
-                  href={FACEBOOK_LINK}
-                  xlinkHref={`${socialLinksSprite}#icon-facebook`}
-                />
-              </li>
-              <li>
-                <SocialLinkButton
-                  href={TWITTER_LINK}
-                  xlinkHref={`${socialLinksSprite}#icon-twitter`}
+                  href={INSTA_LINK}
+                  xlinkHref={`${socialLinksSprite}#icon-inst`}
                 />
               </li>
             </ul>
