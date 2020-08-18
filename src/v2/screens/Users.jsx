@@ -78,8 +78,8 @@ const Users = ({ users, loadUsers, match, history }) => {
                 index: index + 1,
                 avatar: user.avatar ? user.avatar.url : '',
                 name: userBaseName(user),
-                scores: Math.round(user.statistics.score),
-                karma: Math.round(user.data.karma * 100) / 100.0,
+                scores: Math.round(user.statistics.score || 0),
+                karma: Math.round((user.data.karma || 0) * 100) / 100.0,
                 url: `${match.url}/${user.id}`,
               }),
             )
