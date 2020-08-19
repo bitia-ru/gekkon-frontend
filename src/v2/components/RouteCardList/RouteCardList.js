@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import RouteRow from '@/v1/components/RouteRow/RouteRow';
 import getArrayByIds from '@/v1/utils/getArrayByIds';
-import SectorContext from '@/v1/contexts/SectorContext';
 import { StyleSheet, css } from '../../aphrodite';
 
 const RouteCardList = ({
@@ -14,31 +13,29 @@ const RouteCardList = ({
   routes,
   routeIds,
 }) => (
-  <SectorContext.Consumer>
-    <div className={css(styles.tableCard)}>
-      <div className={css(styles.tableCardHeader)}>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardNumber)}>Номер</div>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardName)}>Название трассы</div>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardCategory)}>Категория</div>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardHooks)}>Зацепы</div>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardMarking)}>Маркеры</div>
-        <div className={css(styles.tableCardHeaderItem, styles.tableCardAuthor)}>Накрутчик</div>
-      </div>
-      {
-        R.map(
-          route => (
-            <RouteRow
-              key={route.id}
-              route={route}
-              user={user}
-              onRouteClick={() => onRouteClick(route.id)}
-            />
-          ),
-          getArrayByIds(routeIds, routes),
-        )
-      }
+  <div className={css(styles.tableCard)}>
+    <div className={css(styles.tableCardHeader)}>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardNumber)}>Номер</div>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardName)}>Название трассы</div>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardCategory)}>Категория</div>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardHooks)}>Зацепы</div>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardMarking)}>Маркеры</div>
+      <div className={css(styles.tableCardHeaderItem, styles.tableCardAuthor)}>Накрутчик</div>
     </div>
-  </SectorContext.Consumer>
+    {
+      R.map(
+        route => (
+          <RouteRow
+            key={route.id}
+            route={route}
+            user={user}
+            onRouteClick={() => onRouteClick(route.id)}
+          />
+        ),
+        getArrayByIds(routeIds, routes),
+      )
+    }
+  </div>
 );
 
 const styles = StyleSheet.create({
