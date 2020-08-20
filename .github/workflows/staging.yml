@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy
+      - name: Install SSH key
         env:
           SSH_KEY_GPG_PASSPHRASE: ${{ secrets.ssh_key_gpg_passphrase }}
         run: |
@@ -26,6 +26,8 @@ jobs:
             Port 22001
             User peclet
           EOF
+      - name: Deploy
+        run: |
           cat << EOF >deploy_script.DeployForStaging.sh
             cd services/gekkon-staging/frontend && \
               git fetch && \

@@ -1,9 +1,10 @@
-name: DeployForMaster
+name: DeployForSerg
 
 on:
   push:
     branches:
-      - master
+      - showrooms/sergey
+      - GF-168
 
 jobs:
   build:
@@ -22,29 +23,31 @@ jobs:
           Host deploy
             StrictHostKeyChecking no
             IdentityFile ~/.ssh/id_rsa.deploy
-            HostName almagest.infra.crags.ru
-            User almagest
+            HostName peclet.infra.crags.ru
+            Port 22001
+            User peclet
           EOF
       - name: Deploy
         run: |
-          cat << EOF >deploy_script.DeployForMaster.sh
-            cd services/gekkon-production/frontend && \
+          cat << EOF >deploy_script.DeployForSerg.sh
+            cd services/gekkon-staging/frontend_serg && \
               git fetch && \
               git reset --hard HEAD && \
-              git checkout master && \
-              git reset --hard origin/master && \
+              git checkout showrooms/sergey && \
+              git reset --hard origin/showrooms/sergey && \
               cd .. && \
               . ./.env && \
-              docker-compose build frontend && \
-              docker-compose up -d frontend
+              docker-compose build frontend_serg && \
+              docker-compose up -d frontend_serg
           EOF
-          ssh deploy "$(cat deploy_script.DeployForMaster.sh)"
+          ssh deploy "$(cat deploy_script.DeployForSerg.sh)"
       - name: Purge CloudFlare cache
         env:
-          CLOUDFLARE_ZONE: ${{ secrets.cloudflare_zone }}
-          CLOUDFLARE_PURGE_TOKEN: ${{ secrets.cloudflare_purge_token }}
+          CLOUDFLARE_STAGING_ZONE: ${{ secrets.cloudflare_staging_zone }}
+          CLOUDFLARE_STAGING_PURGE_TOKEN: ${{ secrets.cloudflare_staging_purge_token }}
         run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
+          curl -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_STAGING_ZONE/purge_cache" \
             -d '{ "purge_everything": true }' \
-            -H "Authorization: Bearer $CLOUDFLARE_PURGE_TOKEN" \
+            -H "Authorization: Bearer $CLOUDFLARE_STAGING_PURGE_TOKEN" \
             -H "Content-Type: application/json"
