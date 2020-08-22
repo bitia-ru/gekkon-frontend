@@ -6,7 +6,7 @@ class SchemePointer extends Component {
   onMouseDown = (event) => {
     const { onStartMoving } = this.props;
     if (event.nativeEvent.which === 1) {
-      onStartMoving(event.pageX, event.pageY);
+      onStartMoving && onStartMoving(event.pageX, event.pageY);
     }
   };
 
