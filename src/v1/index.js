@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import V2 from '@/v2/V2';
 import { configureStoreAsync, saveState } from './store';
+import ErrorBoundary from '@/v2/ErrorBoundary';
 import './index.css';
 import './fonts.css';
 /* eslint-enable import/first */
@@ -62,11 +63,13 @@ configureStoreAsync().then((result) => {
   });
   ReactDOM.render(
     (
-      <Provider store={store}>
-        <BrowserRouter>
-          <V2 />
-        </BrowserRouter>
-      </Provider>
+      <ErrorBoundary>
+        <Provider store={store}>
+          <BrowserRouter>
+            <V2 />
+          </BrowserRouter>
+        </Provider>
+      </ErrorBoundary>
     ),
     document.getElementById('app'),
   );
