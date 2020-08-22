@@ -86,9 +86,7 @@ class RouteCardTable extends React.PureComponent {
                       onClick={() => onRouteClick(route.id) || null}
                     >
                       <div className={css(styles.contentRouteCard)}>
-                        <RouteCard
-                          route={route}
-                        />
+                        <RouteCard route={route} />
                       </div>
                     </div>
                   ),
