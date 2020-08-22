@@ -33,7 +33,7 @@ class InfoBlock extends Component {
         <SpotContext.Consumer>
           {
             ({ spot }) => {
-              const sectorIds = spot ? spots[spot.id].sectorIds : [];
+              const sectorIds = (spot && spots[spot.id]?.sectorIds) ? spots[spot.id].sectorIds : [];
               const currentSectors = getArrayByIds(sectorIds, sectors);
               return (
                 <SectorContext.Consumer>
