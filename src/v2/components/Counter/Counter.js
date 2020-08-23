@@ -10,24 +10,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     '@media screen and (max-width: 1440px)': { fontSize: '14px' },
   },
-  redpointsCounter: { color: '#E24D4D' },
-  flashesCounter: { color: '#000000' },
-  counterNum: {
-    marginRight: '4px',
+  counterNum: { marginRight: '4px' },
+  counterNumWrapper: {
+    color: '#FFFFFF',
     width: '28px',
     height: '28px',
-    borderRadius: '14px',
+    borderRadius: '50%',
     textAlign: 'center',
     lineHeight: '28px',
   },
-  redpointsNum: {
-    backgroundColor: '#E24D4D',
-    color: '#FFFFFF',
-  },
-  flashesNum: {
-    backgroundColor: '#000000',
-    color: '#FFFFFF',
-  },
+  defaultCounterColor: { color: '#828282' },
+  redpointsTextColor: { color: '#E24D4D' },
+  flashesTextColor: { color: '#000000' },
+  redpointsNumColor: { backgroundColor: '#E24D4D' },
+  flashesNumColor: { backgroundColor: '#000000' },
 });
 
 const Counter = ({ number, text, type }) => (
@@ -36,8 +32,10 @@ const Counter = ({ number, text, type }) => (
       className={
         css(
           styles.counterNum,
-          type === 'redpoints' && styles.redpointsNum,
-          type === 'flashes' && styles.flashesNum,
+          !type && styles.defaultCounterColor,
+          type && styles.counterNumWrapper,
+          type === 'redpoints' && styles.redpointsNumColor,
+          type === 'flashes' && styles.flashesNumColor,
         )
       }
     >
@@ -46,8 +44,9 @@ const Counter = ({ number, text, type }) => (
     <span
       className={
         css(
-          type === 'redpoints' && styles.redpointsCounter,
-          type === 'flashes' && styles.flashesCounter,
+          !type && styles.defaultCounterColor,
+          type === 'redpoints' && styles.redpointsTextColor,
+          type === 'flashes' && styles.flashesTextColor,
         )
       }
     >

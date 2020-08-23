@@ -540,7 +540,11 @@ class RoutesShowModal extends Component {
                                   users={R.map(redpoint => redpoint.user, redpoints || [])}
                                 />
                               }
-                              <Counter number={numOfRedpoints} text="redpoints" type="redpoints" />
+                              <Counter
+                                number={numOfRedpoints}
+                                text="redpoints"
+                                type={R.find(R.propEq('user_id', user.id))(redpoints) && 'redpoints'}
+                              />
                             </div>
                             <div
                               className={css(styles.modalTrackCount)}
@@ -567,7 +571,11 @@ class RoutesShowModal extends Component {
                                   users={R.map(flash => flash.user, flashes || [])}
                                 />
                               }
-                              <Counter number={numOfFlash} text="flash" type="flashes" />
+                              <Counter
+                                number={numOfFlash}
+                                text="flash"
+                                type={R.find(R.propEq('user_id', user.id))(flashes) && 'flashes'}
+                              />
                             </div>
                           </div>
                           <CtrlPressedContext.Consumer>
