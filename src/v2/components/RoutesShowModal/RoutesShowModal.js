@@ -38,7 +38,6 @@ import {
 } from '@/v2/redux/routes/actions';
 import CtrlPressedContext from '@/v1/contexts/CtrlPressedContext';
 import { StyleSheet, css } from '../../aphrodite';
-import { ApiUrl } from '@/v1/Environ';
 import getFilters from '@/v1/utils/getFilters';
 import { reloadRoutes as reloadRoutesAction } from '@/v1/utils/reloadRoutes';
 import { default as reloadSectorAction } from '@/v1/utils/reloadSector';
@@ -262,7 +261,7 @@ class RoutesShowModal extends Component {
     const spotId = sectors[sectorId].spot_id;
     if (window.confirm('Удалить трассу?')) {
       removeRouteProp(
-        `${ApiUrl}/v1/routes/${routeId}`,
+        routeId,
         () => {
           if (R.contains('sectors', match.url)) {
             this.props.reloadSector(sectorId);
