@@ -9,7 +9,7 @@ import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
 import RouteStatus from '../RouteStatus/RouteStatus';
 import CollapsableBlock from '@/v1/components/CollapsableBlock/CollapsableBlock';
 import CommentForm from '@/v1/components/CommentForm/CommentForm';
-import Counter from '@/v1/components/Counter/Counter';
+import Counter from '@/v2/components/Counter/Counter';
 import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';
 import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
@@ -391,6 +391,15 @@ class RoutesShowModal extends Component {
       ascents,
     );
     const numOfFlash = (avail(flashes) && flashes.length) || 0;
+
+    const currentUserHasRedpoints = () => (
+      user && R.find(R.propEq('user_id', user.id))(redpoints)
+    );
+
+    const currentUserHasFlashes = () => (
+      user && R.find(R.propEq('user_id', user.id))(flashes)
+    );
+
     return (
       <div className={css(styles.modalOverlayWrapper)}>
         <div className={css(styles.modal, styles.modalOverlayModal)}>
@@ -539,7 +548,11 @@ class RoutesShowModal extends Component {
                                   users={R.map(redpoint => redpoint.user, redpoints || [])}
                                 />
                               }
-                              <Counter number={numOfRedpoints} text="redpoints" />
+                              <Counter
+                                number={numOfRedpoints}
+                                text="redpoints"
+                                type={currentUserHasRedpoints() && 'redpoints'}
+                              />
                             </div>
                             <div
                               className={css(styles.modalTrackCount)}
@@ -566,7 +579,11 @@ class RoutesShowModal extends Component {
                                   users={R.map(flash => flash.user, flashes || [])}
                                 />
                               }
-                              <Counter number={numOfFlash} text="flash" />
+                              <Counter
+                                number={numOfFlash}
+                                text="flash"
+                                type={currentUserHasFlashes() && 'flashes'}
+                              />
                             </div>
                           </div>
                           <CtrlPressedContext.Consumer>
@@ -805,6 +822,9 @@ const styles = StyleSheet.create({
     },
   },
   modalTrackCount: {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
     position: 'relative',
     ':not(:last-child)': {
       marginRight: '30px',
@@ -845,7 +865,10 @@ const styles = StyleSheet.create({
   },
   modalTrackInformation: {
     display: 'flex',
+    alignItems: 'center',
     paddingRight: '15px',
+    width: '254px',
+    height: '28px',
   },
   modalItem: {
     paddingLeft: '45px',
