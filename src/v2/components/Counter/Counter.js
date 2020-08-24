@@ -8,17 +8,25 @@ const styles = StyleSheet.create({
     fontFamily: ['GilroyRegular', 'sans-serif'],
     display: 'flex',
     alignItems: 'center',
+    height: '100%',
     '@media screen and (max-width: 1440px)': { fontSize: '14px' },
   },
-  counterNum: { marginRight: '4px' },
-  counterNumWrapper: {
-    color: '#FFFFFF',
-    width: '28px',
-    height: '28px',
-    borderRadius: '50%',
+  counterText: {
+    height: '100%',
     textAlign: 'center',
     lineHeight: '28px',
   },
+  counterNumContainer: { marginRight: '4px' },
+  counterNumWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#FFFFFF',
+    height: '100%',
+    width: '28px',
+    borderRadius: '50%',
+  },
+  counterNum: { marginTop: '2px' },
   defaultCounterColor: { color: '#828282' },
   redpointsTextColor: { color: '#E24D4D' },
   flashesTextColor: { color: '#000000' },
@@ -31,7 +39,7 @@ const Counter = ({ number, text, type }) => (
     <div
       className={
         css(
-          styles.counterNum,
+          styles.counterNumContainer,
           !type && styles.defaultCounterColor,
           type && styles.counterNumWrapper,
           type === 'redpoints' && styles.redpointsNumColor,
@@ -39,11 +47,12 @@ const Counter = ({ number, text, type }) => (
         )
       }
     >
-      {number}
+      <div className={css(type && styles.counterNum)}>{number}</div>
     </div>
     <span
       className={
         css(
+          styles.counterText,
           !type && styles.defaultCounterColor,
           type === 'redpoints' && styles.redpointsTextColor,
           type === 'flashes' && styles.flashesTextColor,

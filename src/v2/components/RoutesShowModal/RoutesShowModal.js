@@ -814,7 +814,9 @@ const styles = StyleSheet.create({
     },
   },
   modalTrackCount: {
-    position: 'relative',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
     ':not(:last-child)': {
       marginRight: '30px',
     },
@@ -854,7 +856,10 @@ const styles = StyleSheet.create({
   },
   modalTrackInformation: {
     display: 'flex',
+    alignItems: 'center',
     paddingRight: '15px',
+    width: '254px',
+    height: '28px',
   },
   modalItem: {
     paddingLeft: '45px',
