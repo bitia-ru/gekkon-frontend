@@ -11,6 +11,8 @@ import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import About from './components/About/About';
 import Faq from './components/Faq/Faq';
 import CtrlPressedCatcher from './components/common/CtrlPressedCatcher/CtrlPressedCatcher';
+import LoginVKError from '@/v2/components/LoginVK/LoginVKError';
+import LoginVKSuccess from '@/v2/components/LoginVK/LoginVKSuccess';
 
 
 const V2 = ({ currentUser }) => (
@@ -26,6 +28,8 @@ const V2 = ({ currentUser }) => (
           <Route path="/spots/:id" component={SpotsShow} />
           <Route exact path="/about" component={About} />
           <Route exact path="/faq" component={Faq} />
+          <Route path="/error" component={LoginVKError} />
+          <Route path="/integrations/vk/actions/success" component={LoginVKSuccess} />
         </Switch>
       ) : (
         <BootingScreen />
