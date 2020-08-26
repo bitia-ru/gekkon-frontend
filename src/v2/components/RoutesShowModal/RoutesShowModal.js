@@ -817,6 +817,7 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
     ':not(:last-child)': {
       marginRight: '30px',
     },
