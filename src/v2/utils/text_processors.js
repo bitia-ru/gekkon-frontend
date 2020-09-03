@@ -17,7 +17,7 @@ export const wrapHashtagInText = (path, text) => {
   const routesRegExp = /([/a-z0-9]+)\/routes/;
   const pathWithoutRoutes = path.pathname.match(routesRegExp)[1];
   const params = new URLSearchParams(path.search);
-  const hashTagRegExp = /(#[a-zA-Zа-яА-Я0-9_]+)/g;
+  const hashTagRegExp = /(?<!\S)(#[a-zA-Zа-яА-Я0-9_]+)/g;
   const mapIndexed = R.addIndex(R.map);
   const preparedText = R.flatten(R.map(
     e => (
