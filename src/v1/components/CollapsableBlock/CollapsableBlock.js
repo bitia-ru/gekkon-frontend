@@ -1,14 +1,13 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './CollapsableBlock.css';
-import { wrapHashtagInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
+import { wrapHashtagsInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
 
-const CollapsableBlock = ({
-  title, text, isCollapsed, onCollapseChange, history,
-}) => {
+const CollapsableBlock = ({ title, text, isCollapsed, onCollapseChange, history }) => {
   const textWithLinks = wrapWebLinksInText(text);
   const path = history.location;
-  const textWithHashtag = wrapHashtagInText(path, textWithLinks);
+  const textWithHashtags = wrapHashtagsInText(path, textWithLinks);
   return (
     <div>
       <button
@@ -29,7 +28,7 @@ const CollapsableBlock = ({
             ? ''
             : (
               <div className="collapsable-block__content">
-                {textWithHashtag}
+                {textWithHashtags}
               </div>
             )
         }
@@ -47,4 +46,4 @@ CollapsableBlock.propTypes = {
   history: PropTypes.object,
 };
 
-export default CollapsableBlock;
+export default withRouter(CollapsableBlock);

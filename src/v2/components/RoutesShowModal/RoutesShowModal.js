@@ -650,7 +650,6 @@ class RoutesShowModal extends Component {
                             isCollapsed={descriptionCollapsed}
                             onCollapseChange={this.onDescriptionCollapseChange}
                             text={route.description ? route.description : ''}
-                            history={this.props.history}
                           />
                         </div>
                         <div className={css(styles.modalItem)}>
@@ -677,7 +676,6 @@ class RoutesShowModal extends Component {
                               )
                             }
                             objectListTitle="route_comments"
-                            history={this.props.history}
                           />
                         </div>
                         <div className={css(styles.modalEnterComment)}>

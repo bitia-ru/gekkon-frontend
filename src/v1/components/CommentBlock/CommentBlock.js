@@ -45,7 +45,6 @@ export default class CommentBlock extends Component {
         removeComment,
         objectListTitle,
         comments,
-        history,
       } = this.props;
       return (
         <RouteContext.Consumer>
@@ -90,7 +89,6 @@ export default class CommentBlock extends Component {
                             removeComment={removeComment}
                             user={user}
                             comment={comment}
-                            history={history}
                           />
                           {
                             R.map(
@@ -133,7 +131,6 @@ CommentBlock.propTypes = {
   comments: PropTypes.array.isRequired,
   showPrevious: PropTypes.func.isRequired,
   allShown: PropTypes.bool.isRequired,
-  history: PropTypes.object,
 };
 
 CommentBlock.defaultProps = {
