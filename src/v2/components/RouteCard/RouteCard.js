@@ -2,14 +2,11 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
 import moment from 'moment';
 import { SOON_END_PERIOD } from '@/v1/Constants/Route';
 import RouteStatus from '../RouteStatus/RouteStatus';
 import { timeFromNow } from '@/v1/Constants/DateTimeFormatter';
 import RouteContext from '@/v1/contexts/RouteContext';
-import { avail, notAvail } from '@/v1/utils';
-import getArrayFromObject from '@/v1/utils/getArrayFromObject';
 import { css } from '../../aphrodite';
 import styles from './styles';
 
@@ -25,16 +22,11 @@ class RouteCard extends Component {
 
   render() {
     moment.locale('ru');
-    const { route, user } = this.props;
+    const { route } = this.props;
     const { imageIsLoading } = this.state;
     const date = moment().add(SOON_END_PERIOD, 'days');
     const installedUntil = route.installed_until ? moment(route.installed_until) : null;
-    const ascents = avail(route.ascents) && getArrayFromObject(route.ascents);
-    const ascent = (
-      notAvail(user) || notAvail(ascents)
-        ? null
-        : (R.find(R.propEq('user_id', user.id))(ascents))
-    );
+    const { ascent_result: ascentResult } = route;
     let year;
     let titleDate;
     if (route.installed_until) {
@@ -46,9 +38,17 @@ class RouteCard extends Component {
     const alarmIcon = `${cardSprite}#icon-alarm`;
     const clockIcon = `${cardSprite}#icon-clock`;
     const installedUntilValid = (installedUntil && date >= installedUntil);
+    const ascentIsSuccess = ascentResult && ascentResult !== 'unsuccessful';
     return (
       <RouteContext.Provider value={{ route }}>
-        <a className={css(styles.routeCard, (ascent && ascent.result !== 'unsuccessful') ? styles.routeCardDone : '')}>
+        <a
+          className={
+            css(
+              styles.routeCard,
+              ascentIsSuccess && styles.routeCardDone,
+            )
+          }
+        >
           <article className={css(styles.routeCardInner)}>
             <div className={css(styles.routeCardImage)}>
               <div className={css(styles.routeCardImageInner)}>
@@ -63,7 +63,7 @@ class RouteCard extends Component {
                   )
                   }
                 {
-                  (ascent && ascent.result !== 'unsuccessful') && (
+                  ascentIsSuccess && (
                     <div className={css(styles.routeCardTrackStatus)}>
                       <RouteStatus />
                     </div>
