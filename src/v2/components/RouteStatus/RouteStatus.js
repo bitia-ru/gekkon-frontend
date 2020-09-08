@@ -1,31 +1,20 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import { notAvail, avail } from '@/v1/utils';
 import RouteContext from '@/v1/contexts/RouteContext';
-import getArrayFromObject from '@/v1/utils/getArrayFromObject';
 import { StyleSheet, css } from '../../aphrodite';
 
-
-const RouteStatus = ({ onClick, user }) => (
+const RouteStatus = ({ onClick }) => (
   <RouteContext.Consumer>
     {
       ({ route }) => {
-        const ascents = avail(route.ascents) && getArrayFromObject(route.ascents);
-        const ascent = (
-          notAvail(user) || notAvail(ascents)
-            ? null
-            : (R.find(R.propEq('user_id', user.id))(ascents))
-        );
-        const complete = (ascent && ascent.result !== 'unsuccessful');
+        const { ascent_result: ascentResult } = route;
+        const complete = (ascentResult && ascentResult !== 'unsuccessful');
 
         let statusClassRedpoint = false;
         let statusClassFlash = false;
-        if (complete && ascent.result === 'red_point') {
+        if (complete && ascentResult === 'red_point') {
           statusClassRedpoint = true;
-        } else if (complete && ascent.result === 'flash') {
+        } else if (complete && ascentResult === 'flash') {
           statusClassFlash = true;
         }
         return (
@@ -44,7 +33,7 @@ const RouteStatus = ({ onClick, user }) => (
             {
               complete
                 ? (
-                  ascent.result === 'red_point' ? 'Пролез' : 'Флешанул'
+                  ascentResult === 'red_point' ? 'Пролез' : 'Флешанул'
                 )
                 : 'Не пройдена'
             }
@@ -94,17 +83,8 @@ const styles = StyleSheet.create({
   },
 });
 
-RouteStatus.propTypes = {
-  user: PropTypes.object,
-  onClick: PropTypes.func,
-};
+RouteStatus.propTypes = { onClick: PropTypes.func };
 
-RouteStatus.defaultProps = {
-  onClick: null,
-};
+RouteStatus.defaultProps = { onClick: null };
 
-const mapStateToProps = state => ({
-  user: state.usersStore.users[state.usersStore.currentUserId],
-});
-
-export default withRouter(connect(mapStateToProps)(RouteStatus));
+export default RouteStatus;
