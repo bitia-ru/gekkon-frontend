@@ -1,34 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MainScreen from '@/v2/layouts/MainScreen/MainScreen';
-import EntityPoster from '@/v2/example/components/EntityPoster';
 import EntityLogo from '@/v2/example/components/EntityLogo';
 import EntityInfoBlock from '@/v2/example/components/EntityInfoBlock';
-import EntityTabs from '@/v2/example/components/EntityTabs';
+import TabBar from '@/v1/components/TabBar/TabBar';
 import { StyleSheet, css } from '@/v2/aphrodite';
+import InfoPageHeader from '@/v2/components/InfoPageHeader/InfoPageHeader';
 
 const styles = StyleSheet.create({
-  infoBlockContainer: {
-    display: 'flex',
+  entityPageBlock: { minWidth: '1300px' },
+  entityPageInfoBlockContainer: {
+    display: 'inline-flex',
     height: '220px',
     marginBottom: '100px',
     marginTop: '-110px',
   },
-  infoContainer: {
+  entityPageInfoContainer: {
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 3,
-    minWidth: '470px',
+    flexGrow: 1,
+    width: '560px',
     height: '220px',
     marginLeft: '30px',
-    '@media screen and (max-width: 1600px)': { width: '560px' },
+    '@media screen and (max-width: 1600px)': { width: '470px' },
   },
-  titleContainer: {
+  entityPageTitleContainer: {
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
     height: '110px',
-    fontFamily: 'Gilroy',
+    fontFamily: 'GilroyRegular',
     fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: '40px',
@@ -37,12 +38,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
     '@media screen and (max-width: 1600px)': { fontSize: '34px' },
   },
-  contentContainer: {
+  entityPageContentContainer: {
     display: 'flex',
-    border: '1px solid grey',
-    minWidth: '960px',
-    height: '1000px',
+    minWidth: '768px',
     margin: '0px 160px 100px 160px',
+    flexWrap: 'wrap',
+  },
+  entityPageTabList: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    margin: '-170px 160px 120px',
   },
 });
 
@@ -53,21 +58,45 @@ const EntityPage = ({
   avatar,
   title,
   infoBlockItems,
-  tabsItems,
-}) => (
-  <MainScreen>
-    <EntityPoster poster={poster} bgHeaderColor={bgHeaderColor} />
-    <div className={css(styles.infoBlockContainer)}>
-      <EntityLogo logo={logo} avatar={avatar} />
-      <div className={css(styles.infoContainer)}>
-        <div className={css(styles.titleContainer)}>{title}</div>
-        <EntityInfoBlock infoBlockItems={infoBlockItems} />
+  titleList,
+}) => {
+  const firstTabContent = () => (
+    <div className={css(styles.entityPageContentContainer)}>Скалодромы</div>
+  );
+
+  const secondTabContent = () => (
+    <div className={css(styles.entityPageContentContainer)}>Трассы</div>
+  );
+
+  return (
+    <MainScreen
+      header={
+        <InfoPageHeader
+          image={poster}
+          height="385px"
+          bgHeaderColor={bgHeaderColor}
+        />
+      }
+    >
+      <div className={css(styles.entityPageBlock)}>
+        <div className={css(styles.entityPageInfoBlockContainer)}>
+          <EntityLogo logo={logo} avatar={avatar} />
+          <div className={css(styles.entityPageInfoContainer)}>
+            <div className={css(styles.entityPageTitleContainer)}>{title}</div>
+            <EntityInfoBlock infoBlockItems={infoBlockItems} />
+          </div>
+        </div>
+        <TabBar
+          contentList={[firstTabContent(), secondTabContent()]}
+          activeList={[true, true]}
+          activeTab={1}
+          titleList={titleList}
+          styles={css(styles.entityPageTabList)}
+        />
       </div>
-      <EntityTabs tabsItems={tabsItems} />
-    </div>
-    <div className={css(styles.contentContainer)} />
-  </MainScreen>
-);
+    </MainScreen>
+  );
+};
 
 EntityPage.propTypes = {
   poster: PropTypes.string,
@@ -76,7 +105,7 @@ EntityPage.propTypes = {
   avatar: PropTypes.string,
   title: PropTypes.string,
   infoBlockItems: PropTypes.array,
-  tabsItems: PropTypes.array,
+  titleList: PropTypes.array,
 };
 
 export default EntityPage;

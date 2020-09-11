@@ -11,10 +11,7 @@ const EntityPageExample = () => {
     { title: 'Работает до', value: '23:30 (ещё 6 часов)' },
   ];
 
-  const tabsItems = [
-    { id: 0, text: 'О скалодроме', content: <div>content О скалодроме</div> },
-    { id: 1, text: 'Трассы', content: <div>content Трассы</div> },
-  ];
+  const titleList = ['О скалодроме', 'Трассы'];
 
   return (
     <EntityPage
@@ -24,7 +21,7 @@ const EntityPageExample = () => {
       avatar={avatar}
       title="Limestone"
       infoBlockItems={infoBlockItems}
-      tabsItems={tabsItems}
+      titleList={titleList}
     />
   );
 };

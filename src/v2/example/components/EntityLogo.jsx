@@ -3,40 +3,40 @@ import PropTypes from 'prop-types';
 import { StyleSheet, css } from '@/v2/aphrodite';
 
 const styles = StyleSheet.create({
-  logoContainer: {
+  entityLogoContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imageContainer: {
+  entityLogoImageContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     zIndex: 1,
   },
-  logo: {
+  entityLogo: {
     minHeight: '220px',
     minWidth: '220px',
     marginLeft: '160px',
   },
-  avatar: {
+  entityLogoAvatar: {
     minHeight: '160px',
     minWidth: '160px',
     marginLeft: '220px',
     borderRadius: '80px',
   },
-  imageWrapper: {
+  entityLogoImageWrapper: {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundColor: '#1A1A1A',
   },
-  logoWrapper: {
+  entityLogoWrapper: {
     height: '200px',
     width: '200px',
   },
-  avatarWrapper: {
+  entityLogoAvatarWrapper: {
     height: '140px',
     width: '140px',
     borderRadius: '80px',
@@ -53,19 +53,19 @@ const EntityLogo = ({ logo, avatar }) => {
   }, [logo, avatar]);
 
   return (
-    <div className={css(styles.logoContainer)}>
+    <div className={css(styles.entityLogoContainer)}>
       {
         logo ? (
-          <div className={css(styles.imageContainer, styles.logo)}>
+          <div className={css(styles.entityLogoImageContainer, styles.entityLogo)}>
             <div
-              className={css(styles.imageWrapper, styles.logoWrapper)}
+              className={css(styles.entityLogoImageWrapper, styles.entityLogoWrapper)}
               style={imgLoaded ? { backgroundImage: `url(${logo})` } : {}}
             />
           </div>
         ) : (
-          <div className={css(styles.imageContainer, styles.avatar)}>
+          <div className={css(styles.entityLogoImageContainer, styles.entityLogoAvatar)}>
             <div
-              className={css(styles.imageWrapper, styles.avatarWrapper)}
+              className={css(styles.entityLogoImageWrapper, styles.entityLogoAvatarWrapper)}
               style={imgLoaded ? { backgroundImage: `url(${avatar})` } : {}}
             />
           </div>

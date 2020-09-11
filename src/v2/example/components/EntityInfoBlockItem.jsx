@@ -3,27 +3,26 @@ import PropTypes from 'prop-types';
 import { StyleSheet, css } from '@/v2/aphrodite';
 
 const styles = StyleSheet.create({
-  infoBlockItemContainer: {
+  entityInfoBlockItemContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    marginRight: '40px',
     maxHeight: '110px',
-    fontFamily: 'Gilroy',
+    fontFamily: 'GilroyRegular',
     fontStyle: 'normal',
     fontWeight: '500',
     fontSize: '16px',
     lineHeight: '19px',
     '@media screen and (max-width: 1600px)': { fontSize: '14px' },
   },
-  title: {
+  entityInfoBlockItemTitle: {
     display: 'flex',
     alignItems: 'center',
     height: '55px',
     color: '#BCC2C3',
     marginTop: '15px',
   },
-  value: {
+  entityInfoBlockItemValue: {
     display: 'flex',
     alignItems: 'center',
     height: '55px',
@@ -33,9 +32,9 @@ const styles = StyleSheet.create({
 });
 
 const EntityInfoBlockItem = ({ item }) => (
-  <div className={css(styles.infoBlockItemContainer)}>
-    <div className={css(styles.title)}>{item.title}</div>
-    <div className={css(styles.value)}>{item.value}</div>
+  <div className={css(styles.entityInfoBlockItemContainer)}>
+    <div className={css(styles.entityInfoBlockItemTitle)}>{item.title}</div>
+    <div className={css(styles.entityInfoBlockItemValue)}>{item.value}</div>
   </div>
 );
 

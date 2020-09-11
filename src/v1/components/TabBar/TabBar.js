@@ -23,12 +23,13 @@ export default class TabBar extends Component {
     };
 
     render() {
-      const { activeList, titleList, contentList } = this.props;
+      const { activeList, titleList, contentList, styles } = this.props;
+      const tabListStyles = styles ? `tab__list ${styles}` : 'tab__list';
       const { tab } = this.state;
       const mapIndexed = R.addIndex(R.map);
       return (
         <div className="tab">
-          <ul className="tab__list">
+          <ul className={tabListStyles}>
             {mapIndexed((title, index) => (
               <li key={index} className="tab__list-item">
                 <a
@@ -67,4 +68,5 @@ TabBar.propTypes = {
   titleList: PropTypes.array.isRequired,
   contentList: PropTypes.array.isRequired,
   activeList: PropTypes.array.isRequired,
+  styles: PropTypes.string,
 };
