@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { wrapWebLinksInText } from '../../utils/text_processors';
+import { withRouter } from 'react-router-dom';
+import { wrapHashtagsInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
 import { StyleSheet, css } from '../../aphrodite';
 
 const CollapsableBlock = ({
-  title, text, isCollapsed, onCollapseChange,
+  title, text, isCollapsed, onCollapseChange, history,
 }) => {
-  const preparedText = wrapWebLinksInText(text);
+  const textWithLinks = wrapWebLinksInText(text);
+  const path = history.location;
+  const textWithHashtagsAndLinks = wrapHashtagsInText(path, textWithLinks);
   return (
     <div>
       <button
@@ -26,7 +29,7 @@ const CollapsableBlock = ({
             ? ''
             : (
               <div className={css(styles.collapsableBlockContent)}>
-                {preparedText}
+                {textWithHashtagsAndLinks}
               </div>
             )
         }
@@ -98,6 +101,7 @@ CollapsableBlock.propTypes = {
   text: PropTypes.string.isRequired,
   isCollapsed: PropTypes.bool.isRequired,
   onCollapseChange: PropTypes.func.isRequired,
+  history: PropTypes.object,
 };
 
-export default CollapsableBlock;
+export default withRouter(CollapsableBlock);

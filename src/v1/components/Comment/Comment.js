@@ -1,16 +1,17 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
 import { timeFromNow } from '../../Constants/DateTimeFormatter';
 import './Comment.css';
-import { wrapWebLinksInText } from '@/v2/utils/text_processors';
+import { wrapHashtagsInText, wrapWebLinksInText } from '@/v2/utils/text_processors';
 
-const Comment = ({
-  user, comment, startAnswer, removeComment,
-}) => {
-  const preparedCommentContent = wrapWebLinksInText(comment.content);
+const Comment = ({ user, comment, startAnswer, removeComment, history }) => {
+  const commentContentWithLinks = wrapWebLinksInText(comment.content);
+  const path = history.location;
+  const commentContentWithHashtags = wrapHashtagsInText(path, commentContentWithLinks);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -28,7 +29,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{preparedCommentContent}</div>
+        <div className="comment__text">{commentContentWithHashtags}</div>
         <div className="comment__footer">
           <div
             className="comment__date"
@@ -81,6 +82,7 @@ Comment.propTypes = {
   startAnswer: PropTypes.func.isRequired,
   removeComment: PropTypes.func.isRequired,
   comment: PropTypes.object.isRequired,
+  history: PropTypes.object,
 };
 
-export default Comment;
+export default withRouter(Comment);
