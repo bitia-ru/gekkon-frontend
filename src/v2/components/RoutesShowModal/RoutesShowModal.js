@@ -14,7 +14,7 @@ import RouteDataTable from '@/v1/components/RouteDataTable/RouteDataTable';
 import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
 import { DEFAULT_COMMENTS_DISPLAYED } from '@/v1/Constants/Comments';
-import SchemeModal from '@/v1/components/SchemeModal/SchemeModal';
+import SchemeModal from '@/v2/components/SchemeModal/SchemeModal';
 import ShowSchemeButton from '@/v1/components/ShowSchemeButton/ShowSchemeButton';
 import NoticeButton from '@/v1/components/NoticeButton/NoticeButton';
 import NoticeForm from '@/v1/components/NoticeForm/NoticeForm';
