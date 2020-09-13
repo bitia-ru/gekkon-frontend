@@ -167,7 +167,7 @@ const Users = ({ users, loadUsers, match, history }) => {
                 content: <Img
                   height={55}
                   src={user.avatar}
-                  defaultImage={require('../components/common/Img/images/avatar_placeholder.svg')}
+                  defaultImage={require('./images/avatar_placeholder.svg')}
                 />,
               },
               name: {
