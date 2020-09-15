@@ -48,6 +48,8 @@ export const createUserSession = (
         let errorDetails;
         if (resp && resp.status === 404 && R.path(['data', 'model'], resp) === 'User') {
           errorDetails = { email: ['Пользователь не найден'] };
+        } else if (error?.response?.status === 400) {
+          errorDetails = error.response.data;
         } else {
           toastHttpError(error);
         }
