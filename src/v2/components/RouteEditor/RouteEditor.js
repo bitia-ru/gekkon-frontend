@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
     left: '50%',
     position: 'relative',
     textAlign: 'center',
-    width: '-moz-available',
     '> img': {
       height: '100%',
     },
