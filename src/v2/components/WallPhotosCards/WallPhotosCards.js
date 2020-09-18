@@ -11,13 +11,15 @@ import WallPhotosCardsLayout from './WallPhotosCardsLayout';
 import { loadWallPhotos as loadWallPhotosAction } from '../../redux/wall_photos/actions';
 import toastHttpError from '@/v2/utils/toastHttpError';
 
+const PHOTOS_PER_PAGE = 30;
+const NUM_OF_DISPLAYED_PAGES = 5;
 
 class WallPhotosCards extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      page: 0,
+      page: 1,
     };
   }
 
@@ -64,10 +66,39 @@ class WallPhotosCards extends Component {
   obtainWallPhotos = () => {
     const { page } = this.state;
 
-    return R.sort((a, b) => b.id - a.id)(Object.values(this.props.wallPhotos));
+    const photos = R.sort((a, b) => b.id - a.id)(Object.values(this.props.wallPhotos));
+    return photos.slice((page - 1) * PHOTOS_PER_PAGE, page * PHOTOS_PER_PAGE);
+  };
+
+  pagesList = () => {
+    const { wallPhotos } = this.props;
+    const { page } = this.state;
+    const numOfPages = (
+      wallPhotos
+        ? Math.ceil(Object.values(wallPhotos).length / PHOTOS_PER_PAGE)
+        : 0
+    );
+    if (NUM_OF_DISPLAYED_PAGES >= numOfPages) {
+      return R.range(1, numOfPages + 1);
+    }
+    const firstPage = page - Math.floor(NUM_OF_DISPLAYED_PAGES / 2);
+    const lastPage = firstPage + NUM_OF_DISPLAYED_PAGES;
+    if (firstPage >= 1 && lastPage <= numOfPages) {
+      return R.range(firstPage, lastPage);
+    }
+    if (firstPage >= 1) {
+      return R.range(numOfPages - NUM_OF_DISPLAYED_PAGES + 1, numOfPages + 1);
+    }
+    return R.range(1, NUM_OF_DISPLAYED_PAGES + 1);
   };
 
   render() {
+    const { wallPhotos } = this.props;
+    const numOfPages = (
+      wallPhotos
+        ? Math.ceil(Object.values(wallPhotos).length / PHOTOS_PER_PAGE)
+        : 0
+    );
     return (
       <Dropzone onDrop={this.onDropFiles}>
         {({ getRootProps, getInputProps }) => (
@@ -81,9 +112,9 @@ class WallPhotosCards extends Component {
             <Pagination
               onPageChange={page => this.setState({ page })}
               page={this.state.page}
-              pagesList={[1, 2, 3, 4, 5, 6, 7]}
+              pagesList={this.pagesList()}
               firstPage={1}
-              lastPage={6}
+              lastPage={numOfPages}
             />
           </div>
         )}
