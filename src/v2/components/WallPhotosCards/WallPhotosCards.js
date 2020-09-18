@@ -8,8 +8,14 @@ import Pagination from '@/v1/components/Pagination/Pagination';
 import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
 import WallPhotosCardsLayout from './WallPhotosCardsLayout';
-import { loadWallPhotos as loadWallPhotosAction } from '../../redux/wall_photos/actions';
+import {
+  loadWallPhotos as loadWallPhotosAction,
+  removeWallPhotos as removeWallPhotosAction,
+} from '../../redux/wall_photos/actions';
 import toastHttpError from '@/v2/utils/toastHttpError';
+import RoutePhotoGallery from './RoutePhotoGallery';
+import withModals from '@/v2/modules/modalable';
+import Button from '../Button/Button';
 
 const PHOTOS_PER_PAGE = 30;
 const NUM_OF_DISPLAYED_PAGES = 5;
@@ -20,6 +26,25 @@ class WallPhotosCards extends Component {
 
     this.state = {
       page: 1,
+      photoId: undefined,
+      selectMode: false,
+      selectedIds: [],
+      deleteBtnIsWaiting: false,
+    };
+  }
+
+  modals() {
+    return {
+      gallery: {
+        hashRoute: true,
+        body: (
+          <RoutePhotoGallery
+            photos={this.obtainRoutePhotos()}
+            photoId={this.state.photoId}
+            afterRemovePhoto={this.afterRemovePhoto}
+          />
+        ),
+      },
     };
   }
 
@@ -28,6 +53,12 @@ class WallPhotosCards extends Component {
   }
 
   getSectorId = () => parseInt(R.propOr(0, 'sector_id', this.props.match.params), 10);
+
+  afterRemovePhoto = () => {
+    this.setState({ page: 1 });
+    this.props.loadRoutePhotos(this.getSectorId());
+    this.props.history.goBack();
+  };
 
   onDropFiles = (acceptedFiles) => {
     const data = new FormData();
@@ -61,6 +92,15 @@ class WallPhotosCards extends Component {
         paddingBottom: '65px',
       },
     },
+    contentFilter: {
+      display: 'flex',
+      paddingBottom: '40px',
+    },
+    contentFilterItem: {
+      marginRight: '50px',
+      '@media screen and (max-width: 1440px)': { marginRight: '24px' },
+    },
+    btnContainer: { display: 'flex' },
   });
 
   obtainWallPhotos = () => {
@@ -92,6 +132,35 @@ class WallPhotosCards extends Component {
     return R.range(1, NUM_OF_DISPLAYED_PAGES + 1);
   };
 
+  onSelectPhoto = (id) => {
+    if (this.state.selectMode) {
+      const { selectedIds } = this.state;
+      if (R.contains(id, selectedIds)) {
+        this.setState({ selectedIds: R.reject(e => e === id, selectedIds) });
+      } else {
+        this.setState({ selectedIds: R.append(id, selectedIds) });
+      }
+    } else {
+      this.setState({ photoId: id });
+      this.props.history.push('#gallery');
+    }
+  };
+
+  removePhotos = () => {
+    const { selectedIds } = this.state;
+    if (window.confirm(`Удалить ${selectedIds.length} фото?`)) {
+      this.setState({ deleteBtnIsWaiting: true });
+      this.props.removeRoutePhotos(
+        selectedIds,
+        () => this.setState({
+          selectMode: false,
+          page: 1,
+        }),
+        () => this.setState({ deleteBtnIsWaiting: false }),
+      );
+    }
+  };
+
   render() {
     const { wallPhotos } = this.props;
     const numOfPages = (
@@ -108,7 +177,52 @@ class WallPhotosCards extends Component {
             onClick={(event) => event.stopPropagation()}
           >
             <input {...getInputProps(this.getSectorId())} />
-            <WallPhotosCardsLayout photos={this.obtainWallPhotos()} />
+            <div className={css(this.style.contentFilter)}>
+              <div className={css(this.style.contentFilterItem)}>
+                <div>
+                  {
+                    this.state.selectMode
+                      ? (
+                        <div className={css(this.style.btnContainer)}>
+                          <Button
+                            onClick={
+                              () => {
+                                this.setState({
+                                  selectMode: false,
+                                  selectedIds: [],
+                                });
+                              }
+                            }
+                            style="grey"
+                          >
+                            Отмена
+                          </Button>
+                          <Button
+                            onClick={this.removePhotos}
+                            style="normal"
+                            isWaiting={this.state.deleteBtnIsWaiting}
+                          >
+                            Удалить
+                          </Button>
+                        </div>
+                      )
+                      : (
+                        <Button
+                          onClick={() => this.setState({ selectMode: true })}
+                          style="normal"
+                        >
+                          Выбрать
+                        </Button>
+                      )
+                  }
+                </div>
+              </div>
+            </div>
+            <WallPhotosCardsLayout
+              photos={this.obtainWallPhotos()}
+              onClick={this.onSelectPhoto}
+              selectedIds={this.state.selectedIds}
+            />
             <Pagination
               onPageChange={page => this.setState({ page })}
               page={this.state.page}
@@ -132,6 +246,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   loadWallPhotos: (sectorId) => dispatch(loadWallPhotosAction(sectorId)),
+  removeWallPhotos: (ids, afterSuccess, afterAll) => dispatch(
+    removeWallPhotosAction(ids, afterSuccess, afterAll),
+  ),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(WallPhotosCards));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(withModals(WallPhotosCards)),
+);
