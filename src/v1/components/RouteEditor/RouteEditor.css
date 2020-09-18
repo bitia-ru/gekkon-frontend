@@ -13,7 +13,6 @@
     left: 50%;
     position: relative;
     text-align: center;
-    width: -moz-available;
 }
 
 .route-editor__img-container img {

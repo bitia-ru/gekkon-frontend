@@ -780,6 +780,7 @@ const styles = StyleSheet.create({
     maxWidth: '530px',
     flexBasis: '45%',
     width: '100%',
+    height: '100%',
     backgroundColor: '#FAFAFA',
     display: 'flex',
     flexDirection: 'column',
@@ -832,7 +833,7 @@ const styles = StyleSheet.create({
   },
   modalTrack: {
     width: '100%',
-    height: '100%',
+    height: 'calc(100% - 94px)',
     backgroundColor: '#F3F3F3',
     overflow: 'hidden',
     display: 'block',
