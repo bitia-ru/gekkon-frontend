@@ -11,6 +11,7 @@ import { DEFAULT_FILTERS } from '@/v1/Constants/DefaultFilters';
 import { BACKEND_DATE_FORMAT } from '@/v1/Constants/Date';
 import { ApiUrl } from '@/v1/Environ';
 import toastHttpError from '@/v2/utils/toastHttpError';
+import SectorContext from '@/v1/contexts/SectorContext';
 
 class SchemeModal extends Component {
   constructor(props) {
@@ -29,9 +30,7 @@ class SchemeModal extends Component {
   }
 
   loadRoutes = () => {
-    const {
-      currentRoute,
-    } = this.props;
+    const { currentRoute } = this.props;
     const currentSectorId = currentRoute.sector_id;
     const currentCategoryFrom = DEFAULT_FILTERS.categoryFrom;
     const currentCategoryTo = DEFAULT_FILTERS.categoryTo;
@@ -130,77 +129,42 @@ class SchemeModal extends Component {
     } = this.props;
     const { currentRoute, routes } = this.state;
     return (
-      <>
-        <div className={css(styles.modalBack)}>
-          <BackButton onClick={() => save(currentRoute.data.position)} />
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          style={{ margin: '50px 70px', outline: 'none' }}
-          className={css(styles.modalHallScheme)}
-          ref={(ref) => {
-            this.schemeContainerRef = ref;
-          }}
-          onMouseDown={editable ? this.onMouseDown : null}
-          onMouseUp={editable ? this.onMouseUp : null}
-          onMouseMove={editable ? this.onMouseMove : null}
-        >
-          <Scheme
-            currentRoutes={[currentRoute.id]}
-            routes={[currentRoute, ...routes]}
-            showCards={false}
-            onStartMoving={this.onStartMoving}
-          />
-        </div>
-      </>
+      <SectorContext.Consumer>
+        {
+          ({ sector }) => (
+            <>
+              <div className={css(styles.modalBack)}>
+                <BackButton onClick={() => save(currentRoute.data.position)} />
+              </div>
+              <div
+                role="button"
+                tabIndex={0}
+                style={{ margin: '50px 70px', outline: 'none' }}
+                className={css(styles.modalHallScheme)}
+                ref={(ref) => {
+                  this.schemeContainerRef = ref;
+                }}
+                onMouseDown={editable ? this.onMouseDown : null}
+                onMouseUp={editable ? this.onMouseUp : null}
+                onMouseMove={editable ? this.onMouseMove : null}
+              >
+                <Scheme
+                  currentRoutes={[currentRoute.id]}
+                  currentSector={sector}
+                  routes={[currentRoute, ...routes]}
+                  showCards={false}
+                  onStartMoving={this.onStartMoving}
+                />
+              </div>
+            </>
+          )
+        }
+      </SectorContext.Consumer>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  // How is it works?
-  modalOverlay: {
-    display: 'block',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    overflow: 'auto',
-    width: '100%',
-    height: '100%',
-    background: 'rgba(0, 0, 0, 0.8)',
-    zIndex: '100',
-  },
-  modalOverlayWrapper: {
-    position: 'relative',
-    backgroundColor: 'transparent',
-    paddingLeft: '40px',
-    paddingRight: '40px',
-    width: '100%',
-    maxWidth: '1464px',
-    boxSizing: 'border-box',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    display: 'flex',
-    justifyContent: 'center',
-    minHeight: '100%',
-  },
-  modalOverlayModal: {
-    '@media screen and (min-width: 1920px)': {
-      alignSelf: 'center',
-    },
-  },
-  modalMap: {
-    width: '80%',
-    maxWidth: '1600px',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    alignSelf: 'center',
-    paddingTop: '10vh',
-    paddingBottom: '10vh',
-    position: 'relative',
-  },
-  // END
   modalHallScheme: {
     position: 'relative',
     alignSelf: 'center',

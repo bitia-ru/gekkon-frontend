@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Scheme from '../Scheme/Scheme';
 import getArrayByIds from '@/v1/utils/getArrayByIds';
 import { StyleSheet, css } from '../../aphrodite';
+import SectorContext from '@/v1/contexts/SectorContext';
 
 const RouteCardScheme = ({
   onRouteClick,
@@ -12,14 +13,23 @@ const RouteCardScheme = ({
   routeIds,
   routes,
 }) => (
-  <div className={css(styles.hallScheme)}>
-    <Scheme
-      diagram={diagram}
-      onRouteClick={onRouteClick}
-      currentRoutes={routeIds}
-      routes={getArrayByIds(routeIds, routes)}
-    />
-  </div>
+  <SectorContext.Consumer>
+    {
+      ({ sector }) => (
+        <>
+          <div className={css(styles.hallScheme)}>
+            <Scheme
+              diagram={diagram}
+              onRouteClick={onRouteClick}
+              currentRoutes={routeIds}
+              routes={getArrayByIds(routeIds, routes)}
+              currentSector={sector}
+            />
+          </div>
+        </>
+      )
+    }
+  </SectorContext.Consumer>
 );
 
 const styles = StyleSheet.create({

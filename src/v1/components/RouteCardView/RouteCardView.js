@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RouteCardTable from '../RouteCardTable/RouteCardTable';
 import RouteCardList from '../RouteCardList/RouteCardList';
-import RouteCardScheme from '../RouteCardScheme/RouteCardScheme';
+import RouteCardScheme from '@/v2/components/RouteCardScheme/RouteCardScheme';
 
 const RouteCardView = ({
   viewMode,
