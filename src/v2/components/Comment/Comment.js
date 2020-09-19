@@ -4,11 +4,13 @@ import moment from 'moment';
 import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '@/v1/Constants/Date';
 import { timeFromNow } from '@/v1/Constants/DateTimeFormatter';
+import { wrapWebLinksInText } from '../../utils/text_processors';
 import { StyleSheet, css } from '../../aphrodite';
 
 const Comment = ({
   user, comment, startAnswer, removeComment,
 }) => {
+  const preparedCommentContent = wrapWebLinksInText(comment.content);
   const created_at = new Date(comment.created_at);
   return (
     <div className={css(styles.comment)}>
@@ -26,7 +28,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className={css(styles.commentText)}>{comment.content}</div>
+        <div className={css(styles.commentText)}>{preparedCommentContent}</div>
         <div className={css(styles.commentFooter)}>
           <div
             className={css(styles.commentDate)}

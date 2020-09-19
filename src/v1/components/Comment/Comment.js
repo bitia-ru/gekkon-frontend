@@ -5,10 +5,12 @@ import AvatarRound from '../AvatarRound/AvatarRound';
 import { COMMENT_DATETIME_FORMAT } from '../../Constants/Date';
 import { timeFromNow } from '../../Constants/DateTimeFormatter';
 import './Comment.css';
+import { wrapWebLinksInText } from '@/v2/utils/text_processors';
 
 const Comment = ({
   user, comment, startAnswer, removeComment,
 }) => {
+  const preparedCommentContent = wrapWebLinksInText(comment.content);
   const created_at = new Date(comment.created_at);
   return (
     <div className="comment">
@@ -26,7 +28,7 @@ const Comment = ({
               : comment.author.login
           }
         </a>
-        <div className="comment__text">{comment.content}</div>
+        <div className="comment__text">{preparedCommentContent}</div>
         <div className="comment__footer">
           <div
             className="comment__date"
