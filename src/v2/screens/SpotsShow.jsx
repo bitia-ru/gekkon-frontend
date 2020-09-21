@@ -34,7 +34,7 @@ class SpotsShow extends React.PureComponent {
     return match.params.sector_id ? parseInt(match.params.sector_id, 10) : 0;
   };
 
-  closeRoutesModal = () => { this.props.history.push(R.replace('/routes', '', this.props.match.url)); };
+  closeRoutesModal = () => { this.props.history.goBack(); };
 
   changeSectorFilter = (id) => {
     const { history, match } = this.props;
@@ -47,9 +47,17 @@ class SpotsShow extends React.PureComponent {
     }
   };
 
-  openEdit = (routeId) => { this.props.history.push(`${this.props.match.url}/routes/${routeId}/edit`); };
+  openEdit = (routeId) => {
+    this.props.history.replace(`${this.props.match.url}/routes/${routeId}/edit`);
+  };
 
-  cancelEdit = () => { this.props.history.goBack(); };
+  cancelEdit = (routeId) => {
+    if (routeId) {
+      this.props.history.replace(`${this.props.match.url}/routes/${routeId}`);
+    } else {
+      this.props.history.goBack();
+    }
+  };
 
   render() {
     const {
