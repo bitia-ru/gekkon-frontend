@@ -3,51 +3,82 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { css } from '@/v2/aphrodite';
-import PhotoGallery from '@/v2/components/PhotoGallery/PhotoGallery';
-import Button from '@/v2/components/Button/Button';
-import AvatarRound from '@/v2/components/AvatarRound/AvatarRound';
-import { userBaseName } from '../../utils/users';
-import InfoBlockCounter from '../InfoBlockCounter/InfoBlockCounter';
-import { getSpotKind } from '@/v2/utils/spots';
-import { currentUser } from '../../redux/user_session/utils';
-import UserInfoForm from '../../forms/UserInfoForm/UserInfoForm';
+import { css } from '../../../aphrodite';
+import { userBaseName } from '../../../utils/users';
+import { getSpotKind } from '../../../utils/spots';
+import { currentUser } from '../../../redux/user_session/utils';
 import withModals from '@/v2/modules/modalable';
 import showToastr from '@/v2/utils/showToastr';
-import NoticeModeratorForm from '../../forms/NoticeModeratorForm/NoticeModeratorForm';
+import Button from '../../../components/Button/Button';
+import AvatarRound from '../../../components/AvatarRound/AvatarRound';
+import ContactModeratorForm from './ContactModeratorForm/ContactModeratorForm';
+import UserInfoForm from './UserInfoForm/UserInfoForm';
+import PhotoGallery from './PhotoGallery/PhotoGallery';
+import InfoBlockCounter from './InfoBlockCounter/InfoBlockCounter';
+import { DEFAULT_MODERATOR_ID } from '@/constants/common';
+
 import styles from './styles';
 
+
 class GymBasicInfoBlock extends Component {
-  sendToSentry = (msgId, data, afterSuccess) => {
-    Sentry.withScope((scope) => {
-      scope.setExtra('user_data', data);
-      scope.setExtra('msg_is', msgId);
-      Sentry.captureException(msgId);
-      showToastr('Сообщение успешно отправлено', { type: 'success' });
-      afterSuccess && afterSuccess();
-    });
+  sendWantToContributeRequest = (afterSuccess) => {
+    const { user } = this.props;
+
+    Sentry.withScope(
+      (scope) => {
+        scope.setExtra('user', user);
+
+        Sentry.captureMessage( // Завести тикет на переделку captureException -> captureMessage где это реально сообщение
+          'Want to contribute request',
+          (error) => {
+            showToastr('Спасибо за готовность помочь, мы с вами свяжемся!', { type: 'success' });
+
+            if (error) {
+              showToastr('Произошла ошибка, мы не смогли отправить ваш запрос', { type: 'error' });
+            }
+
+            afterSuccess && afterSuccess();
+          },
+        );
+      },
+    );
+  };
+
+  contactModerator = (user, msg, afterSuccess) => {
+    // Отправлять тут запрос /gyms/:gym_id/actions/contact_moderator
+    // (дальше - про бекенд)
+    // А этот запрос пусть шлёт письмо по почте.
+    // Если у модератора почты нет или письмо не отправилось, то слать ошибку в Sentry.
+
+    showToastr('Ваше сообщение принято к отправлению', { type: 'success' });
+
+    afterSuccess && afterSuccess();
   };
 
   sendPhotos = () => {
     const { user } = this.props;
-    if (user) {
-      this.sendToSentry('want_to_add_routes', { id: user.id });
-    } else {
+
+    if (!user) {
       this.props.history.push('#want_to_add_routes');
+      return;
     }
+
+    this.sendWantToContributeRequest(user);
   };
 
   wantToAddRoutes = () => {
     const { user } = this.props;
-    if (user) {
-      this.sendToSentry('send_photos', { id: user.id });
-    } else {
+
+    if (!user) {
       this.props.history.push('#send_photos');
+      return;
     }
+
+    this.sendWantToContributeRequest(user);
   };
 
   writeToModerator = () => {
-    this.props.history.push('#notice_moderator');
+    this.props.history.push('#contact_moderator');
   };
 
   modals() {
@@ -57,10 +88,9 @@ class GymBasicInfoBlock extends Component {
         body: (
           <UserInfoForm
             submit={
-              (data) => {
-                this.sendToSentry(
-                  'want_to_add_routes',
-                  data,
+              (userData) => {
+                this.sendWantToContributeRequest(
+                  userData,
                   () => this.props.history.goBack(),
                 );
               }
@@ -73,10 +103,9 @@ class GymBasicInfoBlock extends Component {
         body: (
           <UserInfoForm
             submit={
-              (data) => {
-                this.sendToSentry(
-                  'send_photos',
-                  data,
+              (userData) => {
+                this.sendWantToContributeRequest(
+                  userData,
                   () => this.props.history.goBack(),
                 );
               }
@@ -84,16 +113,16 @@ class GymBasicInfoBlock extends Component {
           />
         ),
       },
-      notice_moderator: {
+      contact_moderator: {
         hashRoute: true,
         body: (
-          <NoticeModeratorForm
+          <ContactModeratorForm
             cancel={this.props.history.goBack}
             submit={
-              (data) => {
-                this.sendToSentry(
-                  'notice_moderator',
-                  { ...data, id: this.props.user },
+              ({ msg }) => {
+                this.contactModerator(
+                  this.props.user,
+                  msg,
                   () => this.props.history.goBack(),
                 );
               }
@@ -105,19 +134,17 @@ class GymBasicInfoBlock extends Component {
   }
 
   render() {
-    const { history, spots, moderator, id } = this.props;
+    const { history, spot, moderator, id } = this.props;
+
     return (
       <div className={css(styles.container)}>
         <div className={css(styles.leftBlock)}>
           <PhotoGallery
             photos={
-              spots[id] && (
+              spot && (
                 R.concat(
-                  [spots[id]?.photo],
-                  R.map(
-                    s => s.photo,
-                    spots[id]?.sectors,
-                  ),
+                  [spot?.photo],
+                  R.map(s => s.photo, spot?.sectors),
                 )
               )
             }
@@ -125,7 +152,7 @@ class GymBasicInfoBlock extends Component {
         </div>
         <div className={css(styles.rightBlock)}>
           <div className={css(styles.topBlock)}>
-            <div className={css(styles.kind)}>{getSpotKind(spots[id])}</div>
+            <div className={css(styles.kind)}>{getSpotKind(spot)}</div>
             <div className={css(styles.signUpContainer)}>
               <div className={css(styles.bell)}>
                 <svg aria-hidden="true">
@@ -136,11 +163,11 @@ class GymBasicInfoBlock extends Component {
             </div>
           </div>
           <div className={css(styles.gymName)}>
-            {spots[id]?.name}
+            {spot?.name}
           </div>
           <div className={css(styles.btnContainer)}>
             <Button
-              onClick={() => { history.push(`/spots/${id}/sectors/${spots[id].sectors[0].id}`); }}
+              onClick={() => { history.push(`/spots/${id}/sectors/${spot?.sectors[0]?.id}`); }}
               style="dark"
               fullLength
             >
@@ -171,18 +198,18 @@ class GymBasicInfoBlock extends Component {
                 </div>
               </div>
               {
-                spots[id]?.infoData && (
+                spot?.infoData && (
                   <div className={css(styles.infoBlock)}>
                     <div>
                       <InfoBlockCounter
-                        count={spots[id].infoData[0].count}
-                        label={spots[id].infoData[0].label}
+                        count={spot.infoData[0].count}
+                        label={spot.infoData[0].label}
                       />
                     </div>
                     <div className={css(styles.routesInfo)}>
                       <InfoBlockCounter
-                        count={spots[id].infoData[1].count}
-                        label={spots[id].infoData[1].label}
+                        count={spot.infoData[1].count}
+                        label={spot.infoData[1].label}
                       />
                     </div>
                   </div>
@@ -203,7 +230,7 @@ class GymBasicInfoBlock extends Component {
             </div>
             <div className={css(styles.gymInfoDescBlock)}>
               <div className={css(styles.gymInfoDescHeader)}>Описание</div>
-              <div className={css(styles.gymInfoDescContent)}>{spots[id]?.description}</div>
+              <div className={css(styles.gymInfoDescContent)}>{spot?.description}</div>
             </div>
           </div>
         </div>
@@ -214,16 +241,20 @@ class GymBasicInfoBlock extends Component {
 
 GymBasicInfoBlock.propTypes = {
   id: PropTypes.number,
-  spots: PropTypes.object,
+  spot: PropTypes.object,
   user: PropTypes.object,
   moderator: PropTypes.object,
   history: PropTypes.object,
 };
 
-const mapStateToProps = state => ({
-  spots: state.spotsStoreV2,
-  moderator: state.usersStoreV2.store[2],
-  user: currentUser(state),
-});
+const mapStateToProps = (state, props) => {
+  const spot = state.spotsStoreV2[props.id];
+
+  return {
+    spot,
+    moderator: state.usersStoreV2.store[spot?.moderator_id ?? DEFAULT_MODERATOR_ID],
+    user: currentUser(state),
+  };
+};
 
 export default withRouter(connect(mapStateToProps)(withModals(GymBasicInfoBlock)));

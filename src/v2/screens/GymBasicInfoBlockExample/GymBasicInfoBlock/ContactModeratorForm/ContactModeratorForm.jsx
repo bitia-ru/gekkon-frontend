@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@/v2/components/Button/Button';
-import Modal from '../../layouts/Modal';
+import Modal from '../../../../layouts/Modal';
 import { css } from '@/v2/aphrodite';
 import styles from './styles';
 
-const NoticeModeratorForm = ({ submit, cancel }) => {
+const ContactModeratorForm = ({ submit, cancel }) => {
   const [msg, setMsg] = useState('');
 
   return (
@@ -51,9 +51,9 @@ const NoticeModeratorForm = ({ submit, cancel }) => {
   );
 };
 
-NoticeModeratorForm.propTypes = {
+ContactModeratorForm.propTypes = {
   submit: PropTypes.func,
   cancel: PropTypes.func,
 };
 
-export default NoticeModeratorForm;
+export default ContactModeratorForm;

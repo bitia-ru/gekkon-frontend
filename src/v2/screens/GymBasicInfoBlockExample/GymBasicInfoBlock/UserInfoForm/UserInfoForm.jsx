@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from '@/v2/components/Button/Button';
 import FormField from '@/v1/components/FormField/FormField';
 import { reEmail } from '@/v1/Constants/Constraints';
-import Modal from '../../layouts/Modal';
+import Modal from '../../../../layouts/Modal';
 import { css } from '@/v2/aphrodite';
 import styles from './styles';
 

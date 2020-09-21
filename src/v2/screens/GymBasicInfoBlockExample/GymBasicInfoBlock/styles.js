@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   kind: {
-    fontSize: '20px',
+    fontSize: '16px',
     lineHeight: '23px',
     color: '#7F7F7F',
   },
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     },
   },
   signUp: {
-    marginLeft: 12,
+    marginLeft: '12px',
     fontSize: '20px',
     lineHeight: '23px',
     color: '#293034',
@@ -32,21 +32,21 @@ const styles = StyleSheet.create({
     width: '45%',
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: 74,
+    paddingLeft: '74px',
   },
   topBlock: {
     display: 'flex',
     justifyContent: 'space-between',
   },
   gymName: {
-    marginTop: 27,
+    marginTop: '8px',
     fontWeight: 500,
-    fontSize: '48px',
+    fontSize: '42px',
     lineHeight: '58px',
     fontFamily: 'GilroyMedium',
   },
   btnContainer: {
-    marginTop: 34,
+    marginTop: '12px',
     width: '100%',
   },
   arrow: {
@@ -59,14 +59,14 @@ const styles = StyleSheet.create({
       fill: '#f1f1f1',
     },
   },
-  bottomBlock: { marginTop: 50 },
+  bottomBlock: { marginTop: 32 },
   gymInfoTopBlock: {
     display: 'flex',
     justifyContent: 'space-between',
   },
   moderatorBlock: { display: 'flex' },
   moderatorInfo: {
-    marginLeft: 20,
+    marginLeft: '20px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -82,19 +82,19 @@ const styles = StyleSheet.create({
     lineHeight: '24px',
     color: '#006CEB',
     cursor: 'pointer',
-    marginTop: 11,
+    marginTop: '11px',
   },
   infoBlock: {
     display: 'flex',
     alignItems: 'center',
   },
-  routesInfo: { marginLeft: 51 },
+  routesInfo: { marginLeft: '51px' },
   gymInfoBtnBlock: {
-    marginTop: 50,
+    marginTop: '32px',
     display: 'flex',
   },
   btnWrapper: { flex: 1 },
-  gymInfoDescBlock: { marginTop: 60 },
+  gymInfoDescBlock: { marginTop: '40px' },
   gymInfoDescHeader: {
     fontStyle: 'normal',
     fontWeight: 'bold',
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize: '16px',
     lineHeight: '18px',
     color: '#000000',
-    marginTop: 22,
+    marginTop: '22px',
   },
 });
 
