@@ -40,6 +40,9 @@ export default class Marker extends Component {
       return (
         <div
           draggable={false}
+          // Fixes dragging pointers on Firefox (see
+          // https://stackoverflow.com/questions/26356877/html5-draggable-false-not-working-in-firefox-browser)
+          onDragStart={(e) => { e.preventDefault() }}
           className={css(styles.marker)}
           style={{
             left: `calc(${left + dx}% - ${radius - this.xShift()}px)`,
@@ -48,6 +51,9 @@ export default class Marker extends Component {
         >
           <img
             draggable={false}
+            // Fixes dragging pointers on Firefox (see
+            // https://stackoverflow.com/questions/26356877/html5-draggable-false-not-working-in-firefox-browser)
+            onDragStart={(e) => { e.preventDefault() }}
             src={require('./images/hold-mark.png')}
             className={css(styles.markerImage)}
             style={{
