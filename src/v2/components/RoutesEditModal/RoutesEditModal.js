@@ -750,12 +750,13 @@ const styles = StyleSheet.create({
   },
   modalTrack: {
     width: '100%',
-    height: 'calc(100% - 70px)',
+    height: 'calc(100% - 104px)',
     backgroundColor: '#F3F3F3',
     overflow: 'hidden',
     display: 'block',
     alignItems: 'center',
     position: 'relative',
+    '@media screen and (max-width: 1440px)': { height: 'calc(100% - 70px)' },
   },
   modalTrackDescr: {
     position: 'absolute',
