@@ -3,11 +3,13 @@ import ReactCrop from 'react-image-crop';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import EXIF from 'exif-js';
+import { css } from '@/v2/aphrodite';
 import Button from '../Button/Button';
 import ButtonHandler from '../ButtonHandler/ButtonHandler';
 import { CROP_DEFAULT } from '../../Constants/Route';
 import 'react-image-crop/dist/ReactCrop.css';
 import './RoutePhotoCropper.css';
+import styles from './styles';
 
 export default class RoutePhotoCropper extends Component {
   constructor(props) {
@@ -158,23 +160,15 @@ export default class RoutePhotoCropper extends Component {
               )}
             />
           </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              minHeight: '100%',
-              width: '100%',
-              backgroundColor: '#000000',
-            }}
-          >
-            <div style={{ zIndex: 200 }}>
+          <div className={css(styles.cropperContainer)}>
+            <div className={css(styles.cropperWrapper)}>
               {
                 srcProp
                   ? (
                     <ReactCrop
                       src={src}
                       crop={crop}
+                      className={css(styles.cropper)}
                       onImageLoaded={this.onImageLoaded}
                       onComplete={this.onCropComplete}
                       onChange={this.onCropChange}
