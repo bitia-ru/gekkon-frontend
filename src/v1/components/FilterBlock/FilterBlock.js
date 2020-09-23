@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import ViewModeSwitcher from '../ViewModeSwitcher/ViewModeSwitcher';
 import DatePicker from '../DatePicker/DatePicker';
 import ComboBox from '../ComboBox/ComboBox';
@@ -101,12 +102,14 @@ class FilterBlock extends Component {
     );
   };
 
+  isToday = date => date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY');
+
   changeDateFilter = (date) => {
     clearTimeout(this.timer);
     const { setAllSelectedFilters: setAllSelectedFiltersProp } = this.props;
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
-    this.setFiltersList('date', date ? date.format() : undefined);
+    this.setFiltersList('date', date && !this.isToday(date) ? date.format() : undefined);
     this.timer = setTimeout(
       () => {
         setAllSelectedFiltersProp(spotId, sectorId, this.state.filtersList);
