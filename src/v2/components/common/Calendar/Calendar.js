@@ -133,9 +133,13 @@ export default class DatePicker extends Component {
   };
 
   render() {
+    const { left, top, resetDisabled, position } = this.props;
+    const posStyle = position === 'top' ? styles.calendarLeftTopV2 : styles.calendarLeftBottomV2;
     return (
-      <div className={css(styles.modalTableItemCalendar)}>
-        <div className={css(styles.calendar, styles.calendarLeftV2)}>
+      <div className={css(styles.modalTableItemCalendar)}
+        style={{ ...(left && { left }), ...(top && { top }) }}
+      >
+        <div className={css(styles.calendar, posStyle)}>
           <div>
             <div>
               <div className={css(styles.calendarContentHeaderMonth)}>
@@ -201,14 +205,18 @@ export default class DatePicker extends Component {
               }
             </div>
           </div>
-          <button
-            type="button"
-            onClick={this.removeDate}
-            style={{ outline: 'none' }}
-            className={css(styles.calendarButton)}
-          >
-            Сбросить дату
-          </button>
+          {
+            !resetDisabled && (
+              <button
+                type="button"
+                onClick={this.removeDate}
+                style={{ outline: 'none' }}
+                className={css(styles.calendarButton)}
+              >
+                Сбросить дату
+              </button>
+            )
+          }
         </div>
       </div>
     );
@@ -219,6 +227,10 @@ DatePicker.propTypes = {
   date: PropTypes.string,
   hide: PropTypes.func,
   onSelect: PropTypes.func.isRequired,
+  left: PropTypes.string,
+  top: PropTypes.string,
+  resetDisabled: PropTypes.bool,
+  position: PropTypes.string,
 };
 
 DatePicker.defaultProps = {
