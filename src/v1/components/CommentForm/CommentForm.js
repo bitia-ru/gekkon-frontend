@@ -80,6 +80,11 @@ export default class CommentForm extends Component {
                     value={content}
                     onChange={event => onContentChange(event.target.value)}
                     onKeyPress={this.onKeyPress}
+                    onKeyDown={
+                      (event) => {
+                        event.nativeEvent.stopImmediatePropagation();
+                      }
+                    }
                   />
                 )
             }
