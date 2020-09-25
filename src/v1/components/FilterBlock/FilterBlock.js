@@ -194,7 +194,7 @@ class FilterBlock extends Component {
       filters,
     } = getMergedFilters(selectedFilters, this.state.filtersList, spotId, sectorId);
     const defaultFilters = R.filter(
-      e => !R.contains(e.id, R.keys(RESULT_FILTERS)),
+      e => !R.contains(e.id, R.concat(R.keys(RESULT_FILTERS), ['liked'])),
       filters,
     );
     const currentFilters = (
