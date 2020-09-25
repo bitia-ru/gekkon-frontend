@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import Axios from 'axios';
 import * as R from 'ramda';
+import dayjs from 'dayjs';
 import Scheme from '../Scheme/Scheme';
 import BackButton from '../BackButton/BackButton';
 import { StyleSheet, css } from '../../aphrodite';
@@ -35,7 +35,10 @@ class SchemeModal extends Component {
     const currentSectorId = currentRoute.sector_id;
     const currentCategoryFrom = DEFAULT_FILTERS.categoryFrom;
     const currentCategoryTo = DEFAULT_FILTERS.categoryTo;
-    const currentDate = DEFAULT_FILTERS.date;
+    const lastActiveDay = dayjs(currentRoute.installed_until).subtract(1, 'days');
+    const currentDate = (
+      currentRoute.installed_at || lastActiveDay || DEFAULT_FILTERS.date
+    );
     const params = {
       filters: {
         category: [[currentCategoryFrom], [currentCategoryTo]],
@@ -44,9 +47,9 @@ class SchemeModal extends Component {
       },
     };
 
-    params.filters.installed_at = [[null], [moment(currentDate).format(BACKEND_DATE_FORMAT)]];
+    params.filters.installed_at = [[null], [dayjs(currentDate).format(BACKEND_DATE_FORMAT)]];
     params.filters.installed_until = [
-      [moment(currentDate).add(1, 'days').format(BACKEND_DATE_FORMAT)],
+      [dayjs(currentDate).add(1, 'days').format(BACKEND_DATE_FORMAT)],
       [null],
     ];
     Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params })
