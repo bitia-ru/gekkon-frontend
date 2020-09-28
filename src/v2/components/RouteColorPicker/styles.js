@@ -13,9 +13,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     outline: 'none',
   },
-  markColorPickerInfo: {
-    cursor: 'pointer',
-  },
+  markColorPickerInfo: { cursor: 'pointer' },
   markColorPickerColor: {
     display: 'inline-block',
     width: '60px',
@@ -65,6 +63,43 @@ const styles = StyleSheet.create({
       color: '#6F6F6F',
     },
   },
+  comboBoxDropdown: {
+    content: '\'\'',
+    position: 'absolute',
+    margin: 0,
+    padding: 0,
+    left: 0,
+    top: 'calc(100% + 20px)',
+    backgroundColor: '#ffffff',
+    minWidth: '100%',
+    boxSizing: 'border-box',
+    boxShadow: '0px 8px 10px rgba(0, 0, 0, 0.12)',
+    border: '2px solid #DDE2EF',
+    zIndex: 10,
+  },
+  comboBoxDropdownActive: { display: 'block' },
+  comboBoxDropdownWrapper: {
+    maxHeight: '270px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    position: 'relative',
+  },
+  comboBoxDropdownItem: {
+    listStyle: 'none',
+    lineHeight: '1.3em',
+    color: '#1f1f1f',
+    fontFamily: 'GilroyRegular',
+    fontSize: '18px',
+    padding: '16px 20px',
+    maxWidth: '100%',
+    overflowX: 'hidden',
+    whiteSpace: 'nowrap',
+    ':hover': {
+      backgroundColor: '#f5f5f5',
+      cursor: 'pointer',
+    },
+  },
+  comboBoxDropdownItemPadding10: { padding: '10px' },
 });
 
 export default styles;
