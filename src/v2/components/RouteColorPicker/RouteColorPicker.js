@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { getColorStyle } from '@/v1/Constants/Route';
 import { css } from '../../aphrodite';
 import styles from './styles';
@@ -34,19 +33,8 @@ export default class RouteColorPicker extends Component {
     };
 
     render() {
-      const {
-        route, fieldName, editable, routeMarkColors,
-      } = this.props;
+      const { route, fieldName, editable, routeMarkColors } = this.props;
       const { droppedDown } = this.state;
-      const droppedDownClasses = classNames({
-        'combo-box__dropdown': true,
-        'modal__combo-box-drowdown': true,
-        'combo-box__dropdown_active': true,
-      });
-      const itemClasses = classNames({
-        'combo-box__dropdown-item': true,
-        'combo-box__dropdown-item_padding-10': true,
-      });
       return (
         <div
           className={css(styles.markColorPickerWrap)}
@@ -82,16 +70,21 @@ export default class RouteColorPicker extends Component {
             droppedDown
               ? (
                 <div
-                  className={droppedDownClasses}
+                  className={css(styles.comboBoxDropdown, styles.comboBoxDropdownActive)}
                 >
                   <div
-                    className="combo-box__dropdown-wrapper"
+                    className={css(styles.comboBoxDropdownWrapper)}
                   >
                     {R.map(routeMarkColor => (
                       <li
                         key={routeMarkColor.id}
                         onClick={() => this.selectItem(routeMarkColor)}
-                        className={itemClasses}
+                        className={
+                          css(
+                            styles.comboBoxDropdownItem,
+                            styles.comboBoxDropdownItemPadding10,
+                          )
+                        }
                       >
                         <div className={css(styles.markColorPickerItem)}>
                           <div
