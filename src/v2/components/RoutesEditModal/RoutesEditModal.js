@@ -10,10 +10,6 @@ import CloseButton from '../CloseButton/CloseButton';
 import ButtonHandler from '@/v1/components/ButtonHandler/ButtonHandler';
 import { DEFAULT_CATEGORY } from '@/v1/Constants/Categories';
 import RoutePhotoCropper from '@/v1/components/RoutePhotoCropper/RoutePhotoCropper';
-import {
-  isNeeded as exifRotateIgnoredIsNeeded,
-  fixRoutePhotoUpdateParams,
-} from '@/v1/Workarounds/EXIFRotateIgnored';
 import SchemeModal from '../SchemeModal/SchemeModal';
 import ShowSchemeButton from '../ShowSchemeButton/ShowSchemeButton';
 import RouteContext from '@/v1/contexts/RouteContext';
@@ -28,6 +24,7 @@ import {
   loadRoute as loadRouteAction,
   updateRoute as updateRouteAction,
 } from '@/v2/redux/routes/actions';
+import { addWallPhoto as addWallPhotoAction } from '../../redux/wall_photos/actions';
 import getArrayByIds from '@/v1/utils/getArrayByIds';
 import { NUM_OF_DAYS } from '@/v1/Constants/Route';
 import { ApiUrl } from '@/v1/Environ';
@@ -45,11 +42,10 @@ class RoutesEditModal extends Component {
       fieldsOld: {},
       showCropper: false,
       photo: {
-        content: null,
-        file: null,
         crop: null,
         rotate: null,
       },
+      wallPhotoId: null,
       routeImageLoading: true,
       schemeModalVisible: false,
       isWaiting: false,
@@ -191,9 +187,7 @@ class RoutesEditModal extends Component {
     const {
       routes, sectors, user,
     } = this.props;
-    const {
-      currentPointers, currentPointersOld, route, photo,
-    } = this.state;
+    const { currentPointers, currentPointersOld, route, photo, wallPhotoId } = this.state;
     const sector = sectors[route.sector_id];
     const routeId = this.getRouteId();
     const routeProp = routeId ? routes[routeId] : this.newRoute;
@@ -239,8 +233,8 @@ class RoutesEditModal extends Component {
       }
       formData.append('route[category]', route.category);
     }
-    if (route.photo !== (routeProp.photo ? routeProp.photo.url : null)) {
-      formData.append('route[photo]', route.photoFile);
+    if (wallPhotoId || (routeProp.photo.url && route.photo === null)) {
+      formData.append('route[wall_photo_id]', wallPhotoId);
     }
     if (photo.crop !== null) {
       formData.append('data[photo][cropping][x]', Math.round(photo.crop.x));
@@ -307,42 +301,36 @@ class RoutesEditModal extends Component {
     this.setState({ route: newRoute });
   };
 
-  onFileRead = () => {
-    const { photo } = this.state;
-    const photoCopy = R.clone(photo);
-    photoCopy.content = this.fileReader.result;
-    this.mouseOver = false;
-    this.setState({ showCropper: true, photo: photoCopy });
-  };
-
   onFileChosen = (file) => {
-    const { photo } = this.state;
-    this.fileReader = new FileReader();
-    this.fileReader.onloadend = this.onFileRead;
-    this.fileReader.readAsDataURL(file);
-    const photoCopy = R.clone(photo);
-    photoCopy.file = file;
-    this.setState({ photo: photoCopy });
+    const { route } = this.state;
+    this.setState({ isWaiting: true });
+    const formData = new FormData();
+    formData.append('wall_photo[sector_id]', route.sector_id);
+    formData.append('wall_photo[photo]', file);
+    this.props.addWallPhoto(
+      formData,
+      (payload) => {
+        this.setState({
+          showCropper: true,
+          photo: { url: payload.photo.url },
+          wallPhotoId: payload.id,
+        });
+      },
+      () => this.setState({ isWaiting: false }),
+    );
   };
 
-  saveCropped = (src, crop, rotate, image, exifAngle) => {
+  saveCropped = (src, crop, rotate, image) => {
     const { route, photo } = this.state;
-    route.photo = src;
-    route.photoFile = photo.file;
+    const photoCopy = R.clone(photo);
     const isFullWidth = Math.abs(image.width - crop.width) < 1;
     const isFullHeight = Math.abs(image.height - crop.height) < 1;
     if (crop.width === 0 || crop.height === 0 || (isFullWidth && isFullHeight)) {
-      let photoCopy = R.clone(photo);
       photoCopy.crop = null;
       photoCopy.rotate = (rotate === 0 ? null : rotate);
-      if (exifRotateIgnoredIsNeeded(exifAngle)) {
-        photoCopy = fixRoutePhotoUpdateParams(exifAngle, photoCopy);
-      }
-      this.setState({ route, showCropper: false, photo: photoCopy });
     } else {
       const scaleX = image.naturalWidth / image.width;
       const scaleY = image.naturalHeight / image.height;
-      let photoCopy = R.clone(photo);
       photoCopy.crop = {
         x: crop.x * scaleX,
         y: crop.y * scaleY,
@@ -350,11 +338,8 @@ class RoutesEditModal extends Component {
         height: crop.height * scaleY,
       };
       photoCopy.rotate = (rotate === 0 ? null : rotate);
-      if (exifRotateIgnoredIsNeeded(exifAngle)) {
-        photoCopy = fixRoutePhotoUpdateParams(exifAngle, photoCopy);
-      }
-      this.setState({ route, showCropper: false, photo: photoCopy });
     }
+    this.setState({ route: { ...route, photo: src }, showCropper: false, photo: photoCopy });
   };
 
   saveRoutePositionAndClose = (position) => {
@@ -621,7 +606,7 @@ class RoutesEditModal extends Component {
             showCropper
               ? (
                 <RoutePhotoCropper
-                  src={photo.content}
+                  src={photo.url}
                   close={() => this.setState({ showCropper: false })}
                   save={this.saveCropped}
                 />
@@ -967,6 +952,9 @@ const mapDispatchToProps = dispatch => ({
   ),
   addRoute: (params, afterSuccess, afterAll) => dispatch(
     addRouteAction(params, afterSuccess, afterAll),
+  ),
+  addWallPhoto: (params, afterSuccess, afterAll) => dispatch(
+    addWallPhotoAction(params, afterSuccess, afterAll),
   ),
 });
 
