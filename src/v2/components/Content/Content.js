@@ -61,6 +61,10 @@ class Content extends Component {
     history.push(`${match.url}/routes/${id}`);
   };
 
+  scrollToRouteCardContentRef = () => {
+    this.routeCardContentRef.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  };
+
   changePage = (page) => {
     const {
       setSelectedPage: setSelectedPageProp,
@@ -68,6 +72,7 @@ class Content extends Component {
     const spotId = this.getSpotId();
     const sectorId = this.getSectorId();
     setSelectedPageProp(spotId, sectorId, page);
+    this.scrollToRouteCardContentRef();
   };
 
   pagesList = () => {
@@ -128,7 +133,10 @@ class Content extends Component {
           ({ sector }) => {
             const diagram = sector && sector.diagram && sector.diagram.url;
             return (
-              <div className={css(styles.content)}>
+              <div
+                className={css(styles.content)}
+                ref={(ref) => { this.routeCardContentRef = ref; }}
+              >
                 <Dropzone onDrop={this.onDropFiles}>
                   {
                     ({ getRootProps, getInputProps }) => (
