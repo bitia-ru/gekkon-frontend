@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactCrop from 'react-image-crop';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import EXIF from 'exif-js';
 import { css } from '@/v2/aphrodite';
 import Button from '../Button/Button';
 import ButtonHandler from '../ButtonHandler/ButtonHandler';
@@ -22,21 +21,9 @@ export default class RoutePhotoCropper extends Component {
       image: null,
       src,
     };
-    this.exifAngle = null;
   }
 
-    onImageLoaded = (image) => {
-      this.imageRef = image;
-      const self = this;
-      EXIF.getData(image, function () {
-        const orient = EXIF.getTag(this, 'Orientation');
-        if (orient === undefined) { return; }
-        const lookUp = {
-          1: 0, 3: 180, 6: 90, 8: 270,
-        };
-        self.exifAngle = lookUp[orient];
-      });
-    };
+  onImageLoaded = (image) => { this.imageRef = image; };
 
     onCropComplete = (crop) => {
       this.makeClientCrop(crop);
@@ -156,7 +143,7 @@ export default class RoutePhotoCropper extends Component {
               style="normal"
               title="Сохранить"
               onClick={() => croppedImageUrl.then(
-                e => save(e, crop, rotate, image, this.exifAngle),
+                e => save(e, crop, rotate, image),
               )}
             />
           </div>
