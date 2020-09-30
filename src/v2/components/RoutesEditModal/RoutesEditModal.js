@@ -233,7 +233,7 @@ class RoutesEditModal extends Component {
       }
       formData.append('route[category]', route.category);
     }
-    if (wallPhotoId || (routeProp.photo.url && route.photo === null)) {
+    if (wallPhotoId || (routeProp.photo?.url && route.photo === null)) {
       formData.append('route[wall_photo_id]', wallPhotoId);
     }
     if (photo.crop !== null) {
