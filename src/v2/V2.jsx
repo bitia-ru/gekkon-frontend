@@ -14,7 +14,7 @@ import CtrlPressedCatcher from './components/common/CtrlPressedCatcher/CtrlPress
 import LoginVKError from '@/v2/components/LoginVK/LoginVKError';
 import LoginVKSuccess from '@/v2/components/LoginVK/LoginVKSuccess';
 import GymBasicInfoBlockExample from
-  '@/v2/examples/GymBasicInfoBlockExample/GymBasicInfoBlockExample';
+    '@/v2/screens/GymBasicInfoBlockExample/GymBasicInfoBlockExample';
 
 
 const V2 = ({ currentUser }) => (
@@ -28,7 +28,7 @@ const V2 = ({ currentUser }) => (
           <Route path="/spots/:id/sectors/:sector_id/photos" component={WallPhotos} />
           <Route path="/spots/:id/sectors/:sector_id" component={SpotsShow} />
           <Route path="/spots/:id" component={SpotsShow} />
-          <Route path="/gyms/:id" component={GymBasicInfoBlockExample} />
+          <Route path="/gyms/:gym_id" component={GymBasicInfoBlockExample} />
           <Route exact path="/about" component={About} />
           <Route exact path="/faq" component={Faq} />
           <Route path="/error" component={LoginVKError} />

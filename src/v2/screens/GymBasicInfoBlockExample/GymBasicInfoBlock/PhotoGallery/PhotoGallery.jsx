@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { css } from '@/v2/aphrodite';
-import LikeButton from '../LikeButton/LikeButton';
+import LikeButton from '../../../../components/LikeButton/LikeButton';
 import styles from './styles';
 
 const mapIndexed = R.addIndex(R.map);
