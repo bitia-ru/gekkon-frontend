@@ -1,11 +1,11 @@
 import React from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import './RouteCardTable.css';
-import RoutePhotoCard from './RoutePhotoCard';
+import './WallCardTable.css';
+import WallPhotoCard from './WallPhotoCard';
 
 
-const RoutePhotosCardsLayout = ({ photos }) => (
+const WallPhotosCardsLayout = ({ photos }) => (
   <div className="content__inner" onClick={(e) => { e.stopPropagation(); }}>
     {
       R.map(
@@ -18,7 +18,7 @@ const RoutePhotosCardsLayout = ({ photos }) => (
             style={{ outline: 'none' }}
           >
             <div className="content__route-card">
-              <RoutePhotoCard photo={photo} />
+              <WallPhotoCard photo={photo} />
             </div>
           </div>
         ),
@@ -27,8 +27,8 @@ const RoutePhotosCardsLayout = ({ photos }) => (
   </div>
 );
 
-RoutePhotosCardsLayout.propTypes = {
+WallPhotosCardsLayout.propTypes = {
   photos: PropTypes.array.isRequired,
 };
 
-export default RoutePhotosCardsLayout;
+export default WallPhotosCardsLayout;

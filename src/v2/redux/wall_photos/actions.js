@@ -7,19 +7,19 @@ export const acts = {
   LOAD_PHOTOS_SUCCESS: 'LOAD_PHOTOS_SUCCESS_V2',
 };
 
-export const loadRoutePhotos = sectorId => (
+export const loadWallPhotos = sectorId => (
   (dispatch) => {
     dispatch({
       type: acts.LOAD_PHOTOS_REQUEST,
     });
 
     Api.get(
-      `/v1/sectors/${sectorId}/route_photos`,
+      `/v1/sectors/${sectorId}/wall_photos`,
       {
         success(payload) {
           dispatch({
             type: acts.LOAD_PHOTOS_SUCCESS,
-            route_photos: payload,
+            wall_photos: payload,
           });
         },
         failed(error) {

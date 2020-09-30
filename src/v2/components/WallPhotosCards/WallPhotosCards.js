@@ -7,12 +7,12 @@ import Axios from 'axios';
 import Pagination from '@/v1/components/Pagination/Pagination';
 import { StyleSheet, css } from '../../aphrodite';
 import { ApiUrl } from '@/v1/Environ';
-import RoutePhotosCardsLayout from './RoutePhotosCardsLayout';
-import { loadRoutePhotos as loadRoutePhotosAction } from '../../redux/route_photos/actions';
+import WallPhotosCardsLayout from './WallPhotosCardsLayout';
+import { loadWallPhotos as loadWallPhotosAction } from '../../redux/wall_photos/actions';
 import toastHttpError from '@/v2/utils/toastHttpError';
 
 
-class RoutePhotosCards extends Component {
+class WallPhotosCards extends Component {
   constructor(props) {
     super(props);
 
@@ -22,24 +22,24 @@ class RoutePhotosCards extends Component {
   }
 
   componentDidMount() {
-    this.props.loadRoutePhotos(this.getSectorId());
+    this.props.loadWallPhotos(this.getSectorId());
   }
 
   getSectorId = () => parseInt(R.propOr(0, 'sector_id', this.props.match.params), 10);
 
   onDropFiles = (acceptedFiles) => {
     const data = new FormData();
-    data.append('route_photo[photo]', acceptedFiles[0]);
-    data.append('route_photo[sector_id]', this.getSectorId());
+    data.append('wall_photo[photo]', acceptedFiles[0]);
+    data.append('wall_photo[sector_id]', this.getSectorId());
 
     Axios({
-      url: `${ApiUrl}/v1/route_photos`,
+      url: `${ApiUrl}/v1/wall_photos`,
       method: 'post',
       data,
       config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
     })
       .then(() => {
-        this.props.loadRoutePhotos(this.getSectorId());
+        this.props.loadWallPhotos(this.getSectorId());
 
         if (acceptedFiles.length > 1) {
           this.onDropFiles(R.slice(1, Infinity, acceptedFiles));
@@ -61,10 +61,10 @@ class RoutePhotosCards extends Component {
     },
   });
 
-  obtainRoutePhotos = () => {
+  obtainWallPhotos = () => {
     const { page } = this.state;
 
-    return R.sort((a, b) => b.id - a.id)(Object.values(this.props.routePhotos));
+    return R.sort((a, b) => b.id - a.id)(Object.values(this.props.wallPhotos));
   };
 
   render() {
@@ -77,7 +77,7 @@ class RoutePhotosCards extends Component {
             onClick={(event) => event.stopPropagation()}
           >
             <input {...getInputProps(this.getSectorId())} />
-            <RoutePhotosCardsLayout photos={this.obtainRoutePhotos()} />
+            <WallPhotosCardsLayout photos={this.obtainWallPhotos()} />
             <Pagination
               onPageChange={page => this.setState({ page })}
               page={this.state.page}
@@ -92,15 +92,15 @@ class RoutePhotosCards extends Component {
   }
 }
 
-RoutePhotosCards.propTypes = {
+WallPhotosCards.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  routePhotos: state.routePhotosV2,
+  wallPhotos: state.wallPhotosV2,
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadRoutePhotos: (sectorId) => dispatch(loadRoutePhotosAction(sectorId)),
+  loadWallPhotos: (sectorId) => dispatch(loadWallPhotosAction(sectorId)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutePhotosCards));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(WallPhotosCards));

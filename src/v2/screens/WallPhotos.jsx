@@ -6,10 +6,10 @@ import UserPoster from '../components/UserPoster/UserPoster';
 import { StyleSheet, css } from '../aphrodite';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadSpecificUser as loadSpecificUserAction } from '../redux/users/actions';
-import RoutePhotosCards from '@/v2/components/RoutePhotosCards/RoutePhotosCards';
+import WallPhotosCards from '@/v2/components/WallPhotosCards/WallPhotosCards';
 
 
-class RoutePhotos extends React.PureComponent {
+class WallPhotos extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -50,7 +50,7 @@ class RoutePhotos extends React.PureComponent {
       >
         <div style={{width: '100%'}}>
           <div className={css(style.content)}>
-            <RoutePhotosCards />
+            <WallPhotosCards />
           </div>
         </div>
       </MainScreen>
@@ -77,4 +77,4 @@ const mapDispatchToProps = dispatch => ({
   loadSpecificUser: userId => dispatch(loadSpecificUserAction(userId)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutePhotos));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(WallPhotos));
