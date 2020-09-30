@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { acts } from './actions';
 
 
-const routePhotosReducer = (
+const wallPhotosReducer = (
   state = {},
   action,
 ) => {
@@ -10,11 +10,11 @@ const routePhotosReducer = (
   case acts.LOAD_PHOTOS_SUCCESS:
     return {
       ...state,
-      ...R.reduce((l, u) => ({ ...l, [u.id]: u }), {})(action.route_photos),
+      ...R.reduce((l, u) => ({ ...l, [u.id]: u }), {})(action.wall_photos),
     };
   default:
     return state;
   }
 };
 
-export default routePhotosReducer;
+export default wallPhotosReducer;
