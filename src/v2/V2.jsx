@@ -6,7 +6,7 @@ import Users from './screens/Users';
 import UserShow from './screens/UserShow';
 import SpotsShow from './screens/SpotsShow';
 import SpotsIndex from './screens/SpotsIndex';
-import RoutePhotos from './screens/RoutePhotos';
+import WallPhotos from './screens/WallPhotos';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import About from './components/About/About';
 import Faq from './components/Faq/Faq';
@@ -23,7 +23,7 @@ const V2 = ({ currentUser }) => (
           <Route path="/users/:user_id" component={UserShow} />
           <Route path="/users" component={Users} />
           <Route exact path={['/', '/spots']} component={SpotsIndex} />
-          <Route path="/spots/:id/sectors/:sector_id/photos" component={RoutePhotos} />
+          <Route path="/spots/:id/sectors/:sector_id/photos" component={WallPhotos} />
           <Route path="/spots/:id/sectors/:sector_id" component={SpotsShow} />
           <Route path="/spots/:id" component={SpotsShow} />
           <Route exact path="/about" component={About} />

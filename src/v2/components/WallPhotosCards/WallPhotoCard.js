@@ -3,10 +3,10 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StyleSheet, css } from '../../aphrodite';
-import './RouteCard.css';
+import './WallCard.css';
 
 
-class RoutePhotoCard extends Component {
+class WallPhotoCard extends Component {
   constructor(props) {
     super(props);
 
@@ -57,11 +57,11 @@ class RoutePhotoCard extends Component {
 }
 
 
-RoutePhotoCard.propTypes = {
+WallPhotoCard.propTypes = {
   photo: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
 });
 
-export default withRouter(connect(mapStateToProps)(RoutePhotoCard));
+export default withRouter(connect(mapStateToProps)(WallPhotoCard));

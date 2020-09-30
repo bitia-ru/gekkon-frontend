@@ -100,11 +100,11 @@ class Content extends Component {
 
   onDropFiles = (acceptedFiles) => {
     const data = new FormData();
-    data.append('route_photo[photo]', acceptedFiles[0]);
-    data.append('route_photo[sector_id]', this.getSectorId());
+    data.append('wall_photo[photo]', acceptedFiles[0]);
+    data.append('wall_photo[sector_id]', this.getSectorId());
 
     Axios({
-      url: `${ApiUrl}/v1/route_photos`,
+      url: `${ApiUrl}/v1/wall_photos`,
       method: 'post',
       data,
       config: { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true },
