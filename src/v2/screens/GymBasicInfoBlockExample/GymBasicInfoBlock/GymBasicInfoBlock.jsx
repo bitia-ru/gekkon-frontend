@@ -15,20 +15,19 @@ import ContactModeratorForm from './ContactModeratorForm/ContactModeratorForm';
 import UserInfoForm from './UserInfoForm/UserInfoForm';
 import PhotoGallery from './PhotoGallery/PhotoGallery';
 import InfoBlockCounter from './InfoBlockCounter/InfoBlockCounter';
+import Api from '@/v2/utils/Api';
 import { DEFAULT_MODERATOR_ID } from '@/constants/common';
 
 import styles from './styles';
 
 
 class GymBasicInfoBlock extends Component {
-  sendWantToContributeRequest = (afterSuccess) => {
-    const { user } = this.props;
-
+  sendWantToContributeRequest = (userData, afterSuccess) => {
     Sentry.withScope(
       (scope) => {
-        scope.setExtra('user', user);
+        scope.setExtra('user', userData);
 
-        Sentry.captureMessage( // Завести тикет на переделку captureException -> captureMessage где это реально сообщение
+        Sentry.captureMessage(
           'Want to contribute request',
           (error) => {
             showToastr('Спасибо за готовность помочь, мы с вами свяжемся!', { type: 'success' });
@@ -45,14 +44,19 @@ class GymBasicInfoBlock extends Component {
   };
 
   contactModerator = (user, msg, afterSuccess) => {
-    // Отправлять тут запрос /gyms/:gym_id/actions/contact_moderator
-    // (дальше - про бекенд)
-    // А этот запрос пусть шлёт письмо по почте.
-    // Если у модератора почты нет или письмо не отправилось, то слать ошибку в Sentry.
-
-    showToastr('Ваше сообщение принято к отправлению', { type: 'success' });
-
-    afterSuccess && afterSuccess();
+    Api.get(
+      `/v1/gyms/${this.props.id}/actions/contact_moderator`,
+      {
+        params: { user, msg },
+        success() {
+          showToastr('Ваше сообщение принято к отправлению', { type: 'success' });
+          afterSuccess && afterSuccess();
+        },
+        failed() {
+          showToastr('Не удалось отправить сообщение', { type: 'error' });
+        },
+      },
+    );
   };
 
   sendPhotos = () => {
