@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
 
 InfoPageHeader.propTypes = {
   image: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   height: PropTypes.string,
   bgHeaderColor: PropTypes.string,
 };

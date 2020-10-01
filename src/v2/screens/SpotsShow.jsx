@@ -3,17 +3,15 @@ import { connect } from 'react-redux';
 import { withRouter, Switch, Route } from 'react-router-dom';
 import * as R from 'ramda';
 import { StyleSheet, css } from '../aphrodite';
-import MainScreen from '../layouts/MainScreen/MainScreen';
-import Header from '@/v2/components/Header/Header';
 import RoutesShowModal from '@/v2/components/RoutesShowModal/RoutesShowModal';
 import RoutesEditModal from '@/v2/components/RoutesEditModal/RoutesEditModal';
 import { default as reloadSectorAction } from '@/v1/utils/reloadSector';
 import { reloadSpot as reloadSpotAction } from '@/v1/utils/reloadSpot';
 import getCurrentSector from '@/v1/utils/getCurrentSector';
-import getCurrentSpotOrSectorData from '@/v1/utils/getCurrentSpotOrSectorData';
 import Content from '@/v2/components/Content/Content';
 import SpotContext from '@/v1/contexts/SpotContext';
 import SectorContext from '@/v1/contexts/SectorContext';
+import EntityPage from '@/v2/example/components/EntityPage';
 
 class SpotsShow extends React.PureComponent {
   componentDidMount() {
@@ -51,6 +49,7 @@ class SpotsShow extends React.PureComponent {
 
   cancelEdit = () => { this.props.history.goBack(); };
 
+
   render() {
     const {
       match,
@@ -59,6 +58,13 @@ class SpotsShow extends React.PureComponent {
     } = this.props;
     const spotId = this.getSpotId();
     const spot = spots[spotId];
+
+    const titleList = ['О скалодроме', 'Трассы'];
+    const infoBlockItems = [
+      { title: 'Москва', value: spot?.data?.wayInfo[0]?.pointFrom },
+      { title: 'Телефон', value: '-' },
+      { title: 'Работает до', value: spot?.data?.hours[0]?.hours },
+    ];
     const sectorId = this.getSectorId();
     const sector = getCurrentSector(sectors, sectorId);
     return (
@@ -85,16 +91,15 @@ class SpotsShow extends React.PureComponent {
               )}
             />
           </Switch>
-          <MainScreen
-            header={
-              <Header
-                data={getCurrentSpotOrSectorData(spots, sectors, spotId, sectorId)}
-                changeSectorFilter={this.changeSectorFilter}
-              />
-            }
+          <EntityPage
+            poster={spot?.photo?.url}
+            bgHeaderColor="#1A1A1A"
+            title={spot?.name}
+            titleList={titleList}
+            infoBlockItems={infoBlockItems}
           >
             <Content />
-          </MainScreen>
+          </EntityPage>
         </SectorContext.Provider>
       </SpotContext.Provider>
     );

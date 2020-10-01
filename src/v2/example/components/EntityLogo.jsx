@@ -56,17 +56,17 @@ const EntityLogo = ({ logo, avatar }) => {
     <div className={css(styles.entityLogoContainer)}>
       {
         logo ? (
-          <div className={css(styles.entityLogoImageContainer, styles.entityLogo)}>
-            <div
-              className={css(styles.entityLogoImageWrapper, styles.entityLogoWrapper)}
-              style={imgLoaded ? { backgroundImage: `url(${logo})` } : {}}
-            />
-          </div>
-        ) : (
           <div className={css(styles.entityLogoImageContainer, styles.entityLogoAvatar)}>
             <div
               className={css(styles.entityLogoImageWrapper, styles.entityLogoAvatarWrapper)}
               style={imgLoaded ? { backgroundImage: `url(${avatar})` } : {}}
+            />
+          </div>
+        ) : (
+          <div className={css(styles.entityLogoImageContainer, styles.entityLogo)}>
+            <div
+              className={css(styles.entityLogoImageWrapper, styles.entityLogoWrapper)}
+              style={imgLoaded ? { backgroundImage: `url(${logo})` } : {}}
             />
           </div>
         )

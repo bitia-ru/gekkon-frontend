@@ -5,11 +5,10 @@ import dayjs from 'dayjs';
 import { ResponsivePie } from '@nivo/pie';
 import { ResponsiveCalendar } from '@nivo/calendar';
 import * as R from 'ramda';
-import UserPoster from '../components/UserPoster/UserPoster';
 import { StyleSheet, css } from '../aphrodite';
-import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadSpecificUser as loadSpecificUserAction } from '../redux/users/actions';
 import Api from '../utils/Api';
+import EntityPage from '@/v2/example/components/EntityPage';
 
 
 class UserShow extends React.PureComponent {
@@ -142,13 +141,20 @@ class UserShow extends React.PureComponent {
   render() {
     const { match, users } = this.props;
 
+    const infoBlockItems = [
+      { title: 'Роль', value: 'Пользователь' },
+      { title: 'Очки', value: '-' },
+      { title: 'Карма', value: '-' },
+    ];
+
+    const user = this.obtainUser(match.params.user_id, users);
+
     return (
-      <MainScreen
-        header={
-          <UserPoster
-            user={this.obtainUser(match.params.user_id, users)}
-          />
-        }
+      <EntityPage
+        bgHeaderColor="#1A1A1A"
+        avatar={user.avatar?.url}
+        title={user.base_name}
+        infoBlockItems={infoBlockItems}
       >
         <div className={css(style.content)}>
           <div className={css(style.row1)}>
@@ -203,7 +209,7 @@ class UserShow extends React.PureComponent {
             </div>
           </div>
         </div>
-      </MainScreen>
+      </EntityPage>
     );
   }
 }

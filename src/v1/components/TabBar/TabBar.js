@@ -29,9 +29,9 @@ export default class TabBar extends Component {
       const mapIndexed = R.addIndex(R.map);
       return (
         <div className="tab">
-          <ul className={tabListStyles}>
-            {mapIndexed((title, index) => (
-              <li key={index} className="tab__list-item">
+          <div className={tabListStyles}>
+            {titleList && mapIndexed((title, index) => (
+              <div key={index} className="tab__list-item">
                 <a
                   className={`tab__list-link${this.getTabClass(index)}`}
                   role="link"
@@ -44,20 +44,20 @@ export default class TabBar extends Component {
                 >
                   {title}
                 </a>
-              </li>
+              </div>
             ), titleList)}
-          </ul>
-          <ul className="tab__content">
-            {mapIndexed((content, index) => (
-              <li
+          </div>
+          <div className="tab__content">
+            {contentList && mapIndexed((content, index) => (
+              <div
                 key={index}
                 className="tab__content-item"
                 style={{ display: (tab === (index + 1) ? '' : 'none') }}
               >
                 {content}
-              </li>
+              </div>
             ), contentList)}
-          </ul>
+          </div>
         </div>
       );
     }
@@ -65,8 +65,8 @@ export default class TabBar extends Component {
 
 TabBar.propTypes = {
   activeTab: PropTypes.number.isRequired,
-  titleList: PropTypes.array.isRequired,
-  contentList: PropTypes.array.isRequired,
+  titleList: PropTypes.array,
+  contentList: PropTypes.array,
   activeList: PropTypes.array.isRequired,
   styles: PropTypes.string,
 };

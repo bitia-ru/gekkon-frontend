@@ -6,11 +6,12 @@ import EntityInfoBlock from '@/v2/example/components/EntityInfoBlock';
 import TabBar from '@/v1/components/TabBar/TabBar';
 import { StyleSheet, css } from '@/v2/aphrodite';
 import InfoPageHeader from '@/v2/components/InfoPageHeader/InfoPageHeader';
+import Content from '@/v2/components/Content/Content';
 
 const styles = StyleSheet.create({
   entityPageBlock: { minWidth: '1300px' },
   entityPageInfoBlockContainer: {
-    display: 'inline-flex',
+    display: 'flex',
     height: '220px',
     marginBottom: '100px',
     marginTop: '-110px',
@@ -18,7 +19,6 @@ const styles = StyleSheet.create({
   entityPageInfoContainer: {
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1,
     width: '560px',
     height: '220px',
     marginLeft: '30px',
@@ -44,10 +44,12 @@ const styles = StyleSheet.create({
     margin: '0px 160px 100px 160px',
     flexWrap: 'wrap',
   },
-  entityPageTabList: {
+  entityPageTabListContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
-    margin: '-170px 160px 120px',
+    alignItems: 'flex-end',
+    flex: '1 1 auto',
+    margin: '0 160px 16px auto',
   },
 });
 
@@ -59,44 +61,38 @@ const EntityPage = ({
   title,
   infoBlockItems,
   titleList,
-}) => {
-  const firstTabContent = () => (
-    <div className={css(styles.entityPageContentContainer)}>Скалодромы</div>
-  );
-
-  const secondTabContent = () => (
-    <div className={css(styles.entityPageContentContainer)}>Трассы</div>
-  );
-
-  return (
-    <MainScreen
-      header={
-        <InfoPageHeader
-          image={poster}
-          height="385px"
-          bgHeaderColor={bgHeaderColor}
-        />
-      }
-    >
-      <div className={css(styles.entityPageBlock)}>
-        <div className={css(styles.entityPageInfoBlockContainer)}>
-          <EntityLogo logo={logo} avatar={avatar} />
-          <div className={css(styles.entityPageInfoContainer)}>
-            <div className={css(styles.entityPageTitleContainer)}>{title}</div>
-            <EntityInfoBlock infoBlockItems={infoBlockItems} />
-          </div>
+  children,
+}) => (
+  <MainScreen
+    header={
+      <InfoPageHeader
+        image={poster}
+        height="385px"
+        bgHeaderColor={bgHeaderColor}
+      />
+    }
+  >
+    <div className={css(styles.entityPageBlock)}>
+      <div className={css(styles.entityPageInfoBlockContainer)}>
+        <EntityLogo logo={logo} avatar={avatar} />
+        <div className={css(styles.entityPageInfoContainer)}>
+          <div className={css(styles.entityPageTitleContainer)}>{title}</div>
+          <EntityInfoBlock infoBlockItems={infoBlockItems} />
         </div>
-        <TabBar
-          contentList={[firstTabContent(), secondTabContent()]}
-          activeList={[true, true]}
-          activeTab={1}
-          titleList={titleList}
-          styles={css(styles.entityPageTabList)}
-        />
+        {
+          titleList && (<div className={css(styles.entityPageTabListContainer)}>
+            <TabBar
+              activeList={[true, true]}
+              activeTab={1}
+              titleList={titleList}
+            />
+          </div>)
+        }
       </div>
-    </MainScreen>
-  );
-};
+      <div>{children}</div>
+    </div>
+  </MainScreen>
+);
 
 EntityPage.propTypes = {
   poster: PropTypes.string,
