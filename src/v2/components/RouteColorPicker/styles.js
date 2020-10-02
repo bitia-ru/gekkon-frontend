@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     border: '2px solid #DDE2EF',
     zIndex: 10,
   },
+  comboBoxDropdownHidden: { visibility: 'hidden' },
   comboBoxDropdownActive: { display: 'block' },
   comboBoxDropdownWrapper: {
     maxHeight: '270px',
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
       cursor: 'pointer',
     },
   },
+  comboBoxDropdownItemSelected: { backgroundColor: '#f5f5f5' },
   comboBoxDropdownItemPadding10: { padding: '10px' },
 });
 
