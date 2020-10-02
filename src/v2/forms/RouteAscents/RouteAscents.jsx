@@ -15,6 +15,8 @@ import {
 import reloadRoutesAction from '@/v2/utils/reloadRoutes';
 import RouteAscentsTableContext from './contexts/RouteAscentsTableContext';
 import isHtmlElChild from '@/v2/utils/isHtmlElChild';
+import getViewMode from '@/v1/utils/getViewMode';
+import getFilters from '../../../v1/utils/getFilters';
 
 const SAVE_REQUEST_DELAY = 3000;
 
@@ -23,10 +25,32 @@ class RouteAscents extends Component {
     super(props);
 
     const ascent = this.getAscent();
+
+    const spotId = this.getSpotId();
+    const sectorId = this.getSectorId();
+    const { sectors, selectedViewModes, selectedFilters, routes } = this.props;
+    const route = routes[this.getRouteId()];
+    const viewMode = getViewMode(
+      sectors,
+      selectedViewModes,
+      spotId,
+      sectorId,
+    );
+    let date = route.installed_until && moment(route.installed_until);
+    if (viewMode === 'scheme') {
+      const filters = getFilters(selectedFilters, spotId, sectorId);
+      const filtersDate = filters.date && moment(filters.date);
+      if (filtersDate && ((date && filtersDate <= date) || !date)) {
+        date = filtersDate;
+      }
+    }
+    date = (date && date < moment()) ? date : moment();
+
     this.state = {
       details: ascent,
       ascent,
       mergeLastRow: true,
+      newRowDate: date.format('YYYY-MM-DD'),
     };
     this.timerId = null;
     this.lastTableRowRef = null;
@@ -77,6 +101,9 @@ class RouteAscents extends Component {
         history[i].accomplished_at = date.format('YYYY-MM-DD');
         i -= 1;
       }
+    }
+    if (index === history.length - 1 && moment(history[index].accomplished_at) < date) {
+      this.setState({ newRowDate: date.format('YYYY-MM-DD') });
     }
     history[index].accomplished_at = date.format('YYYY-MM-DD');
     this.updateStateAscent(this.sortAscents(history));
@@ -145,19 +172,12 @@ class RouteAscents extends Component {
   );
 
   prepareAscentsHistory = (ascents) => {
-    const { ascent } = this.state;
-    let date;
-    if (ascent && ascent.history && ascent.history.length > 0) {
-      date = R.last(ascent.history).accomplished_at;
-    } else {
-      date = moment().format('YYYY-MM-DD');
-    }
     return R.flatten(R.map(
       a => (
         R.repeat(
           {
             result: a.result,
-            accomplished_at: date,
+            accomplished_at: this.state.newRowDate,
           },
           a.count,
         )
@@ -182,7 +202,7 @@ class RouteAscents extends Component {
     const { reloadRoutes } = this.props;
     if (ascent) {
       const history = R.concat(ascent.history || [], this.prepareAscentsHistory(ascents));
-      this.updateStateAscent(history);
+      this.updateStateAscent(this.sortAscents(history));
       this.setState({ mergeLastRow: false });
     } else {
       const { user, addAscent, history: historyProp } = this.props;
@@ -281,12 +301,18 @@ RouteAscents.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   reloadRoutes: PropTypes.func.isRequired,
+  sectors: PropTypes.object,
+  selectedViewModes: PropTypes.object,
+  selectedFilters: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   user: currentUser(state),
   formErrors: {},
   routes: state.routesStoreV2.routes,
+  selectedViewModes: state.selectedViewModes,
+  sectors: state.sectorsStore.sectors,
+  selectedFilters: state.selectedFilters,
 });
 
 const mapDispatchToProps = dispatch => ({
