@@ -28,8 +28,8 @@ import { addWallPhoto as addWallPhotoAction } from '../../redux/wall_photos/acti
 import getArrayByIds from '@/v1/utils/getArrayByIds';
 import { NUM_OF_DAYS } from '@/v1/Constants/Route';
 import { ApiUrl } from '@/v1/Environ';
-import reloadSector from '@/v1/utils/reloadSector';
-import reloadRoutes from '@/v2/utils/reloadRoutes';
+import { default as reloadSectorAction } from '@/v1/utils/reloadSector';
+import { default as reloadRoutesAction } from '@/v2/utils/reloadRoutes';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -141,6 +141,8 @@ class RoutesEditModal extends Component {
       match,
       sectors,
       updateRoute,
+      reloadSector,
+      reloadRoutes,
     } = this.props;
     const routeId = this.getRouteId();
     this.setState({ isWaiting: true });
@@ -164,6 +166,8 @@ class RoutesEditModal extends Component {
       match,
       sectors,
       addRoute,
+      reloadSector,
+      reloadRoutes,
     } = this.props;
     this.setState({ isWaiting: true });
     addRoute(
@@ -932,6 +936,8 @@ RoutesEditModal.propTypes = {
   cancel: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
   routeMarkColors: PropTypes.array,
+  reloadSector: PropTypes.func,
+  reloadRoutes: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -956,6 +962,8 @@ const mapDispatchToProps = dispatch => ({
   addWallPhoto: (params, afterSuccess, afterAll) => dispatch(
     addWallPhotoAction(params, afterSuccess, afterAll),
   ),
+  reloadSector: sectorId => dispatch(reloadSectorAction(sectorId)),
+  reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RoutesEditModal));
