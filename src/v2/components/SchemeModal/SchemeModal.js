@@ -35,7 +35,9 @@ class SchemeModal extends Component {
     const currentSectorId = currentRoute.sector_id;
     const currentCategoryFrom = DEFAULT_FILTERS.categoryFrom;
     const currentCategoryTo = DEFAULT_FILTERS.categoryTo;
-    const lastActiveDay = dayjs(currentRoute.installed_until).subtract(1, 'days');
+    const lastActiveDay = currentRoute.installed_until && (
+      dayjs(currentRoute.installed_until).subtract(1, 'days')
+    );
     const currentDate = (
       currentRoute.installed_at || lastActiveDay || DEFAULT_FILTERS.date
     );
