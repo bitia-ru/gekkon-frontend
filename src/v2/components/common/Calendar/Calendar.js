@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import * as R from 'ramda';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import './Calendar.css';
+import { css } from '../../../aphrodite';
+import styles from './styles';
 
 export default class DatePicker extends Component {
   constructor(props) {
@@ -120,54 +120,64 @@ export default class DatePicker extends Component {
     hide();
   };
 
-  getDayClasses = (week, day) => (
-    classNames(
-      {
-        'calendar__content-day': true,
-        'calendar__content-day_unactive': this.notSelectedMonth(week, day),
-        'calendar__content-day_current': this.isCurrentDate(week, day),
-        'calendar__content-day_active': this.isSelectedDate(week, day),
-      },
-    )
-  );
+  getDayClasses = (week, day) => {
+    const isCurrentDate = this.isCurrentDate(week, day);
+    const isSelectedDate = this.isSelectedDate(week, day);
+    return css(
+      styles.calendarContentDay,
+      this.notSelectedMonth(week, day) && styles.calendarContentDayUnactive,
+      isCurrentDate && styles.calendarContentDayCurrent,
+      isSelectedDate && styles.calendarContentDayActive,
+      isCurrentDate && isSelectedDate && styles.calendarContentDayActiveDayCurrent,
+    );
+  };
 
   render() {
     return (
-      <div className="modal__table-item-calendar">
-        <div className="calendar calendar_left_v2">
-          <div className="calendar__header" />
-          <div className="calendar__content">
-            <div className="calendar__content-header">
-              <div className="calendar__content-header-month">
+      <div className={css(styles.modalTableItemCalendar)}>
+        <div className={css(styles.calendar, styles.calendarLeftV2)}>
+          <div>
+            <div>
+              <div className={css(styles.calendarContentHeaderMonth)}>
                 <button
                   type="button"
                   onClick={this.showPrevMonth}
                   style={{ outline: 'none' }}
-                  className="calendar__content-header-button calendar__content-header-button_prev"
+                  className={
+                    css(
+                      styles.calendarContentHeaderButton,
+                      styles.calendarContentHeaderButtonPrev,
+                    )
+                  }
                 />
                 {`${this.getCurrentMonth()} ${this.getCurrentYear()}`}
                 <button
                   type="button"
                   onClick={this.showNextMonth}
                   style={{ outline: 'none' }}
-                  className="calendar__content-header-button calendar__content-header-button_next"
+                  className={
+                    css(
+                      styles.calendarContentHeaderButton,
+                      styles.calendarContentHeaderButtonNext,
+                    )
+                  }
                 />
               </div>
-              <div className="calendar__content-week-header">
-                <div className="calendar__content-week-header-day">Пн</div>
-                <div className="calendar__content-week-header-day">Вт</div>
-                <div className="calendar__content-week-header-day">Ср</div>
-                <div className="calendar__content-week-header-day">Чт</div>
-                <div className="calendar__content-week-header-day">Пт</div>
-                <div className="calendar__content-week-header-day">Сб</div>
-                <div className="calendar__content-week-header-day">Вс</div>
+              <div className={css(styles.calendarContentWeekHeader)}>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Пн</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Вт</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Ср</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Чт</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Пт</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Сб</div>
+                <div className={css(styles.calendarContentWeekHeaderDay)}>Вс</div>
               </div>
             </div>
-            <div className="calendar__content-month">
+            <div className={css(styles.calendarContentMonth)}>
               {
                 R.map(
                   week => (
-                    <div key={week} className="calendar__content-week">
+                    <div key={week} className={css(styles.calendarContentWeek)}>
                       {
                         R.map(
                           day => (
@@ -195,7 +205,7 @@ export default class DatePicker extends Component {
             type="button"
             onClick={this.removeDate}
             style={{ outline: 'none' }}
-            className="calendar__button"
+            className={css(styles.calendarButton)}
           >
             Сбросить дату
           </button>
