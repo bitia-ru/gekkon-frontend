@@ -19,6 +19,8 @@ const RouteAscentsLayout = ({
   ascents,
   instantMode,
   mergeLastRow,
+  disabledToDate,
+  disabledFromDate,
 }) => (
   <div className={css(style.container)}>
     <div className={css(style.titleRow)}>{title}</div>
@@ -37,6 +39,8 @@ const RouteAscentsLayout = ({
           <RouteAscentsTable
             ascents={ascents}
             mergeLastRow={mergeLastRow}
+            disabledToDate={disabledToDate}
+            disabledFromDate={disabledFromDate}
             onAscentDateChanged={
               (ascentId, newDate) => {
                 onAscentDateChanged && onAscentDateChanged(ascentId, newDate);

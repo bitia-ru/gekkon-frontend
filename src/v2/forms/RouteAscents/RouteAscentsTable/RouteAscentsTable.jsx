@@ -55,10 +55,12 @@ class RouteAscentsTable extends React.PureComponent {
   };
 
   render() {
-    const { onRemoveAscent, onAscentDateChanged } = this.props;
+    const { onRemoveAscent, onAscentDateChanged, disabledFromDate, disabledToDate } = this.props;
 
     return (
       <RouteAscentsTableLayout
+        disabledFromDate={disabledFromDate}
+        disabledToDate={disabledToDate}
         onRemoveClicked={(ascentId) => { onRemoveAscent && onRemoveAscent(ascentId); }}
         onDateClicked={(ascentId) => { this.setState({ dateChangingAscentId: ascentId }); }}
         onDateSelected={
