@@ -104,6 +104,20 @@ export default class DatePicker extends Component {
     return true;
   };
 
+  isDisabled = (week, day) => {
+    const { disabledToDate, disabledFromDate } = this.props;
+    const { displayedDate } = this.state;
+    let d = R.clone(displayedDate);
+    d = d.startOf('month').startOf('week').add(week * 7 + day, 'days');
+    if (disabledToDate && disabledToDate > d) {
+      return true;
+    }
+    if (disabledFromDate && disabledFromDate < d) {
+      return true;
+    }
+    return false;
+  };
+
   selectDate = (e, week, day) => {
     e.stopPropagation();
     const { displayedDate } = this.state;
@@ -129,6 +143,7 @@ export default class DatePicker extends Component {
       isCurrentDate && styles.calendarContentDayCurrent,
       isSelectedDate && styles.calendarContentDayActive,
       isCurrentDate && isSelectedDate && styles.calendarContentDayActiveDayCurrent,
+      this.isDisabled(week, day) && styles.calendarContentDayUnactive,
     );
   };
 
@@ -183,6 +198,7 @@ export default class DatePicker extends Component {
                           day => (
                             <button
                               key={day}
+                              disabled={this.isDisabled(week, day)}
                               type="button"
                               style={{ outline: 'none' }}
                               onClick={e => this.selectDate(e, week, day)}
@@ -218,6 +234,8 @@ export default class DatePicker extends Component {
 DatePicker.propTypes = {
   date: PropTypes.string,
   hide: PropTypes.func,
+  disabledToDate: PropTypes.object,
+  disabledFromDate: PropTypes.object,
   onSelect: PropTypes.func.isRequired,
 };
 
