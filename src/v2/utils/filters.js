@@ -31,11 +31,22 @@ const mapIndexed = R.addIndex(R.map);
 
 const validateSectorFilters = (sectorFilters) => {
   const validFilterNames = R.filter(f => R.contains(f, VALID_FILTERS), R.keys(sectorFilters));
+  const invalidFilterNames = R.difference(R.keys(sectorFilters), VALID_FILTERS);
+  if (invalidFilterNames.length > 0) {
+    Sentry.withScope((scope) => {
+      scope.setExtra('invalidFilterNames', invalidFilterNames);
+      Sentry.captureException(`Invalid filter names: ${invalidFilterNames.join(', ')}`);
+    });
+  }
   return mapIndexed(
     (filter, index) => {
       if (isValidFilter(validFilterNames[index], filter)) {
         return filter;
       }
+      Sentry.withScope((scope) => {
+        scope.setExtra('filterValue', filter);
+        Sentry.captureException(`Invalid value for filter ${validFilterNames[index]}`);
+      });
       return DEFAULT_FILTERS[validFilterNames[index]];
     },
     R.pick(validFilterNames, sectorFilters),
