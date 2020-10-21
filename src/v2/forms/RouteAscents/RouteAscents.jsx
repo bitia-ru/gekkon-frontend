@@ -91,6 +91,19 @@ class RouteAscents extends Component {
     }
   };
 
+  updateNewRowDateIfNeeded = (date, index, history) => {
+    if (index < history.length - 1) { return false; }
+
+    if (index === 0) { return true; }
+
+    const maxDate = moment(
+      Math.max(...R.map(a => moment(a.accomplished_at), R.slice(0, -1, history))),
+    );
+    if (maxDate <= date) { return true; }
+
+    return false;
+  };
+
   onAscentDateChanged = (index, date) => {
     const { ascent, mergeLastRow } = this.state;
     const history = R.clone(ascent.history);
@@ -102,7 +115,7 @@ class RouteAscents extends Component {
         i -= 1;
       }
     }
-    if (index === history.length - 1 && moment(history[index].accomplished_at) < date) {
+    if (this.updateNewRowDateIfNeeded(date, index, history)) {
       this.setState({ newRowDate: date.format('YYYY-MM-DD') });
     }
     history[index].accomplished_at = date.format('YYYY-MM-DD');
