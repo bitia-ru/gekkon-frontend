@@ -38,6 +38,8 @@ class Scheme extends Component {
       currentRoutes,
       routes,
       onStartMoving,
+      cancelMoving,
+      movedRoutesIds,
     } = this.props;
     const { shownRouteId, imageIsLoading } = this.state;
     const position = (left, top) => {
@@ -82,12 +84,12 @@ class Scheme extends Component {
                                   onMouseEnter={() => this.showRouteCard(route.id)}
                                   onMouseLeave={this.hideCard}
                                   onStartMoving={
-                                    route.id === undefined || R.contains(route.id, currentRoutes)
-                                      ? onStartMoving
-                                      : null
+                                    (pageX, pageY) => onStartMoving(route.id, pageX, pageY)
                                   }
+                                  cancelMoving={() => cancelMoving(route.id)}
                                   category={route.category}
                                   transparent={!R.contains(route.id, currentRoutes)}
+                                  moved={R.contains(route.id, movedRoutesIds)}
                                   color={
                                     route.holds_color === null ? undefined : route.holds_color.color
                                   }
@@ -345,12 +347,16 @@ Scheme.propTypes = {
   showCards: PropTypes.bool,
   sectors: PropTypes.object.isRequired,
   onStartMoving: PropTypes.func,
+  movedRoutesIds: PropTypes.array,
+  cancelMoving: PropTypes.func,
 };
 
 Scheme.defaultProps = {
   onRouteClick: null,
   showCards: true,
   onStartMoving: null,
+  movedRoutesIds: [],
+  cancelMoving: null,
 };
 
 const mapStateToProps = state => ({

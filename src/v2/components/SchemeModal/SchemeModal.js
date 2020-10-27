@@ -16,12 +16,14 @@ class SchemeModal extends Component {
   constructor(props) {
     super(props);
 
-    const { currentRoute } = this.props;
+    const { currentRoute, movedRoutes } = this.props;
     this.state = {
       routes: [],
       currentRoute: R.clone(currentRoute),
+      routesInitState: [],
+      movedRoutesIds: R.map(route => route.id, movedRoutes),
     };
-    this.isMoving = false;
+    this.isMovingId = null;
   }
 
   componentDidMount() {
@@ -56,16 +58,27 @@ class SchemeModal extends Component {
     ];
     Axios.get(`${ApiUrl}/v1/sectors/${currentSectorId}/routes`, { params })
       .then((response) => {
-        this.setState(
-          { routes: R.reject(R.propEq('id', currentRoute.id), response.data.payload) },
+        const notMovedRoutes = R.reject(
+          route => (
+            R.contains(route.id, R.concat(this.state.movedRoutesIds, [currentRoute.id]))
+          ),
+          response.data.payload,
         );
+        const routes = R.concat(
+          notMovedRoutes,
+          this.props.movedRoutes,
+        );
+        this.setState({
+          routes,
+          routesInitState: R.clone(routes),
+        });
       }).catch((error) => {
         toastHttpError(error);
       });
   };
 
   onMouseDown = (event) => {
-    if (event.nativeEvent.which === 1) {
+    if (event.nativeEvent.which === 1 && this.isMovingId === null) {
       const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
       const { currentRoute } = this.state;
       const newCurrentRoute = R.clone(currentRoute);
@@ -73,52 +86,97 @@ class SchemeModal extends Component {
         left: (event.pageX - schemeContainerRect.x) / schemeContainerRect.width * 100,
         top: (event.pageY - schemeContainerRect.y) / schemeContainerRect.height * 100,
       };
-      this.isMoving = true;
+      this.isMovingId = currentRoute.id;
       this.setState({ currentRoute: newCurrentRoute });
     }
   };
 
   onMouseMove = (event) => {
-    if (this.isMoving) {
+    if (this.isMovingId !== null) {
       const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
       const xOld = (event.pageX - schemeContainerRect.x) / schemeContainerRect.width * 100;
       const yOld = (event.pageY - schemeContainerRect.y) / schemeContainerRect.height * 100;
       const { currentRoute } = this.state;
-      currentRoute.data.position.dx = xOld - currentRoute.data.position.left;
-      currentRoute.data.position.dy = yOld - currentRoute.data.position.top;
-      this.setState({ currentRoute });
+      if (this.isMovingId === undefined || this.isMovingId === currentRoute.id) {
+        currentRoute.data.position.dx = xOld - currentRoute.data.position.left;
+        currentRoute.data.position.dy = yOld - currentRoute.data.position.top;
+        this.setState({ currentRoute });
+      } else {
+        const { routes } = this.state;
+        const index = R.findIndex(R.propEq('id', this.isMovingId))(routes);
+        const route = routes[index];
+        route.data.position.dx = xOld - route.data.position.left;
+        route.data.position.dy = yOld - route.data.position.top;
+        this.setState({
+          routes: [...routes.slice(0, index), route, ...routes.slice(index + 1, Infinity)],
+        });
+      }
     }
   };
 
-  onStartMoving = (pageX, pageY) => {
+  onStartMoving = (routeId, pageX, pageY) => {
     const { editable } = this.props;
     if (!editable) {
       return;
     }
-    this.isMoving = true;
+    this.isMovingId = routeId;
     const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
     const xOld = (pageX - schemeContainerRect.x) / schemeContainerRect.width * 100;
     const yOld = (pageY - schemeContainerRect.y) / schemeContainerRect.height * 100;
-    const { currentRoute } = this.state;
-    currentRoute.data.position.dx = xOld - currentRoute.data.position.left;
-    currentRoute.data.position.dy = yOld - currentRoute.data.position.top;
-    this.setState({ currentRoute });
+    const { currentRoute, movedRoutesIds } = this.state;
+    if (routeId === undefined || routeId === currentRoute.id) {
+      currentRoute.data.position.dx = xOld - currentRoute.data.position.left;
+      currentRoute.data.position.dy = yOld - currentRoute.data.position.top;
+      this.setState({
+        currentRoute,
+        movedRoutesIds: R.uniq(R.append(routeId, movedRoutesIds)),
+      });
+    } else {
+      const { routes } = this.state;
+      const index = R.findIndex(R.propEq('id', routeId))(routes);
+      const route = routes[index];
+      route.data.position.dx = xOld - route.data.position.left;
+      route.data.position.dy = yOld - route.data.position.top;
+      this.setState({
+        routes: [...routes.slice(0, index), route, ...routes.slice(index + 1, Infinity)],
+        movedRoutesIds: R.uniq(R.append(routeId, movedRoutesIds)),
+      });
+    }
   };
 
   onMouseUp = (event) => {
-    if (this.isMoving) {
+    if (this.isMovingId !== null) {
       const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
       const { currentRoute } = this.state;
       const xOld = (event.pageX - schemeContainerRect.x) / schemeContainerRect.width * 100;
       const yOld = (event.pageY - schemeContainerRect.y) / schemeContainerRect.height * 100;
-      const dx = xOld - currentRoute.data.position.left;
-      const dy = yOld - currentRoute.data.position.top;
-      currentRoute.data.position = {
-        left: currentRoute.data.position.left + dx,
-        top: currentRoute.data.position.top + dy,
-      };
-      this.setState({ currentRoute });
-      this.isMoving = false;
+      if (this.isMovingId === undefined || this.isMovingId === currentRoute.id) {
+        const dx = xOld - currentRoute.data.position.left;
+        const dy = yOld - currentRoute.data.position.top;
+        currentRoute.data.position = {
+          left: parseFloat(currentRoute.data.position.left) + dx,
+          top: parseFloat(currentRoute.data.position.top) + dy,
+          dx: 0,
+          dy: 0,
+        };
+        this.setState({ currentRoute });
+      } else {
+        const { routes } = this.state;
+        const index = R.findIndex(R.propEq('id', this.isMovingId))(routes);
+        const route = routes[index];
+        const dx = xOld - route.data.position.left;
+        const dy = yOld - route.data.position.top;
+        route.data.position = {
+          left: parseFloat(route.data.position.left) + dx,
+          top: parseFloat(route.data.position.top) + dy,
+          dx: 0,
+          dy: 0,
+        };
+        this.setState({
+          routes: [...routes.slice(0, index), route, ...routes.slice(index + 1, Infinity)],
+        });
+      }
+      this.isMovingId = null;
     }
   };
 
@@ -128,16 +186,46 @@ class SchemeModal extends Component {
     close();
   };
 
+  cancelMoving = (routeId) => {
+    const { currentRoute, movedRoutesIds } = this.state;
+    if (routeId === undefined || routeId === currentRoute.id) {
+      this.setState({
+        currentRoute: R.clone(this.props.currentRoute),
+        movedRoutesIds: R.reject(id => id === routeId, movedRoutesIds),
+      });
+    } else {
+      const { routes, routesInitState } = this.state;
+      const index = R.findIndex(R.propEq('id', routeId))(routes);
+      this.setState({
+        routes: [
+          ...routes.slice(0, index),
+          R.clone(routesInitState[index]),
+          ...routes.slice(index + 1, Infinity),
+        ],
+        movedRoutesIds: R.reject(id => id === routeId, movedRoutesIds),
+      });
+    }
+  };
+
   render() {
     const {
       save,
       editable,
     } = this.props;
-    const { currentRoute, routes } = this.state;
+    const { currentRoute, routes, movedRoutesIds } = this.state;
     return (
       <>
         <div className={css(styles.modalBack)}>
-          <BackButton onClick={() => save(currentRoute.data.position)} />
+          <BackButton
+            onClick={
+              () => {
+                save(
+                  currentRoute.data.position,
+                  R.filter(route => R.contains(route.id, movedRoutesIds), routes),
+                );
+              }
+            }
+          />
         </div>
         <div
           role="button"
@@ -152,10 +240,12 @@ class SchemeModal extends Component {
           onMouseMove={editable ? this.onMouseMove : null}
         >
           <Scheme
+            movedRoutesIds={movedRoutesIds}
             currentRoutes={[currentRoute.id]}
             routes={[currentRoute, ...routes]}
             showCards={false}
             onStartMoving={this.onStartMoving}
+            cancelMoving={this.cancelMoving}
           />
         </div>
       </>
@@ -229,6 +319,9 @@ SchemeModal.propTypes = {
   currentRoute: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
+  movedRoutes: PropTypes.array,
 };
+
+SchemeModal.defaultProps = { movedRoutes: [] };
 
 export default withRouter(SchemeModal);
