@@ -17,6 +17,7 @@ import { setAllSelectedFilters } from '@/v2/redux/selectedFilters/actions';
 import { avail } from '../../utils';
 import Button from '@/v2/components/Button/Button';
 import getCategoryId from '../../utils/getCategoryId';
+import RangeCategorySlider from '@/v1/components/RangeCategorySlider/RangeCategorySlider';
 
 class FilterBlock extends Component {
   constructor(props) {
@@ -175,6 +176,10 @@ class FilterBlock extends Component {
     }
   };
 
+  onChangeCategory = (categoryFrom, categoryTo) => {
+    this.changeCategoryFilter(categoryFrom, categoryTo);
+  };
+
   render() {
     const {
       viewModeData,
@@ -207,12 +212,10 @@ class FilterBlock extends Component {
         <div className="content__filter-item content__filter-item_category">
           <div>
             <span className="filter-block__title">Категория</span>
-            <ComboBox
-              tabIndex={1}
-              onChange={this.onCategoryChange}
-              currentId={getCategoryId(categoryFrom, categoryTo)}
-              textFieldName="title"
-              items={CATEGORIES_ITEMS}
+            <RangeCategorySlider
+              categoryFrom={categoryFrom}
+              categoryTo={categoryTo}
+              onChangeCategory={this.onChangeCategory}
             />
           </div>
         </div>
