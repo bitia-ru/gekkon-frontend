@@ -4,6 +4,8 @@ const styles = StyleSheet.create({
   rangeCategoryBlock: {
     outline: 'none',
     position: 'relative',
+    width: '266px',
+    height: '57px',
   },
   rangeCategoryContainer: {
     width: '100%',
@@ -34,7 +36,8 @@ const styles = StyleSheet.create({
     left: 0,
     top: 'calc(100% + 20px)',
     backgroundColor: '#ffffff',
-    minWidth: '100%',
+    width: '344px',
+    height: '161px',
     boxSizing: 'border-box',
     boxShadow: '0px 8px 10px rgba(0, 0, 0, 0.12)',
     border: '2px solid #DDE2EF',
@@ -46,9 +49,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '28px',
-    width: '316px',
-    height: '133px',
+    width: '100%',
+    height: '100%',
     backgroundColor: '#ffffff',
     boxShadow: '0px 8px 10px rgba(0, 0, 0, 0.12)',
     zIndex: 10,
@@ -57,22 +59,22 @@ const styles = StyleSheet.create({
   rangeCategoryActive: { display: 'flex' },
   rangeCategories: {
     display: 'flex',
-    flex: '1 0 auto',
+    height: '20px',
   },
   categorySliderContainer: {
     display: 'flex',
-    width: '100%',
+    width: '286px',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    height: '32px',
+    height: '52px',
   },
   categorySliderRuler: {
     height: '20px',
-    width: 'calc(100% + 20px)',
+    width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   categorySliderRulerItem: {
     fontSize: '12px',
@@ -80,13 +82,12 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: ['GilroyRegular, sans-serif'],
   },
-  categorySliderRulerItemFirst: { marginBottom: 'auto' },
-  categorySliderRulerItemLast: { marginTop: 'auto' },
   categorySliderBar: {
     height: '5px',
     width: '100%',
-    border: '2px solid #DDE2EF',
-    background: 'linear-gradient(90deg, #FFFFFF 0.02%, #FFE602 14.8%, #48FF66 28.92%, #7C81FF 45.91%, #EB002A 71.82%, #141414 92.81%)',
+    borderTop: '2px solid #DDE2EF',
+    borderBottom: '2px solid #DDE2EF',
+    background: 'linear-gradient(90deg, #FFFFFF 0.02%, #FFE602 18.8%, #48FF66 35.92%, #7C81FF 56.91%, #EB002A 71.82%, #141414 92.81%)',
     position: 'relative',
   },
   categorySliderBarHandler: {
@@ -96,11 +97,17 @@ const styles = StyleSheet.create({
     height: '20px',
     top: 'calc(100% + 4px)',
     bottom: '-5px',
-    backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOSIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDkgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik00LjUgMS40OTQ4NUw4IDUuMzgzNzRMOCAxOUwwLjk5OTk5OSAxOUwxIDUuMzgzNzRMNC41IDEuNDk0ODVaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMDA2Q0VCIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==")',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     cursor: 'pointer',
+  },
+  categorySliderBarHandlerActive: {
+    backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOSIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDkgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik00LjUgMS40OTQ4NUw4IDUuMzgzNzRMOCAxOUwwLjk5OTk5OSAxOUwxIDUuMzgzNzRMNC41IDEuNDk0ODVaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjMDA2Q0VCIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==")',
+  },
+  categorySliderBarHandlerInactive: {
+    backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOSIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDkgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik05IDVMOSAyMEwtOC43NDIyOGUtMDcgMjBMLTIuMTg1NTdlLTA3IDVMNC41IC0xLjk2NzAxZS0wN0w5IDVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNC41IDEuNDk0ODVMOCA1LjM4Mzc0TDggMTlMMC45OTk5OTkgMTlMMSA1LjM4Mzc0TDQuNSAxLjQ5NDg1WiIgc3Ryb2tlPSIjMDA2Q0VCIiBzdHJva2Utb3BhY2l0eT0iMC4xIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+Cg==")',
+    left: '-4.5px',
   },
   categorySliderBarItem: {
     position: 'absolute',
@@ -109,9 +116,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDE2EF',
     top: '-7px',
   },
-  categorySliderBarItemFirst: { left: '-2px' },
-  categorySliderBarItemMiddle: { left: '48.5%' },
-  categorySliderBarItemLast: { right: '-2px' },
+  categorySliderBarItemFirst: { left: 0 },
+  categorySliderBarItemMiddle: { left: 'calc(50% - 4.5px)' },
+  categorySliderBarItemLast: { right: 0 },
 
 });
 

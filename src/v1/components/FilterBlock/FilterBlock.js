@@ -7,7 +7,6 @@ import ViewModeSwitcher from '../ViewModeSwitcher/ViewModeSwitcher';
 import DatePicker from '../DatePicker/DatePicker';
 import ComboBox from '../ComboBox/ComboBox';
 import { PERIOD_FILTERS } from '../../Constants/PeriodFilters';
-import { CATEGORIES, CATEGORIES_ITEMS } from '../../Constants/Categories';
 import { dateToTextFormatter } from '../../Constants/Date';
 import './FilterBlock.css';
 import getFilters, { getMergedFilters } from '../../utils/getFilters';
@@ -16,7 +15,6 @@ import { setSelectedPage, setSelectedViewMode } from '../../actions';
 import { setAllSelectedFilters } from '@/v2/redux/selectedFilters/actions';
 import { avail } from '../../utils';
 import Button from '@/v2/components/Button/Button';
-import getCategoryId from '../../utils/getCategoryId';
 import RangeCategorySlider from '@/v1/components/RangeCategorySlider/RangeCategorySlider';
 
 class FilterBlock extends Component {
@@ -152,28 +150,6 @@ class FilterBlock extends Component {
     const sectorId = this.getSectorId();
     const filters = getFilters(this.props.selectedFilters, spotId, sectorId);
     this.changeFilter(id, !filters[id]);
-  };
-
-  onCategoryChange = (id) => {
-    switch (id) {
-    case 0:
-      this.changeCategoryFilter(CATEGORIES[0], CATEGORIES[CATEGORIES.length - 1]);
-      break;
-    case 1:
-      this.changeCategoryFilter(CATEGORIES[0], '6a+');
-      break;
-    case 2:
-      this.changeCategoryFilter('6a', '6b+');
-      break;
-    case 3:
-      this.changeCategoryFilter('6b', '7a+');
-      break;
-    case 4:
-      this.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
-      break;
-    default:
-      break;
-    }
   };
 
   onChangeCategory = (categoryFrom, categoryTo) => {
