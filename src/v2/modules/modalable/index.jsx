@@ -90,6 +90,8 @@ const withModals = (BaseComponent) => {
         return;
       }
 
+      const oldArgs = R.clone(this.state?.modals?.[currentModal]?.args);
+
       this.setState({
         modals: {
           0: null,
@@ -104,6 +106,10 @@ const withModals = (BaseComponent) => {
 
         if (hash && super.modals()[hash]) {
           history.replace({ pathname: location.pathname, hash: '' });
+          // If replace was blocked
+          if (['PUSH', 'POP'].includes(history.action)) {
+            this.openModal(currentModal, oldArgs);
+          }
         }
       });
     };

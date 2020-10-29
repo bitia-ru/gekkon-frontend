@@ -89,6 +89,7 @@ class SchemeModal extends Component {
         top: (event.pageY - schemeContainerRect.y) / schemeContainerRect.height * 100,
       };
       this.isMoving = true;
+      this.props.onChange();
       this.setState({ currentRoute: newCurrentRoute });
     }
   };
@@ -111,6 +112,7 @@ class SchemeModal extends Component {
       return;
     }
     this.isMoving = true;
+    this.props.onChange();
     const schemeContainerRect = this.schemeContainerRef.getBoundingClientRect();
     const xOld = (pageX - schemeContainerRect.x) / schemeContainerRect.width * 100;
     const yOld = (pageY - schemeContainerRect.y) / schemeContainerRect.height * 100;
@@ -245,6 +247,7 @@ SchemeModal.propTypes = {
   close: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
   selectedFilters: PropTypes.object,
+  onChange: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
