@@ -346,7 +346,15 @@ class LogInForm extends Component {
                 <div className="modal-block__social">
                   <ul className="social-links">
                     <li>
-                      <SocialLinkButton onClick={() => enterWithVk('logIn')} xlinkHref={iconVk} dark />
+                      <SocialLinkButton
+                        onClick={
+                          () => {
+                            enterWithVk('logIn', null, this.state.rememberMe);
+                          }
+                        }
+                        xlinkHref={iconVk}
+                        dark
+                      />
                     </li>
                     { false
                     && <>
