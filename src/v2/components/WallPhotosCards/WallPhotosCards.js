@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
@@ -16,6 +17,7 @@ import toastHttpError from '@/v2/utils/toastHttpError';
 import WallPhotoGallery from './WallPhotoGallery';
 import withModals from '@/v2/modules/modalable';
 import Button from '../Button/Button';
+import { currentUser } from '../../redux/user_session/utils';
 
 const PHOTOS_PER_PAGE = 30;
 const NUM_OF_DISPLAYED_PAGES = 5;
@@ -34,6 +36,7 @@ class WallPhotosCards extends Component {
   }
 
   modals() {
+    const { user } = this.props;
     return {
       gallery: {
         hashRoute: true,
@@ -41,6 +44,7 @@ class WallPhotosCards extends Component {
           <WallPhotoGallery
             photos={this.obtainWallPhotos()}
             photoId={this.state.photoId}
+            withRemoveBtn={user && R.contains(user.role, ['admin', 'creator'])}
             afterRemovePhoto={this.afterRemovePhoto}
           />
         ),
@@ -162,7 +166,7 @@ class WallPhotosCards extends Component {
   };
 
   render() {
-    const { wallPhotos } = this.props;
+    const { wallPhotos, user } = this.props;
     const numOfPages = (
       wallPhotos
         ? Math.ceil(Object.values(wallPhotos).length / PHOTOS_PER_PAGE)
@@ -177,47 +181,51 @@ class WallPhotosCards extends Component {
             onClick={(event) => event.stopPropagation()}
           >
             <input {...getInputProps(this.getSectorId())} />
-            <div className={css(this.style.contentFilter)}>
-              <div className={css(this.style.contentFilterItem)}>
-                <div>
-                  {
-                    this.state.selectMode
-                      ? (
-                        <div className={css(this.style.btnContainer)}>
-                          <Button
-                            onClick={
-                              () => {
-                                this.setState({
-                                  selectMode: false,
-                                  selectedIds: [],
-                                });
-                              }
-                            }
-                            style="grey"
-                          >
-                            Отмена
-                          </Button>
-                          <Button
-                            onClick={this.removePhotos}
-                            style="normal"
-                            isWaiting={this.state.deleteBtnIsWaiting}
-                          >
-                            Удалить
-                          </Button>
-                        </div>
-                      )
-                      : (
-                        <Button
-                          onClick={() => this.setState({ selectMode: true })}
-                          style="normal"
-                        >
-                          Выбрать
-                        </Button>
-                      )
-                  }
+            {
+              user && R.contains(user.role, ['admin', 'creator']) && (
+                <div className={css(this.style.contentFilter)}>
+                  <div className={css(this.style.contentFilterItem)}>
+                    <div>
+                      {
+                        this.state.selectMode
+                          ? (
+                            <div className={css(this.style.btnContainer)}>
+                              <Button
+                                onClick={
+                                  () => {
+                                    this.setState({
+                                      selectMode: false,
+                                      selectedIds: [],
+                                    });
+                                  }
+                                }
+                                style="grey"
+                              >
+                                Отмена
+                              </Button>
+                              <Button
+                                onClick={this.removePhotos}
+                                style="normal"
+                                isWaiting={this.state.deleteBtnIsWaiting}
+                              >
+                                Удалить
+                              </Button>
+                            </div>
+                          )
+                          : (
+                            <Button
+                              onClick={() => this.setState({ selectMode: true })}
+                              style="normal"
+                            >
+                              Выбрать
+                            </Button>
+                          )
+                      }
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )
+            }
             <WallPhotosCardsLayout
               photos={this.obtainWallPhotos()}
               onClick={this.onSelectPhoto}
@@ -238,10 +246,12 @@ class WallPhotosCards extends Component {
 }
 
 WallPhotosCards.propTypes = {
+  user: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   wallPhotos: state.wallPhotosV2,
+  user: currentUser(state),
 });
 
 const mapDispatchToProps = dispatch => ({

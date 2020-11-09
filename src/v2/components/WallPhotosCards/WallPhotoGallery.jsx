@@ -37,7 +37,7 @@ class WallPhotoGallery extends Component {
   }
 
   render() {
-    const { photos } = this.props;
+    const { photos, withRemoveBtn } = this.props;
     const { currentDisplayedPhotoIndex, bgImageLoaded } = this.state;
     return (
       <Modal maxWidth="1200px">
@@ -51,11 +51,15 @@ class WallPhotoGallery extends Component {
                 : {}
             }
           />
-          <div className={css(styles.trash)} onClick={this.remove}>
-            <svg aria-hidden="true" width="100%" height="100%">
-              <use xlinkHref={`${require('./assets/trash-can.svg')}#trash-can`} />
-            </svg>
-          </div>
+          {
+            withRemoveBtn && (
+              <div className={css(styles.trash)} onClick={this.remove}>
+                <svg aria-hidden="true" width="100%" height="100%">
+                  <use xlinkHref={`${require('./assets/trash-can.svg')}#trash-can`} />
+                </svg>
+              </div>
+            )
+          }
         </div>
       </Modal>
     );
@@ -93,6 +97,7 @@ WallPhotoGallery.propTypes = {
   history: PropTypes.object,
   removeWallPhoto: PropTypes.func,
   afterRemovePhoto: PropTypes.func,
+  withRemoveBtn: PropTypes.bool,
 };
 
 const mapDispatchToProps = dispatch => ({
