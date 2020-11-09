@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { StyleSheet, css } from '../../aphrodite';
 import Modal from '../../layouts/Modal';
-import { removeRoutePhoto as removeRoutePhotoAction } from '../../redux/route_photos/actions';
+import { removeWallPhoto as removeWallPhotoAction } from '../../redux/wall_photos/actions';
 
-class RoutePhotoGallery extends Component {
+class WallPhotoGallery extends Component {
   constructor(props) {
     super(props);
 
@@ -29,7 +29,7 @@ class RoutePhotoGallery extends Component {
 
   remove = () => {
     if (window.confirm('Удалить фото?')) {
-      this.props.removeRoutePhoto(
+      this.props.removeWallPhoto(
         this.props.photos[this.state.currentDisplayedPhotoIndex].id,
         this.props.afterRemovePhoto,
       );
@@ -87,16 +87,16 @@ const styles = StyleSheet.create({
   },
 });
 
-RoutePhotoGallery.propTypes = {
+WallPhotoGallery.propTypes = {
   photos: PropTypes.array,
   photoId: PropTypes.number,
   history: PropTypes.object,
-  removeRoutePhoto: PropTypes.func,
+  removeWallPhoto: PropTypes.func,
   afterRemovePhoto: PropTypes.func,
 };
 
 const mapDispatchToProps = dispatch => ({
-  removeRoutePhoto: (id, afterSuccess) => dispatch(removeRoutePhotoAction(id, afterSuccess)),
+  removeWallPhoto: (id, afterSuccess) => dispatch(removeWallPhotoAction(id, afterSuccess)),
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(RoutePhotoGallery));
+export default withRouter(connect(null, mapDispatchToProps)(WallPhotoGallery));

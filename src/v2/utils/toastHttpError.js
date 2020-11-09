@@ -1,6 +1,7 @@
 import showToastr from './showToastr';
 
 const toastHttpError = (error) => {
+  console.log(error);
   if (!error?.response) {
     showToastr('Неожиданная ошибка', { type: 'error' });
     return;

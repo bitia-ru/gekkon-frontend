@@ -13,7 +13,7 @@ import {
   removeWallPhotos as removeWallPhotosAction,
 } from '../../redux/wall_photos/actions';
 import toastHttpError from '@/v2/utils/toastHttpError';
-import RoutePhotoGallery from './RoutePhotoGallery';
+import WallPhotoGallery from './WallPhotoGallery';
 import withModals from '@/v2/modules/modalable';
 import Button from '../Button/Button';
 
@@ -38,8 +38,8 @@ class WallPhotosCards extends Component {
       gallery: {
         hashRoute: true,
         body: (
-          <RoutePhotoGallery
-            photos={this.obtainRoutePhotos()}
+          <WallPhotoGallery
+            photos={this.obtainWallPhotos()}
             photoId={this.state.photoId}
             afterRemovePhoto={this.afterRemovePhoto}
           />
@@ -56,7 +56,7 @@ class WallPhotosCards extends Component {
 
   afterRemovePhoto = () => {
     this.setState({ page: 1 });
-    this.props.loadRoutePhotos(this.getSectorId());
+    this.props.loadWallPhotos(this.getSectorId());
     this.props.history.goBack();
   };
 
@@ -150,7 +150,7 @@ class WallPhotosCards extends Component {
     const { selectedIds } = this.state;
     if (window.confirm(`Удалить ${selectedIds.length} фото?`)) {
       this.setState({ deleteBtnIsWaiting: true });
-      this.props.removeRoutePhotos(
+      this.props.removeWallPhotos(
         selectedIds,
         () => this.setState({
           selectMode: false,

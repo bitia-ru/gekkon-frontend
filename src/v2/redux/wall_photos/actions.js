@@ -98,7 +98,7 @@ export const removeWallPhotos = (ids, afterSuccess, afterAll) => (
 
     Api.post(
       '/v1/wall_photos',
-      { wall_photo: R.map(id => ({ id }), ids) },
+      { wall_photos: R.map(id => ({ id }), ids) },
       {
         method: 'delete',
         success(payload) {
