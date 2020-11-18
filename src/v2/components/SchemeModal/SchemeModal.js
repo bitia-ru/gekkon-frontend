@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Axios from 'axios';
 import * as R from 'ramda';
@@ -11,6 +12,8 @@ import { DEFAULT_FILTERS } from '@/v1/Constants/DefaultFilters';
 import { BACKEND_DATE_FORMAT } from '@/v1/Constants/Date';
 import { ApiUrl } from '@/v1/Environ';
 import toastHttpError from '@/v2/utils/toastHttpError';
+import getFilters from '../../../v1/utils/getFilters';
+import { dateIsBetween } from '@/v2/utils/dateUtils';
 
 class SchemeModal extends Component {
   constructor(props) {
@@ -22,6 +25,14 @@ class SchemeModal extends Component {
       currentRoute: R.clone(currentRoute),
     };
     this.isMoving = false;
+
+    const sector = this.props.sectors[currentRoute.sector_id];
+    const filters = getFilters(
+      this.props.selectedFilters,
+      sector.spot_id,
+      currentRoute.sector_id,
+    );
+    this.dateFromFilters = filters.date ? dayjs(filters.date) : null;
   }
 
   componentDidMount() {
@@ -29,18 +40,22 @@ class SchemeModal extends Component {
   }
 
   loadRoutes = () => {
-    const {
-      currentRoute,
-    } = this.props;
+    const { currentRoute } = this.props;
+    const { installed_at: installedAt, installed_until: installedUntil } = currentRoute;
     const currentSectorId = currentRoute.sector_id;
     const currentCategoryFrom = DEFAULT_FILTERS.categoryFrom;
     const currentCategoryTo = DEFAULT_FILTERS.categoryTo;
     const lastActiveDay = currentRoute.installed_until && (
       dayjs(currentRoute.installed_until).subtract(1, 'days')
     );
-    const currentDate = (
-      currentRoute.installed_at || lastActiveDay || DEFAULT_FILTERS.date
-    );
+    let currentDate;
+    if (dateIsBetween(this.dateFromFilters, installedAt, installedUntil)) {
+      currentDate = this.dateFromFilters;
+    } else {
+      currentDate = (
+        currentRoute.installed_at || lastActiveDay || DEFAULT_FILTERS.date
+      );
+    }
     const params = {
       filters: {
         category: [[currentCategoryFrom], [currentCategoryTo]],
@@ -229,6 +244,12 @@ SchemeModal.propTypes = {
   currentRoute: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,
   save: PropTypes.func.isRequired,
+  selectedFilters: PropTypes.object,
 };
 
-export default withRouter(SchemeModal);
+const mapStateToProps = state => ({
+  selectedFilters: state.selectedFilters,
+  sectors: state.sectorsStore.sectors,
+});
+
+export default withRouter(connect(mapStateToProps)(SchemeModal));
