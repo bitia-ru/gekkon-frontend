@@ -5,6 +5,11 @@ import * as R from 'ramda';
 import SpotsBlockLayout from './SpotsBlockLayout';
 import { loadSpots as loadSpotsAction } from '../../../redux/spots/actions';
 
+const sortSpotsByActivity = (spot1, spot2) => {
+  const activity1 = spot1?.data?.statistics?.activity;
+  const activity2 = spot2?.data?.statistics?.activity;
+  return activity2 - activity1;
+};
 
 class SpotsBlock extends React.PureComponent {
   constructor(props) {
@@ -22,12 +27,21 @@ class SpotsBlock extends React.PureComponent {
   render() {
     const self = this;
 
+    const spots = R.values(this.props.spots);
+    const spotsWithActivity = R.filter(
+      spot => (spot.data?.statistics?.activity !== undefined),
+      spots,
+    );
+    const spotsWithoutActivity = R.filter(
+      spot => (spot.data?.statistics?.activity === undefined),
+      spots,
+    );
     return (
       <SpotsBlockLayout
         spots={
           R.filter(
             spot => spot.data && spot.data.public,
-          )(Object.values(this.props.spots))
+          )(R.concat(R.sort(sortSpotsByActivity, spotsWithActivity), spotsWithoutActivity))
         }
         viewMode={{
           value: this.state.viewMode,
