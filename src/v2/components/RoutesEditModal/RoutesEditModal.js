@@ -26,10 +26,12 @@ import {
 } from '@/v2/redux/routes/actions';
 import { addWallPhoto as addWallPhotoAction } from '../../redux/wall_photos/actions';
 import getArrayByIds from '@/v1/utils/getArrayByIds';
+import getViewMode from '@/v1/utils/getViewMode';
 import { NUM_OF_DAYS } from '@/v1/Constants/Route';
 import { ApiUrl } from '@/v1/Environ';
 import { default as reloadSectorAction } from '@/v1/utils/reloadSector';
 import { default as reloadRoutesAction } from '@/v2/utils/reloadRoutes';
+import getFilters from '../../../v1/utils/getFilters';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -62,6 +64,8 @@ class RoutesEditModal extends Component {
       loadRoute,
       loadSector: loadSectorProp,
       loadRouteMarkColors: loadRouteMarkColorsProp,
+      selectedViewModes,
+      selectedFilters,
     } = this.props;
     const sectorId = match.params.sector_id ? parseInt(match.params.sector_id, 10) : null;
     const routeId = this.getRouteId();
@@ -78,6 +82,18 @@ class RoutesEditModal extends Component {
     }
     if (routeId === null && sectors[sectorId]) {
       this.afterSectorIsLoaded(sectors[sectorId]);
+      const viewMode = getViewMode(
+        sectors,
+        selectedViewModes,
+        sectors[sectorId].spot_id,
+        sectorId,
+      );
+      if (viewMode === 'scheme') {
+        const { date } = getFilters(selectedFilters, sectors[sectorId].spot_id, sectorId);
+        if (date) {
+          this.onRouteParamChange(date, 'installed_at');
+        }
+      }
     }
     if (routeId) {
       loadRoute(
@@ -937,6 +953,7 @@ RoutesEditModal.propTypes = {
   routeMarkColors: PropTypes.array,
   reloadSector: PropTypes.func,
   reloadRoutes: PropTypes.func,
+  selectedViewModes: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -945,6 +962,8 @@ const mapStateToProps = state => ({
   user: state.usersStore.users[state.usersStore.currentUserId],
   users: getArrayByIds(state.usersStore.sortedUserIds, state.usersStore.users),
   routeMarkColors: state.routeMarkColorsStore.routeMarkColors,
+  selectedViewModes: state.selectedViewModes,
+  selectedFilters: state.selectedFilters,
 });
 
 const mapDispatchToProps = dispatch => ({
