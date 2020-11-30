@@ -165,9 +165,12 @@ class FilterBlock extends Component {
       this.changeCategoryFilter('6a', '6b+');
       break;
     case 3:
-      this.changeCategoryFilter('6b', '7a+');
+      this.changeCategoryFilter('6b', '6c+');
       break;
     case 4:
+      this.changeCategoryFilter('6c', '7a+');
+      break;
+    case 5:
       this.changeCategoryFilter('7a', CATEGORIES[CATEGORIES.length - 1]);
       break;
     default:
