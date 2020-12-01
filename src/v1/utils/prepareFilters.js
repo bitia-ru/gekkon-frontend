@@ -6,6 +6,7 @@ const filtersLookUp = {
   personal: 'Авторские трассы',
   outdated: 'Скрученные',
   liked: 'Понравившиеся мне',
+  popular: 'Популярные',
   flash: 'Флешанул',
   red_point: 'Пролез',
   unsuccessful: 'Не пройдена',
@@ -24,7 +25,7 @@ const prepareFilters = filters => ({
         value: e,
       };
     },
-    R.concat(R.keys(RESULT_FILTERS), ['personal', 'outdated', 'liked']),
+    R.concat(R.keys(RESULT_FILTERS), ['personal', 'outdated', 'liked', 'popular']),
   ),
 });
 
