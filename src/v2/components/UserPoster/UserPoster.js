@@ -17,18 +17,6 @@ class UserPoster extends Component {
     this.photosInternal = {};
   }
 
-  componentDidMount() {
-    window.addEventListener('scroll', this.onWindowScroll, true);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.onWindowScroll);
-  }
-
-  onWindowScroll = () => {
-    this.setState({ scrollPosition: document.querySelector('.page').scrollTop });
-  };
-
   componentDidUpdate(newProps) {
     if (!newProps.user.avatar || newProps.user.avatar.url === this.state.imageUrl) {
       return;
