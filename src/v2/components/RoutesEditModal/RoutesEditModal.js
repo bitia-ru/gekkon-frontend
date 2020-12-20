@@ -51,6 +51,7 @@ class RoutesEditModal extends Component {
       routeImageLoading: true,
       schemeModalVisible: false,
       isWaiting: false,
+      movedRoutes: [],
     };
     this.mouseOver = false;
   }
@@ -272,6 +273,16 @@ class RoutesEditModal extends Component {
       formData.append('data[position][left]', route.data.position.left);
       formData.append('data[position][top]', route.data.position.top);
     }
+    R.forEach(
+      (movedRoute) => {
+        const movedRouteFormData = new FormData();
+        movedRouteFormData.append('route[id]', movedRoute.id);
+        movedRouteFormData.append('data[position][left]', movedRoute.data.position.left);
+        movedRouteFormData.append('data[position][top]', movedRoute.data.position.top);
+        this.updateRoute(movedRouteFormData);
+      },
+      this.state.movedRoutes,
+    );
     if (routeProp.id !== null) {
       this.updateRoute(formData);
     } else {
@@ -361,12 +372,12 @@ class RoutesEditModal extends Component {
     this.setState({ route: { ...route, photo: src }, showCropper: false, photo: photoCopy });
   };
 
-  saveRoutePositionAndClose = (position) => {
+  saveRoutePositionAndClose = (position, movedRoutes) => {
     const { route } = this.state;
     const data = R.clone(route.data);
     data.position = R.clone(position);
     this.onRouteParamChange(data, 'data');
-    this.setState({ schemeModalVisible: false });
+    this.setState({ schemeModalVisible: false, movedRoutes });
   };
 
   resetRoutePositionAndClose = () => {
@@ -389,6 +400,7 @@ class RoutesEditModal extends Component {
       routeImageLoading,
       schemeModalVisible,
       isWaiting,
+      movedRoutes,
     } = this.state;
     const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
     const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
@@ -410,6 +422,7 @@ class RoutesEditModal extends Component {
             schemeModalVisible
               ? (
                 <SchemeModal
+                  movedRoutes={movedRoutes}
                   currentRoute={route}
                   editable
                   save={this.saveRoutePositionAndClose}

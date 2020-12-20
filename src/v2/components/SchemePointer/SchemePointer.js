@@ -18,6 +18,8 @@ class SchemePointer extends Component {
       category,
       color,
       transparent,
+      moved,
+      cancelMoving,
     } = this.props;
     const hexToRgb = (hex) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -40,11 +42,13 @@ class SchemePointer extends Component {
     return <button
       type="button"
       onClick={onClick}
+      onDoubleClick={cancelMoving}
       style={{
         backgroundColor: color,
         color: getFontColor(color),
         opacity: transparent ? 0.5 : 1,
         cursor: transparent ? 'default' : 'pointer',
+        fontFamily: moved ? 'GilroyBold' : null,
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -88,6 +92,8 @@ SchemePointer.propTypes = {
   onClick: PropTypes.func,
   color: PropTypes.string,
   transparent: PropTypes.bool,
+  moved: PropTypes.bool,
+  cancelMoving: PropTypes.func,
 };
 
 SchemePointer.defaultProps = {
@@ -98,6 +104,8 @@ SchemePointer.defaultProps = {
   onClick: null,
   color: '#ffffff',
   transparent: false,
+  moved: false,
+  cancelMoving: null,
 };
 
 export default SchemePointer;
