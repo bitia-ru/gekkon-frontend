@@ -17,8 +17,10 @@ class SchemePointer extends Component {
       onMouseLeave,
       category,
       color,
+      borderColor,
       transparent,
     } = this.props;
+
     const hexToRgb = (hex) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
@@ -45,6 +47,7 @@ class SchemePointer extends Component {
         color: getFontColor(color),
         opacity: transparent ? 0.5 : 1,
         cursor: transparent ? 'default' : 'pointer',
+        ...(borderColor && { border: `2px solid ${borderColor}` }),
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -87,6 +90,7 @@ SchemePointer.propTypes = {
   onStartMoving: PropTypes.func,
   onClick: PropTypes.func,
   color: PropTypes.string,
+  borderColor: PropTypes.string,
   transparent: PropTypes.bool,
 };
 

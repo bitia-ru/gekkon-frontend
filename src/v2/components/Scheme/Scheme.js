@@ -91,6 +91,7 @@ class Scheme extends Component {
                                   color={
                                     route.holds_color === null ? undefined : route.holds_color.color
                                   }
+                                  borderColor={route.marks_color?.color}
                                 />
                                 {
                                   (showCards && route.id === shownRouteId) && <div
