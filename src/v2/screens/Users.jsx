@@ -2,26 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import * as R from 'ramda';
+import PropTypes from 'prop-types';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { loadUsers as loadUsersAction } from '../redux/users/actions';
 import ContentWithLeftPanel from '../layouts/ContentWithLeftPanel';
 import LeftPanelList from '../layouts/LeftPanelList';
 import TableLayout from '../components/common/Table/TableLayout';
+import Img from '../components/common/Img/Img';
 import { userBaseName } from '../utils/users';
 import { StyleSheet } from '@/v2/aphrodite';
 
-
 const Users = ({ users, loadUsers, match, history }) => {
   const sortOptions = {
-    score: 'По очкам',
+    scoresSport: 'По очкам трудность',
+    scoresBoulder: 'По очкам боулдеринг',
     karma: 'По карме',
     registration_date: 'По дате регистрации',
     id: 'По ID',
   };
 
   const [currentSortOption, setCurrentSortOption] = useState(Object.keys(sortOptions)[0]);
+  const [usersLoading, setUsersLoading] = useState(true);
 
-  useEffect(() => { loadUsers(); }, []);
+  useEffect(() => { loadUsers(() => setUsersLoading(false)); }, []);
+
+  const userRoleToText = (role) => {
+    const user = {
+      admin: 'Админ',
+      creator: 'Наполнитель',
+      user: 'Пользователь',
+    };
+    return user[role];
+  };
 
   const usersSorted = (usersData, sortBy) => {
     const transform = {
@@ -36,7 +48,16 @@ const Users = ({ users, loadUsers, match, history }) => {
           ),
         ),
       ),
-      score: R.pipe(
+      scoresSport: R.pipe(
+        R.filter(u => u.statistics.score > 0),
+        R.sortBy(
+          R.pipe(
+            R.path(['statistics', 'score']),
+            R.divide(1),
+          ),
+        ),
+      ),
+      scoresBoulder: R.pipe(
         R.filter(u => u.statistics.score > 0),
         R.sortBy(
           R.pipe(
@@ -52,6 +73,54 @@ const Users = ({ users, loadUsers, match, history }) => {
     );
   };
 
+  const getCurrentCols = (sortType) => {
+    const cols = {
+      id: [
+        'index',
+        'avatar',
+        'name',
+        'userId',
+        'karma',
+      ],
+      registration_date: [
+        'index',
+        'avatar',
+        'name',
+        'dateRegistration',
+        'karma',
+      ],
+      karma: [
+        'index',
+        'avatar',
+        'name',
+        'karma',
+        'dateRegistration',
+        'role',
+      ],
+      scoresSport: [
+        'index',
+        'avatar',
+        'name',
+        'scoresSport',
+        'karma',
+      ],
+      scoresBoulder: [
+        'index',
+        'avatar',
+        'name',
+        'scoresBoulder',
+        'karma',
+      ],
+    };
+    return cols[sortType];
+  };
+
+  const getDate = (date) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const dayRegistration = new Date(date);
+    return dayRegistration.toLocaleDateString('ru-RU', options);
+  };
+
   const onUserClick = url => history.push(url);
 
   return (
@@ -65,21 +134,27 @@ const Users = ({ users, loadUsers, match, history }) => {
             index: '№',
             avatar: 'Аватар',
             name: { style: { textAlign: 'left' }, content: 'Имя' },
-            scores: 'Очки',
-            karma: 'Карма',
             userId: 'ID',
+            dateRegistration: 'Зарегистрирован',
+            scoresSport: 'Очки',
+            scoresBoulder: 'Очки',
+            role: 'Роль',
+            karma: 'Карма',
           }}
-          currentCols={['index', 'avatar', 'name', 'scores', 'karma']}
+          currentCols={getCurrentCols(currentSortOption)}
           rows={
             usersSorted(users, currentSortOption).map(
               (user, index) => ({
                 key: user.id,
-                userId: user.id,
                 index: index + 1,
                 avatar: user.avatar ? user.avatar.url : '',
                 name: userBaseName(user),
-                scores: Math.round(user.statistics.score || 0),
-                karma: Math.round((user.data.karma || 0) * 100) / 100.0,
+                userId: user.id,
+                dateRegistration: getDate(user.created_at),
+                scoresSport: Math.round(user.statistics.score),
+                scoresBoulder: Math.round(user.statistics.score),
+                role: userRoleToText(user.role),
+                karma: Math.round(user.data.karma * 100) / 100.0,
                 url: `${match.url}/${user.id}`,
               }),
             )
@@ -89,7 +164,11 @@ const Users = ({ users, loadUsers, match, history }) => {
               index: { style: { fontWeight: 'bold' }, content: user.index },
               avatar: {
                 style: { minWidth: '75px' },
-                content: <img height={55} src={user.avatar} />,
+                content: <Img
+                  height={55}
+                  src={user.avatar}
+                  defaultImage={require('./images/avatar_placeholder.svg')}
+                />,
               },
               name: {
                 style: { textAlign: 'left', fontFamily: 'GilroyBold', fontWeight: 'bold' },
@@ -101,6 +180,7 @@ const Users = ({ users, loadUsers, match, history }) => {
           tableStyle={styles.userTable}
           rowStyle={styles.userRow}
           onRowClick={onUserClick}
+          isLoading={usersLoading}
         />
       </ContentWithLeftPanel>
     </MainScreen>
@@ -139,12 +219,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
-  users: state.usersStoreV2.store,
-});
+Users.propTypes = {
+  users: PropTypes.object,
+  loadUsers: PropTypes.func,
+  match: PropTypes.object,
+  history: PropTypes.object,
+};
 
-const mapDispatchToProps = dispatch => ({
-  loadUsers: () => dispatch(loadUsersAction()),
-});
+const mapStateToProps = state => ({ users: state.usersStoreV2.store });
+
+const mapDispatchToProps = dispatch => (
+  { loadUsers: afterUsersLoad => dispatch(loadUsersAction(afterUsersLoad)) }
+);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Users));
