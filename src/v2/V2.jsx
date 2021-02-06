@@ -13,6 +13,7 @@ import Faq from './components/Faq/Faq';
 import CtrlPressedCatcher from './components/common/CtrlPressedCatcher/CtrlPressedCatcher';
 import LoginVKError from '@/v2/components/LoginVK/LoginVKError';
 import LoginVKSuccess from '@/v2/components/LoginVK/LoginVKSuccess';
+import EntityPageExample from '@/v2/example/EntityPageExample';
 
 
 const V2 = ({ currentUser }) => (
@@ -30,6 +31,7 @@ const V2 = ({ currentUser }) => (
           <Route exact path="/faq" component={Faq} />
           <Route path="/error" component={LoginVKError} />
           <Route path="/integrations/vk/actions/success" component={LoginVKSuccess} />
+          <Route exact path="/entity_page" component={EntityPageExample} />
         </Switch>
       ) : (
         <BootingScreen />

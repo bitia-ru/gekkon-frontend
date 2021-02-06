@@ -22,12 +22,24 @@ export default class InfoPageHeader extends Component {
     const {
       image,
       title,
+      height,
+      bgHeaderColor,
     } = this.props;
     const { bgImageLoaded } = this.state;
     return (
       <header
         className={css(styles.aboutUsHeader)}
-        style={bgImageLoaded ? { backgroundImage: `url(${image})` } : {}}
+        style={
+          bgImageLoaded
+            ? {
+              backgroundImage: `url(${image})`,
+              height: height || '40vh',
+            }
+            : {
+              backgroundColor: bgHeaderColor || '#718b9f',
+              height: height || '40vh',
+            }
+        }
       >
         <div className={css(styles.aboutUsHeaderContent)}>
           <h1 className={css(styles.aboutUsHeaderTitle)}>{title}</h1>
@@ -43,7 +55,6 @@ const styles = StyleSheet.create({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    height: '40vh',
   },
   aboutUsHeaderTitle: {
     fontSize: '100px',
@@ -72,5 +83,7 @@ const styles = StyleSheet.create({
 
 InfoPageHeader.propTypes = {
   image: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  height: PropTypes.string,
+  bgHeaderColor: PropTypes.string,
 };
