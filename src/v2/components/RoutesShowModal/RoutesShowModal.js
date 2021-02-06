@@ -115,25 +115,35 @@ class RoutesShowModal extends Component {
   };
 
   onKeyDown = (event) => {
-    const { onClose } = this.props;
+    const { onClose, routes } = this.props;
     if (event.key === 'Escape') {
       onClose();
     }
 
     if (event.key === 'ArrowRight') {
-      this.props.history.push(
-        R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() + 1}`)(this.props.match.url),
+      const ids = R.keys(routes);
+      const index = R.findIndex(e => parseInt(e, 10) === this.getRouteId())(ids);
+      this.props.history.replace(
+        R.replace(
+          /\/routes\/[0-9]+/,
+          `/routes/${ids[index + 1 === ids.length ? 0 : index + 1]}`,
+        )(this.props.match.url),
       );
       const { loadRoute } = this.props;
-      loadRoute(this.getRouteId() + 1);
+      loadRoute(ids[index + 1 === ids.length ? 0 : index + 1]);
     }
 
     if (event.key === 'ArrowLeft') {
-      this.props.history.push(
-        R.replace(/\/routes\/[0-9]+/, `/routes/${this.getRouteId() - 1}`)(this.props.match.url),
+      const ids = R.keys(routes);
+      const index = R.findIndex(e => parseInt(e, 10) === this.getRouteId())(ids);
+      this.props.history.replace(
+        R.replace(
+          /\/routes\/[0-9]+/,
+          `/routes/${ids[index - 1 === 0 ? ids.length - 1 : index - 1]}`,
+        )(this.props.match.url),
       );
       const { loadRoute } = this.props;
-      loadRoute(this.getRouteId() - 1);
+      loadRoute(ids[index - 1 === 0 ? ids.length - 1 : index - 1]);
     }
   };
 
@@ -272,7 +282,7 @@ class RoutesShowModal extends Component {
             this.props.reloadRoutes(spotId, 0);
             setSelectedPageProp(spotId, 0, 1);
           }
-          history.push(R.replace(/\/routes\/[0-9]*/, '', match.url));
+          history.goBack();
         },
       );
     }
@@ -408,7 +418,12 @@ class RoutesShowModal extends Component {
               onClick={
                 schemeModalVisible
                   ? () => this.setState({ schemeModalVisible: false })
-                  : () => onClose()
+                  : (
+                    (e) => {
+                      e.stopPropagation();
+                      onClose();
+                    }
+                  )
               }
             />
           </div>

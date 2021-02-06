@@ -166,7 +166,7 @@ class RoutesEditModal extends Component {
       routeId,
       params,
       (payload) => {
-        history.push(R.replace('/edit', '', `${match.url}`));
+        history.replace(R.replace('/edit', '', `${match.url}`));
         reloadSector(payload.sector_id);
         reloadRoutes(
           sectors[payload.sector_id].spot_id, payload.sector_id,
@@ -189,7 +189,7 @@ class RoutesEditModal extends Component {
     addRoute(
       params,
       (payload) => {
-        history.push(
+        history.replace(
           R.replace('new', payload.id, `${match.url}`),
         );
         reloadSector(payload.sector_id);
@@ -402,7 +402,12 @@ class RoutesEditModal extends Component {
               onClick={
                 schemeModalVisible
                   ? this.resetRoutePositionAndClose
-                  : () => onClose()
+                  : (
+                    (e) => {
+                      e.stopPropagation();
+                      onClose();
+                    }
+                  )
               }
             />
           </div>
@@ -506,7 +511,7 @@ class RoutesEditModal extends Component {
                               size="small"
                               style="gray"
                               title="Отмена"
-                              onClick={cancel}
+                              onClick={() => cancel(route.id)}
                             />
                           </div>
                           <div className={css(styles.modalTrackFooterEditModeItem)}>
