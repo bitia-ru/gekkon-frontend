@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import classNames from 'classnames';
-import Person from '../Person/Person';
-import { SEARCH_DELAY, GetUserName } from '../../Constants/User';
+import Person from '../../../v1/components/Person/Person';
+import { SEARCH_DELAY, GetUserName } from '../../../v1/Constants/User';
 import './ComboBoxPerson.css';
 
 export default class ComboBoxPerson extends Component {
