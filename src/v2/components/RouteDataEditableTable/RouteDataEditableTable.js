@@ -7,7 +7,7 @@ import CategorySlider from '@/v1/components/CategorySlider/CategorySlider';
 import { getCategoryColor } from '@/v1/Constants/Categories';
 import ComboBox from '@/v1/components/ComboBox/ComboBox';
 import { ROUTE_KINDS } from '@/v1/Constants/Route';
-import ComboBoxPerson from '@/v1/components/ComboBoxPerson/ComboBoxPerson';
+import ComboBoxPerson from '@/v2/components/ComboBoxPerson/ComboBoxPerson';
 import RouteColorPicker from '@/v2/components/RouteColorPicker/RouteColorPicker';
 import DatePicker from '@/v1/components/DatePicker/DatePicker';
 import RouteContext from '@/v1/contexts/RouteContext';
