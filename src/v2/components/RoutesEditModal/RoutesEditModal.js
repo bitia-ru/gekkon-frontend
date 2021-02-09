@@ -396,7 +396,15 @@ class RoutesEditModal extends Component {
     const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg');
     return (
       <div className={css(styles.modalOverlayWrapper)}>
-        <div className={css(styles.modal, styles.modalOverlayModal)}>
+        <div
+          className={
+            css(
+              styles.modal,
+              styles.modalOverlayModal,
+              !schemeModalVisible && styles.modalFixHeight,
+            )
+          }
+        >
           <div className="modal-block__close">
             <CloseButton
               onClick={
@@ -687,13 +695,15 @@ const styles = StyleSheet.create({
     minHeight: '800px',
     minWidth: '960px',
     maxHeight: '1050px',
-    height: '95vh',
     '@media screen and (max-width: 1600px)': {
       minHeight: '700px',
     },
     '@media screen and (max-width: 1440px)': {
       minHeight: '600px',
     },
+  },
+  modalFixHeight: {
+    height: '95vh',
   },
   modalTrackBlock: {
     maxWidth: '530px',
