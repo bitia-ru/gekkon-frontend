@@ -402,7 +402,15 @@ class RoutesShowModal extends Component {
 
     return (
       <div className={css(styles.modalOverlayWrapper)}>
-        <div className={css(styles.modal, styles.modalOverlayModal)}>
+        <div
+          className={
+            css(
+              styles.modal,
+              styles.modalOverlayModal,
+              !schemeModalVisible && styles.modalFixHeight,
+            )
+          }
+        >
           <div className="modal-block__close">
             <CloseButton
               onClick={
@@ -652,7 +660,7 @@ class RoutesShowModal extends Component {
                             text={route.description ? route.description : ''}
                           />
                         </div>
-                        <div className={css(styles.modalItem)}>
+                        <div className={css(styles.modalItem, styles.commentBlockWrapper)}>
                           <CommentBlock
                             startAnswer={this.startAnswer}
                             user={user}
@@ -768,13 +776,15 @@ const styles = StyleSheet.create({
     minHeight: '800px',
     minWidth: '960px',
     maxHeight: '1050px',
-    height: '95vh',
     '@media screen and (maxWidth: 1600px)': {
       minHeight: '700px',
     },
     '@media screen and (maxWidth: 1440px)': {
       minHeight: '600px',
     },
+  },
+  modalFixHeight: {
+    height: '95vh',
   },
   modalTrackBlock: {
     maxWidth: '530px',
@@ -958,6 +968,9 @@ const styles = StyleSheet.create({
     right: 'calc(100% + 12px)',
     top: '50%',
     transform: 'translateY(-50%)',
+  },
+  commentBlockWrapper: {
+    overflowY: 'auto',
   },
 });
 
