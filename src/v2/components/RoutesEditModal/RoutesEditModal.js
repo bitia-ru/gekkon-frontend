@@ -312,7 +312,7 @@ class RoutesEditModal extends Component {
     const newParam = {};
     newParam[paramName] = value;
     if (paramName === 'author') {
-      newParam.author_id = value.id;
+      newParam.author_id = value?.id;
     }
     if (paramName === 'photo' && value === null) {
       newParam.photoFile = null;
