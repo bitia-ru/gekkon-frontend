@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import classNames from 'classnames';
 import Person from '../../../v1/components/Person/Person';
 import { SEARCH_DELAY, GetUserName } from '../../../v1/Constants/User';
-import './ComboBoxPerson.css';
+import { css } from '../../aphrodite';
+import styles from './styles';
 
 export default class ComboBoxPerson extends Component {
   constructor(props) {
@@ -66,25 +66,9 @@ export default class ComboBoxPerson extends Component {
           : users
       );
       const name = selectedUser ? GetUserName(selectedUser) : 'Неизвестный накрутчик';
-      const buttonClasses = classNames({
-        'combo-box__select': true,
-        'combo-box__select-transparent': true,
-        'combo-box__select_small': true,
-        modal__link: true,
-        modal__link_edit: true,
-      });
-      const droppedDownClasses = classNames({
-        'combo-box__dropdown': true,
-        'modal__combo-box-drowdown': true,
-        'combo-box__dropdown_active': true,
-      });
-      const itemClasses = classNames({
-        'combo-box__dropdown-item': true,
-        'combo-box__dropdown-item_padding-10': true,
-      });
       return (
         <div
-          className="combo-box__container"
+          className={css(styles.comboBoxContainer)}
           onBlur={this.onBlur}
           tabIndex={1}
           onMouseLeave={() => {
@@ -95,7 +79,7 @@ export default class ComboBoxPerson extends Component {
           }}
         >
           <button
-            className={buttonClasses}
+            className={css(styles.comboBoxButton)}
             type="button"
             onClick={() => this.setState({ droppedDown: !droppedDown })}
           >
@@ -105,25 +89,25 @@ export default class ComboBoxPerson extends Component {
             droppedDown
               ? (
                 <div
-                  className={droppedDownClasses}
+                  className={css(styles.comboBoxDropdown)}
                 >
-                  <div className="combo-box__search-wrapper">
+                  <div className={css(styles.comboBoxSearchWrapper)}>
                     <input
                       type="text"
                       placeholder="Поиск..."
-                      className="combo-box__search"
+                      className={css(styles.comboBoxSearch)}
                       onChange={this.searchInput}
                       onKeyPress={this.onKeyPress}
                     />
                   </div>
-                  <div className="combo-box__dropdown-wrapper">
+                  <div className={css(styles.comboBoxDropdownWrapper)}>
                     {
                       R.map(
                         user => (
                           <li
                             key={user.id}
                             onClick={() => this.selectItem(user)}
-                            className={itemClasses}
+                            className={css(styles.comboBoxDropdownItem)}
                           >
                             <Person user={user} />
                           </li>
