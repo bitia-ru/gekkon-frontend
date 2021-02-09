@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignSelf: 'center',
     maxHeight: '100%',
-    overflowY: 'auto',
+    width: '100%',
     '> img': {
       width: '100%',
       maxWidth: '100%',
