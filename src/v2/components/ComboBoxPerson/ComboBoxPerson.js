@@ -6,6 +6,8 @@ import { SEARCH_DELAY, GetUserName } from '../../../v1/Constants/User';
 import { css } from '../../aphrodite';
 import styles from './styles';
 
+const mapIndexed = R.addIndex(R.map);
+
 export default class ComboBoxPerson extends Component {
   constructor(props) {
     super(props);
@@ -13,9 +15,11 @@ export default class ComboBoxPerson extends Component {
     this.state = {
       droppedDown: false,
       users: null,
+      selectedItemId: undefined,
     };
     this.lastSearchText = '';
     this.mouseOver = false;
+    this.listRef = {};
   }
 
     selectItem = (user) => {
@@ -24,10 +28,49 @@ export default class ComboBoxPerson extends Component {
       onSelect(R.clone(user));
     };
 
+    scrollToCurrentSelectedItem = () => {
+      if (!this.state.selectedItemId) { return; }
+      this.listRef[this.state.selectedItemId].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+
     onKeyPress = (event) => {
       if (event.key === 'Enter') {
         this.updateUserList(this.value);
       }
+      event.stopPropagation();
+    };
+
+    onKeyDown = (event) => {
+      const { users: usersProp } = this.props;
+      const { users, selectedItemId } = this.state;
+      const filteredUsers = (
+        users === null
+          ? R.filter(user => GetUserName(user) !== null, usersProp)
+          : users
+      );
+
+      if (event.key === 'Enter') {
+        this.selectItem(R.find(R.propEq('id', selectedItemId))(filteredUsers));
+      }
+
+      const listLength = R.keys(filteredUsers).length;
+      const selectedItem = R.findIndex(R.propEq('id', selectedItemId))(filteredUsers);
+      const newSelectedItem = {
+        ArrowUp: R.max(0, selectedItem - 1),
+        ArrowDown: R.min(listLength - 1, selectedItem + 1),
+      }[event.key];
+      if (newSelectedItem === undefined) { return; }
+
+      event.preventDefault();
+      this.setState(
+        state => {
+          const index = state.selectedItemId !== undefined ? newSelectedItem : 0;
+          return {
+            selectedItemId: filteredUsers[index].id,
+          }
+        },
+        this.scrollToCurrentSelectedItem,
+      );
     };
 
     searchInput = (event) => {
@@ -37,17 +80,18 @@ export default class ComboBoxPerson extends Component {
       this.timerId = setTimeout(() => this.updateUserList(value), SEARCH_DELAY);
     };
 
-    updateUserList = (value) => {
+    updateUserList = (value, afterUpdate) => {
       const { users } = this.props;
       if (value === this.lastSearchText) {
+        afterUpdate();
         return;
       }
       this.setState({
         users: R.filter((user) => {
           const name = GetUserName(user);
-          return (name !== null && name.match(value) !== null);
+          return (name !== null && name.toLowerCase().match(value.toLowerCase()) !== null);
         }, users),
-      });
+      }, afterUpdate);
       this.lastSearchText = value;
     };
 
@@ -57,9 +101,28 @@ export default class ComboBoxPerson extends Component {
       }
     };
 
+    dropDown = () => {
+      const { selectedUser } = this.props;
+      this.setState(
+        {
+          droppedDown: !this.state.droppedDown,
+          selectedItemId: (
+            selectedUser
+              ? selectedUser.id
+              : undefined
+          ),
+        },
+        () => {
+          if (this.state.droppedDown) {
+            this.updateUserList('', this.scrollToCurrentSelectedItem);
+          }
+        },
+      );
+    };
+
     render() {
       const { selectedUser, users: usersProp } = this.props;
-      const { users, droppedDown } = this.state;
+      const { users, droppedDown, selectedItemId } = this.state;
       const filteredUsers = (
         users === null
           ? R.filter(user => GetUserName(user) !== null, usersProp)
@@ -71,6 +134,8 @@ export default class ComboBoxPerson extends Component {
           className={css(styles.comboBoxContainer)}
           onBlur={this.onBlur}
           tabIndex={1}
+          onClick={this.dropDown}
+          onKeyDown={this.onKeyDown}
           onMouseLeave={() => {
             this.mouseOver = false;
           }}
@@ -78,13 +143,12 @@ export default class ComboBoxPerson extends Component {
             this.mouseOver = true;
           }}
         >
-          <button
+          <div
             className={css(styles.comboBoxButton)}
             type="button"
-            onClick={() => this.setState({ droppedDown: !droppedDown })}
           >
             {name === null ? 'Неизвестный накрутчик' : name}
-          </button>
+          </div>
           {
             droppedDown
               ? (
@@ -95,19 +159,28 @@ export default class ComboBoxPerson extends Component {
                     <input
                       type="text"
                       placeholder="Поиск..."
+                      autoFocus
                       className={css(styles.comboBoxSearch)}
                       onChange={this.searchInput}
                       onKeyPress={this.onKeyPress}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
                   <div className={css(styles.comboBoxDropdownWrapper)}>
                     {
-                      R.map(
-                        user => (
+                      mapIndexed(
+                        (user, index) => (
                           <li
-                            key={user.id}
+                            key={`author-${user.id}`}
+                            data-author={'author'}
                             onClick={() => this.selectItem(user)}
-                            className={css(styles.comboBoxDropdownItem)}
+                            ref={(ref) => { this.listRef[user.id] = ref; }}
+                            className={
+                              css(
+                                styles.comboBoxDropdownItem,
+                                selectedItemId === user.id && styles.comboBoxDropdownItemSelected,
+                              )
+                            }
                           >
                             <Person user={user} />
                           </li>
@@ -116,11 +189,18 @@ export default class ComboBoxPerson extends Component {
                       )
                     }
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => this.selectItem(null)}
+                    className={css(styles.clearButton)}
+                  >
+                    Сбросить
+                  </button>
                 </div>
               )
               : ''
-          }
-        </div>
+            }
+          </div>
       );
     }
 }

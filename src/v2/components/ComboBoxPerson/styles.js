@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     paddingLeft: '7px',
     paddingRight: '16px',
     width: 'auto',
+    cursor: 'pointer',
     fontSize: '16px',
     '@media screen and (max-width: 1440px)': {
       fontSize: '14px',
@@ -132,6 +133,40 @@ const styles = StyleSheet.create({
     ':hover': {
       backgroundColor: '#f5f5f5',
       cursor: 'pointer',
+    },
+  },
+  comboBoxDropdownItemSelected: {
+    backgroundColor: '#f5f5f5',
+    cursor: 'pointer',
+  },
+  clearButton: {
+    color: '#C2C3C8',
+    fontSize: '14px',
+    fontFamily: ['GilroyRegular', 'sans-serif'],
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
+    border: 'none',
+    transition: 'background-color .3s ease-out, color .3s ease-out',
+    position: 'relative',
+    outline: 'none',
+    ':after': {
+      position: 'absolute',
+      content: '\'\'',
+      left: 0,
+      right: 0,
+      top: 0,
+      height: '1px',
+      backgroundColor: '#F1F2F6',
+    },
+    ':hover': {
+      backgroundColor: '#F3F3F3',
+      color: '#6F6F6F',
     },
   },
 });
