@@ -443,7 +443,10 @@ class RoutesEditModal extends Component {
                           />
                           {
                             ((route && !route.photo) || !routeImageLoading) && (
-                              <div className={css(styles.modalTrackDescr)}>
+                              <div
+                                className={css(styles.modalTrackDescr)}
+                                onClick={() => this.fileInput.click()}
+                              >
                                 <div className={css(styles.modalTrackDescrPicture)} />
                                 <div className={css(styles.modalTrackDescrText)}>
                                   Загрузите фото трассы
@@ -782,6 +785,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
     zIndex: '1',
+    cursor: 'pointer',
   },
   modalTrackDescrPicture: {
     width: '118px',
