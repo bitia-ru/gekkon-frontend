@@ -12,6 +12,7 @@ import { default as wallPhotosReducerV2 } from '@/v2/redux/wall_photos/reducer';
 import { default as spotsReducerV2 } from '@/v2/redux/spots/reducer';
 import { default as routesReducerV2 } from '@/v2/redux/routes/reducer';
 import { default as selectedFiltersReducerV2 } from '@/v2/redux/selectedFilters/reducer';
+import initializedAtReducer from '@/v2/redux/initizalizedAt/reducer';
 
 
 const tabReducer = (state = 1, action) => {
@@ -78,4 +79,5 @@ export default combineReducers({
   wallPhotosV2: wallPhotosReducerV2,
   spotsStoreV2: spotsReducerV2,
   routesStoreV2: routesReducerV2,
+  initializedAt: initializedAtReducer,
 });
