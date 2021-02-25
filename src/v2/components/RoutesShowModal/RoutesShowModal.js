@@ -11,7 +11,7 @@ import CollapsableBlock from '@/v1/components/CollapsableBlock/CollapsableBlock'
 import CommentForm from '@/v1/components/CommentForm/CommentForm';
 import Counter from '@/v2/components/Counter/Counter';
 import RouteDataTable from '@/v2/components/RouteDataTable/RouteDataTable';
-import RouteEditor from '@/v1/components/RouteEditor/RouteEditor';
+import RouteEditor from '@/v2/components/RouteEditor/RouteEditor';
 import CloseButton from '@/v1/components/CloseButton/CloseButton';
 import { DEFAULT_COMMENTS_DISPLAYED } from '@/v1/Constants/Comments';
 import SchemeModal from '@/v2/components/SchemeModal/SchemeModal';
