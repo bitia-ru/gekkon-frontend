@@ -5,6 +5,7 @@ import Marker from '../Marker/Marker';
 import { MARKER_RADIUS } from '@/v1/Constants/Marker';
 import { SHORT_CLICK_DELAY } from '@/v1/Constants/Route';
 import RouteContext from '@/v1/contexts/RouteContext';
+import { getPointerType } from '@/v2/components/Marker/utils';
 import { StyleSheet, css } from '../../aphrodite';
 
 export default class RouteEditor extends Component {
@@ -206,6 +207,7 @@ export default class RouteEditor extends Component {
                                     ? ((x, y) => this.onStartMoving(index, x, y))
                                     : null
                                 }
+                                pointerType={getPointerType(editable, index, pointer)}
                                 angle={pointer.angle}
                                 radius={MARKER_RADIUS}
                                 dx={pointer.dx}
