@@ -118,11 +118,22 @@ class RoutesEditModal extends Component {
       loadRouteMarkColorsProp();
     }
     window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('paste', this.onPaste);
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('paste', this.onPaste);
   }
+
+  onPaste = (event) => {
+    if (['text', 'textarea'].includes(event.target.type)) {
+      return;
+    }
+    if (event.clipboardData.files.length > 0) {
+      this.onFileChosen(event.clipboardData.files[0]);
+    }
+  };
 
   afterSectorIsLoaded = (sector) => {
     const { user } = this.props;
@@ -438,9 +449,20 @@ class RoutesEditModal extends Component {
                           this.mouseOver = false;
                         }}
                       >
+                        <input
+                          type="file"
+                          hidden
+                          ref={(ref) => {
+                            this.fileInput = ref;
+                          }}
+                          onChange={event => this.onFileChosen(event.target.files[0])}
+                        />
                         <Dropzone onDrop={files => this.onFileChosen(files[0])}>
                           {({ getRootProps, getInputProps }) => (
-                            <div className={css(styles.modalTrack)} {...getRootProps()}>
+                            <div className={css(styles.modalTrack)}
+                                 {...getRootProps()}
+                                 onClick={(e) => e.preventDefault()}
+                            >
                               <input {...getInputProps()} />
                               <ShowSchemeButton
                                 onClick={() => this.setState({schemeModalVisible: true})}
@@ -453,7 +475,7 @@ class RoutesEditModal extends Component {
                                   >
                                     <div className={css(styles.modalTrackDescrPicture)} />
                                     <div className={css(styles.modalTrackDescrText)}>
-                                      Загрузите фото трассы
+                                      Перетащите сюда фото или вставьте из буфера обмена
                                     </div>
                                   </div>
                                 )
@@ -477,14 +499,6 @@ class RoutesEditModal extends Component {
                                   : ''
                               }
                               <div className={css(styles.btnHandlerTrackToggles)}>
-                                <input
-                                  type="file"
-                                  hidden
-                                  ref={(ref) => {
-                                    this.fileInput = ref;
-                                  }}
-                                  onChange={event => this.onFileChosen(event.target.files[0])}
-                                />
                                 {
                                   route && route.photo
                                     ? (
@@ -564,6 +578,7 @@ class RoutesEditModal extends Component {
                                 styles.modalTitleInputDark,
                               )}
                               maxLength="6"
+                              onPaste={(e) => e.stopPropagation()}
                               value={route.number ? route.number : ''}
                             />
                             <span className={css(styles.modalTitlePlace)}>(“</span>
@@ -575,6 +590,7 @@ class RoutesEditModal extends Component {
                                   'name',
                                 )
                               }
+                              onPaste={(e) => e.stopPropagation()}
                               className={css(styles.modalTitleInput)}
                               value={route.name ? route.name : ''}
                             />
@@ -600,6 +616,7 @@ class RoutesEditModal extends Component {
                             </button>
                             <textarea
                               className={css(styles.modalDescrEdit)}
+                              onPaste={(e) => e.stopPropagation()}
                               onChange={
                                 event => this.onRouteParamChange(
                                   event.target.value,
@@ -822,9 +839,12 @@ const styles = StyleSheet.create({
   },
   modalTrackDescrText: {
     fontFamily: ['GilroyBold', 'sans-serif'],
-    fontSize: '30px',
+    fontSize: '25px',
     color: '#797979',
     marginTop: '30px',
+    textAlign: 'center',
+    paddingLeft: '50px',
+    paddingRight: '50px',
   },
   modalItem: {
     paddingLeft: '45px',
