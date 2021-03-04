@@ -32,6 +32,7 @@ import { ApiUrl } from '@/v1/Environ';
 import { default as reloadSectorAction } from '@/v1/utils/reloadSector';
 import { default as reloadRoutesAction } from '@/v2/utils/reloadRoutes';
 import getFilters from '../../../v1/utils/getFilters';
+import Dropzone from 'react-dropzone';
 
 class RoutesEditModal extends Component {
   constructor(props) {
@@ -437,78 +438,83 @@ class RoutesEditModal extends Component {
                           this.mouseOver = false;
                         }}
                       >
-                        <div className={css(styles.modalTrack)}>
-                          <ShowSchemeButton
-                            onClick={() => this.setState({schemeModalVisible: true})}
-                          />
-                          {
-                            ((route && !route.photo) || !routeImageLoading) && (
-                              <div
-                                className={css(styles.modalTrackDescr)}
-                                onClick={() => this.fileInput.click()}
-                              >
-                                <div className={css(styles.modalTrackDescrPicture)} />
-                                <div className={css(styles.modalTrackDescrText)}>
-                                  Загрузите фото трассы
-                                </div>
-                              </div>
-                            )
-                          }
-                          {
-                            route && route.photo
-                              ? (
-                                <RouteEditor
-                                  routePhoto={
-                                    typeof (route.photo) === 'string'
-                                      ? route.photo
-                                      : route.photo.url
-                                  }
-                                  pointers={currentPointers}
-                                  editable
-                                  updatePointers={this.updatePointers}
-                                  routeImageLoading={routeImageLoading}
-                                  onImageLoad={() => this.setState({ routeImageLoading: false })}
-                                />
-                              )
-                              : ''
-                          }
-                          <div className={css(styles.btnHandlerTrackToggles)}>
-                            <input
-                              type="file"
-                              hidden
-                              ref={(ref) => {
-                                this.fileInput = ref;
-                              }}
-                              onChange={event => this.onFileChosen(event.target.files[0])}
-                            />
-                            {
-                              route && route.photo
-                                ? (
-                                  <React.Fragment>
-                                    <ButtonHandler
-                                      onClick={() => this.fileInput.click()}
-                                      title="Обновить фото"
-                                      xlinkHref={`${iconImage}#icon-btn-reload`}
-                                    />
-                                    <ButtonHandler
-                                      onClick={
-                                        () => this.onRouteParamChange(null, 'photo')
-                                      }
-                                      title="Удалить фото"
-                                      xlinkHref={`${iconImage}#icon-btn-close`}
-                                    />
-                                  </React.Fragment>
-                                )
-                                : (
-                                  <ButtonHandler
+                        <Dropzone onDrop={files => this.onFileChosen(files[0])}>
+                          {({ getRootProps, getInputProps }) => (
+                            <div className={css(styles.modalTrack)} {...getRootProps()}>
+                              <input {...getInputProps()} />
+                              <ShowSchemeButton
+                                onClick={() => this.setState({schemeModalVisible: true})}
+                              />
+                              {
+                                ((route && !route.photo) || !routeImageLoading) && (
+                                  <div
+                                    className={css(styles.modalTrackDescr)}
                                     onClick={() => this.fileInput.click()}
-                                    title="Загрузить фото"
-                                    xlinkHref={`${iconImage}#icon-btn-download`}
-                                  />
+                                  >
+                                    <div className={css(styles.modalTrackDescrPicture)} />
+                                    <div className={css(styles.modalTrackDescrText)}>
+                                      Загрузите фото трассы
+                                    </div>
+                                  </div>
                                 )
-                            }
-                          </div>
-                        </div>
+                              }
+                              {
+                                route && route.photo
+                                  ? (
+                                    <RouteEditor
+                                      routePhoto={
+                                        typeof (route.photo) === 'string'
+                                          ? route.photo
+                                          : route.photo.url
+                                      }
+                                      pointers={currentPointers}
+                                      editable
+                                      updatePointers={this.updatePointers}
+                                      routeImageLoading={routeImageLoading}
+                                      onImageLoad={() => this.setState({ routeImageLoading: false })}
+                                    />
+                                  )
+                                  : ''
+                              }
+                              <div className={css(styles.btnHandlerTrackToggles)}>
+                                <input
+                                  type="file"
+                                  hidden
+                                  ref={(ref) => {
+                                    this.fileInput = ref;
+                                  }}
+                                  onChange={event => this.onFileChosen(event.target.files[0])}
+                                />
+                                {
+                                  route && route.photo
+                                    ? (
+                                      <React.Fragment>
+                                        <ButtonHandler
+                                          onClick={() => this.fileInput.click()}
+                                          title="Обновить фото"
+                                          xlinkHref={`${iconImage}#icon-btn-reload`}
+                                        />
+                                        <ButtonHandler
+                                          onClick={
+                                            () => this.onRouteParamChange(null, 'photo')
+                                          }
+                                          title="Удалить фото"
+                                          xlinkHref={`${iconImage}#icon-btn-close`}
+                                        />
+                                      </React.Fragment>
+                                    )
+                                    : (
+                                      <ButtonHandler
+                                        onClick={() => this.fileInput.click()}
+                                        title="Загрузить фото"
+                                        xlinkHref={`${iconImage}#icon-btn-download`}
+                                      />
+                                    )
+                                }
+                              </div>
+                            </div>
+                          )}
+                        </Dropzone>
                         <div
                           className={css(styles.modalTrackFooter,styles.modalTrackFooterEditMode)}
                         >
