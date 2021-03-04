@@ -5,7 +5,7 @@ import './WallCardTable.css';
 import WallPhotoCard from './WallPhotoCard';
 
 
-const WallPhotosCardsLayout = ({ photos }) => (
+const WallPhotosCardsLayout = ({ photos, onClick, selectedIds }) => (
   <div className="content__inner" onClick={(e) => { e.stopPropagation(); }}>
     {
       R.map(
@@ -18,7 +18,11 @@ const WallPhotosCardsLayout = ({ photos }) => (
             style={{ outline: 'none' }}
           >
             <div className="content__route-card">
-              <WallPhotoCard photo={photo} />
+              <WallPhotoCard
+                photo={photo}
+                onClick={onClick}
+                selected={R.contains(photo.id, selectedIds)}
+              />
             </div>
           </div>
         ),
@@ -29,6 +33,8 @@ const WallPhotosCardsLayout = ({ photos }) => (
 
 WallPhotosCardsLayout.propTypes = {
   photos: PropTypes.array.isRequired,
+  onClick: PropTypes.func,
+  selectedIds: PropTypes.array,
 };
 
 export default WallPhotosCardsLayout;
