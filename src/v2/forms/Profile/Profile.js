@@ -404,6 +404,8 @@ class Profile extends Component {
                 </div>
               </div>
               <div className="modal-block__padding-wrapper">
+                <input type="text" style={{display: 'none'}} />
+                <input type="password" style={{display: 'none'}} />
                 <FormField
                   placeholder="Имя"
                   id="name"
@@ -429,6 +431,7 @@ class Profile extends Component {
                       ? 'Задать пароль'
                       : 'Сменить пароль'
                   }
+                  autocomplete="new-password"
                   onChange={this.onPasswordChange}
                   type="password"
                   hasError={this.hasError('password')}
@@ -443,6 +446,7 @@ class Profile extends Component {
                   hasError={this.hasError('repeatPassword')}
                   errorText={this.errorText('repeatPassword')}
                   value={repeatPassword}
+                  autocomplete="new-password"
                 />
                 <FormField
                   placeholder="Email"

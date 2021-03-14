@@ -12,7 +12,7 @@ export default class FormField extends Component {
 
     render() {
       const {
-        hasError, id, disabled, type, value, onChange, placeholder, errorText,
+        hasError, id, disabled, type, value, onChange, placeholder, errorText, autocomplete,
       } = this.props;
       const inputClass = `form__input${type === 'number' ? ' form__input-number' : ''}`;
       return (
@@ -27,6 +27,7 @@ export default class FormField extends Component {
               onChange={onChange}
               onKeyPress={this.onKeyPress}
               placeholder={placeholder}
+              autocomplete={autocomplete}
             />
             <label
               htmlFor={id}
@@ -62,6 +63,7 @@ FormField.propTypes = {
     PropTypes.string.isRequired,
     PropTypes.number.isRequired,
   ]),
+  autocomplete: PropTypes.string,
 };
 
 FormField.defaultProps = {
@@ -70,4 +72,5 @@ FormField.defaultProps = {
   disabled: false,
   onChange: null,
   errorText: null,
+  autocomplete: null,
 };
