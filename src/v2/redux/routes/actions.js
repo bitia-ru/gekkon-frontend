@@ -111,7 +111,7 @@ export const loadRoute = (id, afterLoad) => (
       type: acts.LOAD_ROUTES_REQUEST,
     });
 
-    const params = { with: ['comments', 'likes', 'ascents'] };
+    const params = { with: ['comments', 'likes', 'ascents', 'author'] };
     Api.get(
       `/v1/routes/${id}`,
       {
