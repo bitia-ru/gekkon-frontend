@@ -59,7 +59,7 @@ export const loadRoutes = (url, params) => (
 
     Axios.get(
       url,
-      { params: { ...params, with: ['ascents'] }, withCredentials: true },
+      { params: { ...params, with: ['ascents', 'author'] }, withCredentials: true },
     )
       .then((response) => {
         const routeIds = R.map(route => route.id, response.data.payload);
@@ -79,7 +79,7 @@ export const loadRoute = (url, afterLoad) => (
   (dispatch) => {
     dispatch(loadRoutesRequest());
 
-    const params = { with: ['comments', 'likes', 'ascents'] };
+    const params = { with: ['comments', 'likes', 'ascents', 'author'] };
     Axios.get(url, { params, withCredentials: true })
       .then((response) => {
         dispatch(loadRouteSuccess(prepareRoute(response.data.payload)));
