@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEFEFE',
     position: 'relative',
   },
-  calendarLeftV2: {
+  calendarLeftBottomV2: {
     position: 'fixed',
     ':before': {
       content: '\'\'',
@@ -28,6 +28,20 @@ const styles = StyleSheet.create({
       borderStyle: 'solid',
       borderWidth: '0 8px 8px 8px',
       borderColor: 'transparent transparent #ffffff transparent',
+    },
+  },
+  calendarLeftTopV2: {
+    position: 'fixed',
+    ':after': {
+      content: '\'\'',
+      position: 'absolute',
+      top: '100%',
+      left: '20px',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+      borderWidth: '8px 8px 0 8px',
+      borderColor: '#ffffff transparent transparent transparent',
     },
   },
   calendarContentHeaderMonth: {

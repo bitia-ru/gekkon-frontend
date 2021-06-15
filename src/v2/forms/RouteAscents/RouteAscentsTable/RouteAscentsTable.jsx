@@ -63,7 +63,9 @@ class RouteAscentsTable extends React.PureComponent {
         onDateClicked={(ascentId) => { this.setState({ dateChangingAscentId: ascentId }); }}
         onDateSelected={
           (ascentId, newDate) => {
-            onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
+            if (newDate !== null) {
+              onAscentDateChanged && onAscentDateChanged(ascentId, newDate);
+            }
             this.setState({ dateChangingAscentId: null });
           }
         }

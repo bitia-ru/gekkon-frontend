@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import * as R from 'ramda';
 import { StyleSheet, css } from '../../../aphrodite';
 import Calendar from '../../../components/common/Calendar/Calendar';
@@ -11,104 +11,126 @@ const RouteAscentsTableLayout = ({
   onDateSelected,
   dateChangingAscentId,
   ascents,
-}) => (
-  <RouteAscentsTableContext.Consumer>
-    {
-      ({ setLastRowRef }) => (
-        <>
-          <table className={css(style.tableHeader)}>
-            <thead>
-            <tr>
-              <th style={{ width: '10%', textAlign: 'left' }}>№</th>
-              <th style={{ width: '25%' }}>Статус</th>
-              <th style={{ width: '45%', textAlign: 'left' }}>Дата</th>
-              <th style={{ width: '10%' }} />
-              <th style={{ width: '10%' }} />
-            </tr>
-            </thead>
-          </table>
-          <div className={css(style.detailsContainer)}>
-            <table className={css(style.table)}>
-              <tbody>
-              {
-                ascents && R.addIndex(R.map)(
-                  (ascent, i) => (
-                    <tr key={i} ref={i === ascents.length - 1 ? setLastRowRef : null}>
-                      <td style={{ width: '10%', outline: 'none' }} tabIndex={0}>{i + 1}</td>
-                      <td
-                        tabIndex={0}
-                        style={{ width: '25%', textAlign: 'center', outline: 'none' }}
-                      >
-                        <img
-                          src={
-                            ascent.success ? (
-                              require('./assets/success_indicator.svg')
-                            ) : (
-                              require('./assets/fail_indicator.svg')
-                            )
-                          }
-                        />
-                      </td>
-                      <td
-                        tabIndex={0}
-                        style={{
-                          width: '45%',
-                          position: 'absolute',
-                          cursor: 'pointer',
-                          outline: 'none',
-                        }}
-                        onClick={() => {
-                          onDateClicked && onDateClicked(ascent.id);
-                        }}
-                      >
-                        {ascent.accomplished_at}
-                        {
-                          dateChangingAscentId === ascent.id && (
-                            <Calendar
-                              date={ascent.accomplished_at}
-                              onSelect={
-                                (newDate) => {
-                                  onDateSelected && onDateSelected(
-                                    ascent.id,
-                                    newDate ? newDate : null,
-                                  );
-                                }
+}) => {
+  const containerRef = useRef(null);
+  const [scroll, setScroll] = useState(0);
+  const [top, setTop] = useState(false);
+  const onScroll = () => {
+    const c = containerRef.current;
+    setTop(c.scrollTop * 1.0 / (c.scrollHeight - c.offsetHeight) > 0.5);
+    setScroll(containerRef.current.scrollTop);
+    onDateSelected(dateChangingAscentId, null);
+  };
+
+  return (
+    <RouteAscentsTableContext.Consumer>
+      {
+        ({ setLastRowRef }) => (
+          <>
+            <table className={css(style.tableHeader)}>
+              <thead>
+                <tr>
+                  <th style={{ width: '10%', textAlign: 'left' }}>№</th>
+                  <th style={{ width: '25%' }}>Статус</th>
+                  <th style={{ width: '45%', textAlign: 'left' }}>Дата</th>
+                  <th style={{ width: '10%' }} />
+                  <th style={{ width: '10%' }} />
+                </tr>
+              </thead>
+            </table>
+            <div
+              className={css(style.detailsContainer)}
+              ref={containerRef}
+              onScroll={onScroll}
+            >
+              <table className={css(style.table)}>
+                <tbody>
+                  {
+                    ascents && R.addIndex(R.map)(
+                      (ascent, i) => (
+                        <tr key={i} ref={i === ascents.length - 1 ? setLastRowRef : null}>
+                          <td style={{ width: '10%', outline: 'none' }} tabIndex={0}>{i + 1}</td>
+                          <td
+                            tabIndex={0}
+                            style={{ width: '25%', textAlign: 'center', outline: 'none' }}
+                          >
+                            <img
+                              src={
+                                ascent.success ? (
+                                  require('./assets/success_indicator.svg')
+                                ) : (
+                                  require('./assets/fail_indicator.svg')
+                                )
                               }
                             />
-                          )
-                        }
-                      </td>
-                      <td tabIndex={0} style={{ paddingLeft: '45%', outline: 'none' }}>
-                        {
-                          ascent.count > 1 && `×${ascent.count}`
-                        }
-                      </td>
-                      <td
-                        tabIndex={0}
-                        style={{ width: '20%', textAlign: 'right', outline: 'none' }}
-                      >
-                        <img
-                          style={{ cursor: 'pointer' }}
-                          onClick={
-                            () => {
-                              onRemoveClicked && onRemoveClicked(ascent.id);
+                          </td>
+                          <td
+                            tabIndex={0}
+                            style={{
+                              width: '45%',
+                              cursor: 'pointer',
+                              outline: 'none',
+                              whiteSpace: 'nowrap',
+                            }}
+                            onClick={() => {
+                              onDateClicked && onDateClicked(ascent.id);
+                            }}
+                          >
+                            {ascent.accomplished_at}
+                            {
+                              dateChangingAscentId === ascent.id && (
+                                <div style={{ position: 'relative' }}>
+                                  <Calendar
+                                    left="-80px"
+                                    top={`${top ? -315 - scroll : -scroll}px`}
+                                    position={top ? 'top' : 'bottom'}
+                                    date={ascent.accomplished_at}
+                                    resetDisabled
+                                    onSelect={
+                                      (newDate) => {
+                                        onDateSelected && onDateSelected(
+                                          ascent.id,
+                                          newDate ? newDate : null,
+                                        );
+                                      }
+                                    }
+                                  />
+                                </div>
+                              )
                             }
-                          }
-                          src={require('./assets/remove.svg')}
-                        />
-                      </td>
-                    </tr>
-                  ),
-                )(ascents)
-              }
-              </tbody>
-            </table>
-          </div>
-        </>
-      )
-    }
-  </RouteAscentsTableContext.Consumer>
-);
+                          </td>
+                          <td tabIndex={0} style={{ outline: 'none' }}>
+                            {
+                              ascent.count > 1 && `×${ascent.count}`
+                            }
+                          </td>
+                          <td
+                            tabIndex={0}
+                            style={{ width: '20%', textAlign: 'right', outline: 'none' }}
+                          >
+                            <img
+                              style={{ cursor: 'pointer' }}
+                              onClick={
+                                () => {
+                                  onRemoveClicked && onRemoveClicked(ascent.id);
+                                }
+                              }
+                              src={require('./assets/remove.svg')}
+                            />
+                          </td>
+                        </tr>
+                      ),
+                    )(ascents)
+                  }
+                </tbody>
+              </table>
+            </div>
+          </>
+        )
+      }
+    </RouteAscentsTableContext.Consumer>
+  );
+};
 
 const style = StyleSheet.create({
   detailsContainer: {
@@ -120,6 +142,7 @@ const style = StyleSheet.create({
   table: {
     width: '100%',
     borderSpacing: 0,
+    tableLayout: 'fixed',
 
     '> tbody': {
       '> tr': {
