@@ -8,7 +8,10 @@ const CloseButton = ({
   <button
     className={css(styles.close)}
     type="button"
-    onClick={onClick}
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick(e);
+    }}
   />
 );
 

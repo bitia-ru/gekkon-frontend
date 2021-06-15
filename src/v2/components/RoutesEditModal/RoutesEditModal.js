@@ -52,6 +52,7 @@ class RoutesEditModal extends Component {
       routeImageLoading: true,
       schemeModalVisible: false,
       isWaiting: false,
+      routePositionChanged: false,
     };
     this.mouseOver = false;
   }
@@ -119,10 +120,17 @@ class RoutesEditModal extends Component {
     }
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('paste', this.onPaste);
+    window.addEventListener('beforeunload', this.confirmBeforeLeaving);
+    this.props.history.block((location, action) => {
+      if (action === 'POP' && !this.saveDisabled()) {
+        return 'Отменить редактирование?';
+      }
+    });
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('beforeunload', this.confirmBeforeLeaving);
     window.removeEventListener('paste', this.onPaste);
   }
 
@@ -132,6 +140,14 @@ class RoutesEditModal extends Component {
     }
     if (event.clipboardData.files.length > 0) {
       this.onFileChosen(event.clipboardData.files[0]);
+    }
+  }
+
+  confirmBeforeLeaving = (e) => {
+    if (!this.saveDisabled()) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
     }
   };
 
@@ -378,16 +394,42 @@ class RoutesEditModal extends Component {
     const data = R.clone(route.data);
     data.position = R.clone(position);
     this.onRouteParamChange(data, 'data');
-    this.setState({ schemeModalVisible: false });
+    this.setState({ schemeModalVisible: false, routePositionChanged: false });
   };
 
   resetRoutePositionAndClose = () => {
-    this.setState({ schemeModalVisible: false });
+    const { routePositionChanged } = this.state;
+    if (!routePositionChanged || window.confirm('Отменить редактирование?')) {
+      this.setState({ schemeModalVisible: false, routePositionChanged: false });
+    }
   };
+
+  onRoutePositionChange = () => {
+    this.setState({ routePositionChanged: true });
+  };
+
+  saveDisabled = () => {
+    const {
+      route,
+      fieldsOld,
+      currentPointers,
+      currentPointersOld,
+      routePositionChanged,
+    } = this.state;
+    const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
+    const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
+    return !routeChanged && !markChanged && !routePositionChanged;
+  };
+
+  onClose = () => {
+    const saveDisabled = this.saveDisabled();
+    if (saveDisabled || window.confirm('Отменить редактирование?')) {
+      this.props.onClose();
+    }
+  }
 
   content = () => {
     const {
-      onClose,
       cancel,
       user,
       routeMarkColors,
@@ -395,16 +437,12 @@ class RoutesEditModal extends Component {
     } = this.props;
     const {
       route,
-      fieldsOld,
       currentPointers,
-      currentPointersOld,
       routeImageLoading,
       schemeModalVisible,
       isWaiting,
     } = this.state;
-    const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
-    const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
-    const saveDisabled = (!routeChanged && !markChanged);
+    const saveDisabled = this.saveDisabled();
     const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg');
     return (
       <div className={css(styles.modalOverlayWrapper)}>
@@ -422,7 +460,7 @@ class RoutesEditModal extends Component {
               onClick={
                 schemeModalVisible
                   ? this.resetRoutePositionAndClose
-                  : () => onClose()
+                  : this.onClose
               }
             />
           </div>
@@ -434,6 +472,7 @@ class RoutesEditModal extends Component {
                   editable
                   save={this.saveRoutePositionAndClose}
                   close={this.resetRoutePositionAndClose}
+                  onChange={this.onRoutePositionChange}
                 />
               )
               : (
@@ -465,7 +504,12 @@ class RoutesEditModal extends Component {
                             >
                               <input {...getInputProps()} />
                               <ShowSchemeButton
-                                onClick={() => this.setState({schemeModalVisible: true})}
+                                onClick={
+                                  () => this.setState({
+                                    schemeModalVisible: true,
+                                    routePositionChanged: false,
+                                  })
+                                }
                               />
                               {
                                 ((route && !route.photo) || !routeImageLoading) && (
@@ -537,7 +581,9 @@ class RoutesEditModal extends Component {
                               size="small"
                               style="gray"
                               title="Отмена"
-                              onClick={cancel}
+                              onClick={
+                                (event) => cancel(event)
+                              }
                             />
                           </div>
                           <div className={css(styles.modalTrackFooterEditModeItem)}>
@@ -639,7 +685,6 @@ class RoutesEditModal extends Component {
   };
 
   render() {
-    const { onClose } = this.props;
     const {
       showCropper,
       photo,
@@ -651,7 +696,7 @@ class RoutesEditModal extends Component {
           className={css(styles.modalOverlay)}
           onClick={showCropper ? null : () => {
             if (!this.mouseOver) {
-              onClose();
+              this.onClose();
             }
           }}
         >
