@@ -11,6 +11,8 @@ const RouteAscentsTableLayout = ({
   onDateSelected,
   dateChangingAscentId,
   ascents,
+  disabledToDate,
+  disabledFromDate,
 }) => (
   <RouteAscentsTableContext.Consumer>
     {
@@ -66,6 +68,8 @@ const RouteAscentsTableLayout = ({
                           dateChangingAscentId === ascent.id && (
                             <Calendar
                               date={ascent.accomplished_at}
+                              disabledToDate={disabledToDate}
+                              disabledFromDate={disabledFromDate}
                               onSelect={
                                 (newDate) => {
                                   onDateSelected && onDateSelected(

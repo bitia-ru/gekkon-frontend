@@ -275,6 +275,22 @@ class RouteAscents extends Component {
     }
   };
 
+  disabledFromDate = () => {
+    const { routes } = this.props;
+    const route = routes[this.getRouteId()];
+    if (!route.installed_until) { return moment(); }
+
+    return moment(route.installed_until) < moment() ? moment(route.installed_until) : moment();
+  };
+
+  disabledToDate = () => {
+    const { routes } = this.props;
+    const route = routes[this.getRouteId()];
+    if (!route.installed_at) { return null; }
+
+    return moment(route.installed_at);
+  };
+
   render() {
     const { details, ascent, mergeLastRow } = this.state;
     const ascentsHistory = this.ascentsForLayout();
@@ -297,6 +313,8 @@ class RouteAscents extends Component {
               onAddAscents={this.onAddAscents}
               onRemoveAscent={this.removeAscent}
               onAscentDateChanged={this.onAscentDateChanged}
+              disabledFromDate={this.disabledFromDate()}
+              disabledToDate={this.disabledToDate()}
             />
           </div>
         </RouteAscentsTableContext.Provider>
