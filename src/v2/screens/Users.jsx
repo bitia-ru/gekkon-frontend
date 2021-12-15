@@ -28,12 +28,9 @@ const Users = ({ users, loadUsers, match, history }) => {
       id: R.sortBy(R.prop('id')),
       registration_date: R.sortBy(R.prop('created_at')),
       karma: R.pipe(
-        R.filter(u => (u.data && u.data.karma > 0)),
+        R.filter(u => (u.karma > 0)),
         R.sortBy(
-          R.pipe(
-            R.path(['data', 'karma']),
-            R.divide(1),
-          ),
+          R.prop('karma'),
         ),
       ),
       score: R.pipe(
@@ -79,7 +76,7 @@ const Users = ({ users, loadUsers, match, history }) => {
                 avatar: user.avatar ? user.avatar.url : '',
                 name: userBaseName(user),
                 scores: Math.round(user.statistics.score || 0),
-                karma: Math.round((user.data.karma || 0) * 100) / 100.0,
+                karma: Math.round(user.karma * 100) / 100.0,
                 url: `${match.url}/${user.id}`,
               }),
             )
