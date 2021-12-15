@@ -51,7 +51,7 @@ class SchemePointer extends Component {
       onMouseDown={this.onMouseDown}
       className="track-point"
     >
-      {category.substring(0, 2)}
+      {category}
     </button>;
   }
 }
