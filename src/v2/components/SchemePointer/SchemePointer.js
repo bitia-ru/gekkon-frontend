@@ -54,7 +54,7 @@ class SchemePointer extends Component {
       onMouseDown={this.onMouseDown}
       className={css(styles.trackPoint)}
     >
-      {category.substring(0, 2)}
+      {category}
     </button>;
   }
 }
