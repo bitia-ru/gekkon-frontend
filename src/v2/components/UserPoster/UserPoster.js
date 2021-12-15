@@ -132,7 +132,7 @@ class UserPoster extends Component {
                 </div>
                 <div>
                   <div>Карма:</div>
-                  <div>{ (user && user.data && user.data.karma !== undefined) ? Math.round(user.data.karma * 100) / 100.0 : '-' }</div>
+                  <div>{ user.karma > 0 ? Math.round(user.karma * 100) / 100.0 : '-' }</div>
                 </div>
                 <div>
                   <div>Достижения (б/т):</div>
