@@ -61,7 +61,25 @@ class Profile extends Component {
         avatar,
       },
     });
+    window.addEventListener('beforeunload', this.confirmBeforeLeaving);
+    this.props.history.block((location, action) => {
+      if (['POP', 'REPLACE'].includes(action) && this.fieldsChanged()) {
+        return 'Отменить редактирование?';
+      }
+    });
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.confirmBeforeLeaving);
+  }
+
+  confirmBeforeLeaving = (e) => {
+    if (this.fieldsChanged()) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+  };
 
   saveStartFieldsValues = (user) => {
     this.setState({
