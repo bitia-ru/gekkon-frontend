@@ -7,6 +7,7 @@ import { GetUserName } from '../../Constants/User';
 import { ROUTE_KINDS } from '../../Constants/Route';
 import RouteColorPicker from '@/v2/components/RouteColorPicker/RouteColorPicker';
 import './RouteDataTable.css';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 const RouteDataTable = ({
   user, route,
@@ -29,7 +30,9 @@ const RouteDataTable = ({
           Категория:
         </div>
         <div className="route-data-table-item">
-          <div className="route-data-table__category-track">{route.category}</div>
+          <div className="route-data-table__category-track">
+            {routeCategoryToString(route)}
+          </div>
           <div
             className="route-data-table__category-track-color"
             style={{ backgroundColor: getCategoryColor(route.category) }}

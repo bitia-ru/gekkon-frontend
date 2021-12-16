@@ -9,6 +9,7 @@ import { timeFromNow } from '@/v1/Constants/DateTimeFormatter';
 import RouteContext from '@/v1/contexts/RouteContext';
 import { css } from '../../aphrodite';
 import styles from './styles';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 
 class RouteCard extends Component {
@@ -105,7 +106,7 @@ class RouteCard extends Component {
                     className={css(styles.routeCardCategory)}
                     style={{ borderColor: route.marks_color?.color || 'rgba(0, 0, 0, 0)' }}
                   >
-                    {route.category}
+                    {routeCategoryToString(route)}
                   </div>
                   {
                     route.holds_color && (

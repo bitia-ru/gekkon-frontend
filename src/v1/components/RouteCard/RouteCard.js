@@ -11,6 +11,7 @@ import RouteContext from '../../contexts/RouteContext';
 import { avail, notAvail } from '../../utils';
 import getArrayFromObject from '../../utils/getArrayFromObject';
 import './RouteCard.css';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 class RouteCard extends Component {
   constructor(props) {
@@ -105,7 +106,7 @@ class RouteCard extends Component {
                       <span className="route-card__date" />
                     )
                 }
-                <div className="route-card__level">{route.category}</div>
+                <div className="route-card__level">{routeCategoryToString(route)}</div>
               </div>
             </div>
           </article>
