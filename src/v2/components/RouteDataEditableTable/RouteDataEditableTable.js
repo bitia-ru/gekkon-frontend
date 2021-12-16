@@ -13,6 +13,7 @@ import DatePicker from '@/v1/components/DatePicker/DatePicker';
 import RouteContext from '@/v1/contexts/RouteContext';
 import { css } from '@/v2/aphrodite';
 import styles from './styles';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 class RouteDataEditableTable extends Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class RouteDataEditableTable extends Component {
                           onClick={() => this.setState({ showSlider: !showSlider })}
                         >
                           <div className={css(styles.routeDataTableCategoryTrack)}>
-                            {route.category}
+                            {routeCategoryToString(route)}
                           </div>
                           <div
                             className={css(styles.routeDataTableCategoryTrackColor)}

@@ -8,6 +8,7 @@ import { HIDE_DELAY } from '../../Constants/Scheme';
 import SchemePointer from '../SchemePointer/SchemePointer';
 import SectorContext from '../../contexts/SectorContext';
 import './Scheme.css';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 class Scheme extends Component {
   constructor(props) {
@@ -86,7 +87,7 @@ class Scheme extends Component {
                                       ? onStartMoving
                                       : null
                                   }
-                                  category={route.category}
+                                  category={routeCategoryToString(route)}
                                   transparent={!R.contains(route.id, currentRoutes)}
                                   color={
                                     route.holds_color === null ? undefined : route.holds_color.color

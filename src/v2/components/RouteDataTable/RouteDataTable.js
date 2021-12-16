@@ -7,6 +7,7 @@ import { GetUserName } from '@/v1/Constants/User';
 import { ROUTE_KINDS } from '@/v1/Constants/Route';
 import RouteColorPicker from '../RouteColorPicker/RouteColorPicker';
 import { StyleSheet, css } from '../../aphrodite';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 const RouteDataTable = ({
   user, route,
@@ -31,7 +32,9 @@ const RouteDataTable = ({
           Категория:
         </div>
         <div className={css(styles.routeDataTableItem)}>
-          <div className={css(styles.routeDataTableCategoryTrack)}>{route.category}</div>
+          <div className={css(styles.routeDataTableCategoryTrack)}>
+            {routeCategoryToString(route)}
+          </div>
           <div
             className={css(styles.routeDataTableCategoryTrackColor)}
             style={{ backgroundColor: getCategoryColor(route.category) }}

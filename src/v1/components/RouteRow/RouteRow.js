@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { GetUserName } from '../../Constants/User';
 import RouteColor from '../RouteColor/RouteColor';
 import './RouteRow.css';
+import { routeCategoryToString } from '@/lib/routeHelpers';
 
 const RouteRow = ({ onRouteClick, route, user }) => {
   const isCurrentUserRoute = user && route.author_id === user.id;
@@ -30,7 +31,7 @@ const RouteRow = ({ onRouteClick, route, user }) => {
       {route.number ? `№${route.number}` : `#${route.id}`}
     </div>
     <div className="table-card__item table-card__name">{route.name}</div>
-    <div className="table-card__item table-card__category">{route.category}</div>
+    <div className="table-card__item table-card__category">{routeCategoryToString(route)}</div>
     <div className="table-card__item table-card__marking">
       <RouteColor size="medium" route={route} fieldName="holds_color" />
     </div>
