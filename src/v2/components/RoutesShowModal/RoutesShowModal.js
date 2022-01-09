@@ -994,7 +994,7 @@ const mapDispatchToProps = dispatch => ({
   reloadSpot: spotId => dispatch(reloadSpotAction(spotId)),
   reloadSector: sectorId => dispatch(reloadSectorAction(sectorId)),
   reloadRoutes: (spotId, sectorId) => dispatch(reloadRoutesAction(spotId, sectorId)),
-  loadRoute: (id, afterLoad) => dispatch(loadRouteAction(id, afterLoad)),
+  loadRoute: id => dispatch(loadRouteAction(id, /* incrementViewsCount */ true)),
   removeComment: id => dispatch(removeCommentAction(id)),
   addComment: (params, afterSuccess) => dispatch(addCommentAction(params, afterSuccess)),
   removeLike: (id, afterAll) => dispatch(removeLikeAction(id, afterAll)),
