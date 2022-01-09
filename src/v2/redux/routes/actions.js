@@ -105,13 +105,15 @@ export const loadRoutes = (url, params) => (
   }
 );
 
-export const loadRoute = (id, afterLoad) => (
+export const loadRoute = (id, incrementViewsCount, afterLoad) => (
   (dispatch) => {
-    dispatch({
-      type: acts.LOAD_ROUTES_REQUEST,
-    });
+    dispatch({ type: acts.LOAD_ROUTES_REQUEST });
 
-    const params = { with: ['comments', 'likes', 'ascents', 'author'] };
+    const params = {
+      with: ['comments', 'likes', 'ascents', 'author'],
+      ...(incrementViewsCount ? { incrementViewsCount: true } : {}),
+    };
+
     Api.get(
       `/v1/routes/${id}`,
       {
@@ -121,14 +123,11 @@ export const loadRoute = (id, afterLoad) => (
             type: acts.LOAD_ROUTE_SUCCESS,
             route: prepareRoute(payload),
           });
-          if (afterLoad) {
-            afterLoad(payload);
-          }
+
+          if (afterLoad) afterLoad(payload);
         },
         failed(error) {
-          dispatch({
-            type: acts.LOAD_ROUTES_FAILED,
-          });
+          dispatch({ type: acts.LOAD_ROUTES_FAILED });
 
           toastHttpError(error);
         },
