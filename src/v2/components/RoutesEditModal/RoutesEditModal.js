@@ -1010,7 +1010,9 @@ const mapDispatchToProps = dispatch => ({
   loadRouteMarkColors: () => dispatch(loadRouteMarkColors()),
   loadUsers: () => dispatch(loadUsers()),
   loadSector: (url, params, afterLoad) => dispatch(loadSector(url, params, afterLoad)),
-  loadRoute: (id, afterLoad) => dispatch(loadRouteAction(id, afterLoad)),
+  loadRoute: (id, afterLoad) => dispatch(
+    loadRouteAction(id, /* incrementViewsCount */ false, afterLoad),
+  ),
   updateRoute: (id, params, afterSuccess, afterAll) => dispatch(
     updateRouteAction(id, params, afterSuccess, afterAll),
   ),
