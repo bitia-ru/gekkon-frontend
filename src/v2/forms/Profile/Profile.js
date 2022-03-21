@@ -350,9 +350,7 @@ class Profile extends Component {
     );
 
     const iconVk = `${socialLinksSprite}#icon-vk`;
-    const iconFB = `${socialLinksSprite}#icon-facebook`;
     const iconTwitter = `${socialLinksSprite}#icon-twitter`;
-    const iconInst = `${socialLinksSprite}#icon-inst`;
     const iconYoutube = `${socialLinksSprite}#icon-youtube`;
 
     return (
@@ -487,9 +485,7 @@ class Profile extends Component {
                       </li>
                       { false
                       && <>
-                        <li><SocialLinkButton xlinkHref={iconFB} dark unactive /></li>
                         <li><SocialLinkButton xlinkHref={iconTwitter} dark unactive /></li>
-                        <li><SocialLinkButton xlinkHref={iconInst} dark unactive /></li>
                         <li><SocialLinkButton xlinkHref={iconYoutube} dark unactive /></li>
                       </>
                       }
