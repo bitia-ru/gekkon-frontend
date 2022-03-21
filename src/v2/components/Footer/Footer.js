@@ -6,7 +6,6 @@ import { currentUser } from '../../redux/user_session/utils';
 import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
 import {
   TELEGRAM_LINK,
-  INSTA_LINK,
   VK_LINK,
 } from '@/v1/Constants/SocialLinks';
 import { notReady, notExist } from '@/v1/utils';
@@ -127,12 +126,6 @@ class Footer extends React.PureComponent {
                 <SocialLinkButton
                   href={VK_LINK}
                   xlinkHref={`${socialLinksSprite}#icon-vk`}
-                />
-              </li>
-              <li>
-                <SocialLinkButton
-                  href={INSTA_LINK}
-                  xlinkHref={`${socialLinksSprite}#icon-inst`}
                 />
               </li>
             </ul>

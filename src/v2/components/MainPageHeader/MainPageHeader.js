@@ -7,7 +7,7 @@ import { notReady, notExist } from '@/v1/utils';
 import './MainPageHeader.css';
 import { currentUser } from '@/v2/redux/user_session/utils';
 import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
-import { INSTA_LINK, TELEGRAM_LINK, VK_LINK } from '@/v1/Constants/SocialLinks';
+import { TELEGRAM_LINK, VK_LINK } from '@/v1/Constants/SocialLinks';
 
 const bgImage = require('./images/main-page-header.jpg');
 
@@ -77,13 +77,6 @@ class MainPageHeader extends Component {
                         dark
                         href={VK_LINK}
                         xlinkHref={`${socialLinksSprite}#icon-vk`}
-                      />
-                    </li>
-                    <li>
-                      <SocialLinkButton
-                        dark
-                        href={INSTA_LINK}
-                        xlinkHref={`${socialLinksSprite}#icon-inst`}
                       />
                     </li>
                   </ul>
