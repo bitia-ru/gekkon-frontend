@@ -61,7 +61,7 @@ class DivWithBackgroundImage extends React.Component {
     const style = {
       ...(this.props.style ? this.props.style : {}),
       backgroundImage: image === null ? 'none' : (
-        image ? `url(${image})` : `url(${require('./placeholder.svg')})`
+        image ? `url(${image})` : `url(${require('./placeholder.svg').default})`
       ),
     };
 

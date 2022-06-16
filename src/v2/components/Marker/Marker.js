@@ -54,7 +54,7 @@ export default class Marker extends Component {
             // Fixes dragging pointers on Firefox (see
             // https://stackoverflow.com/questions/26356877/html5-draggable-false-not-working-in-firefox-browser)
             onDragStart={(e) => { e.preventDefault() }}
-            src={require(`./images/${pointerType}.svg`)}
+            src={require(`./images/${pointerType}.svg`).default}
             className={css(styles.markerImage)}
             style={{
               width: `${radius * 2}px`,

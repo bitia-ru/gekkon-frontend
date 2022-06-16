@@ -25,7 +25,7 @@ export const getColorStyle = (routeMarkColor) => {
   if (routeMarkColor && routeMarkColor.color) {
     return { backgroundColor: routeMarkColor.color };
   }
-  return { backgroundImage: `url(${require('../../../img/route-img/no_color.png')})` };
+  return { backgroundImage: `url(${require('../../../img/route-img/no_color.png').default})` };
 };
 
 export const NUM_OF_DAYS = 7; // is used to count new routes in sector info

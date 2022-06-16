@@ -18,7 +18,7 @@ export const USER_ITEMS_DATA = [
     id: 2,
     title: 'Выйти',
     clickable: true,
-    svgSrc: `${require('../../../img/main-nav-img/exit.svg')}#exit`,
+    svgSrc: `${require('../../../img/main-nav-img/exit.svg').default}#exit`,
   },
 ];
 

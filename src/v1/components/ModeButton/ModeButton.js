@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import './ModeButton.css';
 
-const icons = require('./images/view-mode-switcher-sprite.svg');
+const icons = require('./images/view-mode-switcher-sprite.svg').default;
 
 const schemeIcon = `${icons}#toggle-track`;
 const tableIcon = `${icons}#toggle-table`;
