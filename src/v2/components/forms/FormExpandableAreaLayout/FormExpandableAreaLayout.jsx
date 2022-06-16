@@ -8,7 +8,7 @@ const FormExpandableAreaLayout = ({ children, expanded, onClick }) => (
       className={css(style.expander, expanded && style.expanderActivated)}
       onClick={() => onClick && onClick()}
     >
-      Подробнее <img src={require('./assets/expander_flag.svg')} />
+      Подробнее <img src={require('./assets/expander_flag.svg').default} />
     </div>
     {
       expanded && children

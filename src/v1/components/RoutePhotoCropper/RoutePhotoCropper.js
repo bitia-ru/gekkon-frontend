@@ -107,7 +107,7 @@ export default class RoutePhotoCropper extends Component {
       const {
         croppedImageUrl, crop, rotate, image, src,
       } = this.state;
-      const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg');
+      const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg').default;
       return (
         <React.Fragment>
           <div

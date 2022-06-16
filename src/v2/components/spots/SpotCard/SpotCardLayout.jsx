@@ -36,7 +36,7 @@ const SpotCardLayout = ({ spot, onClick, style: inputStyle, className }) => (
                       R.addIndex(R.map)(
                         (e, i) => (
                           <tr>
-                            <td>{i === 0 ? <img src={require('./assets/calendar.svg')} /> : ''}</td>
+                            <td>{i === 0 ? <img src={require('./assets/calendar.svg').default} /> : ''}</td>
                             <td style={{ color: '#B4BABC' }}>{e.days}</td>
                             <td>{e.hours}</td>
                           </tr>
@@ -49,10 +49,10 @@ const SpotCardLayout = ({ spot, onClick, style: inputStyle, className }) => (
                       R.addIndex(R.map)(
                         (way, i) => (
                           <tr>
-                            <td>{ i === 0 ? <img src={require('./assets/landmark.svg')} /> : '' }</td>
+                            <td>{ i === 0 ? <img src={require('./assets/landmark.svg').default} /> : '' }</td>
                             <td>{way.pointFrom}</td>
                             <td style={{ color: '#B4BABC' }}>
-                              <img src={require(`./assets/${way.pointFromType}.svg`)} />
+                              <img src={require(`./assets/${way.pointFromType}.svg`).default} />
                               &nbsp;
                               {way.distance}
                             </td>
@@ -66,7 +66,7 @@ const SpotCardLayout = ({ spot, onClick, style: inputStyle, className }) => (
                       R.addIndex(R.map)(
                         (priceLine, i) => (
                           <tr>
-                            <td><img src={i === 0 ? require('./assets/coin.svg') : ''} /></td>
+                            <td><img src={i === 0 ? require('./assets/coin.svg').default : ''} /></td>
                             <td style={{ color: '#B4BABC' }}>{priceLine.days}</td>
                             <td>{priceLine.cost}</td>
                           </tr>
