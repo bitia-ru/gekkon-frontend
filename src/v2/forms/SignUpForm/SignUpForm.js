@@ -277,7 +277,7 @@ class SignUpForm extends Component {
   render() {
     const socialLinksSprite = require(
       '../../../../img/social-links-sprite/social-links-sprite.svg',
-    );
+    ).default;
 
     const iconVk = `${socialLinksSprite}#icon-vk`;
     const iconFB = `${socialLinksSprite}#icon-facebook`;

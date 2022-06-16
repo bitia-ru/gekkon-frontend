@@ -277,7 +277,7 @@ class LogInForm extends Component {
       const { enterWithVk } = this.props;
       const socialLinksSprite = require(
         '../../../../img/social-links-sprite/social-links-sprite.svg',
-      );
+      ).default;
       const iconVk = `${socialLinksSprite}#icon-vk`;
       const iconTwitter = `${socialLinksSprite}#icon-twitter`;
       const iconYoutube = `${socialLinksSprite}#icon-youtube`;

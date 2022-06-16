@@ -35,7 +35,7 @@ class RouteCard extends Component {
       year = yearUntil !== moment().format('YYYY') ? yearUntil : '';
       titleDate = installedUntil.format('Do MMMM');
     }
-    const cardSprite = require('./images/card-sprite.svg');
+    const cardSprite = require('./images/card-sprite.svg').default;
     const alarmIcon = `${cardSprite}#icon-alarm`;
     const clockIcon = `${cardSprite}#icon-clock`;
     const installedUntilValid = (installedUntil && date >= installedUntil);

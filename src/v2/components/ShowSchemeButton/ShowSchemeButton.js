@@ -26,7 +26,7 @@ const ShowSchemeButton = ({
             <svg>
               <use
                 xlinkHref={
-                  `${require('../../../../img/btn-handler/btn-handler-sprite.svg')}#icon-show-map`
+                  `${require('../../../../img/btn-handler/btn-handler-sprite.svg').default}#icon-show-map`
                 }
               />
             </svg>

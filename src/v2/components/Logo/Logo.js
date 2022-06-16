@@ -7,7 +7,7 @@ const Logo = () => (
   <div className={css(styles.container)}>
     <Link to="/" className={css(styles.link)}>
       <span className={css(styles.iconContainer)}>
-        <img src={require('./images/logo-75x75.png')} alt="RC" />
+        <img src={require('./images/logo-75x75.png').default} alt="RC" />
       </span>
     </Link>
   </div>

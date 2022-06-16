@@ -48,7 +48,7 @@ class RouteCard extends Component {
           : ''
       );
     }
-    const cardSprite = require('./images/card-sprite.svg');
+    const cardSprite = require('./images/card-sprite.svg').default;
     const alarmIcon = `${cardSprite}#icon-alarm`;
     const clockIcon = `${cardSprite}#icon-clock`;
     const installedUntilValid = (installedUntil && date >= installedUntil);

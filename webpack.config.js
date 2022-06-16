@@ -1,25 +1,30 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
+const BUILD_DIR = path.resolve(__dirname, 'public');
 
 module.exports = () => ({
-  entry: ['@babel/polyfill', './src/v1/index.js'],
+  entry: ['./src/v1/index.js'],
   output: {
-    path: path.join(__dirname, '/dist'),
+    path: BUILD_DIR,
     filename: 'index.js',
     publicPath: '/',
-  },
-  devServer: {
-    historyApiFallback: true,
   },
   devtool: 'source-map',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+    fallback: {
+      "crypto": false,
+      "buffer": false
+    },
     extensions: ['.js', '.jsx'],
+  },
+  performance: {
+    maxEntrypointSize: 1572864*2,
+    maxAssetSize: 1572864*2
   },
   module: {
     rules: [
@@ -37,13 +42,23 @@ module.exports = () => ({
       {
         test: /\.(pdf|jpg|png|gif|svg|ico|woff2)$/,
         use: {
-          loader: 'file-loader',
+          loader: 'url-loader',
           options: {
-            name: 'assets/[path][name]-[hash].[ext]',
+            limit : 128,
+            name: 'assets/[name]-[hash].[ext]',
           },
         },
       },
     ],
+  },
+  devServer: {
+    static: BUILD_DIR,
+    compress: false,
+    port: 3042,
+    host: 'localhost',
+    historyApiFallback: {
+      index: 'index.html'
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -53,21 +68,6 @@ module.exports = () => ({
       API_URL: '/api',
       SENTRY_DSN: '',
       CLIENT_ID: '',
-    }),
-    new FaviconsWebpackPlugin({
-      logo: './src/v1/components/Logo/images/logo-75x75-blacked.png',
-      favicons: {
-        appName: 'Roving Climbers',
-        appShortName: 'RC',
-        appDescription: 'Climbing club',
-        developerName: 'Bitia',
-        developerURL: 'http://bitia.ru',
-        appleStatusBarStyle: 'black',
-        background: '#000',
-        theme_color: '#000',
-        orientation: 'portrait',
-        start_url: '/',
-      },
     }),
   ],
 });

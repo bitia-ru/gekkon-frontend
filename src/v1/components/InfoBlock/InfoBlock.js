@@ -75,7 +75,7 @@ class InfoBlock extends Component {
                                 <div>Залы</div>
                                 <div style={{ height: '10px', width: '20px', marginLeft: '10px' }}>
                                   <svg aria-hidden="true">
-                                    <use xlinkHref={`${require('./images/arrow.svg')}#arrow`} />
+                                    <use xlinkHref={`${require('./images/arrow.svg').default}#arrow`} />
                                   </svg>
                                 </div>
                               </div>

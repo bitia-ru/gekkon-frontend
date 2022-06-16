@@ -91,7 +91,7 @@ class UserPoster extends Component {
           >
             {
               (window.innerHeight * 0.4 - this.state.scrollPosition > menuHeight * 2) && (
-                <img src={(user.avatar && user.avatar.url) ? user.avatar.url : require('./images/avatar_placeholder.svg')}
+                <img src={(user.avatar && user.avatar.url) ? user.avatar.url : require('./images/avatar_placeholder.svg').default}
                   className={css(styles.logo)}
                 />
               )
