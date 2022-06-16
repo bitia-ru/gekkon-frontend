@@ -39,7 +39,7 @@ export default class LikeButton extends Component {
       >
         <span className={css(styles.likeButtonIcon)}>
           <svg>
-            <use xlinkHref={`${require('./images/like.svg')}#icon-like`} />
+            <use xlinkHref={`${require('./images/like.svg').default}#icon-like`} />
           </svg>
         </span>
         <span className={css(styles.likeButtonCount)}>

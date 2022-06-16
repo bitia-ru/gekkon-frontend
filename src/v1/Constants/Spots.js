@@ -9,7 +9,7 @@ export const SpotsData = [
     description: 'Самый большой зал на трудность в Москве. Разнообразные виды поверхностей, включая участки с '
       + 'потолками, карнизы. Стенд с воспроизводством естественной скальной поверхности. Автостраховки. Имеется '
       + 'небольшой болдеринговый зал.',
-    imgSrc: require('../../../img/spot-card-img/gravity.jpg'),
+    imgSrc: require('../../../img/spot-card-img/gravity.jpg').default,
     className: 'spot-card_gravity',
   },
   {
@@ -21,7 +21,7 @@ export const SpotsData = [
     info4: 'Кампусборд',
     address: 'Москва, пер. Леснорядский д.18, стр.6',
     description: 'Самый большой боулдеринговый зал в Москве.',
-    imgSrc: require('../../../img/spot-card-img/limestone.jpg'),
+    imgSrc: require('../../../img/spot-card-img/limestone.jpg').default,
     className: 'spot-card_limestone',
   },
   {
@@ -29,7 +29,7 @@ export const SpotsData = [
     name: 'BigWall ВДНХ',
     address: 'Москва, ВДНХ, павильон плодоовощеводства',
     description: 'Просторный светлый скалодром в ландшафтном парке ВДНХ.',
-    imgSrc: require('../../../img/spot-card-img/bigwall.jpg'),
+    imgSrc: require('../../../img/spot-card-img/bigwall.jpg').default,
     className: 'spot-card_bigwall',
   },
   {
@@ -41,7 +41,7 @@ export const SpotsData = [
     address: 'Москва, Электролитный пр.7, стр.2, СК КАНТ',
     description: 'Высокое качество скальной поверхности и расширенные возможности боулдерингового\n'
       + '                                зала совместно с регулярной перекруткой и обновлением трасс',
-    imgSrc: require('../../../img/spot-card-img/atmosphere.jpg'),
+    imgSrc: require('../../../img/spot-card-img/atmosphere.jpg').default,
     className: 'spot-card_atmo',
   },
 ];

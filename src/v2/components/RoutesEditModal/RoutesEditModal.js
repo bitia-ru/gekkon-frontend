@@ -405,7 +405,7 @@ class RoutesEditModal extends Component {
     const routeChanged = JSON.stringify(route) !== JSON.stringify(fieldsOld);
     const markChanged = JSON.stringify(currentPointers) !== JSON.stringify(currentPointersOld);
     const saveDisabled = (!routeChanged && !markChanged);
-    const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg');
+    const iconImage = require('../../../../img/btn-handler/btn-handler-sprite.svg').default;
     return (
       <div className={css(styles.modalOverlayWrapper)}>
         <div
