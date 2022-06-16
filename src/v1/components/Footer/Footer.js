@@ -14,7 +14,7 @@ const Footer = ({
 }) => {
   const socialLinksSprite = require(
     '../../../../img/social-links-sprite/social-links-sprite.svg',
-  );
+  ).default;
   return (
     <footer className="footer">
       <div className="footer__container">

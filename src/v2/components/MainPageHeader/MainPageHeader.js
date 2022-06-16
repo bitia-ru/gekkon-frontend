@@ -9,7 +9,7 @@ import { currentUser } from '@/v2/redux/user_session/utils';
 import SocialLinkButton from '@/v1/components/SocialLinkButton/SocialLinkButton';
 import { TELEGRAM_LINK, VK_LINK } from '@/v1/Constants/SocialLinks';
 
-const bgImage = require('./images/main-page-header.jpg');
+const bgImage = require('./images/main-page-header.jpg').default;
 
 class MainPageHeader extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class MainPageHeader extends Component {
 
     const socialLinksSprite = require(
       '@/../img/social-links-sprite/social-links-sprite.svg',
-    );
+    ).default;
 
     return (
       <header
@@ -88,10 +88,10 @@ class MainPageHeader extends Component {
             <picture>
               <source
                 media="(max-width: 1600px)"
-                srcSet={require('./images/main-page-header-img_desktop-md.png')}
+                srcSet={require('./images/main-page-header-img_desktop-md.png').default}
               />
               <img
-                src={require('./images/main-page-header-img.png')}
+                src={require('./images/main-page-header-img.png').default}
                 alt="Скалолаз"
                 onLoad={() => this.setState({ posterPhotoLoaded: true })}
                 style={{ visibility: posterPhotoLoaded ? 'visible' : 'hidden' }}

@@ -2,8 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { ResponsivePie } from '@nivo/pie';
-import { ResponsiveCalendar } from '@nivo/calendar';
 import * as R from 'ramda';
 import UserPoster from '../components/UserPoster/UserPoster';
 import { StyleSheet, css } from '../aphrodite';
@@ -152,50 +150,54 @@ class UserShow extends React.PureComponent {
       >
         <div className={css(style.content)}>
           <div className={css(style.row1)}>
-            <ResponsiveCalendar
-              data={this.obtainUserAscentsForCalendar(match.params.user_id)}
-              from="2019-01-01"
-              to="2020-12-31"
-              emptyColor="#eeeeee"
-              colors={[ '#61cdbb', '#97e3d5', '#e8c1a0', '#f47560' ]}
-              margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-              yearSpacing={40}
-              monthBorderColor="#ffffff"
-              dayBorderWidth={2}
-              dayBorderColor="#ffffff"
-              onClick={(e) => {
-                this.setState({
-                  currentDay: e.day,
-                  currentDayScores: null,
-                  ascentsForPie: [],
-                })
-              }}
-            />
+            {
+              //<ResponsiveCalendar
+              //  data={this.obtainUserAscentsForCalendar(match.params.user_id)}
+              //  from="2019-01-01"
+              //  to="2020-12-31"
+              //  emptyColor="#eeeeee"
+              //  colors={[ '#61cdbb', '#97e3d5', '#e8c1a0', '#f47560' ]}
+              //  margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+              //  yearSpacing={40}
+              //  monthBorderColor="#ffffff"
+              //  dayBorderWidth={2}
+              //  dayBorderColor="#ffffff"
+              //  onClick={(e) => {
+              //    this.setState({
+              //      currentDay: e.day,
+              //      currentDayScores: null,
+              //      ascentsForPie: [],
+              //    })
+              //  }}
+              ///>
+            }
           </div>
           <div className={css(style.row2)}>
             <div className={css(style.leftPane)}>
-              <ResponsivePie
-                data={this.obtainUserAscentsForPie(match.params.user_id)}
-                margin={{ top: 0, right: 80, bottom: 0, left: 80 }}
-                innerRadius={0.5}
-                padAngle={0.7}
-                cornerRadius={3}
-                borderWidth={1}
-                borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                radialLabelsSkipAngle={10}
-                radialLabelsTextXOffset={6}
-                radialLabelsTextColor="#333333"
-                radialLabelsLinkOffset={0}
-                radialLabelsLinkDiagonalLength={16}
-                radialLabelsLinkHorizontalLength={24}
-                radialLabelsLinkStrokeWidth={1}
-                radialLabelsLinkColor={{ from: 'color' }}
-                slicesLabelsSkipAngle={10}
-                slicesLabelsTextColor="#333333"
-                animate
-                motionStiffness={90}
-                motionDamping={15}
-              />
+              {
+                //<ResponsivePie
+                //  data={this.obtainUserAscentsForPie(match.params.user_id)}
+                //  margin={{ top: 0, right: 80, bottom: 0, left: 80 }}
+                //  innerRadius={0.5}
+                //  padAngle={0.7}
+                //  cornerRadius={3}
+                //  borderWidth={1}
+                //  borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
+                //  radialLabelsSkipAngle={10}
+                //  radialLabelsTextXOffset={6}
+                //  radialLabelsTextColor="#333333"
+                //  radialLabelsLinkOffset={0}
+                //  radialLabelsLinkDiagonalLength={16}
+                //  radialLabelsLinkHorizontalLength={24}
+                //  radialLabelsLinkStrokeWidth={1}
+                //  radialLabelsLinkColor={{ from: 'color' }}
+                //  slicesLabelsSkipAngle={10}
+                //  slicesLabelsTextColor="#333333"
+                //  animate
+                //  motionStiffness={90}
+                //  motionDamping={15}
+                ///>
+              }
             </div>
             <div className={css(style.rightPane)}>
               <div>Дата: {this.state.currentDay}</div>

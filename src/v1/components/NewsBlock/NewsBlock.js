@@ -79,7 +79,7 @@ class NewsBlock extends Component {
         {
           filteredNews.length > 0 && <section
             className="section-news"
-            style={{ backgroundImage: `url(${require('./images/mountain-peak.png')})` }}
+            style={{ backgroundImage: `url(${require('./images/mountain-peak.png').default})` }}
           >
             <div className="section-news__container">
               <div className="section-news__inner">
