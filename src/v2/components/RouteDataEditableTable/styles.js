@@ -24,22 +24,11 @@ const styles = StyleSheet.create({
     marginLeft: '-10px',
     marginTop: '-3px',
   },
-  routeDataTableCategoryTrack: {
-    display: 'inline-block',
-    verticalAlign: 'middle',
-  },
   routeDataTableCategoryTrackWrap: {
     display: 'inline-flex',
     position: 'relative',
   },
   routeDataTableCategoryTrackInfo: { cursor: 'pointer' },
-  routeDataTableCategoryTrackColor: {
-    display: 'inline-block',
-    width: '60px',
-    height: '20px',
-    verticalAlign: 'middle',
-    marginLeft: '15px',
-  },
   modalTableItem: {
     maxWidth: '215px',
     width: '100%',

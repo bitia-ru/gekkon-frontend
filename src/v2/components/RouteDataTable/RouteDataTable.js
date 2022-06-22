@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import * as R from 'ramda';
-import { getCategoryColor } from '@/v1/Constants/Categories';
 import { GetUserName } from '@/v1/Constants/User';
 import { ROUTE_KINDS } from '@/v1/Constants/Route';
 import RouteColorPicker from '../RouteColorPicker/RouteColorPicker';
 import { StyleSheet, css } from '../../aphrodite';
-import { routeCategoryToString } from '@/lib/routeHelpers';
+import RouteCategory from '@/lib/components/RouteCategory';
+
 
 const RouteDataTable = ({
   user, route,
@@ -31,15 +31,7 @@ const RouteDataTable = ({
         <div className={css(styles.routeDataTableItem, styles.routeDataTableItemHeader)}>
           Категория:
         </div>
-        <div className={css(styles.routeDataTableItem)}>
-          <div className={css(styles.routeDataTableCategoryTrack)}>
-            {routeCategoryToString(route)}
-          </div>
-          <div
-            className={css(styles.routeDataTableCategoryTrackColor)}
-            style={{ backgroundColor: getCategoryColor(route.category) }}
-          />
-        </div>
+        <div className={css(styles.routeDataTableItem)}><RouteCategory route={route} /></div>
       </div>
       <div className={css(styles.routeDataTableRow)}>
         <div className={css(styles.routeDataTableItem, styles.routeDataTableItemHeader)}>
@@ -157,14 +149,6 @@ const styles = StyleSheet.create({
     cursor: 'pointer',
   },
   // END
-
-  routeDataTableCategoryTrackColor: {
-    display: 'inline-block',
-    width: '60px',
-    height: '20px',
-    verticalAlign: 'middle',
-    marginLeft: '15px',
-  },
 
   // NOT USED
   routeDataTableCategoryTrackColor5c: {

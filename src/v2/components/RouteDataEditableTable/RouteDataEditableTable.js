@@ -4,16 +4,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import CategorySlider from '@/v1/components/CategorySlider/CategorySlider';
-import { getCategoryColor } from '@/v1/Constants/Categories';
 import ComboBox from '@/v1/components/ComboBox/ComboBox';
 import { ROUTE_KINDS } from '@/v1/Constants/Route';
 import ComboBoxPerson from '@/v2/components/ComboBoxPerson/ComboBoxPerson';
 import RouteColorPicker from '@/v2/components/RouteColorPicker/RouteColorPicker';
 import DatePicker from '@/v1/components/DatePicker/DatePicker';
 import RouteContext from '@/v1/contexts/RouteContext';
+import RouteCategory from '@/lib/components/RouteCategory';
 import { css } from '@/v2/aphrodite';
 import styles from './styles';
-import { routeCategoryToString } from '@/lib/routeHelpers';
 
 class RouteDataEditableTable extends Component {
   constructor(props) {
@@ -65,7 +64,7 @@ class RouteDataEditableTable extends Component {
                         )
                       }
                     >
-                      Сложность:
+                      Категория:
                     </div>
                     <div className={css(styles.routeDataTableTableItemRight)}>
                       <div className={css(styles.routeDataTableCategoryTrackWrap)}>
@@ -76,13 +75,7 @@ class RouteDataEditableTable extends Component {
                           style={{ outline: 'none' }}
                           onClick={() => this.setState({ showSlider: !showSlider })}
                         >
-                          <div className={css(styles.routeDataTableCategoryTrack)}>
-                            {routeCategoryToString(route)}
-                          </div>
-                          <div
-                            className={css(styles.routeDataTableCategoryTrackColor)}
-                            style={{ backgroundColor: getCategoryColor(route.category) }}
-                          />
+                          <RouteCategory route={route} />
                         </div>
                         {
                           showSlider
