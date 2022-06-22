@@ -99,16 +99,13 @@ class RoutesEditModal extends Component {
     if (routeId) {
       loadRoute(
         this.getRouteId(),
-        (payload) => {
-          const route = payload;
-          const routeCopy = R.clone(route);
-          if (route.photo) {
-            routeCopy.photo = routeCopy.photo.url;
-          }
-          if (route.category === null) {
-            routeCopy.category = DEFAULT_CATEGORY;
-          }
-          this.setState({ fieldsOld: routeCopy, route: R.clone(routeCopy) });
+        payload => {
+          const route = {
+            ...payload,
+            category: payload.category || DEFAULT_CATEGORY,
+            photo: payload.photo.url,
+          };
+          this.setState({ fieldsOld: route, route: R.clone(route) });
           this.loadPointers(route);
         },
       );
