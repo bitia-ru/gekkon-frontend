@@ -280,9 +280,7 @@ class SignUpForm extends Component {
     ).default;
 
     const iconVk = `${socialLinksSprite}#icon-vk`;
-    const iconFB = `${socialLinksSprite}#icon-facebook`;
     const iconTwitter = `${socialLinksSprite}#icon-twitter`;
-    const iconInst = `${socialLinksSprite}#icon-inst`;
     const iconYoutube = `${socialLinksSprite}#icon-youtube`;
 
     return (
