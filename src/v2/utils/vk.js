@@ -17,25 +17,28 @@ const params = (type, token, rememberMe) => ({
   redirect_uri: redirectUri(),
   response_type: 'code',
   v: '5.131',
-  state: JSON.stringify({
-    method: type,
-    token,
-    rememberMe,
-  }),
+  state: btoa(
+    JSON.stringify({
+      method: type,
+      token,
+      rememberMe,
+    })
+  ),
 });
 
-const paramsSerialized = (type, token, rememberMe) => (
-  R.join('&')(
-    R.map(v => `${v[0]}=${v[1]}`)(
-      R.toPairs(params(type, token, rememberMe)),
-    ),
-  )
-);
+const paramsSerialized = (type, token, rememberMe) => {
+  let queryString = new URLSearchParams();
+  const queryParams = params(type, token, rememberMe);
 
-export const afterVkEnter = (ev) => {
-  if (ev.data.result !== 'success') {
+  for (const k in queryParams)
+    queryString.set(k, queryParams[k]);
+
+  return queryString.toString();
+};
+
+export const afterVkEnter = ev => {
+  if (ev.data.result !== 'success')
     return;
-  }
   ev.source.close();
   closeForm();
   window.removeEventListener('message', afterVkEnter);
